@@ -111,6 +111,12 @@ input[type=color]{padding:4px;height:44px}
 .preset{display:grid;gap:4px;text-align:left;background:var(--card);border:2px solid var(--card);border-radius:16px;padding:14px 16px}
 .preset span{color:var(--mut);font-size:15px}.preset small{color:var(--mut);font-size:13px;opacity:.8}
 .preset.on{border-color:var(--acc);background:color-mix(in srgb,var(--acc) 12%,var(--card))}
+.wstats{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:14px;align-items:end;margin:10px 0 6px}
+.wstats .kbig{font-size:clamp(28px,7vw,40px)}.wstats b{font-size:18px;white-space:nowrap}
+.wfig{position:relative;height:220px;margin-top:4px}.wfig svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.wkey{display:flex;gap:6px 14px;align-items:center;flex-wrap:wrap;font-size:13px}.wkey i{display:inline-block;width:14px;height:4px;border-radius:2px;margin-right:-8px}.wkey i.dash{background:repeating-linear-gradient(90deg,#3cc985 0 5px,transparent 5px 9px)}
+.wform{display:grid;grid-template-columns:minmax(0,1.3fr) repeat(auto-fit,minmax(0,1fr));gap:8px;align-items:end;margin:14px 0 12px}
+@media(max-width:520px){.wform{grid-template-columns:1fr 1fr}.wform label:first-child,.wform .btn{grid-column:1/-1}}
 .upd{position:fixed;left:50%;top:calc(10px + env(safe-area-inset-top));transform:translateX(-50%);z-index:30;display:flex;gap:10px;align-items:center;background:var(--ink);color:var(--bg);padding:8px 8px 8px 14px;border-radius:14px;font-size:14px;box-shadow:0 6px 24px #0008;max-width:94vw}
 .upd button{height:36px;border:0;border-radius:10px;padding:0 12px;background:var(--acc);color:#fff;font-weight:600}
 @media(max-width:700px){.wheelwrap{grid-template-columns:1fr;gap:16px}.wheel{max-width:250px;margin:0 auto}.cards{grid-template-columns:1fr}.kcal{grid-template-columns:1fr}
@@ -118,7 +124,7 @@ input[type=color]{padding:4px;height:44px}
 @media(prefers-reduced-motion:no-preference){.bar i{transition:width .3s}}
 </style></head><body><div id="root"></div><div id="toast"></div><script>
 {
-const VERSION='2.7';
+const VERSION='2.8';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -204,7 +210,7 @@ const GENERIC=[['Chicken breast, cooked',165,31,0,3.6],['Turkey breast, cooked',
 let D=null;
 try{D=JSON.parse(localStorage.getItem('pillars2')||'null')}catch(e){}
 if(!D||!D.cfg)D={cfg:PRESET(),days:{},foods:[],recent:[],updated:0};
-D.foods=D.foods||[];D.recent=D.recent||[];
+D.foods=D.foods||[];D.recent=D.recent||[];D.weights=D.weights||[];D.wdel=D.wdel||{};
 if(!D.onboarded&&(D.cfgU||Object.keys(D.days).length))D.onboarded=true;
 function save(){stamp();D.updated=Date.now();try{localStorage.setItem('pillars2',JSON.stringify(D))}catch(e){toast('Could not save — storage is full or blocked')}queueSync()}
 let cur=TODAY;try{cur=sessionStorage.getItem('pcur')||TODAY}catch(e){}
@@ -231,6 +237,47 @@ const logged=d=>{const x=D.days[d];return!!x&&((x.food&&x.food.length)||Object.k
 function streak(){const g=+D.cfg.good||70;let d=overall(TODAY)>=g?TODAY:shift(TODAY,-1),n=0;while(overall(d)>=g&&n<3650){n++;d=shift(d,-1)}return n}
 function label(d){if(d===TODAY)return'Today';if(d===shift(TODAY,-1))return'Yesterday';return new Date(d+'T12:00:00').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'})}
 const goalTxt=m=>(m.d==='max'?'limit ':m.d==='near'?'target ~':'goal ')+fmt(m.t)+' '+esc(m.u);
+
+
+/* ---------- Weigh-ins ---------- */
+const KGLB=2.20462262;let wRange=90;
+const wUnit=()=>D.cfg.wUnit||'kg';
+function fmtW(kg,short){if(kg==null)return'–';const u=wUnit();if(u==='kg')return kg.toFixed(1)+(short?'':' kg');const lb=kg*KGLB;if(u==='lb')return lb.toFixed(1)+(short?'':' lb');
+ let st=Math.floor(lb/14),r=Math.round((lb-st*14)*10)/10;if(r>=14){st++;r=0}return short?`${st}st ${Math.round(r)}`:`${st} st ${r.toFixed(1)} lb`}
+function fmtD(dk){if(dk==null)return'–';const u=wUnit(),s=dk>0?'+':dk<0?'−':'±',a=Math.abs(dk);return s+(u==='kg'?a.toFixed(1)+' kg':(a*KGLB).toFixed(1)+' lb')}
+function wInputs(pre,kg){const u=wUnit();if(u==='st'){const lb=kg!=null?kg*KGLB:null,st=lb!=null?Math.floor(lb/14):'',rl=lb!=null?Math.round((lb-st*14)*10)/10:'';
+ return`<label class="f">Stone<input name="${pre}st" inputmode="decimal" value="${st}"></label><label class="f">Pounds<input name="${pre}lb" inputmode="decimal" value="${rl}"></label>`}
+ return`<label class="f">${u==='kg'?'Kilograms':'Pounds'}<input name="${pre}v" inputmode="decimal" value="${kg!=null?(u==='kg'?kg.toFixed(1):(kg*KGLB).toFixed(1)):''}"></label>`}
+function readW(f,pre){const u=wUnit(),g=n=>f.elements[pre+n]?num(f.elements[pre+n].value):null;
+ if(u==='st'){const s=g('st'),l=g('lb');if(s==null&&l==null)return null;return((s||0)*14+(l||0))/KGLB}const v=g('v');return v==null?null:(u==='kg'?v:v/KGLB)}
+function wList(){const by={};for(const e of D.weights||[])if(!by[e.date]||e.ts>by[e.date].ts)by[e.date]=e;return Object.values(by).sort((a,b)=>a.date<b.date?-1:1)}
+function wAt(list,date){let r=null;for(const e of list)if(e.date<=date)r=e;return r}
+function weighSection(){const L=wList(),last=L[L.length-1],goal=D.cfg.wGoal,ex=(D.weights||[]).find(e=>e.date===wDate);
+ const ch=n=>{if(!last)return null;const p=wAt(L,shift(last.date,-n));return p&&p!==last?last.kg-p.kg:null};
+ const c7=ch(7),c30=ch(30);
+ return`<section class="card" id="weigh"><div class="ch"><h2>Weigh-in</h2>${last?`<span class="sub">last ${label(last.date).toLowerCase()}</span>`:''}</div>
+ ${last?`<div class="wstats"><div><div class="kbig">${fmtW(last.kg)}</div><div class="sub">current</div></div><div><b class="num">${c7==null?'–':fmtD(c7)}</b><div class="sub">7 days</div></div><div><b class="num">${c30==null?'–':fmtD(c30)}</b><div class="sub">30 days</div></div>${goal?`<div><b class="num">${fmtD(last.kg-goal).replace(/^[+−±]/,'')}</b><div class="sub">${Math.abs(last.kg-goal)<0.05?'at goal':'to goal'}</div></div>`:''}</div>`:'<p class="sub">Log your first weigh-in below. Weighing at the same time each morning gives the most useful trend.</p>'}
+ ${L.length>1?`<div class="seg" role="group" aria-label="Chart range">${[[30,'1M'],[90,'3M'],[365,'1Y'],[0,'All']].map(([d,l])=>`<button data-wr="${d}" class="${wRange===d?'on':''}">${l}</button>`).join('')}</div><div class="fig wfig"><svg id="wchart" role="img" aria-label="Weight trend chart"></svg></div><p class="sub wkey"><i style="background:#ff7a63"></i>Weigh-ins <i style="background:var(--acc)"></i>7-day average${goal?' <i class="dash"></i>Goal':''}</p>`:''}
+ <form id="wform" class="wform"><label class="f">Date<input type="date" name="date" value="${wDate}" max="${TODAY}"></label>${wInputs('w',ex?ex.kg:null)}<button class="btn">${ex?'Update':'Save'}</button></form>
+ ${L.length?`<details data-keep="wrec" ${openD.has('wrec')?'open':''}><summary>Recent weigh-ins</summary>${L.slice(-10).reverse().map(e=>`<div class="fe"><div>${label(e.date)}</div><span class="num">${fmtW(e.kg)}</span><button class="x" data-wdel="${e.id}" aria-label="Delete weigh-in ${label(e.date)}">×</button></div>`).join('')}</details>`:''}
+ <details data-keep="wcfg" ${openD.has('wcfg')?'open':''} style="margin-top:10px"><summary>Units and goal</summary><form id="wcfg" class="grid3"><label class="f" style="grid-column:1/-1">Units<select name="unit" data-wunit>${[['kg','Kilograms (kg)'],['st','Stone and pounds'],['lb','Pounds (lb)']].map(([v,l])=>`<option value="${v}" ${wUnit()===v?'selected':''}>${l}</option>`).join('')}</select></label>${wInputs('g',goal??null)}<button class="btn sec" style="grid-column:1/-1">Save goal</button></form></details></section>`}
+let wDate=TODAY,wro=null;const openD=new Set();
+function drawW(){const s=document.getElementById('wchart');if(!s)return;const draw=()=>{const W=s.clientWidth,H=s.clientHeight;if(!W)return;
+ let L=wList();const from=wRange?shift(TODAY,-wRange):'0000';const pts=L.filter(e=>e.date>=from);if(pts.length<2){s.innerHTML=`<text x="${W/2}" y="${H/2}" text-anchor="middle" fill="#a9a5b5" font-size="14">Not enough weigh-ins in this range</text>`;return}
+ const conv=kg=>wUnit()==='kg'?kg:kg*KGLB,t=d=>new Date(d+'T12:00:00').getTime();
+ const avg=pts.map(e=>{const w=L.filter(o=>o.date<=e.date&&o.date>shift(e.date,-7));return{date:e.date,v:conv(w.reduce((a,o)=>a+o.kg,0)/w.length)}});
+ let vs=pts.map(e=>conv(e.kg)),g=D.cfg.wGoal!=null?conv(D.cfg.wGoal):null,lo=Math.min(...vs),hi=Math.max(...vs);const span=Math.max(hi-lo,2);
+ if(g!=null&&g>=lo-span&&g<=hi+span){lo=Math.min(lo,g);hi=Math.max(hi,g)}else g=null;lo-=span*.12;hi+=span*.12;
+ const pl=46,pr=10,pt=10,pb=24,t0=t(pts[0].date),t1=t(pts[pts.length-1].date),X=d=>pl+(W-pl-pr)*((t(d)-t0)/(t1-t0||1)),Y=v=>pt+(H-pt-pb)*(1-(v-lo)/(hi-lo));
+ const ticks=[0,.5,1].map(f=>lo+(hi-lo)*f),lab=v=>wUnit()==='st'?fmtW(v/KGLB,true):v.toFixed(W<520?0:1);
+ const dl=d=>new Date(d+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'});
+ s.innerHTML=ticks.map(v=>`<line x1="${pl}" x2="${W-pr}" y1="${Y(v).toFixed(1)}" y2="${Y(v).toFixed(1)}" stroke="#2e2b37"/><text x="${pl-6}" y="${(Y(v)+4).toFixed(1)}" text-anchor="end" fill="#a9a5b5" font-size="11">${lab(v)}</text>`).join('')
+ +(g!=null?`<line x1="${pl}" x2="${W-pr}" y1="${Y(g).toFixed(1)}" y2="${Y(g).toFixed(1)}" stroke="#3cc985" stroke-dasharray="5 5"/>`:'')
+ +`<polyline fill="none" stroke="#ff7a63" stroke-opacity=".45" stroke-width="1.5" points="${pts.map(e=>X(e.date).toFixed(1)+','+Y(conv(e.kg)).toFixed(1)).join(' ')}"/>`
+ +pts.map(e=>`<circle cx="${X(e.date).toFixed(1)}" cy="${Y(conv(e.kg)).toFixed(1)}" r="${pts.length>60?2:3.5}" fill="#ff7a63"/>`).join('')
+ +`<polyline fill="none" stroke="#8d88ff" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" points="${avg.map(a=>X(a.date).toFixed(1)+','+Y(a.v).toFixed(1)).join(' ')}"/>`
+ +`<text x="${pl}" y="${H-6}" fill="#a9a5b5" font-size="11">${dl(pts[0].date)}</text><text x="${W-pr}" y="${H-6}" text-anchor="end" fill="#a9a5b5" font-size="11">${dl(pts[pts.length-1].date)}</text>`};
+ if(wro)wro.disconnect();wro=new ResizeObserver(draw);wro.observe(s);draw()}
 
 /* ---------- Views ---------- */
 const navBar=()=>`<div class="nav"><button data-nav="-1" aria-label="Previous day">‹</button><span class="d">${label(cur)}</span><button data-nav="1" aria-label="Next day" ${cur>=TODAY?'disabled':''}>›</button>${cur!==TODAY?'<button data-nav="0">Today</button>':''}</div>`;
@@ -277,7 +324,7 @@ function history(){const days=[];for(let i=13;i>=0;i--)days.push(shift(TODAY,-i)
  const ms=allM().map(m=>{let s=0;for(let i=0;i<7;i++)s+=mScore(m,val(shift(TODAY,-i),m));return{m,s:s/7}}).sort((a,b)=>a.s-b.s).slice(0,4);
  const cellBg=(c,s)=>`border:0;background:color-mix(in srgb,${c} ${15+Math.round(s*0.85)}%,transparent)`;
  return`<header class="hero"><div class="in"><div class="top"><h1>Progress</h1><span class="sub">${streak()}-day streak</span></div></div></header>
- <main class="wrap"><section class="card"><h2>Last 14 days</h2><p class="sub">Tap a square to open that day.</p><div class="hist"><span></span>${days.map(d=>`<span class="h">${new Date(d+'T12:00:00').toLocaleDateString('en-GB',{weekday:'narrow'})}</span>`).join('')}
+ <main class="wrap">${weighSection()}<section class="card"><h2>Last 14 days</h2><p class="sub">Tap a square to open that day.</p><div class="hist"><span></span>${days.map(d=>`<span class="h">${new Date(d+'T12:00:00').toLocaleDateString('en-GB',{weekday:'narrow'})}</span>`).join('')}
  ${rows.map(r=>`<span class="l">${esc(r.s)}</span>${days.map(d=>{const has=logged(d),s=has?r.fn(d):0;return`<button class="cell${d===cur?' cur':''}" data-go="${d}" aria-label="${esc(r.s)} ${label(d)}: ${has?s+'%':'nothing logged'}" style="${has?cellBg(r.c,s):''}"></button>`}).join('')}`).join('')}</div></section>
  <section class="card"><h2>This week vs last week</h2><table><thead><tr><th>Pillar</th><th class="n">Last 7 days</th><th class="n">Previous 7</th><th class="n">Change</th></tr></thead><tbody>
  ${rows.map(r=>{const a=avg(r.fn,TODAY,7),b=avg(r.fn,shift(TODAY,-7),7),ch=a!=null&&b!=null?a-b:null;return`<tr><td>${esc(r.n)}</td><td class="n">${a==null?'–':a+'%'}</td><td class="n">${b==null?'–':b+'%'}</td><td class="n ${ch>0?'up':ch<0?'down':''}">${ch==null?'–':(ch>0?'+':'')+ch}</td></tr>`}).join('')}</tbody></table></section>
@@ -296,7 +343,7 @@ function settings(){const types=[['min','At least'],['max','At most'],['near','A
 const ICONS={today:'<circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/>',food:'<path d="M7 3v8a2 2 0 0 0 4 0V3M9 11v10M17 3c-2 0-3 3-3 6s1 4 3 4v8"/>',history:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',settings:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/>'};
 const tabs=v=>`<nav class="tabs">${[['today','Today'],['food','Food'],['history','Progress'],['settings','Settings']].map(([k,l])=>`<a href="#${k}" class="${v===k?'on':''}" ${v===k?'aria-current="page"':''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[k]}</svg>${l}</a>`).join('')}</nav>`;
 const view=()=>{const h=location.hash.slice(1);return['today','food','history','settings'].includes(h)?h:'today'};
-function render(){if(!D.onboarded||ob.done){root.innerHTML=onboard();return}const v=view();root.innerHTML=(v==='food'?food():v==='history'?history():v==='settings'?settings():today())+tabs(v);if(v==='food')renderResults()}
+function render(){if(!D.onboarded||ob.done){root.innerHTML=onboard();return}const v=view();root.innerHTML=(v==='food'?food():v==='history'?history():v==='settings'?settings():today())+tabs(v);if(v==='food')renderResults();if(v==='history')drawW()}
 function rr(){const y=scrollY;render();scrollTo(0,y)}
 let tt;function toast(t){const e=document.getElementById('toast');e.innerHTML=`<div class="toast" role="status">${esc(t)}</div>`;clearTimeout(tt);tt=setTimeout(()=>e.innerHTML='',2600)}
 
@@ -336,6 +383,8 @@ function addEntry(it,q,saveIt){const k=it.unit==='g'?q/100:q;
 /* ---------- Events ---------- */
 addEventListener('hashchange',()=>{picked=null;status='';lastQ='';render();scrollTo(0,0)});
 root.addEventListener('click',e=>{const t=e.target.closest('button,a');if(!t)return;const ds=t.dataset;
+ if(ds.wr!=null){wRange=+ds.wr;rr();return}
+ if(ds.wdel){D.wdel[ds.wdel]=Date.now();D.weights=D.weights.filter(x=>x.id!==ds.wdel);save();rr();return}
  if(ds.obPreset){ob.preset=ds.obPreset;render();return}
  if(ds.ob){const o=ds.ob;
   if(o==='next'){ob.step++;render();scrollTo(0,0)}
@@ -368,15 +417,20 @@ root.addEventListener('click',e=>{const t=e.target.closest('button,a');if(!t)ret
  if(a==='copy')navigator.clipboard.writeText(JSON.stringify(D)).then(()=>toast('Backup copied'),()=>toast('Copy was blocked'));
  if(a==='reset'){if(!resetArm){resetArm=true;rr();setTimeout(()=>{if(resetArm){resetArm=false;if(view()==='settings')rr()}},4000);return}resetArm=false;D.cfg=PRESET();save();rr();toast('Preset reset')}});
 root.addEventListener('change',e=>{const t=e.target,ds=t.dataset;
+ if(ds.wunit!=null){D.cfg.wUnit=t.value;save();rr();return}
+ if(t.name==='date'&&t.form&&t.form.id==='wform'){wDate=t.value||TODAY;rr();return}
  if(ds.val){const v=num(t.value);setV(ds.val,v==null||v<0?null:v);save();rr();return}
  if(ds.note!=null){day(cur).note=t.value.slice(0,3000);day(cur).nt=Date.now();save();return}
  if(ds.pset){const[pi,k]=ds.pset.split(':');const v=t.value.trim();if(v)P()[+pi][k]=v;save();rr();return}
  if(ds.mset){const[pi,mi,k]=ds.mset.split(':');const m=P()[+pi].m[+mi];if(['t','st','w'].includes(k)){const v=num(t.value);if(v!=null&&v>0)m[k]=v}else{const v=t.value.trim();if(v||k==='u')m[k]=v}save();rr();return}
  if(ds.cfg){const v=num(t.value);if(v!=null&&v>0){if(ds.cfg==='mc')D.cfg.macros.c=v;else if(ds.cfg==='mf')D.cfg.macros.f=v;else D.cfg.good=Math.min(100,v)}save();rr();return}
  if(ds.restore!=null&&t.files[0]){t.files[0].text().then(s=>{const j=JSON.parse(s);if(!j.cfg||!j.days)throw 0;D=j;D.foods=D.foods||[];D.recent=D.recent||[];snapAll();D.cfgU=Date.now();Object.values(D.days).forEach(x=>x.u=Date.now());save();rr();toast('Backup restored')}).catch(()=>toast('That file is not a Life Pillars backup'))}});
-root.addEventListener('toggle',e=>{const d=e.target;if(d.dataset&&d.dataset.pi!=null){d.open?openP.add(+d.dataset.pi):openP.delete(+d.dataset.pi)}},true);
+root.addEventListener('toggle',e=>{const d=e.target;if(d.dataset&&d.dataset.keep){d.open?openD.add(d.dataset.keep):openD.delete(d.dataset.keep)}if(d.dataset&&d.dataset.pi!=null){d.open?openP.add(+d.dataset.pi):openP.delete(+d.dataset.pi)}},true);
 root.addEventListener('input',e=>{if(e.target.id==='amt')updAmt();if(e.target.id==='fq'){lastQ=e.target.value;if(!lastQ.trim()){picked=null;status='';renderResults()}}});
 root.addEventListener('submit',e=>{e.preventDefault();const f=e.target;
+ if(f.id==='wform'){const kg=readW(f,'w'),d=f.elements.date.value||TODAY;if(kg==null||kg<20||kg>400){toast('Enter a weight');return}if(d>TODAY){toast('That date is in the future');return}
+  const now=Date.now();for(const x of D.weights.filter(x=>x.date===d))D.wdel[x.id]=now;D.weights=D.weights.filter(x=>x.date!==d);D.weights.push({id:uid('w'),ts:now,date:d,kg:Math.round(kg*100)/100});wDate=TODAY;save();rr();toast('Weigh-in saved');return}
+ if(f.id==='wcfg'){const kg=readW(f,'g');if(kg==null)delete D.cfg.wGoal;else if(kg>=20&&kg<=400)D.cfg.wGoal=Math.round(kg*100)/100;else{toast('Enter a goal weight');return}save();rr();toast(kg==null?'Goal cleared':'Goal saved');return}
  if(f.id==='obform'){finishOb(f);return}
  if(f.id==='newpw'){const m=document.getElementById('pwmsg'),pw=f.elements.pw.value;if(pw!==f.elements.pw2.value){m.textContent='The two passwords don\'t match.';return}m.textContent='Saving…';
   sb.auth.updateUser({password:pw}).then(r=>{if(r.error){m.textContent=/same/i.test(r.error.message)?'That is your current password — choose a different one.':r.error.message;return}recovery=false;changePw=false;rr();toast('Password updated')}).catch(()=>{m.textContent='Can\'t reach the server — check your connection.'});return}
@@ -405,6 +459,7 @@ function merge(a,b,preferRemote){const o=JSON.parse(JSON.stringify(a));if(!b||!b
  if((b.foodsU||0)>(a.foodsU||0)){o.recent=b.recent||[];o.foodsU=b.foodsU}
  const names=new Set(o.foods.map(f=>f.n));for(const f of b.foods||[])if(!names.has(f.n))o.foods.push(f);
  for(const[d,x]of Object.entries(b.days||{}))o.days[d]=o.days[d]?mergeDay(o.days[d],x):x;
+ o.wdel={...(a.wdel||{})};for(const[k,t]of Object.entries(b.wdel||{}))o.wdel[k]=Math.max(o.wdel[k]||0,t);{const seen=new Set();o.weights=[...(a.weights||[]),...(b.weights||[])].filter(e=>{if(seen.has(e.id)||o.wdel[e.id])return false;seen.add(e.id);return true})}
  o.onboarded=!!(a.onboarded||b.onboarded);o.updated=Math.max(a.updated||0,b.updated||0);return o}
 function setSync(s){syncState=s;document.querySelectorAll('[data-syncst]').forEach(e=>e.textContent=SYNC[s])}
 function queueSync(){if(!sb||!user)return;setSync('syncing');clearTimeout(syncTimer);syncTimer=setTimeout(syncNow,2000)}
