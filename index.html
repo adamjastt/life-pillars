@@ -171,7 +171,7 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 .scene .shim rect{animation:shim 2.6s ease-in-out infinite alternate}@keyframes shim{to{opacity:.12}}
 .scene .tw{animation:tw 3s ease-in-out infinite alternate}@keyframes tw{to{opacity:.15}}
 @media(prefers-reduced-motion:reduce){.scene *{animation:none!important}}
-.fart{width:100%;height:auto;display:block}
+.fart{width:100%;height:auto;display:block}.fimg{aspect-ratio:2/1;object-fit:contain}
 .scenes{margin:0 0 4px;display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;overflow:visible}.scenes button{height:44px}.scenes button:last-child:nth-child(odd){grid-column:1/-1}.scenes .cnt{display:inline-block;min-width:20px;padding:0 6px;margin-left:4px;border-radius:99px;background:#ffffff1f;font-size:12px;line-height:18px}.scenes button.on .cnt{background:#13241c33}
 .spgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:6px}
 .spc{position:relative;display:grid;gap:2px;text-align:left;background:var(--card);border:1px solid #ffffff0c;border-radius:16px;padding:10px 12px 12px;min-height:44px}
@@ -198,7 +198,7 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 @media(prefers-reduced-motion:no-preference){.bar i{transition:width .3s}}
 </style></head><body><div id="root"></div><div id="toast"></div><script>
 {
-const VERSION='4.0';
+const VERSION='4.2';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -402,90 +402,122 @@ const spFilter=(sp,cm)=>sp.filter(s=>(fGroup==='All'||s.g===fGroup)&&(fStatus===
 let fArtN=0;
 const fRng=s=>{let h=1779033703;for(const ch of s)h=Math.imul(h^ch.charCodeAt(0),3432918353);return()=>{h=Math.imul(h^h>>>16,2246822507);h=Math.imul(h^h>>>13,3266489909);return((h^=h>>>16)>>>0)/4294967296}};
 const FP=(a)=>a.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ');
-function fishSVG(name,cls){const s=FSPEC[name]||FSPEC._;const id='fa'+(++fArtN),R=fRng(name);
- const body=s.a==='e'?artEel(s,id,R):s.a==='r'?artRay(s,id,R):s.a==='f'?artFlat(s,id,R):artSide(s,id,R);
+/* Your own artwork: put an image in the repo's fish/ folder and list it here, e.g. 'Perch':'perch.png'. It replaces the drawing for that species. */
+const FIMG={};
+function fishSVG(name,cls){if(FIMG[name])return`<img class="${cls||'fart'} fimg" src="fish/${FIMG[name]}" alt="" loading="lazy">`;const s=FSPEC[name]||FSPEC._;const id='fa'+(++fArtN),R=fRng(name);
+ const body=s.a==='e'?artEel(s,id,R):s.a==='r'?artRay(s,id,R):s.a==='f'?artFlat(s,id,R):artSide(s,id,R,name);
  return`<svg class="${cls||'fart'}" viewBox="0 0 200 100" aria-hidden="true">${body}</svg>`}
-function grad(id,c,dir){return`<linearGradient id="${id}g" x1="0" y1="0" x2="${dir==='h'?1:0}" y2="${dir==='h'?0:1}"><stop offset="0" stop-color="${c[0]}"/><stop offset=".55" stop-color="${c[1]}"/><stop offset="1" stop-color="${c[2]}"/></linearGradient>`}
+function grad(id,c,dir){return`<linearGradient id="${id}g" x1="0" y1="0" x2="${dir==='h'?1:0}" y2="${dir==='h'?0:1}"><stop offset="0" stop-color="${c[0]}"/><stop offset=".34" stop-color="${c[0]}"/><stop offset=".52" stop-color="${c[1]}"/><stop offset=".7" stop-color="${c[1]}"/><stop offset=".86" stop-color="${c[2]}"/><stop offset="1" stop-color="${c[2]}"/></linearGradient>`}
 function marks(s,id,R,box,yTop,yBot,N,T,cy){let o='';const L=T-N,ux=u=>N+L*u,inside=(u,v)=>cy+(v<0?-yTop(ux(u))*-v:yBot(ux(u))*v);
  for(const m of s.m||[]){const[k,...a]=m.split(':');
-  if(k==='scales'){o+=`<pattern id="${id}sc" width="7" height="6" patternUnits="userSpaceOnUse"><path d="M0 6a3.5 3.5 0 0 1 7 0" fill="none" stroke="${a[0]||'#000'}" stroke-opacity="${a[1]||.22}" stroke-width=".8"/></pattern><rect x="${N}" y="0" width="${L}" height="100" fill="url(#${id}sc)"/>`}
+  if(k==='scales'&&0){o+=`<pattern id="${id}sc" width="7" height="6" patternUnits="userSpaceOnUse"><path d="M0 6a3.5 3.5 0 0 1 7 0" fill="none" stroke="${a[0]||'#000'}" stroke-opacity="${a[1]||.22}" stroke-width=".8"/></pattern><rect x="${N}" y="0" width="${L}" height="100" fill="url(#${id}sc)"/>`}
   if(k==='bars'){const n=+a[0];for(let i=0;i<n;i++){const u=.32+i*(.6/n);o+=`<path d="M${ux(u)} ${cy-yTop(ux(u))} L${ux(u+.035)} ${cy-yTop(ux(u+.035))} L${ux(u+.05)} ${cy+yBot(ux(u))*.35} L${ux(u+.02)} ${cy+yBot(ux(u))*.35}Z" fill="${a[1]}" opacity="${a[2]||.75}"/>`}}
-  if(k==='spots'||k==='halo'){const n=+a[0],r=+(a[2]||1.6),lo=+(a[3]||-.9),hi=+(a[4]||.5),u0=+(a[5]||.12);for(let i=0;i<n;i++){const u=u0+R()*(.95-u0),v=lo+R()*(hi-lo),x=ux(u),y=inside(u,v),rr=r*(.7+R()*.6);
+  if(k==='spots'||k==='halo'){const n=Math.ceil(+a[0]*.55),r=+(a[2]||1.6)*1.1,lo=+(a[3]||-.9),hi=+(a[4]||.5),u0=+(a[5]||.12);for(let i=0;i<n;i++){const u=u0+R()*(.92-u0),v=lo+R()*(hi-lo),x=ux(u),y=inside(u,v),rr=r;
    o+=k==='halo'?`<circle cx="${x}" cy="${y}" r="${rr+1}" fill="${a[6]||'#f3e6c8'}" opacity=".85"/><circle cx="${x}" cy="${y}" r="${rr}" fill="${a[1]}"/>`:`<circle cx="${x}" cy="${y}" r="${rr}" fill="${a[1]}" opacity="${a[6]||.9}"/>`}}
-  if(k==='mottle'){const n=+a[0];for(let i=0;i<n;i++){const u=.1+R()*.88,v=-1+R()*1.7;o+=`<ellipse cx="${ux(u)}" cy="${inside(u,v)}" rx="${3+R()*5}" ry="${2+R()*3.5}" fill="${a[1]}" opacity="${a[2]||.35}"/>`}}
+  if(k==='mottle'){const n=Math.ceil(+a[0]*.45);for(let i=0;i<n;i++){const u=.15+R()*.8,v=-.9+R()*1.4;o+=`<ellipse cx="${ux(u)}" cy="${inside(u,v)}" rx="${5+R()*3}" ry="${3+R()*1.5}" fill="${a[1]}" opacity="${(+(a[2]||.35))*.75}"/>`}}
   if(k==='blotch'){const n=+a[0];for(let i=0;i<n;i++){const u=.25+i*(.68/n);o+=`<ellipse cx="${ux(u)}" cy="${cy+(+(a[2]||0))}" rx="3.4" ry="2.6" fill="${a[1]}" opacity=".8"/>`}}
-  if(k==='mirror'){for(let i=0;i<7;i++){const u=.28+i*.09,y=cy-yTop(ux(u))*.72;o+=`<path d="M${ux(u)-5} ${y+3}a5.5 5 0 0 1 11 0" fill="${a[0]||'#000'}" fill-opacity=".14" stroke="${a[0]||'#000'}" stroke-opacity=".35" stroke-width=".8"/>`}for(let i=0;i<4;i++){const u=.45+i*.1;o+=`<path d="M${ux(u)-4} ${cy+3}a4.5 4 0 0 1 9 0" fill="none" stroke="${a[0]||'#000'}" stroke-opacity=".3" stroke-width=".8"/>`}}
+  if(k==='mirror'){for(let i=0;i<6;i++){const u=.3+i*.1,y=cy-yTop(ux(u))*.7;o+=`<ellipse cx="${ux(u)}" cy="${y+2}" rx="5" ry="4" fill="${a[0]||'#000'}" fill-opacity=".16"/>`}for(let i=0;i<3;i++){const u=.5+i*.12;o+=`<ellipse cx="${ux(u)}" cy="${cy+2}" rx="4" ry="3.2" fill="${a[0]||'#000'}" fill-opacity=".13"/>`}}
   if(k==='lat'){const pts=[];for(let u=.14;u<=1;u+=.04)pts.push([ux(u),cy-yTop(ux(u))*(+(a[1]||.15))+(a[2]?Math.sin(u*3.2)*-(+a[2]):0)]);o+=`<polyline points="${FP(pts)}" fill="none" stroke="${a[0]}" stroke-width="${a[3]||1.1}" opacity=".85"/>`}
   if(k==='hstripes'){const n=+a[0];for(let i=0;i<n;i++){const v=-.75+i*(1.2/n),pts=[];for(let u=.16;u<=1;u+=.04)pts.push([ux(u),inside(u,v)]);o+=`<polyline points="${FP(pts)}" fill="none" stroke="${a[1]}" stroke-width="${a[2]||1.4}" opacity=".7"/>`}}
   if(k==='band'){const pts=[],pb=[];for(let u=.1;u<=1.01;u+=.04){pts.push([ux(u),inside(u,-.12)]);pb.unshift([ux(u),inside(u,.18)])}o+=`<polygon points="${FP(pts.concat(pb))}" fill="${a[0]}" opacity="${a[1]||.65}"/>`}
   if(k==='mack'){for(let i=0;i<14;i++){const u=.3+i*.05,x=ux(u),yt=cy-yTop(x);o+=`<path d="M${x} ${yt} q${3} ${4} ${-1} ${8} q${-3} ${4} ${1} ${7}" fill="none" stroke="${a[0]}" stroke-width="1.6"/>`}}
-  if(k==='worms'){for(let i=0;i<26;i++){const u=.15+R()*.82,v=-.9+R()*1.6,x=ux(u),y=inside(u,v);o+=`<path d="M${x} ${y} q2 -3 4 0 t4 0" fill="none" stroke="${a[0]}" stroke-width="1.2" opacity=".8"/>`}}
+  if(k==='worms'){for(let i=0;i<14;i++){const u=.15+R()*.82,v=-.9+R()*1.6,x=ux(u),y=inside(u,v);o+=`<path d="M${x} ${y} q2 -3 4 0 t4 0" fill="none" stroke="${a[0]}" stroke-width="1.2" opacity=".8"/>`}}
   if(k==='dot'){o+=`<circle cx="${ux(+a[0])}" cy="${inside(+a[0],+a[1])}" r="${a[3]||3}" fill="${a[2]}"/>`}
   if(k==='scutes'){for(let u=.45;u<.98;u+=.035){const x=ux(u);o+=`<path d="M${x} ${cy-1.2}l1.6 1.2-1.6 1.2-1.6-1.2z" fill="${a[0]}" opacity=".8"/>`}}
   if(k==='headlines'){for(let i=0;i<4;i++){o+=`<path d="M${N+4} ${cy-2-i*3}q${L*.25} ${-4-i} ${L*.55} ${-i*2.5}" fill="none" stroke="${a[0]}" stroke-width="1.3" opacity=".9"/>`}}
   if(k==='dark'){o+=`<rect x="${N}" y="0" width="${L}" height="${cy-yTop(N+L*.45)*.2}" fill="${a[0]}" opacity="${a[1]||.35}"/>`}
  }return o}
-function artSide(s,id,R){const cy=s.cy||52,N=s.n||18,T=s.t||(s.a==='k'?155:148),L=T-N,top=s.h||17,bot=s.b||top*.9,bl=s.bl||0,pk=s.pk||.42,pd=s.pd||.28;
- const sh=u=>{u=Math.max(0,Math.min(1,u));const v=u<pk?Math.pow(Math.sin(u/pk*Math.PI/2),s.np||.75):pd+(1-pd)*Math.cos((u-pk)/(1-pk)*Math.PI/2);return bl+(1-bl)*v};
- const yTop=x=>top*sh((x-N)/L),yBot=x=>bot*sh((x-N)/L)*(s.bf||1);
- const tp=[],bp=[];for(let u=0;u<=1.0001;u+=.025){const x=N+L*u;tp.push([x,cy-yTop(x)]);bp.unshift([x,cy+yBot(x)])}
- const bodyPts=[...tp,...bp],c=s.c,fc=s.f||c[0],ux=u=>N+L*u;let fins='',front='';
- const pdT=yTop(T),pdB=yBot(T),TL=s.tw||30,ph=Math.max(top*.9,13)*(s.th||1);
- const tail={f:`M${T-2} ${cy-pdT} L${T+TL} ${cy-ph} Q${T+TL*.5} ${cy} ${T+TL} ${cy+ph} L${T-2} ${cy+pdB}Z`,d:`M${T-2} ${cy-pdT} L${T+TL} ${cy-ph*1.05} Q${T+TL*.3} ${cy} ${T+TL} ${cy+ph*1.05} L${T-2} ${cy+pdB}Z`,
-  s:`M${T-2} ${cy-pdT} L${T+TL*.85} ${cy-ph*.8} Q${T+TL*.95} ${cy} ${T+TL*.85} ${cy+ph*.8} L${T-2} ${cy+pdB}Z`,r:`M${T-2} ${cy-pdT} C${T+TL} ${cy-ph*.9} ${T+TL*1.1} ${cy+ph*.9} ${T-2} ${cy+pdB}Z`,
-  e:`M${T-2} ${cy-pdT} L${T+TL*.9} ${cy-ph*.85} Q${T+TL*.7} ${cy} ${T+TL*.9} ${cy+ph*.85} L${T-2} ${cy+pdB}Z`,
-  k:`M${T-2} ${cy-pdT} L${T+44} ${cy-13} L${T+38} ${cy-4} L${T+14} ${cy+8} L${T-2} ${cy+pdB}Z`}[s.tl||'f'];
- fins+=`<path d="${tail}" fill="${s.tc||fc}" opacity=".95"/>`;
- const dfin=(u0,u1,hgt,col,spiny,round)=>{const x0=ux(u0),x1=ux(u1),y0=cy-yTop(x0)+1.5,y1=cy-yTop(x1)+1.5;let d;
-  if(spiny){const n=Math.max(4,Math.round((u1-u0)*40));let p=`M${x0} ${y0}`;for(let i=0;i<=n;i++){const x=x0+(x1-x0)*i/n,yb=cy-yTop(x)+1,hh=hgt*(1-.45*i/n);p+=` L${x} ${yb-hh} L${x+(x1-x0)/n*.5} ${yb-hh*.55}`}d=p+` L${x1} ${y1}Z`}
-  else if(round)d=`M${x0} ${y0} C${x0} ${y0-hgt*1.3} ${x1} ${y1-hgt*1.3} ${x1} ${y1}Z`;
-  else d=`M${x0} ${y0} L${x0+(x1-x0)*.22} ${cy-yTop(x0)-hgt} L${x1+2} ${cy-yTop(x1)-hgt*.3} L${x1} ${y1}Z`;
-  return`<path d="${d}" fill="${col||fc}" opacity=".95"/>`};
- const afin=(u0,u1,hgt,col,round)=>{const x0=ux(u0),x1=ux(u1),y0=cy+yBot(x0)-1.5,y1=cy+yBot(x1)-1.5;return`<path d="${round?`M${x0} ${y0} C${x0} ${y0+hgt*1.3} ${x1} ${y1+hgt*1.3} ${x1} ${y1}Z`:`M${x0} ${y0} L${x0+(x1-x0)*.3} ${cy+yBot(x0)+hgt} L${x1+2} ${cy+yBot(x1)+hgt*.3} L${x1} ${y1}Z`}" fill="${col||fc}" opacity=".95"/>`};
- const D=s.d||'s',dh=s.dh||top*.55;
- if(D==='s')fins+=dfin(.4,.6,dh,s.dc);if(D==='sr')fins+=dfin(.38,.62,dh,s.dc,0,1);
- if(D==='sp'){fins+=dfin(.3,.5,dh,s.dc,1);fins+=dfin(.53,.72,dh*.8,s.dc2)}
- if(D==='spl'){fins+=dfin(.28,.55,dh,s.dc,1);fins+=dfin(.55,.85,dh*.7,s.dc2)}
- if(D==='spc'){fins+=dfin(.3,.85,dh*.8,s.dc,1)}
- if(D==='3'){fins+=dfin(.3,.42,dh,s.dc);fins+=dfin(.47,.62,dh*.8,s.dc);fins+=dfin(.67,.82,dh*.7,s.dc)}
- if(D==='2'){fins+=dfin(.32,.45,dh,s.dc);fins+=dfin(.55,.7,dh*.8,s.dc)}
- if(D==='sail'){fins+=dfin(.3,.64,dh*2.6,s.dc,0,1)}
- if(D==='bk'){fins+=dfin(.72,.86,dh,s.dc)}
- if(D==='lg'){fins+=dfin(.3,.92,dh*.6,s.dc,0,1)}
- if(D==='sm'){fins+=dfin(.36,.42,dh*.6,s.dc)}
- if(D==='k'){fins+=dfin(.4,.5,dh,s.dc);fins+=dfin(.72,.8,dh*.6,s.dc)}
+const FAMS={
+ cyp:{t:[[18,52],[22,47],[30,42],[45,37],[65,34],[90,35],[115,40],[135,46],[148,48]],b:[[18,53],[24,57],[40,61],[65,64],[90,63],[115,58],[135,54],[148,52]]},
+ carp:{t:[[16,51],[20,45],[28,39],[42,33],[62,30],[88,31],[112,37],[133,45],[148,47.5]],b:[[16,54],[22,59],[38,64],[62,67],[90,66],[115,60],[135,55],[148,52.5]]},
+ deep:{t:[[20,52],[23,46],[31,38],[45,31],[66,27],[92,27.5],[116,33],[134,41.5],[148,47]],b:[[20,55],[25,61],[38,67.5],[62,71],[92,70],[116,64],[134,57],[148,53]]},
+ perch:{t:[[16,52],[20,46],[27,40],[38,34],[52,31],[72,32],[98,37],[124,44],[148,47.5]],b:[[16,54],[22,58],[40,62],[65,64],[95,62],[120,57],[148,52.5]]},
+ pike:{t:[[8,51],[22,49],[38,47],[60,45],[90,44],[115,45],[133,47],[150,48.5]],b:[[8,52.5],[22,54],[45,57],[80,58],[112,56],[134,54],[150,51.5]]},
+ salmo:{t:[[16,52],[21,47],[32,42],[52,38],[78,37],[104,40],[128,45],[148,48]],b:[[16,54],[23,58],[42,62],[72,63],[104,60],[128,55],[148,52]]},
+ cod:{t:[[16,50],[21,44],[33,39],[52,37],[78,39],[104,43],[128,47],[150,49]],b:[[16,55],[24,60],[46,63],[78,62],[108,57],[132,53],[150,51]]},
+ tuna:{t:[[14,51],[24,46],[42,40],[66,37.5],[92,38.5],[116,43],[136,47.5],[150,48.8]],b:[[14,52],[24,56],[46,60.5],[72,61.5],[100,59],[120,54.5],[136,52],[150,51.2]]},
+ cat:{t:[[10,49],[22,44],[42,41],[68,42],[98,44],[128,47],[156,49]],b:[[10,55],[22,60],[46,62],[78,60],[110,56],[156,51.5]]},
+ mullet:{t:[[16,51],[19,46],[32,41],[58,39],[88,39.5],[114,43],[134,47],[150,48.5]],b:[[16,54],[21,58],[44,61.5],[80,61.5],[110,58],[134,54],[150,51.5]]},
+ gurn:{t:[[14,47],[22,40],[36,36],[56,38],[88,43],[120,47],[150,49]],b:[[14,58],[24,62],[48,62],[88,58],[120,54],[150,51]]},
+ wrasse:{t:[[16,52],[19,46],[28,39],[45,34],[70,33],[98,36],[122,42],[146,47]],b:[[16,55],[22,60],[42,65],[70,66],[100,63],[124,57],[146,53]]},
+ shark:{t:[[10,50.5],[22,46],[45,43],[75,42.5],[105,44.5],[135,48],[158,49.5]],b:[[10,52],[26,56],[55,57.5],[95,56],[130,52.5],[158,50.5]]}};
+const FAMOF={Perch:'perch',Ruffe:'perch',Zander:'perch',Bass:'perch','Largemouth bass':'perch','Smallmouth bass':'perch',Walleye:'perch','Nile perch':'perch',Barramundi:'perch',Snook:'perch','Peacock bass':'perch','Black bream':'wrasse','Gilthead bream':'deep','White seabream':'deep','Saddled seabream':'wrasse','Common dentex':'wrasse','Red snapper':'wrasse','Dusky grouper':'wrasse',Meagre:'perch',Corb:'perch','Red drum':'perch','Lesser weever':'perch',
+ Pike:'pike',Muskellunge:'pike',Garfish:'pike','European barracuda':'pike',
+ 'Brown trout':'salmo','Rainbow trout':'salmo','Sea trout':'salmo','Tiger trout':'salmo','Atlantic salmon':'salmo',Grayling:'salmo','Arctic char':'salmo',Huchen:'salmo',Tigerfish:'salmo',
+ Cod:'cod',Pollack:'cod',Coalfish:'cod',Whiting:'cod',Pouting:'cod',Haddock:'cod',Ling:'cat','Shore rockling':'cat',
+ Mackerel:'tuna',Scad:'tuna',Herring:'tuna','Atlantic bonito':'tuna','Little tunny':'tuna','Bluefin tuna':'tuna','Yellowfin tuna':'tuna',Bluefish:'tuna',Leerfish:'tuna','Greater amberjack':'tuna','Giant trevally':'deep',Sailfish:'tuna','Blue marlin':'tuna','Mahi-mahi':'mullet',Tarpon:'salmo',Bonefish:'salmo',
+ 'Carp (common)':'carp','Carp (mirror)':'carp','Carp (leather)':'carp','Carp (ghost)':'carp','Carp (crucian)':'deep',Mahseer:'carp',Tench:'carp',
+ 'Bream (common)':'deep','Bream (silver)':'deep',Pumpkinseed:'deep',
+ 'Catfish (wels)':'cat','Channel catfish':'cat','Black bullhead':'cat',Bullhead:'gurn',Arapaima:'cat',
+ 'Thick-lipped grey mullet':'mullet','Thin-lipped grey mullet':'mullet','Golden grey mullet':'mullet','Red mullet':'mullet','Stone loach':'mullet',Gudgeon:'mullet',
+ 'Red gurnard':'gurn','Grey gurnard':'gurn','Tub gurnard':'gurn','Long-spined sea scorpion':'gurn',Dragonet:'gurn',Shanny:'gurn',
+ 'Ballan wrasse':'wrasse','Corkwing wrasse':'wrasse','Cuckoo wrasse':'wrasse',Sterlet:'shark','Siberian sturgeon':'shark'};
+function spline(pts,n){const o=[];for(let i=0;i<pts.length-1;i++){const p0=pts[i-1]||pts[i],p1=pts[i],p2=pts[i+1],p3=pts[i+2]||p2;for(let k=0;k<n;k++){const t=k/n,t2=t*t,t3=t2*t;o.push([0,1].map(d=>.5*(2*p1[d]+(-p0[d]+p2[d])*t+(2*p0[d]-5*p1[d]+4*p2[d]-p3[d])*t2+(-p0[d]+3*p1[d]-3*p2[d]+p3[d])*t3)))}}o.push(pts[pts.length-1]);return o}
+function artSide(s,id,R,name){const cy=50,fam=FAMS[s.fam||FAMOF[name]||(s.a==='k'?'shark':'cyp')];
+ const baseH=cy-Math.min(...fam.t.map(p=>p[1])),sv=s.h?Math.max(.55,Math.min(1.6,s.h/baseH)):1,sb=s.b&&s.h?s.b/s.h:1,sc=(p,k)=>[p[0],cy+(p[1]-cy)*sv*k];
+ const TP=spline(fam.t.map(p=>sc(p,1)),6),BP=spline(fam.b.map(p=>sc(p,sb)),6),N=TP[0][0],T=TP[TP.length-1][0],L=T-N;
+ const at=(P,x)=>{if(x<=P[0][0])return P[0][1];for(let i=1;i<P.length;i++)if(P[i][0]>=x){const a=P[i-1],b=P[i],f=(x-a[0])/((b[0]-a[0])||1);return a[1]+(b[1]-a[1])*f}return P[P.length-1][1]};
+ const yTop=x=>cy-at(TP,x),yBot=x=>at(BP,x)-cy,ux=u=>N+L*u;
+ const bodyPts=[...TP,[T+.5,at(TP,T)],[T+.5,at(BP,T)],...[...BP].reverse()],c=s.c,fc=s.f||c[0];let fins='',front='';
+ const top=Math.max(...TP.map(p=>cy-p[1])),bot=Math.max(...BP.map(p=>p[1]-cy)),pdT=yTop(T),pdB=yBot(T),TL=(s.tw||30)*(fam===FAMS.tuna?.85:1),ph=Math.max(top*.95,12)*(s.th||1);
+ const tl=s.tl||'f',tx=T-3;
+ const tail={f:`M${tx} ${cy-pdT} C${T+TL*.35} ${cy-pdT-ph*.35} ${T+TL*.75} ${cy-ph*.85} ${T+TL} ${cy-ph} C${T+TL*.82} ${cy-ph*.45} ${T+TL*.55} ${cy-ph*.12} ${T+TL*.58} ${cy} C${T+TL*.55} ${cy+ph*.12} ${T+TL*.82} ${cy+ph*.45} ${T+TL} ${cy+ph} C${T+TL*.75} ${cy+ph*.85} ${T+TL*.35} ${cy+pdB+ph*.35} ${tx} ${cy+pdB}Z`,
+  d:`M${tx} ${cy-pdT} C${T+TL*.3} ${cy-pdT-ph*.3} ${T+TL*.8} ${cy-ph*.9} ${T+TL*1.05} ${cy-ph*1.08} C${T+TL*.72} ${cy-ph*.5} ${T+TL*.35} ${cy-ph*.15} ${T+TL*.3} ${cy} C${T+TL*.35} ${cy+ph*.15} ${T+TL*.72} ${cy+ph*.5} ${T+TL*1.05} ${cy+ph*1.08} C${T+TL*.8} ${cy+ph*.9} ${T+TL*.3} ${cy+pdB+ph*.3} ${tx} ${cy+pdB}Z`,
+  s:`M${tx} ${cy-pdT} C${T+TL*.4} ${cy-pdT-ph*.3} ${T+TL*.7} ${cy-ph*.8} ${T+TL*.88} ${cy-ph*.82} Q${T+TL*.8} ${cy} ${T+TL*.88} ${cy+ph*.82} C${T+TL*.7} ${cy+ph*.8} ${T+TL*.4} ${cy+pdB+ph*.3} ${tx} ${cy+pdB}Z`,
+  e:`M${tx} ${cy-pdT} C${T+TL*.4} ${cy-pdT-ph*.3} ${T+TL*.72} ${cy-ph*.82} ${T+TL*.9} ${cy-ph*.86} Q${T+TL*.66} ${cy} ${T+TL*.9} ${cy+ph*.86} C${T+TL*.72} ${cy+ph*.82} ${T+TL*.4} ${cy+pdB+ph*.3} ${tx} ${cy+pdB}Z`,
+  r:`M${tx} ${cy-pdT} C${T+TL*.5} ${cy-ph*.95} ${T+TL*1.05} ${cy-ph*.6} ${T+TL*.95} ${cy} C${T+TL*1.05} ${cy+ph*.6} ${T+TL*.5} ${cy+ph*.95} ${tx} ${cy+pdB}Z`,
+  k:`M${tx} ${cy-pdT} C${T+18} ${cy-6} ${T+34} ${cy-12} ${T+44} ${cy-14} C${T+38} ${cy-8} ${T+34} ${cy-3} ${T+30} ${cy+1} C${T+22} ${cy+4} ${T+14} ${cy+8} ${T+8} ${cy+9} C${T+6} ${cy+5} ${T+2} ${cy+pdB+1} ${tx} ${cy+pdB}Z`}[tl];
+ fins+=`<path d="${tail}" fill="${s.tc||fc}" stroke="${s.tc||fc}" stroke-width="1" stroke-linejoin="round"/>`;
+ const dfin=(u0,u1,hgt,col,spiny,round)=>{const x0=ux(u0),x1=ux(u1),y0=cy-yTop(x0)+2,y1=cy-yTop(x1)+2,w=x1-x0;let d;
+  if(spiny){const n=Math.max(4,Math.round((u1-u0)*36));let p=`M${x0} ${y0}`;for(let i=0;i<=n;i++){const x=x0+w*i/n,yb=cy-yTop(x),hh=hgt*(i===0?.7:1-.5*i/n);p+=` L${x} ${yb-hh} Q${x+w/n*.5} ${yb-hh*.45} ${x+w/n} ${cy-yTop(x+w/n)-hgt*(1-.5*(i+1)/n)}`}d=p+` L${x1} ${y1}Z`}
+  else if(round)d=`M${x0} ${y0} C${x0+w*.1} ${y0-hgt*1.25} ${x1-w*.15} ${y1-hgt*1.15} ${x1+2} ${y1}Z`;
+  else d=`M${x0} ${y0} C${x0+w*.08} ${y0-hgt*.6} ${x0+w*.18} ${cy-yTop(x0)-hgt} ${x0+w*.3} ${cy-yTop(x0)-hgt} C${x0+w*.6} ${cy-yTop(x1)-hgt*.65} ${x1} ${cy-yTop(x1)-hgt*.2} ${x1+3} ${y1}Z`;
+  return`<path d="${d}" fill="${col||fc}" stroke="${col||fc}" stroke-width="1" stroke-linejoin="round"/>`};
+ const afin=(u0,u1,hgt,col,round)=>{const x0=ux(u0),x1=ux(u1),y0=cy+yBot(x0)-2,y1=cy+yBot(x1)-2,w=x1-x0;return`<path d="${round?`M${x0} ${y0} C${x0+w*.1} ${y0+hgt*1.25} ${x1-w*.15} ${y1+hgt*1.15} ${x1+2} ${y1}Z`:`M${x0} ${y0} C${x0+w*.1} ${y0+hgt*.6} ${x0+w*.25} ${cy+yBot(x0)+hgt} ${x0+w*.35} ${cy+yBot(x0)+hgt} C${x0+w*.6} ${cy+yBot(x1)+hgt*.6} ${x1} ${cy+yBot(x1)+hgt*.2} ${x1+3} ${y1}Z`}" fill="${col||fc}" stroke="${col||fc}" stroke-width="1" stroke-linejoin="round"/>`};
+ const D=s.d||'s',dh=(s.dh||top*.5);
+ if(D==='s')fins+=dfin(.4,.58,dh,s.dc);if(D==='sr')fins+=dfin(.38,.62,dh,s.dc,0,1);
+ if(D==='sp'){fins+=dfin(.27,.48,dh,s.dc,1);fins+=dfin(.52,.72,dh*.85,s.dc2)}
+ if(D==='spl'){fins+=dfin(.26,.55,dh,s.dc,1);fins+=dfin(.55,.84,dh*.75,s.dc2,0,1)}
+ if(D==='spc'){fins+=dfin(.28,.84,dh*.8,s.dc,1)}
+ if(D==='3'){fins+=dfin(.28,.4,dh,s.dc,0,1);fins+=dfin(.46,.62,dh*.8,s.dc,0,1);fins+=dfin(.67,.82,dh*.7,s.dc,0,1)}
+ if(D==='2'){fins+=dfin(.3,.44,dh,s.dc);fins+=dfin(.56,.72,dh*.85,s.dc)}
+ if(D==='sail'){fins+=dfin(.28,.66,dh*2.6,s.dc,0,1)}
+ if(D==='bk'){fins+=dfin(.74,.88,dh*1.1,s.dc)}
+ if(D==='lg'){fins+=dfin(.26,.94,dh*.6,s.dc,0,1)}
+ if(D==='sm'){fins+=dfin(.34,.42,dh*.6,s.dc)}
+ if(D==='k'){fins+=dfin(.38,.5,dh*1.1,s.dc);fins+=dfin(.74,.82,dh*.6,s.dc)}
  if(D==='st'){for(const u of[.3,.4,.5])fins+=`<path d="M${ux(u)} ${cy-yTop(ux(u))+1} l2 -9 l1.5 9z" fill="${fc}"/>`;fins+=dfin(.62,.78,dh*.6,s.dc)}
  if(D==='dr'){fins+=dfin(.33,.42,dh*2,s.dc);fins+=dfin(.48,.75,dh*1.1,s.dc2)}
- if(s.ad)fins+=`<path d="M${ux(.84)} ${cy-yTop(ux(.84))+1} q4 -6 9 0z" fill="${s.adc||fc}"/>`;
- const A=s.an||'n';if(A==='n')fins+=afin(.66,.8,bot*.45,s.ac);if(A==='lg')fins+=afin(.45,.92,bot*.4,s.ac,1);if(A==='2'){fins+=afin(.45,.6,bot*.4,s.ac);fins+=afin(.64,.8,bot*.35,s.ac)}if(A==='bk')fins+=afin(.72,.86,bot*.45,s.ac);if(A==='k')fins+=afin(.68,.76,bot*.4,s.ac);
- fins+=`<path d="M${ux(.42)} ${cy+yBot(ux(.42))-2} l${-1} ${bot*.4} l${9} ${-bot*.25}z" fill="${s.vc||fc}" opacity=".95"/>`;
- const hd=s.hd||.2,gx=ux(hd);
- const pe=s.pe||1,px=gx+3,py=cy+bot*.25;front+=s.gp?`<path d="M${px} ${py} C${px+30*pe} ${py-12*pe} ${px+40*pe} ${py+6*pe} ${px+8} ${py+14*pe}Z" fill="${s.gp}" opacity=".95"/>`:`<path d="M${px} ${py} q${14*pe} ${2*pe} ${18*pe} ${8*pe} q${-10*pe} ${0} ${-17*pe} ${-4*pe}z" fill="${s.pc||fc}" opacity=".9"/>`;
- front+=`<path d="M${gx} ${cy-yTop(gx)*.75} q${-6} ${yTop(gx)*.75} 0 ${yTop(gx)*.75+yBot(gx)*.7}" fill="none" stroke="#000" stroke-opacity=".28" stroke-width="1.1"/>`;
- if(s.a==='k')for(let i=0;i<4;i++)front+=`<path d="M${gx+i*2.6} ${cy-3} l-1 7" stroke="#000" stroke-opacity=".3" stroke-width="1"/>`;
- const ex=ux(s.ex||.075)+(bl?3:0),ey=cy-yTop(ex)*(s.ey||.45),er=s.er||Math.max(2.4,top*.15);
- front+=`<circle cx="${ex}" cy="${ey}" r="${er}" fill="${s.ec||'#e9dfb8'}"/><circle cx="${ex+.3}" cy="${ey}" r="${er*.55}" fill="#0d0d0d"/><circle cx="${ex-er*.3}" cy="${ey-er*.3}" r="${er*.2}" fill="#fff" opacity=".8"/>`;
- const mo=s.mo||'n',my=cy+(mo==='dn'?yBot(N+4)*.5:mo==='up'?-yTop(N+4)*.35:2);
- if(mo==='duck')front+=`<path d="M${N-6} ${cy+1} L${N+12} ${cy+2}" stroke="#000" stroke-opacity=".45" stroke-width="1.2"/>`;
- else if(mo==='beak')front+=`<path d="M${N} ${cy-1} L${N-22} ${cy} L${N} ${cy+2}Z" fill="${c[0]}"/><path d="M${N-21} ${cy+.4} L${N+4} ${cy+.8}" stroke="#000" stroke-opacity=".4"/>`;
- else front+=`<path d="M${N+1} ${my} q4 ${mo==='lip'?3:1.5} 8 ${mo==='up'?-1:0}" fill="none" stroke="#000" stroke-opacity=".45" stroke-width="${mo==='lip'?2.4:1.2}" stroke-linecap="round"/>`;
- const bb=s.bb||'';if(bb==='2'||bb==='4')for(let i=0;i<(bb==='4'?2:1);i++)front+=`<path d="M${N+2+i*4} ${cy+yBot(N+3)*.5} q-1 7 -6 9" fill="none" stroke="${c[0]}" stroke-width="1.2" stroke-linecap="round"/>`;
- if(bb==='chin')front+=`<path d="M${N+5} ${cy+yBot(N+5)*.9} l-1 5" stroke="${c[0]}" stroke-width="1.2" stroke-linecap="round"/>`;
- if(bb==='cat')front+=`<path d="M${N+3} ${cy-2} q-10 8 -8 26" fill="none" stroke="${c[0]}" stroke-width="1.4" stroke-linecap="round"/><path d="M${N+4} ${cy+yBot(N+4)*.7} q-4 5 -8 7" fill="none" stroke="${c[0]}" stroke-width="1"/>`;
+ if(s.ad)fins+=`<path d="M${ux(.83)} ${cy-yTop(ux(.83))+1.5} q3 -6 9 -.5z" fill="${s.adc||fc}"/>`;
+ const A=s.an||'n';if(A==='n')fins+=afin(.68,.8,bot*.42,s.ac);if(A==='lg')fins+=afin(.45,.92,bot*.38,s.ac,1);if(A==='2'){fins+=afin(.45,.6,bot*.4,s.ac,1);fins+=afin(.64,.8,bot*.35,s.ac,1)}if(A==='bk')fins+=afin(.74,.88,bot*.45,s.ac);if(A==='k')fins+=afin(.7,.78,bot*.4,s.ac);
+ {const vx=ux(.42),vy=cy+yBot(vx)-2;fins+=`<path d="M${vx} ${vy} C${vx+1} ${vy+bot*.35} ${vx+5} ${vy+bot*.5} ${vx+11} ${vy+bot*.45} C${vx+9} ${vy+bot*.2} ${vx+8} ${vy} ${vx+8} ${vy-1}Z" fill="${s.vc||fc}"/>`}
+ const hd=s.hd||(fam===FAMS.cod||fam===FAMS.gurn||fam===FAMS.cat?.24:.2),gx=ux(hd);
+ const pe=s.pe||1,px=gx+3,py=cy+yBot(gx)*.25;front+=s.gp?`<path d="M${px} ${py} C${px+30*pe} ${py-12*pe} ${px+40*pe} ${py+6*pe} ${px+8} ${py+14*pe}Z" fill="${s.gp}"/>`:`<path d="M${px} ${py-1} C${px+8*pe} ${py-3*pe} ${px+17*pe} ${py+1*pe} ${px+19*pe} ${py+7*pe} C${px+12*pe} ${py+6*pe} ${px+5*pe} ${py+4*pe} ${px} ${py+2}Z" fill="${s.pc||fc}" opacity=".92"/>`;
+ front+=`<path d="M${gx+1} ${cy-yTop(gx)*.8} C${gx-5} ${cy-yTop(gx)*.2} ${gx-5} ${cy+yBot(gx)*.3} ${gx+1} ${cy+yBot(gx)*.75}" fill="none" stroke="#000" stroke-opacity=".14" stroke-width="1"/>`;
+ if(s.a==='k')for(let i=0;i<4;i++)front+=`<path d="M${gx+i*2.6} ${cy-3} l-1 7" stroke="#000" stroke-opacity=".25" stroke-width="1"/>`;
+ const ex=ux(s.ex||(fam===FAMS.pike?.09:.075)),ey=cy-yTop(ex)*(s.ey||.42),er=s.er||Math.max(2.3,Math.min(4,top*.14));
+ front+=(s.ec?`<circle cx="${ex}" cy="${ey}" r="${er}" fill="${s.ec}"/>`:'')+`<circle cx="${ex}" cy="${ey}" r="${s.ec?er*.62:er*.72}" fill="#111"/><circle cx="${ex-er*.22}" cy="${ey-er*.25}" r="${er*.2}" fill="#fff" opacity=".85"/>`;
+ const mo=s.mo||'n',mx=N+.5,my=cy+(mo==='dn'?yBot(N+4)*.55:mo==='up'?-yTop(N+4)*.3:1);
+ if(mo==='duck')front+=`<path d="M${N} ${cy+1} L${N+14} ${cy+1.6}" stroke="#000" stroke-opacity=".4" stroke-width="1.1" stroke-linecap="round"/>`;
+ else if(mo==='beak')front+=`<path d="M${N+1} ${cy-1.2} L${N-22} ${cy} L${N+1} ${cy+1.6}Z" fill="${c[0]}"/><path d="M${N-21} ${cy+.3} L${N+4} ${cy+.6}" stroke="#000" stroke-opacity=".35"/>`;
+ else front+=`<path d="M${mx} ${my} q4 ${mo==='lip'?2.6:1.3} ${7.5} ${mo==='up'?-.8:.2}" fill="none" stroke="#000" stroke-opacity=".4" stroke-width="${mo==='lip'?2.2:1.1}" stroke-linecap="round"/>`;
+ const bb=s.bb||'';if(bb==='2'||bb==='4')for(let i=0;i<(bb==='4'?2:1);i++)front+=`<path d="M${N+2+i*4} ${cy+yBot(N+3)*.55} q-1 6 -5 8" fill="none" stroke="${c[0]}" stroke-width="1.1" stroke-linecap="round"/>`;
+ if(bb==='chin')front+=`<path d="M${N+5} ${cy+yBot(N+5)*.9} l-1 5" stroke="${c[0]}" stroke-width="1.1" stroke-linecap="round"/>`;
+ if(bb==='cat')front+=`<path d="M${N+3} ${cy-2} q-10 8 -8 26" fill="none" stroke="${c[0]}" stroke-width="1.3" stroke-linecap="round"/><path d="M${N+4} ${cy+yBot(N+4)*.7} q-4 5 -8 7" fill="none" stroke="${c[0]}" stroke-width="1"/>`;
  if(bb==='6')for(let i=0;i<3;i++)front+=`<path d="M${N+1} ${cy+1+i} l${-4} ${2+i*1.5}" stroke="${c[0]}" stroke-width="1"/>`;
  if(bb==='3')front+=`<path d="M${N+1} ${cy-yTop(N+1)*.5} l-5 -3M${N+3} ${cy-yTop(N+3)*.6} l-4 -4M${N+5} ${cy+yBot(N+5)*.9} l-1 5" stroke="${c[0]}" stroke-width="1"/>`;
- return`<defs>${grad(id,c)}<clipPath id="${id}c"><polygon points="${FP(bodyPts)}"/></clipPath></defs>${fins}<polygon points="${FP(bodyPts)}" fill="url(#${id}g)"/><g clip-path="url(#${id}c)">${marks(s,id,R,0,yTop,yBot,N,T,cy)}<rect x="0" y="${cy-top*1.1}" width="200" height="${top*.55}" fill="#fff" opacity=".07"/></g>${front}`}
+ return`<defs>${grad(id,c)}<clipPath id="${id}c"><polygon points="${FP(bodyPts)}"/></clipPath></defs>${fins}<polygon points="${FP(bodyPts)}" fill="url(#${id}g)" stroke="#000" stroke-opacity=".12" stroke-width=".8" stroke-linejoin="round"/><g clip-path="url(#${id}c)">${marks(s,id,R,0,yTop,yBot,N,T,cy)}</g>${front}`}
 function artEel(s,id,R){const cy=50,c=s.c,pts=[],pb=[],fp=[],fb=[];for(let u=0;u<=1.0001;u+=.02){const x=14+u*178,y=cy+Math.sin(u*Math.PI*1.6-.6)*7*u,w=(s.h||7.5)*(u<.08?.55+u/.08*.45:1-.75*Math.pow((u-.08)/.92,1.4)),fw=u>(s.ds||.3)?w+3.2*(1-u*.4):w;pts.push([x,y-w]);pb.unshift([x,y+w]);fp.push([x,y-fw]);fb.unshift([x,y+(u>.45?w+3*(1-u*.4):w)])}
  const ey=cy+Math.sin(-.6)*0-3.5;return`<defs>${grad(id,c)}</defs><polygon points="${FP(fp.concat(fb))}" fill="${s.f||c[0]}" opacity=".85"/><polygon points="${FP(pts.concat(pb))}" fill="url(#${id}g)"/><path d="M34 ${cy+1} q8 6 3 12" fill="${s.f||c[0]}" opacity=".9"/><circle cx="22" cy="${ey}" r="2.2" fill="#e9dfb8"/><circle cx="22.3" cy="${ey}" r="1.2" fill="#111"/><path d="M15 ${cy+1.5} q5 1.5 10 0" stroke="#000" stroke-opacity=".45" fill="none" stroke-width="1.2"/>`}
 function artRay(s,id,R){const c=s.c,disc=`M18 50 Q34 40 52 18 Q78 6 104 30 Q114 42 120 50 Q114 58 104 70 Q78 94 52 82 Q34 60 18 50Z`;let m='';
- for(const k of s.m||[]){const[t,...a]=k.split(':');if(t==='spots')for(let i=0;i<+a[0];i++){const x=34+R()*80,y=22+R()*56;m+=`<circle cx="${x}" cy="${y}" r="${(+a[2]||1.4)*(.6+R()*.8)}" fill="${a[1]}" opacity=".85"/>`}
-  if(t==='mottle')for(let i=0;i<+a[0];i++)m+=`<ellipse cx="${36+R()*76}" cy="${24+R()*52}" rx="${3+R()*6}" ry="${2+R()*4}" fill="${a[1]}" opacity=".4"/>`;
+ for(const k of s.m||[]){const[t,...a]=k.split(':');if(t==='spots')for(let i=0;i<Math.ceil(+a[0]*.5);i++){const x=40+R()*70,y=28+R()*44;m+=`<circle cx="${x}" cy="${y}" r="${(+a[2]||1.4)*1.1}" fill="${a[1]}" opacity=".8"/>`}
+  if(t==='mottle')for(let i=0;i<Math.ceil(+a[0]*.45);i++)m+=`<ellipse cx="${40+R()*70}" cy="${28+R()*44}" rx="${6+R()*3}" ry="${4+R()*2}" fill="${a[1]}" opacity=".3"/>`;
   if(t==='waves')for(let i=0;i<5;i++)m+=`<path d="M${40+i*14} 22 q8 14 0 28 q-8 14 0 28" fill="none" stroke="${a[0]}" stroke-width="2.6" opacity=".8"/><path d="M${40+i*14} 22 q8 14 0 28 q-8 14 0 28" fill="none" stroke="#fff" stroke-width=".8" stroke-dasharray="1 4" opacity=".9"/>`;
   if(t==='thorns')for(let x=60;x<180;x+=7)m+=`<path d="M${x} 48.4l2 1.6-2 1.6z" fill="${a[0]}"/>`}
  return`<defs>${grad(id,c,'h')}<clipPath id="${id}c"><path d="${disc}"/></clipPath></defs><path d="M118 47 L190 49.3 L190 50.7 L118 53Z" fill="${c[0]}"/><path d="M160 48 l5 -4 l2 4zM172 48.5 l4 -3 l2 3.5z" fill="${c[0]}"/><path d="${disc}" fill="url(#${id}g)"/><g clip-path="url(#${id}c)">${m}</g><circle cx="46" cy="44" r="2" fill="#2a2418"/><circle cx="46" cy="56" r="2" fill="#2a2418"/>`}
 function artFlat(s,id,R){const c=s.c,rx=s.rx||62,ry=s.h||30,cx=92,cy=50;let m='';
- for(const k of s.m||[]){const[t,...a]=k.split(':');if(t==='spots')for(let i=0;i<+a[0];i++){const th=R()*Math.PI*2,r=Math.sqrt(R())*.85;m+=`<circle cx="${cx+Math.cos(th)*rx*r}" cy="${cy+Math.sin(th)*ry*r}" r="${(+a[2]||2)*(.7+R()*.6)}" fill="${a[1]}" opacity="${a[3]||.9}"/>`}
-  if(t==='mottle')for(let i=0;i<+a[0];i++){const th=R()*Math.PI*2,r=Math.sqrt(R())*.85;m+=`<ellipse cx="${cx+Math.cos(th)*rx*r}" cy="${cy+Math.sin(th)*ry*r}" rx="${3+R()*6}" ry="${2+R()*4}" fill="${a[1]}" opacity=".4"/>`}
+ for(const k of s.m||[]){const[t,...a]=k.split(':');if(t==='spots')for(let i=0;i<+a[0];i++){const th=R()*Math.PI*2,r=Math.sqrt(R())*.8;if(i>=Math.ceil(+a[0]*.55))continue;m+=`<circle cx="${cx+Math.cos(th)*rx*r}" cy="${cy+Math.sin(th)*ry*r}" r="${(+a[2]||2)*1.1}" fill="${a[1]}" opacity="${a[3]||.9}"/>`}
+  if(t==='mottle')for(let i=0;i<+a[0];i++){const th=R()*Math.PI*2,r=Math.sqrt(R())*.8;if(i>=Math.ceil(+a[0]*.45))continue;m+=`<ellipse cx="${cx+Math.cos(th)*rx*r}" cy="${cy+Math.sin(th)*ry*r}" rx="${6+R()*4}" ry="${4+R()*2}" fill="${a[1]}" opacity=".3"/>`}
   if(t==='arc')m+=`<path d="M${cx-rx*.7} ${cy} Q${cx-rx*.45} ${cy-ry*.45} ${cx-rx*.2} ${cy} L${cx+rx} ${cy}" fill="none" stroke="${a[0]}" stroke-width="1" opacity=".7"/>`;
   if(t==='line')m+=`<path d="M${cx-rx*.6} ${cy} L${cx+rx} ${cy}" stroke="${a[0]}" stroke-width="1" opacity=".6"/>`;
   if(t==='dot')m+=`<circle cx="${cx+rx*(+a[0])}" cy="${cy+ry*(+a[1])}" r="${a[3]||3}" fill="${a[2]}"/>`}
