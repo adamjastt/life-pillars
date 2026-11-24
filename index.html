@@ -75,7 +75,18 @@ h3{font-size:15px;margin:16px 0 6px;color:var(--mut);font-weight:600}
 .pick{background:var(--card2);border-radius:14px;padding:14px;margin-top:10px}
 .grid3{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 label.f{display:grid;gap:4px;font-size:13px;color:var(--mut)}
-details summary{cursor:pointer;min-height:44px;display:flex;align-items:center;color:var(--mut)}
+details>summary{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:48px;padding:0 16px;border:1px solid #ffffff24;border-radius:12px;background:var(--card2);color:var(--ink);font-weight:500}
+summary::-webkit-details-marker{display:none}
+summary::after{content:'';flex:none;width:8px;height:8px;border-right:2px solid var(--mut);border-bottom:2px solid var(--mut);transform:translateY(-2px) rotate(45deg)}
+details[open]>summary{margin-bottom:12px}
+details[open]>summary::after{transform:translateY(2px) rotate(-135deg)}
+summary:hover{border-color:#ffffff4d}
+.btn.sec{border:1px solid #ffffff24}
+.btn:active,.stp button:active,.link:active,summary:active,.res:active,.seg button:active,.preset:active,.nav button:active{transform:scale(.97)}
+.btn:hover,.stp button:hover{filter:brightness(1.12)}
+.linkbtn{background:none;border:0;color:var(--ink);text-decoration:underline;text-underline-offset:3px;min-height:44px;padding:0 4px;font-weight:500}
+.res{border-radius:10px}.res:hover{background:var(--card2)}
+.link::after{content:'›';margin-left:8px;color:var(--mut);font-size:18px}
 .hist{display:grid;grid-template-columns:4.8em repeat(14,minmax(0,1fr));gap:4px;align-items:center}
 .hist .l{font-size:13px;color:var(--mut)}.hist .h{font-size:11px;color:var(--mut);text-align:center}
 .cell{aspect-ratio:1;border-radius:5px;border:1px dashed var(--line);background:none;padding:0}
@@ -107,7 +118,7 @@ input[type=color]{padding:4px;height:44px}
 @media(prefers-reduced-motion:no-preference){.bar i{transition:width .3s}}
 </style></head><body><div id="root"></div><div id="toast"></div><script>
 {
-const VERSION='2.4';
+const VERSION='2.5';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -251,7 +262,7 @@ function food(){const x=D.days[cur]||{food:[]},F=x.food||[];
  <section class="card"><h2>Add food</h2><div class="seg" role="group" aria-label="Meal">${meals.map(m=>`<button data-meal="${m}" class="${meal===m?'on':''}">${m}</button>`).join('')}</div>
  <form id="fs" class="row"><input id="fq" type="search" value="${esc(lastQ)}" placeholder="Search foods, or type a barcode number" autocomplete="off" style="flex:1"><button class="btn">Search</button></form>
  <div id="fres"></div>
- <details style="margin-top:8px"><summary>Quick add manually</summary><form id="fquick" class="grid3">
+ <details style="margin-top:8px"><summary>+ Quick add manually</summary><form id="fquick" class="grid3">
  <label class="f" style="grid-column:1/-1">Name<input name="n" required maxlength="80"></label>
  <label class="f">Calories (kcal)<input name="kcal" inputmode="decimal" required></label><label class="f">Protein (g)<input name="p" inputmode="decimal"></label>
  <label class="f">Carbs (g)<input name="c" inputmode="decimal"></label><label class="f">Fat (g)<input name="f" inputmode="decimal"></label>
@@ -273,7 +284,7 @@ function history(){const days=[];for(let i=13;i>=0;i--)days.push(shift(TODAY,-i)
 function settings(){const types=[['min','At least'],['max','At most'],['near','Around']];
  return`<header class="hero"><div class="in"><div class="top"><h1>Settings</h1><span class="sub">v${VERSION}</span></div><p class="sub">Your pillars and metrics are your preset. Each pillar's score is the weighted % of its goals hit.</p></div></header>
  <main class="wrap">${acct()}${P().map((p,pi)=>`<section class="card" style="border-top:5px solid ${esc(p.c)}"><div class="ptitle"><label class="f">Pillar name<input data-pset="${pi}:n" value="${esc(p.n)}" maxlength="40"></label><label class="f ps">Short name<input data-pset="${pi}:s" value="${esc(p.s)}" maxlength="10"></label><label class="f">Colour<input type="color" data-pset="${pi}:c" value="${esc(p.c)}"></label><button class="btn danger" data-delp="${pi}">Remove</button></div>
- <details data-pi="${pi}" ${openP.has(pi)?'open':''}><summary>${p.m.length} metric${p.m.length===1?'':'s'} · tap to edit</summary>${p.m.map((m,mi)=>`<div class="mset"><label class="f mname">Metric ${m.food?'<span class="tag">from food log</span>':''}<input data-mset="${pi}:${mi}:n" value="${esc(m.n)}" maxlength="50"></label><label class="f">Unit<input data-mset="${pi}:${mi}:u" value="${esc(m.u)}" maxlength="10"></label><label class="f">Target<input inputmode="decimal" data-mset="${pi}:${mi}:t" value="${m.t}"></label>
+ <details data-pi="${pi}" ${openP.has(pi)?'open':''}><summary>Edit ${p.m.length} metric${p.m.length===1?'':'s'}</summary>${p.m.map((m,mi)=>`<div class="mset"><label class="f mname">Metric ${m.food?'<span class="tag">from food log</span>':''}<input data-mset="${pi}:${mi}:n" value="${esc(m.n)}" maxlength="50"></label><label class="f">Unit<input data-mset="${pi}:${mi}:u" value="${esc(m.u)}" maxlength="10"></label><label class="f">Target<input inputmode="decimal" data-mset="${pi}:${mi}:t" value="${m.t}"></label>
  <label class="f">Goal type<select data-mset="${pi}:${mi}:d">${types.map(([v,l])=>`<option value="${v}" ${m.d===v?'selected':''}>${l}</option>`).join('')}</select></label>
  <label class="f">+/− step<input inputmode="decimal" data-mset="${pi}:${mi}:st" value="${m.st??''}" ${m.food?'disabled':''}></label><label class="f">Weight<input inputmode="decimal" data-mset="${pi}:${mi}:w" value="${m.w??1}"></label><button class="x" data-delm="${pi}:${mi}" aria-label="Remove ${esc(m.n)}">×</button></div>`).join('')}
  <div class="row" style="margin-top:10px"><button class="btn sec" data-addm="${pi}">+ Add metric</button></div></details></section>`).join('')}
@@ -410,7 +421,7 @@ function acct(){const head='<section class="card"><h2>Account &amp; sync</h2>';
  if(!sb)return head+'<p class="sub">Connecting… if this stays, check your internet connection.</p></section>';
  if(user&&(recovery||changePw))return head+`<p style="margin:8px 0 2px">Signed in as <b>${esc(user.email)}</b></p>${recovery?'<p class="sub">Choose a new password for your account.</p>':''}${pwForm('New password')}</section>`;
  if(user)return head+`<p style="margin:8px 0 2px">Signed in as <b>${esc(user.email)}</b></p><p class="sub"><span data-syncst>${SYNC[syncState]}</span>${lastSync?' · last synced '+lastSync.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}):''}</p>${syncErr&&syncState!=='synced'?`<p class="sub" style="color:var(--bad)">Details: ${esc(syncErr)}</p>`:''}<div class="row"><button class="btn" data-act="syncnow">Sync now</button><button class="btn sec" data-act="chpw">Change password</button><button class="btn sec" data-act="signout">Sign out</button></div></section>`;
- return head+`<p class="sub">Sign in to back up your data and use the same data on your phone and laptop. Anything already on this device is kept and uploaded.</p><form id="auth" class="grid3" style="margin-top:10px"><label class="f" style="grid-column:1/-1">Email<input name="email" type="email" autocomplete="email" required></label><label class="f" style="grid-column:1/-1">Password<input name="pw" type="password" autocomplete="current-password" minlength="6" required></label><button class="btn" data-mode="in">Sign in</button><button class="btn sec" data-mode="up">Create account</button><button type="button" class="btn sec" data-act="forgot" style="grid-column:1/-1;background:none;color:var(--mut);font-weight:500">Forgot password?</button></form><p class="sub" id="authmsg" role="status">${esc(authMsg)}</p></section>`}
+ return head+`<p class="sub">Sign in to back up your data and use the same data on your phone and laptop. Anything already on this device is kept and uploaded.</p><form id="auth" class="grid3" style="margin-top:10px"><label class="f" style="grid-column:1/-1">Email<input name="email" type="email" autocomplete="email" required></label><label class="f" style="grid-column:1/-1">Password<input name="pw" type="password" autocomplete="current-password" minlength="6" required></label><button class="btn" data-mode="in">Sign in</button><button class="btn sec" data-mode="up">Create account</button><button type="button" class="linkbtn" data-act="forgot" style="grid-column:1/-1;justify-self:start">Forgot password?</button></form><p class="sub" id="authmsg" role="status">${esc(authMsg)}</p></section>`}
 async function doAuth(f,mode){const email=f.elements.email.value.trim(),pw=f.elements.pw.value,m=document.getElementById('authmsg');
  if(!sb){m.textContent='Still connecting — try again in a moment.';return}m.textContent='Working…';
  try{if(mode==='up'){const r=await sb.auth.signUp({email,password:pw,options:{emailRedirectTo:location.origin+location.pathname}});if(r.error)throw r.error;
