@@ -345,9 +345,18 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 .pkg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;max-height:46vh;overflow:auto}.pki{position:relative;padding:0;border:3px solid transparent;border-radius:12px;overflow:hidden;aspect-ratio:1;background:var(--card2);cursor:pointer}
 .pki img{width:100%;height:100%;object-fit:cover;display:block}.pki span{position:absolute;left:0;right:0;bottom:0;font-size:11px;padding:10px 6px 4px;background:linear-gradient(transparent,#000b);color:#fff;text-align:left}.pki.on{border-color:#d9b45a}.pki.on::after{content:'✓';position:absolute;top:6px;right:6px;width:24px;height:24px;border-radius:99px;background:#d9b45a;color:#13241c;font-weight:700;display:grid;place-items:center;font-size:14px}
 .gitem span small{display:block;opacity:.8;font-size:11px}
+.fview{margin:12px 0 0}.mlay{margin:10px 0}.fmap{height:62vh;min-height:320px;border-radius:16px;overflow:hidden;position:relative;z-index:0;background:#0c1a15}
+.fpin{background:none;border:0}.fpin svg{width:32px;height:42px;filter:drop-shadow(0 3px 4px #0008)}.fpin b{position:absolute;top:5px;left:0;right:0;text-align:center;font-size:11px;color:#d9b45a;font-weight:800}
+.mpop{display:grid;gap:8px;font:14px/1.3 Inter,system-ui,sans-serif;color:#13241c}.mpop>div{display:grid;grid-template-columns:52px 1fr auto;gap:8px;align-items:center}.mpart>*{width:52px;height:auto;display:block}.mpop small{display:block;color:#566}
+.mpop button{border:0;background:#13241c;color:#f4ecd2;border-radius:8px;padding:6px 10px;font:inherit;font-size:13px;cursor:pointer}
+.leaflet-popup-content-wrapper{border-radius:14px}.leaflet-container{font:inherit}
+.flocrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:6px}.pinon{display:flex;gap:8px;align-items:center;flex:1 1 100%;font-weight:500}.pinon svg{width:20px;height:26px;flex:none}.pinon small{display:block;color:var(--mut);font-weight:400;font-size:12px}
+.minipin svg{width:9px;height:12px;vertical-align:-1px}
+.mpick{max-height:92vh}.pmapw{position:relative}.pmapw .fmap{height:52vh;min-height:280px}.pcross{position:absolute;left:50%;top:50%;width:32px;height:42px;transform:translate(-50%,-100%);pointer-events:none;z-index:1000}.pcross svg{width:32px;height:42px;filter:drop-shadow(0 3px 4px #0009)}
+.mapw{position:relative}.maptog{position:absolute;top:10px;right:10px;z-index:1001;border:0;border-radius:10px;padding:8px 12px;background:#13241ce6;color:#f4ecd2;font:inherit;font-size:14px;font-weight:600;box-shadow:0 2px 8px #0006;cursor:pointer}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><div id="achpop" aria-live="polite"></div><script>
 {
-const VERSION='7.3';
+const VERSION='7.4';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -846,7 +855,7 @@ function fishing(){const C=catches(),cm=caughtMap(),sp=speciesAll(),got=sp.filte
  return`<header class="fhero">${sc.svg}<div class="fhin">${user?`<button class="fav" data-act="profile" aria-label="Your profile">${avatarImg(favAv(),'sm')}${pendingIn().length?'<i class="tdot"></i>':''}</button>`:''}<p class="fgreet">${sc.greet}</p><h1>The Bank</h1><p class="fsun">Sunrise ${hm(skyKeys().sr)} · Sunset ${hm(skyKeys().ss)}</p></div></header>
  <div class="fband"><div class="in"><div class="fstats"><div><div class="kbig">${got}</div><div class="sub">species caught</div></div><div><div class="kbig sm">${C.filter(c=>c.date.startsWith(yr)).length}</div><div class="sub">catches in ${yr}</div></div><div><div class="kbig sm">${big?fW(big.g):'–'}</div><div class="sub">${big?'biggest · '+esc(big.species):'biggest fish'}</div></div></div>
  <div class="seg ftabs" role="tablist">${[['log','Catches'],['species','Species'],['gallery','Gallery'],['board','Rankings']].map(([k,l])=>`<button role="tab" aria-selected="${fTab===k}" data-ftab="${k}" class="${fTab===k?'on':''}">${l}</button>`).join('')}</div></div></div>
- <main class="wrap">${fTab==='species'?fishSpecies(cm,sp,got):fTab==='gallery'?fishGallery(C):fTab==='board'?fishBoard():fishLog(C,cm)}</main>${lb?lightbox():''}${blb?boardBox():''}${spSel?spSheet(cm):''}${celeb?celebrate(cm,sp):''}${secret?secretCard():''}`}
+ <main class="wrap">${fTab==='species'?fishSpecies(cm,sp,got):fTab==='gallery'?fishGallery(C):fTab==='board'?fishBoard():fishLog(C,cm)}</main>${lb?lightbox():''}${blb?boardBox():''}${pickSheet()}${spSel?spSheet(cm):''}${celeb?celebrate(cm,sp):''}${secret?secretCard():''}`}
 let spSel=null,celeb=null;
 function fishSpecies(cm,sp,got){const groups=[...FISH.map(f=>f[0]),...(fishD().custom.length?['Custom']:[]),'All'],list=spFilter(sp,cm),inG=sp.filter(s=>fGroup==='All'||s.g===fGroup),gotG=inG.filter(s=>isTicked(s.n,cm)).length;
  return`<section class="card"><div class="seg scenes" role="tablist" aria-label="Fishing scene">${groups.map(g=>{const n=sp.filter(s=>(g==='All'||s.g===g)&&isTicked(s.n,cm)).length;return`<button role="tab" aria-selected="${fGroup===g}" data-fgroup="${g}" class="${fGroup===g?'on':''}">${g}${n?` <span class="cnt">${n}</span>`:''}</button>`}).join('')}</div>
@@ -879,6 +888,7 @@ function fishForm(){const c=fForm,sp=speciesAll(),venues=[...new Set(fishD().cat
  <div style="grid-column:1/-1"><div class="fphotos">${(c.photos||[]).map(p=>`<div class="fph">${pimg(p,'Catch photo')}<button type="button" class="x" data-fphdel="${p.id}" aria-label="Remove photo">×</button></div>`).join('')}
  ${(c.photos||[]).length<4?`<label class="fphadd"><input type="file" accept="image/*" multiple data-fphotos hidden><span>+ Add photo</span></label>`:''}</div>
  <p class="sub" style="margin:6px 0 0">${sb&&user?'Photos are backed up privately to your account.':'Photos are kept on this device. Sign in (Settings) to back them up.'}</p></div>
+ ${locRow(c)}
  <button class="btn">${c.editId?'Save changes':'Save catch'}</button><button type="button" class="btn sec" data-fcancel>Cancel</button></form></section>`}
 const SCENEC={'UK coarse':['#d9b45a','#2f6b48','#173a2a'],'UK sea':['#7fc4e8','#245a86','#12304a'],'European':['#c9a2ff','#5b3f8f','#2a1d45'],'Other':['#ffb36b','#a04f2a','#4a2414'],'Custom':['#d9d2c0','#5a5a52','#2a2a26']};
 function tradeCard(c,cm,pb,bx){const all=speciesAll(),idx=all.findIndex(s=>s.n===c.species),g=(all[idx]||{}).g||'Custom',[ac,mc,dc]=SCENEC[g]||SCENEC.Custom,mine=bx?[]:fishD().catches.filter(x=>x.species===c.species);
@@ -891,13 +901,13 @@ function tradeCard(c,cm,pb,bx){const all=speciesAll(),idx=all.findIndex(s=>s.n==
  <div class="tcstats">${bar('Weight',c.g?c.g/maxG*100:0,c.g?fW(c.g):'–')}${bar('Length',c.cm?c.cm/maxL*100:0,c.cm?fmt(c.cm)+' cm':'–')}${bx?bar('Board rank',(bx.n-bx.rank+1)/bx.n*100,'#'+bx.rank+' of '+bx.n):bar('Catch no.',mine.length?nth/mine.length*100:0,nth+' of '+mine.length)}</div>
  <div class="tcflav">${c.notes?esc(c.notes):[c.method&&'Caught on the '+esc(c.method.toLowerCase())+(c.bait?' with '+esc(c.bait.toLowerCase()):''),c.rel===false?'Kept.':c.rel===true||!bx?'Safely released.':''].filter(Boolean).join('. ')||'Details kept private.'}</div>
  <div class="tcfoot"><span>${esc(c.method||'')}${c.bait?' · '+esc(c.bait):''}</span><span>${bx?'Caught by '+esc(bx.who):'Life Pillars · The Bank'}</span></div></div></div>`}
-function fishLog(C,cm){return(fForm?fishForm():`<button class="btn bigadd" data-fnew>+ Log a catch</button>`)+
+function fishLog(C,cm){return(fForm?fishForm():`<button class="btn bigadd" data-fnew>+ Log a catch</button>`)+(C.length&&!fForm?`<div class="seg fview">${[['list','List'],['map','Map']].map(([k,l])=>`<button data-fview="${k}" class="${fView===k?'on':''}">${l}</button>`).join('')}</div>`:'')+(fView==='map'&&!fForm&&C.length?mapBlock():
  (C.length?C.map(c=>{const pb=cm[c.species]&&cm[c.species].pb===c,open=fOpen===c.id,ph=c.photos||[];
  return`<section class="crow${open?' open':''}"><button class="crhead" data-fexp="${c.id}" aria-expanded="${open}">${ph[0]?pimg(ph[0],c.species,'crthumb'):`<span class="crthumb art" aria-hidden="true">${fishSVG(c.species)}</span>`}
- <span class="crmeta"><b>${esc(c.species)}${pb?' <span class="pb">PB</span>':''}</b><small>${[c.g?fW(c.g):'',c.cm?fmt(c.cm)+' cm':''].filter(Boolean).join(' · ')||'No weight'}</small><small>${label(c.date)}${c.place?' · '+esc(c.place):''}</small></span><span class="crchev" aria-hidden="true"></span></button>
+ <span class="crmeta"><b>${esc(c.species)}${pb?' <span class="pb">PB</span>':''}</b><small>${[c.g?fW(c.g):'',c.cm?fmt(c.cm)+' cm':''].filter(Boolean).join(' · ')||'No weight'}</small><small>${label(c.date)}${c.place?' · '+esc(c.place):''}${c.loc?' · <span class="minipin" aria-label="Pinned">'+PINSVG+'</span>':''}</small></span><span class="crchev" aria-hidden="true"></span></button>
  ${open?`<div class="crbody">${tradeCard(c,cm,pb)}
  ${ph.length?`<div class="scphotos" style="justify-content:center">${ph.map((p,i)=>`<button class="scph" data-lb="${c.id}:${i}" aria-label="Open photo ${i+1}">${pimg(p,c.species)}</button>`).join('')}</div>`:''}
- <div class="row" style="justify-content:center;margin-top:12px"><button class="btn sec" data-fedit="${c.id}">Edit</button><button class="btn danger" data-fdelc="${c.id}">${fDelArm===c.id?'Tap again to delete':'Delete'}</button></div></div>`:''}</section>`}).join(''):`<p class="empty" style="margin-top:14px">No catches yet. Your first one will tick off a species on the checklist.</p>`)}
+ <div class="row" style="justify-content:center;margin-top:12px">${c.loc?`<button class="btn sec" data-mapat="${c.id}">View on map</button>`:''}<button class="btn sec" data-fedit="${c.id}">Edit</button><button class="btn danger" data-fdelc="${c.id}">${fDelArm===c.id?'Tap again to delete':'Delete'}</button></div></div>`:''}</section>`}).join(''):`<p class="empty" style="margin-top:14px">No catches yet. Your first one will tick off a species on the checklist.</p>`))}
 function myGallery(C){const ps=C.flatMap(c=>(c.photos||[]).map((p,i)=>({p,c,i})));
  return ps.length?`<div class="gal">${ps.map(({p,c,i})=>`<button class="gitem" data-lb="${c.id}:${i}" aria-label="${esc(c.species)}, ${label(c.date)}">${pimg(p,c.species)}<span>${esc(c.species)}${c.g?' · '+fW(c.g):''}</span></button>`).join('')}</div>`:'<p class="empty">Photos you add to catches will appear here.</p>'}
 const bimg=(path,alt,cls)=>`<img data-pid="b:${esc(path)}" data-path="${esc(path)}" ${purl['b:'+path]?`src="${purl['b:'+path]}"`:''} alt="${esc(alt)}" class="${cls||''}" loading="lazy">`;
@@ -914,6 +924,7 @@ function mergeFish(a,b){a=a||{};b=b||{};const o={catches:[],cdel:{...(a.cdel||{}
  const by={};for(const c of[...(a.catches||[]),...(b.catches||[])]){if(o.cdel[c.id])continue;if(!by[c.id]||(c.ts||0)>(by[c.id].ts||0))by[c.id]=c}o.catches=Object.values(by);
  for(const[k,t]of Object.entries(b.ticks||{}))if(!o.ticks[k]||t.t>o.ticks[k].t)o.ticks[k]=t;const ba=a.board,bb=b.board;o.board=!ba?bb:!bb?ba:((bb.t||0)>(ba.t||0)?bb:ba);if(!o.board)delete o.board;return o}
 function fishClick(t,ds){
+ if(pinClick(t,ds))return true;
  if(albClick(t,ds))return true;
  if(ds.pfp){const P=prof();P.avatar=ds.pfp;save();syncSocial();rr();return true}
  if(ds.pv){pv=ds.pv;frArm=null;location.hash='mate';return true}
@@ -946,9 +957,9 @@ function fishClick(t,ds){
  if(ds.lbclose!=null){lb=null;blb=null;gl=null;albArm=null;rr();return true}
  return false}
 function keepForm(){const f=document.getElementById('fform');if(!f||!fForm)return;const e=f.elements;Object.assign(fForm,{species:e.species.value,date:e.date.value,time:e.time.value,g:readFW(f),cm:num(e.cm.value),place:e.place.value,method:e.method.value,bait:e.bait.value,rel:e.rel.checked,notes:e.notes.value})}
-async function addPhotos(files){keepForm();const room=4-(fForm.photos||[]).length;for(const file of[...files].slice(0,room)){try{const b=await compress(file);if(!b)continue;const id=uid('p');await idbPut(id,b);purl[id]=URL.createObjectURL(b);fForm.photos.push({id})}catch(e){toast('Could not read that photo')}}rr()}
+async function addPhotos(files){keepForm();const room=4-(fForm.photos||[]).length;for(const file of[...files].slice(0,room)){try{if(!fForm.loc){const g=await exifGps(file);if(g){fForm.loc=g;fForm.locSrc='photo';toast("Pinned from your photo's location")}}const b=await compress(file);if(!b)continue;const id=uid('p');await idbPut(id,b);purl[id]=URL.createObjectURL(b);fForm.photos.push({id})}catch(e){toast('Could not read that photo')}}rr()}
 function saveCatch(f){keepForm();const c=fForm;const sp=(c.species||'').trim();if(!sp){toast('Add a species');return}
- const canon=speciesAll().find(s=>s.n.toLowerCase()===sp.toLowerCase()),spn=canon?canon.n:sp;const F=fishD(),now=Date.now(),rec={id:c.editId||uid('c'),ts:now,species:spn,date:c.date||TODAY,time:c.time||'',g:c.g||null,cm:c.cm||null,place:(c.place||'').trim(),method:(c.method||'').trim(),bait:(c.bait||'').trim(),rel:c.rel,notes:(c.notes||'').trim(),photos:c.photos||[]};
+ const canon=speciesAll().find(s=>s.n.toLowerCase()===sp.toLowerCase()),spn=canon?canon.n:sp;const F=fishD(),now=Date.now(),rec={id:c.editId||uid('c'),ts:now,species:spn,date:c.date||TODAY,time:c.time||'',g:c.g||null,cm:c.cm||null,place:(c.place||'').trim(),method:(c.method||'').trim(),bait:(c.bait||'').trim(),rel:c.rel,notes:(c.notes||'').trim(),photos:c.photos||[],...(c.loc?{loc:{lat:r5(c.loc.lat),lng:r5(c.loc.lng)}}:{})};
  if(c.editId){const old=F.catches.find(x=>x.id===c.editId);if(old)for(const p of old.photos||[])if(!rec.photos.some(q=>q.id===p.id)){idbDel(p.id).catch(()=>{});if(p.path&&sb&&user)sb.storage.from(BUCKET).remove([p.path]).catch(()=>{})}F.catches=F.catches.filter(x=>x.id!==c.editId)}
  if(!canon)F.custom.push(spn);
  F.catches.push(rec);const first=F.catches.filter(x=>x.species===spn).length===1;fForm=null;fOpen=rec.id;save();rr();scrollTo(0,0);if(first)celeb=spn,rr();else toast('Catch saved');uploadPending()}
@@ -1036,7 +1047,7 @@ const tabList=()=>fishOnly()?[['fishing','The Bank'],['settings','Settings']]:[[
 const tabs=v=>`<nav class="tabs" style="--n:${tabList().length}">${tabList().map(([k,l])=>`<a href="#${k}" class="${v===k?'on':''}" ${v===k?'aria-current="page"':''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[k]}</svg>${l}${k==='fishing'&&pendingIn().length?'<i class="tdot" aria-label="Friend requests"></i>':''}</a>`).join('')}</nav>`;
 const view=()=>{const h=location.hash.slice(1);if(h==='profile'||(h==='mate'&&pv)||(h==='album'&&alb))return h;return tabList().some(t=>t[0]===h)?h:(fishOnly()?'fishing':'today')};
 function keepOpen(){document.querySelectorAll('details[data-keep]').forEach(d=>d.open?openD.add(d.dataset.keep):openD.delete(d.dataset.keep));document.querySelectorAll('details[data-pi]').forEach(d=>d.open?openP.add(+d.dataset.pi):openP.delete(+d.dataset.pi))}
-function render(){keepOpen();if(!D.onboarded||ob.done){root.innerHTML=onboard();return}const v=view();root.innerHTML=(v==='food'?food():v==='history'?history():v==='settings'?settings():v==='fishing'?fishing():v==='profile'||v==='mate'?profilePage():v==='album'?albumPage():today())+((lb||blb||spSel||celeb||secret||gl||albPick)&&['fishing','album','mate'].includes(v)?'':tabs(v))+glBox();document.body.classList.toggle('fishmode',['fishing','profile','mate','album'].includes(v)||(fishOnly()&&v==='settings'));if(v==='profile'||v==='mate')loadSocial();if(v==='album')loadAlbums();if(v==='food')renderResults();if(v==='history')drawW();if(['fishing','profile','mate','album'].includes(v))hydratePhotos()}
+function render(){keepOpen();if(!D.onboarded||ob.done){root.innerHTML=onboard();return}const v=view();root.innerHTML=(v==='food'?food():v==='history'?history():v==='settings'?settings():v==='fishing'?fishing():v==='profile'||v==='mate'?profilePage():v==='album'?albumPage():today())+((lb||blb||spSel||celeb||secret||gl||albPick||mapPick)&&['fishing','album','mate'].includes(v)?'':tabs(v))+glBox();document.body.classList.toggle('fishmode',['fishing','profile','mate','album'].includes(v)||(fishOnly()&&v==='settings'));if(v==='profile'||v==='mate')loadSocial();if(v==='album')loadAlbums();if(v==='food')renderResults();if(v==='history')drawW();if(['fishing','profile','mate','album'].includes(v))hydratePhotos();if(v==='fishing'){if(fTab==='log'&&fView==='map'&&!fForm)initCatchMap();if(mapPick)initPickMap()}}
 let morphing=false;
 function morph(to){if(morphing)return;morphing=true;const toFish=to==='fish',o=document.getElementById('morph'),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
  const apply=()=>{D.cfg.mode=to;if(toFish)D.cfg.fishTab=true;save();location.hash='settings';render();scrollTo(0,0)};
@@ -1083,9 +1094,9 @@ function addEntry(it,q,saveIt){const k=it.unit==='g'?q/100:q;
  save();toast(`Added to ${meal}`)}
 
 /* ---------- Events ---------- */
-addEventListener('keydown',e=>{if(e.key==='Escape'&&(lb||blb||gl||albPick||spSel||celeb||secret)){lb=null;blb=null;gl=null;albPick=null;spSel=null;celeb=null;secret=false;rr()}});
-let lastTab=null;addEventListener('hashchange',()=>{{const v=view();if(tabList().some(t=>t[0]===v))lastTab=v}if(tourPending&&location.hash==='#today'){tourPending=false;setTimeout(startTour,300)}lb=null;gl=null;albPick=null;spSel=null;celeb=null;picked=null;status='';lastQ='';blb=null;render();scrollTo(0,0)});
-root.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('[data-floattap]')){floatTap();return}if(e.target.classList&&e.target.classList.contains('sheetbg')&&!celeb){spSel=null;albPick=null;rr();return}const t=e.target.closest('button,a');if(!t)return;const ds=t.dataset;
+addEventListener('keydown',e=>{if(e.key==='Escape'&&(lb||blb||gl||albPick||spSel||celeb||secret)){lb=null;blb=null;gl=null;albPick=null;mapPick=null;pickMap=null;spSel=null;celeb=null;secret=false;rr()}});
+let lastTab=null;addEventListener('hashchange',()=>{{const v=view();if(tabList().some(t=>t[0]===v))lastTab=v}if(tourPending&&location.hash==='#today'){tourPending=false;setTimeout(startTour,300)}lb=null;gl=null;albPick=null;mapPick=null;pickMap=null;spSel=null;celeb=null;picked=null;status='';lastQ='';blb=null;render();scrollTo(0,0)});
+root.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('[data-floattap]')){floatTap();return}if(e.target.classList&&e.target.classList.contains('sheetbg')&&!celeb){spSel=null;albPick=null;mapPick=null;pickMap=null;rr();return}const t=e.target.closest('button,a');if(!t)return;const ds=t.dataset;
  if(fishClick(t,ds))return;
  if(ds.snap){const t=+ds.snap;if(snapArm!==t){snapArm=t;rr();return}snapArm=null;restoreSnap(t);return}
  if(ds.wr!=null){wRange=+ds.wr;rr();return}
@@ -1248,6 +1259,53 @@ function snapsCard(){if(snapList===null){loadSnaps();return''}
  return`<details data-keep="snaps" ${openD.has('snaps')?'open':''} style="margin-top:12px"><summary>Automatic backups (${snapList.length})</summary><p class="sub">The app quietly saves a copy on this device every half hour you use it, and before every sync. If anything ever goes missing, restore an earlier copy here.</p>
  ${snapList.map(s=>`<div class="fe"><div>${fm(s.t)}<small>${esc(s.why)} · ${s.vals} entries${s.catches?' · '+s.catches+' catches':''}</small></div><span></span><button class="btn sec" data-snap="${s.t}" style="height:40px">${snapArm===s.t?'Tap to confirm':'Restore'}</button></div>`).join('')||'<p class="empty">No backups yet.</p>'}</details>`}
 let snapArm=null;
+/* ---------- Location pins and maps (Leaflet, loaded only when needed) ---------- */
+let fView='list',mapSt={c:null,z:null,layer:'sat'},mapFocus=null,mapPick=null,pickMap=null,leafP=null;
+function leaf(){return leafP||(leafP=new Promise((res,rej)=>{if(window.L)return res(window.L);const c=document.createElement('link');c.rel='stylesheet';c.href='https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css';document.head.appendChild(c);
+ const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js';s.onload=()=>res(window.L);s.onerror=()=>{leafP=null;rej()};document.head.appendChild(s)}))}
+const TILES={sat:['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}','Imagery © Esri'],map:['https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png','© OpenStreetMap contributors © CARTO']};
+const PINSVG='<svg viewBox="0 0 32 42" aria-hidden="true"><path d="M16 41s14-13.5 14-24A14 14 0 0 0 2 17c0 10.5 14 24 14 24z" fill="#d9b45a" stroke="#13241c" stroke-width="2"/><circle cx="16" cy="16" r="6" fill="#13241c"/></svg>';
+const r5=n=>+(+n).toFixed(5);
+function addTiles(L,m){const T=TILES[mapSt.layer];L.tileLayer(T[0],{attribution:T[1],maxZoom:19,maxNativeZoom:mapSt.layer==='sat'?18:19,subdomains:'abcd'}).addTo(m)}
+function lastPin(){const c=catches().find(c=>c.loc);if(c)return[c.loc.lat,c.loc.lng];try{const g=JSON.parse(localStorage.getItem('pgeo')||'null');if(g)return g}catch(e){}return null}
+function mapBlock(){const n=catches().filter(c=>c.loc).length;return`<div class="mapw" style="margin-top:12px"><div id="fmap" class="fmap"></div><button class="maptog" data-maplayer="${mapSt.layer==='sat'?'map':'sat'}">${mapSt.layer==='sat'?'Map view':'Satellite'}</button></div><p class="sub" style="text-align:center">${n?`${n} pinned catch${n===1?'':'es'}. Only you can see your pins.`:'No pinned catches yet. Add a pin when you log a catch, or edit an old one.'}</p>`}
+async function initCatchMap(){const el=document.getElementById('fmap');if(!el)return;let L;try{L=await leaf()}catch(e){el.innerHTML='<p class="empty" style="padding:24px;text-align:center">The map could not load. Check your connection.</p>';return}
+ if(!document.body.contains(el)||el.dataset.on)return;el.dataset.on=1;const m=L.map(el,{zoomControl:true});addTiles(L,m);
+ const G={};for(const c of catches().filter(c=>c.loc)){const k=c.loc.lat.toFixed(4)+','+c.loc.lng.toFixed(4);(G[k]=G[k]||[]).push(c)}
+ const pts=[];let focus=null;
+ for(const L2 of Object.values(G)){const c0=L2[0],ll=[c0.loc.lat,c0.loc.lng];pts.push(ll);
+  const mk=L.marker(ll,{icon:L.divIcon({className:'fpin',html:PINSVG+(L2.length>1?`<b>${L2.length}</b>`:''),iconSize:[32,42],iconAnchor:[16,41],popupAnchor:[0,-36]})}).addTo(m);
+  mk.bindPopup(`<div class="mpop">${L2.map(c=>`<div><span class="mpart">${fishSVG(c.species)}</span><span><b>${esc(c.species)}</b>${c.g?' · '+fW(c.g):''}<small>${label(c.date)}${c.place?' · '+esc(c.place):''}</small></span><button data-mapopen="${c.id}">Open</button></div>`).join('')}</div>`,{maxWidth:280});
+  if(mapFocus&&L2.some(c=>c.id===mapFocus))focus=mk}
+ m.on('popupopen',e=>{e.popup.getElement().querySelectorAll('[data-mapopen]').forEach(b=>b.onclick=()=>{fView='list';fOpen=b.dataset.mapopen;rr();setTimeout(()=>{const r=document.querySelector('.crow.open');if(r)r.scrollIntoView({block:'start'})},60)})});
+ const place=()=>{if(focus){m.setView(focus.getLatLng(),16);focus.openPopup()}else if(mapSt.c)m.setView(mapSt.c,mapSt.z);else if(pts.length)m.fitBounds(pts,{padding:[40,40],maxZoom:15});else{const p=lastPin();m.setView(p||[52.5,-1.5],p?12:6)}};
+ place();requestAnimationFrame(()=>{m.invalidateSize();if(!focus&&!mapSt.c)place()});setTimeout(()=>{m.invalidateSize();m.on('moveend',()=>{mapSt.c=m.getCenter();mapSt.z=m.getZoom()})},300);mapFocus=null}
+function pickSheet(){return mapPick?`<div class="sheetbg"></div><div class="sheet mpick" role="dialog" aria-label="Pick the spot"><div class="sheeth">Drop a pin on your spot</div><div class="pmapw mapw"><div id="pmap" class="fmap"></div><span class="pcross">${PINSVG}</span><button class="maptog" data-maplayer="${mapSt.layer==='sat'?'map':'sat'}">${mapSt.layer==='sat'?'Map view':'Satellite'}</button></div>
+ <p class="sub" style="margin:8px 0">Drag the map so the pin sits on the spot, then set it.</p><div class="row"><button class="btn" data-pickset>Set pin here</button><button class="btn sec" data-pickgps>Go to my location</button><button class="btn sec" data-pickx>Cancel</button></div></div>`:''}
+async function initPickMap(){const el=document.getElementById('pmap');if(!el)return;let L;try{L=await leaf()}catch(e){el.innerHTML='<p class="empty" style="padding:24px;text-align:center">The map could not load. Check your connection.</p>';return}
+ if(!document.body.contains(el)||el.dataset.on)return;el.dataset.on=1;pickMap=L.map(el,{zoomControl:true});addTiles(L,pickMap);pickMap.setView(mapPick.c,mapPick.z);requestAnimationFrame(()=>{pickMap&&pickMap.invalidateSize();pickMap&&pickMap.setView(mapPick.c,mapPick.z)});pickMap.on('moveend',()=>{const c=pickMap.getCenter();mapPick.c=[c.lat,c.lng];mapPick.z=pickMap.getZoom()})}
+function gpsHere(ok){if(!navigator.geolocation){toast('Location is not available on this device');return}toast('Finding your location…');navigator.geolocation.getCurrentPosition(p=>ok(r5(p.coords.latitude),r5(p.coords.longitude)),()=>toast('Location was blocked. Allow it in your browser settings, or pick on the map.'),{enableHighAccuracy:true,timeout:15000})}
+function locRow(c){return`<div style="grid-column:1/-1"><span class="f">Location pin</span><div class="flocrow">${c.loc?`<span class="pinon">${PINSVG}<span>Pinned${c.locSrc==='photo'?' from your photo':''}<small>${c.loc.lat.toFixed(4)}, ${c.loc.lng.toFixed(4)}</small></span></span><button type="button" class="btn sec sm" data-locpick>Move</button><button type="button" class="btn sec sm" data-locclear>Remove</button>`:`<button type="button" class="btn sec sm" data-locgps>Use my location</button><button type="button" class="btn sec sm" data-locpick>Pick on map</button>`}</div><p class="sub" style="margin:6px 0 0">Only you can see your pins.</p></div>`}
+async function exifGps(file){try{const buf=await file.slice(0,262144).arrayBuffer(),v=new DataView(buf);if(v.byteLength<4||v.getUint16(0)!==0xFFD8)return null;let o=2;
+ while(o<v.byteLength-10){const mk=v.getUint16(o),len=v.getUint16(o+2);
+  if(mk===0xFFE1&&v.getUint32(o+4)===0x45786966){const t=o+10,le=v.getUint16(t)===0x4949,g16=p=>v.getUint16(p,le),g32=p=>v.getUint32(p,le);
+   const ifd=(p,want)=>{const n=g16(p),r={};for(let i=0;i<n;i++){const e=p+2+i*12,tag=g16(e);if(want.includes(tag))r[tag]=e+8}return r};
+   const i0=ifd(t+g32(t+4),[0x8825]);if(!i0[0x8825])return null;const G=ifd(t+g32(i0[0x8825]),[1,2,3,4]);if(!G[2]||!G[4])return null;
+   const rat=e=>{const p=t+g32(e),r=k=>{const d=g32(p+k*8+4);return d?g32(p+k*8)/d:0};return r(0)+r(1)/60+r(2)/3600};
+   const ref=e=>e?String.fromCharCode(v.getUint8(e)):'';let lat=rat(G[2]),lng=rat(G[4]);if(ref(G[1])==='S')lat=-lat;if(ref(G[3])==='W')lng=-lng;
+   if(!isFinite(lat)||!isFinite(lng)||(!lat&&!lng)||Math.abs(lat)>90||Math.abs(lng)>180)return null;return{lat:r5(lat),lng:r5(lng)}}
+  if((mk&0xFF00)!==0xFF00||mk===0xFFDA)break;o+=2+len}}catch(e){}return null}
+function pinClick(t,ds){
+ if(ds.fview){fView=ds.fview;if(fView==='map')mapSt.c=null;rr();return true}
+ if(ds.maplayer){mapSt.layer=ds.maplayer;if(pickMap&&mapPick){const c=pickMap.getCenter();mapPick.c=[c.lat,c.lng];mapPick.z=pickMap.getZoom()}rr();return true}
+ if(ds.mapat){fView='map';mapFocus=ds.mapat;fForm=null;rr();scrollTo(0,0);return true}
+ if(ds.locgps!=null){keepForm();gpsHere((lat,lng)=>{if(!fForm)return;fForm.loc={lat,lng};fForm.locSrc='gps';rr();toast('Pinned to where you are')});return true}
+ if(ds.locpick!=null){keepForm();const c=fForm.loc?[fForm.loc.lat,fForm.loc.lng]:lastPin();mapPick={c:c||[52.5,-1.5],z:fForm.loc?17:c?14:6};rr();return true}
+ if(ds.locclear!=null){keepForm();fForm.loc=null;fForm.locSrc=null;rr();return true}
+ if(ds.pickset!=null){if(pickMap){const c=pickMap.getCenter();fForm.loc={lat:r5(c.lat),lng:r5(c.lng)};fForm.locSrc='map'}mapPick=null;pickMap=null;rr();return true}
+ if(ds.pickgps!=null){gpsHere((lat,lng)=>{if(pickMap)pickMap.setView([lat,lng],17)});return true}
+ if(ds.pickx!=null){mapPick=null;pickMap=null;rr();return true}
+ return false}
 /* ---------- Friends' galleries, shared albums and a shared photo viewer ---------- */
 const newId=()=>{try{return crypto.randomUUID()}catch(e){const h=[...crypto.getRandomValues(new Uint8Array(16))].map(b=>b.toString(16).padStart(2,'0')).join('');return`${h.slice(0,8)}-${h.slice(8,12)}-4${h.slice(13,16)}-a${h.slice(17,20)}-${h.slice(20,32)}`}};
 let galMode='mine',alb=null,albs={at:0,list:[],members:{},items:{},err:''},gl=null,albForm=null,albPick=null,albInv=false,albArm=null,albBusy='';
