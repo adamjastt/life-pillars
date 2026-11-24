@@ -336,9 +336,18 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 .av.pic{display:block;padding:0;background:#0f201a}.av.pic img{position:static;transform:none;width:100%;height:100%;object-fit:cover;display:block}
 .pfps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}.pfpb{padding:0;border:3px solid transparent;border-radius:99px;overflow:hidden;aspect-ratio:1;background:none;cursor:pointer;transition:transform .15s,border-color .15s}
 .pfpb img{width:100%;height:100%;object-fit:cover;display:block}.pfpb.on{border-color:#d9b45a;transform:scale(1.06);box-shadow:0 0 0 3px #d9b45a33}
+.gseg{margin-bottom:12px}
+.albs{display:grid;gap:10px;margin-top:12px}.albc{display:flex;gap:14px;align-items:center;width:100%;text-align:left;background:var(--card);border:1px solid #ffffff0c;border-radius:16px;padding:10px;color:var(--ink);font:inherit;cursor:pointer}
+.albcov{flex:none;width:84px;height:84px;border-radius:12px;overflow:hidden;background:var(--card2);display:grid;place-items:center;color:var(--mut)}.albcov img{width:100%;height:100%;object-fit:cover;display:block}.albcov svg{width:34px;height:34px}
+.albt{min-width:0;display:grid;gap:4px}.albt b{font-size:17px}.albt small{color:var(--mut);font-size:13px}.avs{display:flex}.avs .av{margin-right:-8px;border-width:2px}
+.av.xs{width:26px;height:26px}.pickf{display:flex;flex-wrap:wrap;gap:8px}
+.pickf .chip{min-height:38px;padding:6px 12px;border-radius:99px;border:1px solid var(--line);background:#ffffff08;color:inherit;font:inherit;font-size:14px;cursor:pointer}.pickf .chip.on{background:#d9b45a;color:#13241c;border-color:#d9b45a;font-weight:600}
+.pkg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;max-height:46vh;overflow:auto}.pki{position:relative;padding:0;border:3px solid transparent;border-radius:12px;overflow:hidden;aspect-ratio:1;background:var(--card2);cursor:pointer}
+.pki img{width:100%;height:100%;object-fit:cover;display:block}.pki span{position:absolute;left:0;right:0;bottom:0;font-size:11px;padding:10px 6px 4px;background:linear-gradient(transparent,#000b);color:#fff;text-align:left}.pki.on{border-color:#d9b45a}.pki.on::after{content:'✓';position:absolute;top:6px;right:6px;width:24px;height:24px;border-radius:99px;background:#d9b45a;color:#13241c;font-weight:700;display:grid;place-items:center;font-size:14px}
+.gitem span small{display:block;opacity:.8;font-size:11px}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><div id="achpop" aria-live="polite"></div><script>
 {
-const VERSION='7.2';
+const VERSION='7.3';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -820,7 +829,7 @@ function tickScene(){const sv=document.querySelector('.scene');if(!sv)return;con
  $$('far').setAttribute('fill',S.far);$$('near').setAttribute('fill',S.near);sv.querySelectorAll('.reed path').forEach(p=>p.setAttribute('stroke',S.near));
  $$('stars').setAttribute('opacity',S.st.toFixed(2));$$('clouds').setAttribute('opacity',S.co.toFixed(2));
  $$('shim').setAttribute('transform',`translate(${(S.sx-200).toFixed(1)} 0)`);$$('shim').querySelectorAll('rect').forEach(r=>r.setAttribute('fill',S.sun));
- const g=document.querySelector('.fgreet');if(g&&!celeb)g.textContent=greetAt(t)}
+ const g=document.querySelector('.fgreet:not(.fx)');if(g&&!celeb)g.textContent=greetAt(t)}
 setInterval(()=>{if(document.visibilityState==='visible'&&document.querySelector('.scene'))tickScene()},30000);
 function scene(){const t=sceneHour(),S=skyAt(t),R=fRng('stars');let stars='';for(let i=0;i<40;i++)stars+=`<circle cx="${(R()*400).toFixed(0)}" cy="${(R()*84).toFixed(0)}" r="${(R()*.9+.3).toFixed(1)}" fill="#fff" opacity="${(R()*.6+.3).toFixed(2)}" class="tw" style="animation-delay:${(R()*4).toFixed(1)}s"/>`;
  const reeds=(x0,n,dir)=>{let o='';for(let i=0;i<n;i++){const x=x0+i*5*dir,hh=24+((i*37)%17);o+=`<path d="M${x} 170 q${dir*-3} ${-hh*.6} ${dir*2} ${-hh}" stroke="${S.near}" stroke-width="2" fill="none"/>`;if(i%3===0)o+=`<rect x="${x+dir*1.2-1.6}" y="${170-hh-6}" width="3.2" height="9" rx="1.6" fill="#3a2a18"/>`}return`<g class="reed" style="transform-origin:${x0}px 170px">${o}</g>`};
@@ -889,7 +898,7 @@ function fishLog(C,cm){return(fForm?fishForm():`<button class="btn bigadd" data-
  ${open?`<div class="crbody">${tradeCard(c,cm,pb)}
  ${ph.length?`<div class="scphotos" style="justify-content:center">${ph.map((p,i)=>`<button class="scph" data-lb="${c.id}:${i}" aria-label="Open photo ${i+1}">${pimg(p,c.species)}</button>`).join('')}</div>`:''}
  <div class="row" style="justify-content:center;margin-top:12px"><button class="btn sec" data-fedit="${c.id}">Edit</button><button class="btn danger" data-fdelc="${c.id}">${fDelArm===c.id?'Tap again to delete':'Delete'}</button></div></div>`:''}</section>`}).join(''):`<p class="empty" style="margin-top:14px">No catches yet. Your first one will tick off a species on the checklist.</p>`)}
-function fishGallery(C){const ps=C.flatMap(c=>(c.photos||[]).map((p,i)=>({p,c,i})));
+function myGallery(C){const ps=C.flatMap(c=>(c.photos||[]).map((p,i)=>({p,c,i})));
  return ps.length?`<div class="gal">${ps.map(({p,c,i})=>`<button class="gitem" data-lb="${c.id}:${i}" aria-label="${esc(c.species)}, ${label(c.date)}">${pimg(p,c.species)}<span>${esc(c.species)}${c.g?' · '+fW(c.g):''}</span></button>`).join('')}</div>`:'<p class="empty">Photos you add to catches will appear here.</p>'}
 const bimg=(path,alt,cls)=>`<img data-pid="b:${esc(path)}" data-path="${esc(path)}" ${purl['b:'+path]?`src="${purl['b:'+path]}"`:''} alt="${esc(alt)}" class="${cls||''}" loading="lazy">`;
 let blb=null;
@@ -905,6 +914,7 @@ function mergeFish(a,b){a=a||{};b=b||{};const o={catches:[],cdel:{...(a.cdel||{}
  const by={};for(const c of[...(a.catches||[]),...(b.catches||[])]){if(o.cdel[c.id])continue;if(!by[c.id]||(c.ts||0)>(by[c.id].ts||0))by[c.id]=c}o.catches=Object.values(by);
  for(const[k,t]of Object.entries(b.ticks||{}))if(!o.ticks[k]||t.t>o.ticks[k].t)o.ticks[k]=t;const ba=a.board,bb=b.board;o.board=!ba?bb:!bb?ba:((bb.t||0)>(ba.t||0)?bb:ba);if(!o.board)delete o.board;return o}
 function fishClick(t,ds){
+ if(albClick(t,ds))return true;
  if(ds.pfp){const P=prof();P.avatar=ds.pfp;save();syncSocial();rr();return true}
  if(ds.pv){pv=ds.pv;frArm=null;location.hash='mate';return true}
  if(ds.fracc){acceptReq(+ds.fracc);return true}
@@ -933,7 +943,7 @@ function fishClick(t,ds){
  if(ds.lb){const[c,i]=ds.lb.split(':');lb={c,i:+i};rr();return true}
  if(ds.blb){blb=ds.blb;rr();return true}
  if(ds.lbnav!=null){const all=catches().flatMap(c=>(c.photos||[]).map((p,i)=>({c:c.id,i})));lb=all[+ds.lbnav];rr();return true}
- if(ds.lbclose!=null){lb=null;blb=null;rr();return true}
+ if(ds.lbclose!=null){lb=null;blb=null;gl=null;albArm=null;rr();return true}
  return false}
 function keepForm(){const f=document.getElementById('fform');if(!f||!fForm)return;const e=f.elements;Object.assign(fForm,{species:e.species.value,date:e.date.value,time:e.time.value,g:readFW(f),cm:num(e.cm.value),place:e.place.value,method:e.method.value,bait:e.bait.value,rel:e.rel.checked,notes:e.notes.value})}
 async function addPhotos(files){keepForm();const room=4-(fForm.photos||[]).length;for(const file of[...files].slice(0,room)){try{const b=await compress(file);if(!b)continue;const id=uid('p');await idbPut(id,b);purl[id]=URL.createObjectURL(b);fForm.photos.push({id})}catch(e){toast('Could not read that photo')}}rr()}
@@ -1003,7 +1013,7 @@ function settings(){const types=[['min','At least'],['max','At most'],['near','A
  <div class="pfoot"><button class="btn sec" data-addm="${pi}">+ Add metric</button><button class="linkbtn dlink" data-delp="${pi}">Remove pillar</button></div></div></details>`;
  const fishOn=D.cfg.fishTab!==false,FO=fishOnly();
  const modeCard=`<h3 class="sgh">App mode</h3><section class="card modes"><button class="mode${FO?'':' on'}" data-mode2="full" aria-pressed="${!FO}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">${ICONS.today}</svg><b>Full app</b><small>Pillars, food, progress and fishing</small></button><button class="mode${FO?' on':''}" data-mode2="fish" aria-pressed="${FO}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS.fishing}</svg><b>Fishing only</b><small>Just The Bank, with every fishing feature</small></button></section>`;
- const hero=FO?`<header class="fhero sm">${scene().svg}<div class="fhin"><p class="fgreet">Fishing only</p><div class="fhtop"><h1>Settings</h1><span class="fsun">v${VERSION}</span></div></div></header>`:`<header class="hero"><div class="in"><div class="top"><h1>Settings</h1><span class="sub">v${VERSION}</span></div></div></header>`;
+ const hero=FO?`<header class="fhero sm">${scene().svg}<div class="fhin"><p class="fgreet fx">Fishing only</p><div class="fhtop"><h1>Settings</h1><span class="fsun">v${VERSION}</span></div></div></header>`:`<header class="hero"><div class="in"><div class="top"><h1>Settings</h1><span class="sub">v${VERSION}</span></div></div></header>`;
  return`${hero}
  <main class="wrap settings">${modeCard}
  <h3 class="sgh">Account</h3>${acct()}
@@ -1024,9 +1034,9 @@ const ICONS={today:'<circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/>'
 const fishOnly=()=>D.cfg.mode==='fish';
 const tabList=()=>fishOnly()?[['fishing','The Bank'],['settings','Settings']]:[['today','Today'],['food','Food'],['history','Progress'],...(D.cfg.fishTab!==false?[['fishing','Fishing']]:[]),['settings','Settings']];
 const tabs=v=>`<nav class="tabs" style="--n:${tabList().length}">${tabList().map(([k,l])=>`<a href="#${k}" class="${v===k?'on':''}" ${v===k?'aria-current="page"':''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[k]}</svg>${l}${k==='fishing'&&pendingIn().length?'<i class="tdot" aria-label="Friend requests"></i>':''}</a>`).join('')}</nav>`;
-const view=()=>{const h=location.hash.slice(1);if(h==='profile'||(h==='mate'&&pv))return h;return tabList().some(t=>t[0]===h)?h:(fishOnly()?'fishing':'today')};
+const view=()=>{const h=location.hash.slice(1);if(h==='profile'||(h==='mate'&&pv)||(h==='album'&&alb))return h;return tabList().some(t=>t[0]===h)?h:(fishOnly()?'fishing':'today')};
 function keepOpen(){document.querySelectorAll('details[data-keep]').forEach(d=>d.open?openD.add(d.dataset.keep):openD.delete(d.dataset.keep));document.querySelectorAll('details[data-pi]').forEach(d=>d.open?openP.add(+d.dataset.pi):openP.delete(+d.dataset.pi))}
-function render(){keepOpen();if(!D.onboarded||ob.done){root.innerHTML=onboard();return}const v=view();root.innerHTML=(v==='food'?food():v==='history'?history():v==='settings'?settings():v==='fishing'?fishing():v==='profile'||v==='mate'?profilePage():today())+((lb||blb||spSel||celeb||secret)&&v==='fishing'?'':tabs(v));document.body.classList.toggle('fishmode',v==='fishing'||v==='profile'||v==='mate'||(fishOnly()&&v==='settings'));if(v==='profile'||v==='mate')loadSocial();if(v==='food')renderResults();if(v==='history')drawW();if(v==='fishing')hydratePhotos()}
+function render(){keepOpen();if(!D.onboarded||ob.done){root.innerHTML=onboard();return}const v=view();root.innerHTML=(v==='food'?food():v==='history'?history():v==='settings'?settings():v==='fishing'?fishing():v==='profile'||v==='mate'?profilePage():v==='album'?albumPage():today())+((lb||blb||spSel||celeb||secret||gl||albPick)&&['fishing','album','mate'].includes(v)?'':tabs(v))+glBox();document.body.classList.toggle('fishmode',['fishing','profile','mate','album'].includes(v)||(fishOnly()&&v==='settings'));if(v==='profile'||v==='mate')loadSocial();if(v==='album')loadAlbums();if(v==='food')renderResults();if(v==='history')drawW();if(['fishing','profile','mate','album'].includes(v))hydratePhotos()}
 let morphing=false;
 function morph(to){if(morphing)return;morphing=true;const toFish=to==='fish',o=document.getElementById('morph'),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
  const apply=()=>{D.cfg.mode=to;if(toFish)D.cfg.fishTab=true;save();location.hash='settings';render();scrollTo(0,0)};
@@ -1073,9 +1083,9 @@ function addEntry(it,q,saveIt){const k=it.unit==='g'?q/100:q;
  save();toast(`Added to ${meal}`)}
 
 /* ---------- Events ---------- */
-addEventListener('keydown',e=>{if(e.key==='Escape'&&(lb||blb||spSel||celeb||secret)){lb=null;blb=null;spSel=null;celeb=null;secret=false;rr()}});
-let lastTab=null;addEventListener('hashchange',()=>{{const v=view();if(tabList().some(t=>t[0]===v))lastTab=v}if(tourPending&&location.hash==='#today'){tourPending=false;setTimeout(startTour,300)}lb=null;spSel=null;celeb=null;picked=null;status='';lastQ='';blb=null;render();scrollTo(0,0)});
-root.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('[data-floattap]')){floatTap();return}if(e.target.classList&&e.target.classList.contains('sheetbg')&&!celeb){spSel=null;rr();return}const t=e.target.closest('button,a');if(!t)return;const ds=t.dataset;
+addEventListener('keydown',e=>{if(e.key==='Escape'&&(lb||blb||gl||albPick||spSel||celeb||secret)){lb=null;blb=null;gl=null;albPick=null;spSel=null;celeb=null;secret=false;rr()}});
+let lastTab=null;addEventListener('hashchange',()=>{{const v=view();if(tabList().some(t=>t[0]===v))lastTab=v}if(tourPending&&location.hash==='#today'){tourPending=false;setTimeout(startTour,300)}lb=null;gl=null;albPick=null;spSel=null;celeb=null;picked=null;status='';lastQ='';blb=null;render();scrollTo(0,0)});
+root.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('[data-floattap]')){floatTap();return}if(e.target.classList&&e.target.classList.contains('sheetbg')&&!celeb){spSel=null;albPick=null;rr();return}const t=e.target.closest('button,a');if(!t)return;const ds=t.dataset;
  if(fishClick(t,ds))return;
  if(ds.snap){const t=+ds.snap;if(snapArm!==t){snapArm=t;rr();return}snapArm=null;restoreSnap(t);return}
  if(ds.wr!=null){wRange=+ds.wr;rr();return}
@@ -1101,7 +1111,7 @@ root.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('[data-f
  const a=ds.act;if(!a)return;
  if(a==='tour'){startTour();return}
  if(a==='profile'){pv=null;soc.msg='';location.hash='profile';return}
- if(a==='pback'){location.hash=view()==='mate'?'profile':'fishing';return}
+ if(a==='pback'){if(view()==='album'){galMode='shared';fTab='gallery'}location.hash=view()==='mate'?'profile':'fishing';return}
  if(a==='gosettings'){location.hash='settings';return}
  if(a==='copycode'){const c=prof().code;try{navigator.clipboard.writeText(c);toast('Code copied: '+c)}catch(e){toast(c)}return}
  if(a==='bleave'){leaveBoard();return}
@@ -1124,6 +1134,7 @@ root.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('[data-f
  if(a==='reset'){if(!resetArm){resetArm=true;rr();setTimeout(()=>{if(resetArm){resetArm=false;if(view()==='settings')rr()}},4000);return}resetArm=false;D.cfg=PRESET();save();rr();toast('Preset reset')}});
 root.addEventListener('change',e=>{const t=e.target,ds=t.dataset;
  if(ds.bsp!=null){board.sp=t.value;rr();return}
+ if(ds.albup!=null){const fs=[...(t.files||[])];albPick=null;if(fs.length)albAddBlobs(fs.map(f=>({blob:f,info:null})));return}
  if(ds.fphotos!=null){if(t.files&&t.files.length)addPhotos(t.files);return}
  if(ds.fset){if(ds.fset==='tab'){D.cfg.fishTab=t.checked}else D.cfg.fUnit=t.value;save();rr();return}
  if(ds.wunit!=null){D.cfg.wUnit=t.value;save();rr();return}
@@ -1132,11 +1143,11 @@ root.addEventListener('change',e=>{const t=e.target,ds=t.dataset;
  if(ds.note!=null){day(cur).note=t.value.slice(0,3000);day(cur).nt=Date.now();save();return}
  if(ds.pset){const[pi,k]=ds.pset.split(':');const v=t.value.trim();if(v)P()[+pi][k]=v;save();rr();return}
  if(ds.mset){const[pi,mi,k]=ds.mset.split(':');const m=P()[+pi].m[+mi];if(['t','st','w'].includes(k)){const v=num(t.value);if(v!=null&&v>0)m[k]=v}else{const v=t.value.trim();if(v||k==='u')m[k]=v}save();rr();return}
- if(ds.prof){const P=prof();if(ds.prof==='pillars')P.pillars=t.checked;else if(ds.prof==='name'){const v=t.value.trim().slice(0,24);if(v)P.name=v}else P.avatar=t.value||null;save();syncSocial();rr();return}
+ if(ds.prof){const P=prof();if(ds.prof==='gallery')P.gallery=t.checked;else if(ds.prof==='pillars')P.pillars=t.checked;else if(ds.prof==='name'){const v=t.value.trim().slice(0,24);if(v)P.name=v}else P.avatar=t.value||null;save();syncSocial();rr();return}
  if(ds.cfg){const v=num(t.value);if(v!=null&&v>0){if(ds.cfg==='mc')D.cfg.macros.c=v;else if(ds.cfg==='mf')D.cfg.macros.f=v;else D.cfg.good=Math.min(100,v)}save();rr();return}
  if(ds.restore!=null&&t.files[0]){t.files[0].text().then(s=>{const j=JSON.parse(s);if(!j.cfg||!j.days)throw 0;D=j;D.foods=D.foods||[];D.recent=D.recent||[];snapAll();D.cfgU=Date.now();Object.values(D.days).forEach(x=>x.u=Date.now());save();rr();toast('Backup restored')}).catch(()=>toast('That file is not a Life Pillars backup'))}});
 root.addEventListener('toggle',e=>{const d=e.target;if(d.dataset&&d.dataset.keep){d.open?openD.add(d.dataset.keep):openD.delete(d.dataset.keep)}if(d.dataset&&d.dataset.pi!=null){d.open?openP.add(+d.dataset.pi):openP.delete(+d.dataset.pi)}},true);
-root.addEventListener('input',e=>{if(e.target.dataset&&e.target.dataset.suggest){showSugg(e.target);return}if(e.target.dataset.fsq!=null){fQ=e.target.value;const cm=caughtMap(),el=document.getElementById('fsplist');if(el)el.innerHTML=spRows(spFilter(speciesAll(),cm),cm);return}if(e.target.id==='amt')updAmt();if(e.target.id==='fq'){lastQ=e.target.value;if(!lastQ.trim()){picked=null;status='';renderResults()}}});
+root.addEventListener('input',e=>{if(e.target.dataset&&e.target.dataset.albname!=null&&albForm){albForm.name=e.target.value;return}if(e.target.dataset&&e.target.dataset.suggest){showSugg(e.target);return}if(e.target.dataset.fsq!=null){fQ=e.target.value;const cm=caughtMap(),el=document.getElementById('fsplist');if(el)el.innerHTML=spRows(spFilter(speciesAll(),cm),cm);return}if(e.target.id==='amt')updAmt();if(e.target.id==='fq'){lastQ=e.target.value;if(!lastQ.trim()){picked=null;status='';renderResults()}}});
 root.addEventListener('submit',e=>{e.preventDefault();const f=e.target;if(f.id==='fradd'){addByCode(f.elements.code.value);return}
  if(f.id==='bjoin'){const n=f.elements.name.value.trim().slice(0,24);if(!n)return;fishD().board={on:true,name:n,photos:!!(f.elements.photos&&f.elements.photos.checked),details:!!(f.elements.details&&f.elements.details.checked),venues:!!(f.elements.venues&&f.elements.venues.checked),t:Date.now()};boardHash='';save();syncBoard().then(()=>{loadBoard(true);toast("You're on the leaderboard")});rr();return}
  if(f.id==='fform'){saveCatch(f);return}
@@ -1237,6 +1248,81 @@ function snapsCard(){if(snapList===null){loadSnaps();return''}
  return`<details data-keep="snaps" ${openD.has('snaps')?'open':''} style="margin-top:12px"><summary>Automatic backups (${snapList.length})</summary><p class="sub">The app quietly saves a copy on this device every half hour you use it, and before every sync. If anything ever goes missing, restore an earlier copy here.</p>
  ${snapList.map(s=>`<div class="fe"><div>${fm(s.t)}<small>${esc(s.why)} · ${s.vals} entries${s.catches?' · '+s.catches+' catches':''}</small></div><span></span><button class="btn sec" data-snap="${s.t}" style="height:40px">${snapArm===s.t?'Tap to confirm':'Restore'}</button></div>`).join('')||'<p class="empty">No backups yet.</p>'}</details>`}
 let snapArm=null;
+/* ---------- Friends' galleries, shared albums and a shared photo viewer ---------- */
+const newId=()=>{try{return crypto.randomUUID()}catch(e){const h=[...crypto.getRandomValues(new Uint8Array(16))].map(b=>b.toString(16).padStart(2,'0')).join('');return`${h.slice(0,8)}-${h.slice(8,12)}-4${h.slice(13,16)}-a${h.slice(17,20)}-${h.slice(20,32)}`}};
+let galMode='mine',alb=null,albs={at:0,list:[],members:{},items:{},err:''},gl=null,albForm=null,albPick=null,albInv=false,albArm=null,albBusy='';
+function myGalleryList(){const out=[];for(const c of catches())for(const p of c.photos||[])if(p.path)out.push({path:p.path,sp:c.species,g:c.g||null,d:c.date});return out.slice(0,48)}
+async function loadAlbums(force){if(!sb||!user)return;if(!force&&Date.now()-albs.at<15000)return;albs.at=Date.now();
+ try{const a=await sb.from('albums').select('id,owner,name,created_at');if(a.error)throw a.error;albs.list=(a.data||[]).sort((x,y)=>(y.created_at||'').localeCompare(x.created_at||''));
+  const ids=albs.list.map(x=>x.id),M={},I={};
+  if(ids.length){const m=await sb.from('album_members').select('album_id,user_id').in('album_id',ids);if(m.error)throw m.error;for(const r of m.data||[])(M[r.album_id]=M[r.album_id]||[]).push(r.user_id);
+   const it=await sb.from('album_items').select('id,album_id,user_id,path,info,created_at').in('album_id',ids);if(it.error)throw it.error;for(const r of it.data||[])(I[r.album_id]=I[r.album_id]||[]).push(r);
+   for(const k in I)I[k].sort((a,b)=>(b.created_at||'').localeCompare(a.created_at||''));
+   const uids=[...new Set(Object.values(M).flat())].filter(u=>!soc.people[u]);if(uids.length){const p=await sb.from('profiles').select('user_id,name,code,avatar').in('user_id',uids);for(const x of p.data||[])soc.people[x.user_id]=x}}
+  albs.members=M;albs.items=I;albs.err=''}catch(e){albs.err=socErr(e)}
+ if((view()==='fishing'&&fTab==='gallery')||view()==='album')rr()}
+const pname=id=>id===(user&&user.id)?'You':esc((soc.people[id]||{}).name||'Someone');
+function fishGallery(C){return`<div class="seg gseg">${[['mine','My photos'],['shared','Shared albums']].map(([k,l])=>`<button data-gmode="${k}" class="${galMode===k?'on':''}">${l}</button>`).join('')}</div>`+(galMode==='shared'?albumList():myGallery(C))}
+function albumList(){if(!SB_URL||!user)return'<section class="card"><p class="sub">Sign in from Settings to share albums with your mates.</p></section>';loadAlbums();loadSocial();
+ if(albs.err==='setup')return`<section class="card"><p class="sub">Shared albums aren't switched on on the server yet.</p></section>`;
+ const fr=friendIds();const form=albForm?`<section class="card"><h2>New shared album</h2><label class="f" style="margin-top:10px">Album name<input data-albname maxlength="40" value="${esc(albForm.name)}" placeholder="e.g. Lake trip, October"></label>
+ <p class="sub" style="margin:12px 0 6px">Who's in it?</p>${fr.length?`<div class="pickf">${fr.map(id=>`<button type="button" class="chip${albForm.sel.includes(id)?' on':''}" data-albsel="${id}">${albForm.sel.includes(id)?'✓ ':''}${pname(id)}</button>`).join('')}</div>`:'<p class="empty">Add friends on your profile first. You can still make an album just for you.</p>'}
+ <div class="row" style="margin-top:14px"><button class="btn" data-albcreate>Create album</button><button class="btn sec" data-albcancel>Cancel</button></div></section>`:`<button class="btn bigadd" data-albnew>+ New shared album</button>`;
+ const L=albs.list.map(a=>{const it=albs.items[a.id]||[],mem=albs.members[a.id]||[];return`<button class="albc" data-alb="${a.id}"><span class="albcov">${it[0]?bimg(it[0].path,a.name):`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">${AIC.camera}</svg>`}</span><span class="albt"><b>${esc(a.name)}</b><small>${it.length} photo${it.length===1?'':'s'} · ${mem.length} member${mem.length===1?'':'s'}</small><span class="avs">${mem.slice(0,5).map(u=>avatarImg((soc.people[u]||{}).avatar||(u===user.id?favAv():null),'xs')).join('')}</span></span></button>`}).join('');
+ return form+(L?`<div class="albs">${L}</div>`:(albs.at?'<p class="empty" style="margin-top:12px">No shared albums yet. Start one for your next trip and invite your mates.</p>':'<p class="sub">Loading albums…</p>'))}
+function albumPage(){const a=albs.list.find(x=>x.id===alb);const back=`<button class="pback" data-act="pback" aria-label="Back">‹</button>`;
+ const head=t=>`<header class="fhero sm">${scene().svg}<div class="fhin">${back}<p class="fgreet fx">Shared album</p><div class="fhtop"><h1>${t}</h1></div></div></header>`;
+ if(!a)return head('Album')+`<main class="wrap"><section class="card"><p class="sub">${albs.at?"This album isn't available. You may have left it or it was deleted.":'Loading…'}</p></section></main>`;
+ const mine=a.owner===user.id,mem=albs.members[a.id]||[],it=albs.items[a.id]||[],fr=friendIds().filter(id=>!mem.includes(id));
+ const pick=albPick?(()=>{const ps=[];for(const c of catches())(c.photos||[]).forEach((p,i)=>{if(p.path||1)ps.push({c,p,k:c.id+':'+i})});return`<div class="sheetbg"></div><div class="sheet" role="dialog" aria-label="Add photos"><div class="sheeth">Add to ${esc(a.name)}</div>
+  <label class="btn sec" style="display:flex;justify-content:center;margin:8px 0 12px">Upload from your phone<input type="file" accept="image/*" multiple data-albup hidden></label>
+  ${ps.length?`<p class="sub" style="margin:0 0 8px">Or pick from your catches</p><div class="pkg">${ps.map(({c,p,k})=>`<button class="pki${albPick.has(k)?' on':''}" data-albpk="${k}" aria-pressed="${albPick.has(k)}">${pimg(p,c.species)}<span>${esc(c.species)}</span></button>`).join('')}</div>`:'<p class="empty">Photos on your catches show here too.</p>'}
+  <div class="row" style="margin-top:14px"><button class="btn" data-albpkgo ${albPick.size?'':'disabled'}>Add ${albPick.size||''} photo${albPick.size===1?'':'s'}</button><button class="btn sec" data-albpkx>Cancel</button></div></div>`})():'';
+ return head(esc(a.name))+`<main class="wrap">
+ <section class="card"><div class="ch"><h2>Members</h2>${mine&&fr.length?`<button class="btn sec sm" data-albinv>+ Invite</button>`:''}</div>
+ ${albInv?`<div class="pickf" style="margin:10px 0">${fr.map(id=>`<button class="chip" data-albinvu="${id}">+ ${pname(id)}</button>`).join('')}</div>`:''}
+ ${mem.map(u=>`<div class="frow">${avatarImg((soc.people[u]||{}).avatar||(u===user.id?favAv():null),'sm')}<span class="frn">${pname(u)}${u===a.owner?'<small>Started this album</small>':''}</span>${mine&&u!==user.id?`<button class="btn sec sm" data-albkick="${u}">Remove</button>`:''}</div>`).join('')}</section>
+ <button class="btn bigadd" data-albadd ${albBusy?'disabled':''}>${albBusy||'+ Add photos'}</button>
+ ${it.length?`<div class="gal" style="margin-top:12px">${it.map((x,i)=>`<button class="gitem" data-gl="a:${i}" aria-label="Photo ${i+1}">${bimg(x.path,(x.info||{}).sp||'Photo')}<span>${(x.info||{}).sp?esc(x.info.sp)+(x.info.g?' · '+fW(x.info.g):''):''}<small>${pname(x.user_id)}</small></span></button>`).join('')}</div>`:'<p class="empty" style="margin-top:12px">No photos yet. Add the first one.</p>'}
+ <p class="sub" style="text-align:center;margin-top:18px">${mine?`<button class="linkbtn dlink" data-albdel>${albArm==='del'?'Tap again to delete the album for everyone':'Delete album'}</button>`:`<button class="linkbtn dlink" data-albleave>${albArm==='leave'?'Tap again to leave':'Leave album'}</button>`}</p></main>${pick}`}
+async function albCreate(){const name=(albForm.name||'').trim();if(!name){toast('Give the album a name');return}const id=newId();
+ let r=await sb.from('albums').insert({id,owner:user.id,name,created_at:new Date().toISOString()});if(r.error){toast(socErr(r.error)==='setup'?"Albums aren't switched on yet":'Could not create the album');return}
+ r=await sb.from('album_members').insert([user.id,...albForm.sel].map(u=>({album_id:id,user_id:u})));if(r.error)toast('Album made, but some friends could not be added');
+ albForm=null;alb=id;await loadAlbums(true);location.hash='album'}
+async function albAddBlobs(list){const a=alb;let n=0;albBusy='Adding photos…';rr();
+ for(const x of list){try{const small=await compress(x.blob,1400,.82),id=newId(),path=`albums/${a}/${user.id}_${id}.jpg`;
+  const u=await sb.storage.from(BUCKET).upload(path,small,{contentType:'image/jpeg'});if(u.error)throw u.error;
+  const r=await sb.from('album_items').insert({id,album_id:a,user_id:user.id,path,info:x.info||null,created_at:new Date().toISOString()});if(r.error)throw r.error;n++;albBusy=`Adding photos… ${n}/${list.length}`;rr()}catch(e){console.warn('album add',e)}}
+ albBusy='';toast(n===list.length?`Added ${n} photo${n===1?'':'s'}`:`Added ${n} of ${list.length}. Check your connection and try the rest again.`);await loadAlbums(true)}
+async function albPickGo(){const want=[...albPick];albPick=null;const list=[];
+ for(const k of want){const[cid,i]=k.split(':'),c=fishD().catches.find(x=>x.id===cid),p=c&&(c.photos||[])[+i];if(!p)continue;const b=await photoBlob(p).catch(()=>null);if(b)list.push({blob:b,info:{sp:c.species,g:c.g||null,d:c.date}})}
+ if(list.length)albAddBlobs(list);else{toast("Couldn't load those photos");rr()}}
+function glBox(){if(!gl)return'';const x=gl.list[gl.i];if(!x)return'';const n=gl.list.length,own=x.user_id&&x.user_id===user.id,canDel=x.item&&(own||(albs.list.find(a=>a.id===alb)||{}).owner===user.id);
+ return`<div class="lb" role="dialog" aria-modal="true" aria-label="Photo"><button class="lbx" data-lbclose aria-label="Close">×</button>${bimg(x.path,x.sp||'Photo','lbimg')}
+ <div class="lbcap"><b>${x.sp?esc(x.sp)+(x.g?' · '+fW(x.g):''):'&nbsp;'}</b><span>${[x.by,x.d?label(x.d):''].filter(Boolean).join(' · ')}</span>${canDel?`<button class="linkbtn" data-albrm="${x.item}" style="color:#ffb3b3;min-height:36px;justify-self:start">${albArm===x.item?'Tap again to remove':'Remove from album'}</button>`:''}</div>
+ ${n>1?`<button class="lbn l" data-glnav="${(gl.i-1+n)%n}" aria-label="Previous photo">‹</button><button class="lbn r" data-glnav="${(gl.i+1)%n}" aria-label="Next photo">›</button>`:''}</div>`}
+function openGl(kind,i){let list=[];if(kind==='f'){const c=soc.cards[pv];list=((c&&c.gallery)||[]).map(x=>({...x,by:esc((c||{}).name||'')}))}
+ else{list=(albs.items[alb]||[]).map(x=>({path:x.path,sp:(x.info||{}).sp,g:(x.info||{}).g,d:(x.info||{}).d,by:pname(x.user_id),user_id:x.user_id,item:x.id}))}gl={list,i};rr()}
+function albClick(t,ds){
+ if(ds.gmode){galMode=ds.gmode;albForm=null;rr();return true}
+ if(ds.albnew!=null){albForm={name:'',sel:[]};rr();setTimeout(()=>{const i=document.querySelector('[data-albname]');if(i)i.focus()},50);return true}
+ if(ds.albcancel!=null){albForm=null;rr();return true}
+ if(ds.albsel){const s=albForm.sel,i=s.indexOf(ds.albsel);i<0?s.push(ds.albsel):s.splice(i,1);rr();return true}
+ if(ds.albcreate!=null){albCreate();return true}
+ if(ds.alb){alb=ds.alb;albInv=false;albArm=null;location.hash='album';return true}
+ if(ds.albadd!=null){albPick=new Set();rr();return true}
+ if(ds.albpk){albPick.has(ds.albpk)?albPick.delete(ds.albpk):albPick.add(ds.albpk);rr();return true}
+ if(ds.albpkx!=null){albPick=null;rr();return true}
+ if(ds.albpkgo!=null){albPickGo();return true}
+ if(ds.albinv!=null){albInv=!albInv;rr();return true}
+ if(ds.albinvu){sb.from('album_members').insert({album_id:alb,user_id:ds.albinvu}).then(r=>{toast(r.error?'Could not add them':'Added to the album');albInv=false;loadAlbums(true)});return true}
+ if(ds.albkick){sb.from('album_members').delete().eq('album_id',alb).eq('user_id',ds.albkick).then(r=>{toast(r.error?'Could not remove them':'Removed from the album');loadAlbums(true)});return true}
+ if(ds.albleave!=null){if(albArm!=='leave'){albArm='leave';rr();return true}albArm=null;sb.from('album_members').delete().eq('album_id',alb).eq('user_id',user.id).then(r=>{toast(r.error?'Something went wrong':'You left the album');galMode='shared';location.hash='fishing';loadAlbums(true)});return true}
+ if(ds.albdel!=null){if(albArm!=='del'){albArm='del';rr();return true}albArm=null;const a=alb,paths=(albs.items[a]||[]).map(x=>x.path);(async()=>{if(paths.length)await sb.storage.from(BUCKET).remove(paths).catch(()=>{});const r=await sb.from('albums').delete().eq('id',a);toast(r.error?'Could not delete the album':'Album deleted');galMode='shared';location.hash='fishing';loadAlbums(true)})();return true}
+ if(ds.albrm){const id=ds.albrm;if(albArm!==id){albArm=id;rr();return true}albArm=null;const x=(albs.items[alb]||[]).find(y=>y.id===id);gl=null;(async()=>{const r=await sb.from('album_items').delete().eq('id',id);if(!r.error&&x)await sb.storage.from(BUCKET).remove([x.path]).catch(()=>{});toast(r.error?'Could not remove it':'Removed from the album');loadAlbums(true)})();return true}
+ if(ds.gl){const[k,i]=ds.gl.split(':');openGl(k,+i);return true}
+ if(ds.glnav!=null){gl.i=+ds.glnav;albArm=null;rr();return true}
+ return false}
 /* ---------- Profiles, achievements and friends ---------- */
 const AIC={hook:'<path d="M15 3v9.5a4.5 4.5 0 0 1-9 0V10l-2.5 2.5"/><circle cx="15" cy="3" r="1"/>',fish:'<path d="M3 12c3.5-4.5 8-6 12-5 2.5.6 4.5 2.6 6 5-1.5 2.4-3.5 4.4-6 5-4 1-8.5-.5-12-5z"/><circle cx="16.5" cy="11" r="1" fill="currentColor"/>',star:'<path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.5 6.7 19.4l1.2-6L3.4 9.3l6-.7z"/>',scale:'<path d="M12 4v16M6 20h12M5 7h14M5 7l-3 6a3 3 0 0 0 6 0zM19 7l-3 6a3 3 0 0 0 6 0z"/>',camera:'<path d="M3 8h4l2-3h6l2 3h4v11H3z"/><circle cx="12" cy="13" r="3.5"/>',moon:'<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>',sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',snow:'<path d="M12 2v20M3.3 7l17.4 10M3.3 17L20.7 7M9 4l3 2 3-2M9 20l3-2 3 2"/>',wave:'<path d="M2 10c3-3 5-3 8 0s5 3 8 0 3-2 4-2M2 16c3-3 5-3 8 0s5 3 8 0 3-2 4-2"/>',globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/>',pin:'<path d="M12 21s-7-6.5-7-12a7 7 0 0 1 14 0c0 5.5-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/>',heart:'<path d="M12 20s-8-5-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 9c0 6-8 11-8 11z"/>',flame:'<path d="M12 3c1 4 6 6 6 11a6 6 0 0 1-12 0c0-3 2-4.5 2-7.5 2 1 3 3.5 3 3.5s0-4 1-7z"/>',cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',trophy:'<path d="M8 4h8v5a4 4 0 0 1-8 0zM8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M8 20h8M10 17h4v3h-4z"/>'};
 const ACH=[
@@ -1273,7 +1359,7 @@ function myStats(){const C=fishD().catches,all=speciesAll(),grp=n=>(all.find(s=>
  return s}
 function buildCard(){const P=prof(),s=myStats(),ach={};for(const a of ACH)ach[a.id]=Math.min(s[a.k]||0,a.goal);
  const pb={};for(const c of fishD().catches)if(c.g&&(!pb[c.species]||c.g>pb[c.species]))pb[c.species]=c.g;
- return{v:1,name:P.name,avatar:favAv(),stats:{catches:s.catches,species:s.species,big:s.big?{sp:s.big.species,g:s.big.g}:null,streak:null},pbs:Object.entries(pb).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([sp,g])=>({sp,g})),ach}}
+ return{v:1,name:P.name,avatar:favAv(),gallery:P.gallery===false?[]:myGalleryList(),stats:{catches:s.catches,species:s.species,big:s.big?{sp:s.big.species,g:s.big.g}:null,streak:null},pbs:Object.entries(pb).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([sp,g])=>({sp,g})),ach}}
 const achDone=(card,a)=>(card.ach[a.id]||0)>=a.goal;
 let soc={at:0,err:'',fr:[],people:{},cards:{},msg:''},socHash='',pv=null,frArm=null;
 const socErr=e=>/relation|does not exist|schema cache/i.test((e&&e.message)||'')?'setup':((e&&e.message)||'Something went wrong');
@@ -1316,12 +1402,12 @@ function profilePage(){const mine=view()==='profile',FO=true,back=`<button class
  if(!mine){const card=soc.cards[pv],per=soc.people[pv]||{},rel=relWith(pv);
   if(!rel||rel.status!=='accepted')return head(esc(per.name||'Profile'))+`<main class="wrap"><section class="card"><p class="sub">You can see this profile once you're friends.</p></section></main>`;
   if(!card)return head(esc(per.name||'Profile'))+`<main class="wrap"><section class="card"><p class="sub">${per.name?esc(per.name)+" hasn't":"They haven't"} opened the app since profiles were added, so there's nothing to show yet.</p></section></main>`;
-  return head(esc(card.name))+`<main class="wrap">${profTop(card,false)}${pbCard(card)}<section class="card"><h2>Achievements</h2>${achWall(card,'am'+pv)}</section><p class="sub" style="text-align:center"><button class="linkbtn dlink" data-frdel="${rel.id}">${frArm===rel.id?'Tap again to remove':'Remove friend'}</button></p></main>`}
+  return head(esc(card.name))+`<main class="wrap">${profTop(card,false)}${pbCard(card)}${(card.gallery||[]).length?`<section class="card"><div class="ch"><h2>Gallery</h2><span class="sub">${card.gallery.length} photo${card.gallery.length===1?'':'s'}</span></div><div class="gal" style="margin-top:10px">${card.gallery.map((x,i)=>`<button class="gitem" data-gl="f:${i}" aria-label="${esc(x.sp)}">${bimg(x.path,x.sp)}<span>${esc(x.sp)}${x.g?' · '+fW(x.g):''}</span></button>`).join('')}</div></section>`:''}<section class="card"><h2>Achievements</h2>${achWall(card,'am'+pv)}</section><p class="sub" style="text-align:center"><button class="linkbtn dlink" data-frdel="${rel.id}">${frArm===rel.id?'Tap again to remove':'Remove friend'}</button></p></main>`}
  const card=buildCard(),P=prof(),inn=pendingIn(),out=soc.fr.filter(x=>x.status==='pending'&&x.from_id===user.id),fr=friendIds();
  const nm=id=>esc((soc.people[id]||{}).name||'Someone'),avOf=id=>(soc.cards[id]||{}).avatar||(soc.people[id]||{}).avatar;
  const setup=soc.err==='setup'?`<section class="card"><p class="sub">Profiles and friends aren't switched on on the server yet. Your achievements still work here.</p></section>`:'';
   return head('Your angler profile')+`<main class="wrap">${setup}${profTop(card,true)}
- <details class="card pedit" data-keep="pedit" ${openD.has('pedit')?'open':''}><summary>Edit profile</summary><div class="grid3"><label class="f" style="grid-column:1/-1">Display name<input data-prof="name" maxlength="24" value="${esc(P.name)}"></label><div style="grid-column:1/-1"><span class="f" style="display:block;margin-bottom:6px">Profile picture</span><div class="pfps">${PFP.map(([k,f,n])=>`<button type="button" class="pfpb${favAv()===k?' on':''}" data-pfp="${k}" aria-label="${esc(n)}" aria-pressed="${favAv()===k}"><img src="pfp/${f}" alt="" loading="lazy"></button>`).join('')}</div></div></div></details>
+ <details class="card pedit" data-keep="pedit" ${openD.has('pedit')?'open':''}><summary>Edit profile</summary><div class="grid3"><label class="f" style="grid-column:1/-1">Display name<input data-prof="name" maxlength="24" value="${esc(P.name)}"></label><div style="grid-column:1/-1"><span class="f" style="display:block;margin-bottom:6px">Profile picture</span><div class="pfps">${PFP.map(([k,f,n])=>`<button type="button" class="pfpb${favAv()===k?' on':''}" data-pfp="${k}" aria-label="${esc(n)}" aria-pressed="${favAv()===k}"><img src="pfp/${f}" alt="" loading="lazy"></button>`).join('')}</div></div></div><label class="tgl" style="margin-top:10px"><span>Show my catch photos to friends<small>Friends see your photo gallery on your profile. Venues stay private.</small></span><input type="checkbox" role="switch" data-prof="gallery" ${P.gallery!==false?'checked':''}></label></details>
  ${pbCard(card)}
  <section class="card"><h2>Achievements</h2>${achWall(card,'ame')}</section>
  <h3 class="sgh">Friends</h3>
