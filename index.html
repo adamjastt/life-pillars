@@ -94,7 +94,8 @@ summary:hover{border-color:#ffffff4d}
 .cell.cur{outline:2px solid var(--ink);outline-offset:1px}
 table{width:100%;border-collapse:collapse;font-size:15px}
 td,th{padding:9px 4px;border-top:1px solid var(--line);text-align:left}th{color:var(--mut);font-weight:500;font-size:13px}
-td.n,th.n{text-align:right;white-space:nowrap}
+td.n,th.n{text-align:right;white-space:nowrap}th.n{white-space:normal}
+@media(max-width:380px){table{font-size:13px}td,th{padding:8px 3px}}
 .up{color:#3cc985}.down{color:var(--bad)}
 .mset{display:grid;grid-template-columns:2fr 1fr 1fr 1.3fr 1fr 1fr 44px;gap:6px;align-items:end;padding:8px 0;border-top:1px solid var(--line)}
 .mset input,.mset select{padding:8px;height:44px}
@@ -259,7 +260,7 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 @media(prefers-reduced-motion:no-preference){.bar i{transition:width .3s}}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><script>
 {
-const VERSION='5.8';
+const VERSION='5.9';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -349,7 +350,8 @@ if(!D||!D.cfg)D={cfg:PRESET(),days:{},foods:[],recent:[],updated:0};
 D.foods=D.foods||[];D.recent=D.recent||[];D.weights=D.weights||[];D.wdel=D.wdel||{};
 if(!D.onboarded&&(D.cfgU||Object.keys(D.days).length))D.onboarded=true;
 function save(){stamp();takeSnap('While using');D.updated=Date.now();try{localStorage.setItem('pillars2',JSON.stringify(D))}catch(e){toast('Could not save — storage is full or blocked')}queueSync()}
-let cur=TODAY;try{cur=sessionStorage.getItem('pcur')||TODAY}catch(e){}
+let cur=TODAY;try{const pc=JSON.parse(sessionStorage.getItem('pcur2')||'null');if(pc&&Date.now()-pc.t<10*60e3&&pc.d<=TODAY)cur=pc.d}catch(e){}
+const keepDay=()=>{try{sessionStorage.setItem('pcur2',JSON.stringify({d:cur,t:Date.now()}))}catch(e){}};
 if(cur>TODAY)cur=TODAY;
 let meal=(h=>h<11?'Breakfast':h<15?'Lunch':h<21?'Dinner':'Snacks')(new Date().getHours());
 const openP=new Set();let results=[],shown=[],picked=null,status='',resetArm=false,lastQ='';
@@ -895,7 +897,7 @@ function history(){const days=[];for(let i=13;i>=0;i--)days.push(shift(TODAY,-i)
  return`<header class="hero"><div class="in"><div class="top"><h1>Progress</h1><span class="sub">${streak()}-day streak</span></div></div></header>
  <main class="wrap">${weighSection()}<section class="card"><h2>Last 14 days</h2><p class="sub">Tap a square to open that day.</p><div class="hist"><span></span>${days.map(d=>`<span class="h">${new Date(d+'T12:00:00').toLocaleDateString('en-GB',{weekday:'narrow'})}</span>`).join('')}
  ${rows.map(r=>`<span class="l">${esc(r.s)}</span>${days.map(d=>{const has=logged(d),s=has?r.fn(d):0;return`<button class="cell${d===cur?' cur':''}" data-go="${d}" aria-label="${esc(r.s)} ${label(d)}: ${has?s+'%':'nothing logged'}" style="${has?cellBg(r.c,s):''}"></button>`}).join('')}`).join('')}</div></section>
- <section class="card"><h2>This week vs last week</h2><table><thead><tr><th>Pillar</th><th class="n">Last 7 days</th><th class="n">Previous 7</th><th class="n">Change</th></tr></thead><tbody>
+ <section class="card"><h2>This week vs last week</h2><table><thead><tr><th>Pillar</th><th class="n">This week</th><th class="n">Last week</th><th class="n">Change</th></tr></thead><tbody>
  ${rows.map(r=>{const a=avg(r.fn,TODAY,7),b=avg(r.fn,shift(TODAY,-7),7),ch=a!=null&&b!=null?a-b:null;return`<tr><td>${esc(r.n)}</td><td class="n">${a==null?'–':a+'%'}</td><td class="n">${b==null?'–':b+'%'}</td><td class="n ${ch>0?'up':ch<0?'down':''}">${ch==null?'–':(ch>0?'+':'')+ch}</td></tr>`}).join('')}</tbody></table></section>
  <section class="card"><h2>Focus next</h2><p class="sub">Your least-hit goals over the last 7 days.</p>${ms.map(({m,s})=>`<div class="mrow"><div><div class="mn">${esc(m.n)}</div><div class="mt">${goalTxt(m)}</div></div><b class="num">${Math.round(s*100)}%</b><div class="bar"><i style="width:${Math.round(s*100)}%"></i></div></div>`).join('')}</section></main>`}
 function settings(){const types=[['min','At least'],['max','At most'],['near','Around']];
@@ -915,7 +917,8 @@ const ICONS={today:'<circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/>'
 const tabList=()=>[['today','Today'],['food','Food'],['history','Progress'],...(D.cfg.fishTab!==false?[['fishing','Fishing']]:[]),['settings','Settings']];
 const tabs=v=>`<nav class="tabs" style="--n:${tabList().length}">${tabList().map(([k,l])=>`<a href="#${k}" class="${v===k?'on':''}" ${v===k?'aria-current="page"':''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[k]}</svg>${l}</a>`).join('')}</nav>`;
 const view=()=>{const h=location.hash.slice(1);return tabList().some(t=>t[0]===h)?h:'today'};
-function render(){if(!D.onboarded||ob.done){root.innerHTML=onboard();return}const v=view();root.innerHTML=(v==='food'?food():v==='history'?history():v==='settings'?settings():v==='fishing'?fishing():today())+((lb||spSel||celeb||secret)&&v==='fishing'?'':tabs(v));document.body.classList.toggle('fishmode',v==='fishing');if(v==='food')renderResults();if(v==='history')drawW();if(v==='fishing')hydratePhotos()}
+function keepOpen(){document.querySelectorAll('details[data-keep]').forEach(d=>d.open?openD.add(d.dataset.keep):openD.delete(d.dataset.keep));document.querySelectorAll('details[data-pi]').forEach(d=>d.open?openP.add(+d.dataset.pi):openP.delete(+d.dataset.pi))}
+function render(){keepOpen();if(!D.onboarded||ob.done){root.innerHTML=onboard();return}const v=view();root.innerHTML=(v==='food'?food():v==='history'?history():v==='settings'?settings():v==='fishing'?fishing():today())+((lb||spSel||celeb||secret)&&v==='fishing'?'':tabs(v));document.body.classList.toggle('fishmode',v==='fishing');if(v==='food')renderResults();if(v==='history')drawW();if(v==='fishing')hydratePhotos()}
 function rr(){const y=scrollY;render();scrollTo(0,y)}
 let tt;function toast(t){const e=document.getElementById('toast');e.innerHTML=`<div class="toast" role="status">${esc(t)}</div>`;clearTimeout(tt);tt=setTimeout(()=>e.innerHTML='',2600)}
 
@@ -969,9 +972,9 @@ root.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('[data-f
   if(o==='account'){ob.done=false;const again=ob.again;ob.again=false;location.hash='settings';render();scrollTo(0,0);if(!again)tourPending=true}
   if(o==='start'){ob.done=false;const again=ob.again;ob.again=false;location.hash='today';render();scrollTo(0,0);if(!again)setTimeout(startTour,300)}
   return}
- if(ds.nav!=null){const n=+ds.nav;cur=n===0?TODAY:shift(cur,n);if(cur>TODAY)cur=TODAY;try{sessionStorage.setItem('pcur',cur)}catch(x){}rr();return}
+ if(ds.nav!=null){const n=+ds.nav;cur=n===0?TODAY:shift(cur,n);if(cur>TODAY)cur=TODAY;keepDay();rr();return}
  if(ds.inc||ds.dec){const id=ds.inc||ds.dec,m=mById(id);if(!m)return;const st=+m.st||1,v=val(cur,m)||0;setV(id,Math.max(0,r2(v+(ds.inc?st:-st))));save();rr();return}
- if(ds.go){cur=ds.go;try{sessionStorage.setItem('pcur',cur)}catch(x){}location.hash='today';return}
+ if(ds.go){cur=ds.go;keepDay();location.hash='today';return}
  if(ds.meal){meal=ds.meal;rr();return}
  if(ds.pick!=null){picked=shown[+ds.pick];renderResults();const a=document.getElementById('amt');if(a){a.focus();a.select()}return}
  if(ds.delfood!=null){const x=day(cur),e=x.food[+ds.delfood];if(e){if(e.id){x.fdel=x.fdel||{};x.fdel[e.id]=Date.now()}else x.lu=Date.now();x.food.splice(+ds.delfood,1)}save();rr();return}
@@ -1188,6 +1191,9 @@ document.getElementById('tour').addEventListener('click',e=>{const b=e.target.cl
  if(a==='next'){tour.i++;if(tour.i>=TOUR().length){endTour();return}showTour()}if(a==='back'){tour.i=Math.max(0,tour.i-1);showTour()}if(a==='skip')endTour()});
 addEventListener('resize',()=>{if(tour)showTour()});addEventListener('keydown',e=>{if(tour&&e.key==='Escape')endTour();if(tour&&e.key==='ArrowRight'){tour.i++;tour.i>=TOUR().length?endTour():showTour()}});
 applyIcon();
+/* New day while the app was open or suspended: reload so Today is today */
+function dayCheck(){if(iso(new Date())!==TODAY){try{sessionStorage.removeItem('pcur2')}catch(e){}if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();setTimeout(()=>location.reload(),50)}}
+addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')dayCheck()});setInterval(dayCheck,60e3);
 snapAll();render();initSync();setTimeout(()=>takeSnap('On open'),1000);setTimeout(checkUpdate,1500);setInterval(()=>{if(document.visibilityState==='visible')checkUpdate()},5*60*1000);
 try{const pv=localStorage.getItem('pver');if(pv&&pv!==VERSION)setTimeout(()=>toast('Updated to v'+VERSION),600);localStorage.setItem('pver',VERSION)}catch(e){}
 }
