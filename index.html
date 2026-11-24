@@ -387,9 +387,10 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 .pmi svg{flex:none;width:24px;height:24px;color:#d9b45a}.pmi span:not(.pill){flex:1}.pmi small{display:block;font-weight:400;font-size:12px;color:#a9c0b0}.pill.red{background:#ff5a5f;color:#fff}
 .code.big{font-size:26px;letter-spacing:.16em}
 @media(prefers-reduced-motion:reduce){.pmenu{transition:none}}
+@media(max-width:700px){.fhero:not(.sm){height:calc(min(80vw,340px) + env(safe-area-inset-top))}}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><div id="achpop" aria-live="polite"></div><script>
 {
-const VERSION='7.13';
+const VERSION='7.14';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -865,7 +866,7 @@ function skyAt(t){const K=skyKeys(),SKYK=K.keys;let k=0;while(k<SKYK.length-2&&S
 const sceneHour=()=>{const d=new Date();return window.__sceneHour??(d.getHours()+d.getMinutes()/60)};
 const greetAt=t=>{const{sr,ss}=skyKeys();return(t<sr-1.5?'Night session':t<sr+2?'Early start. Tight lines':t<ss-1.5?'Tight lines':t<ss+1.2?'Golden hour. Tight lines':'Night session')+(D.cfg.name?', '+D.cfg.name:'')};
 function tickScene(){const sv=document.querySelector('.scene');if(!sv)return;const t=sceneHour(),S=skyAt(t),$$=id=>sv.querySelector('#'+id);
- S.s.forEach((c,i)=>$$('sk'+i).setAttribute('stop-color',c));$$('cg1').setAttribute('stop-color',S.cl);$$('wt0').setAttribute('stop-color',S.w[0]);$$('wt1').setAttribute('stop-color',S.w[1]);
+ S.s.forEach((c,i)=>$$('sk'+i).setAttribute('stop-color',c));if($$('skx'))$$('skx').setAttribute('fill',S.s[0]);$$('cg1').setAttribute('stop-color',S.cl);$$('wt0').setAttribute('stop-color',S.w[0]);$$('wt1').setAttribute('stop-color',S.w[1]);
  $$('gl0').setAttribute('stop-color',S.sun);$$('gl0').setAttribute('stop-opacity',S.gl);$$('gl1').setAttribute('stop-color',S.sun);
  for(const id of['sunc','glc']){$$(id).setAttribute('cx',S.sx.toFixed(1));$$(id).setAttribute('cy',S.sy.toFixed(1))}$$('sunc').setAttribute('r',S.r);$$('sunc').setAttribute('fill',S.sun);
  $$('far').setAttribute('fill',S.far);$$('near').setAttribute('fill',S.near);sv.querySelectorAll('.reed path').forEach(p=>p.setAttribute('stroke',S.near));
@@ -873,10 +874,10 @@ function tickScene(){const sv=document.querySelector('.scene');if(!sv)return;con
  $$('shim').setAttribute('transform',`translate(${(S.sx-200).toFixed(1)} 0)`);$$('shim').querySelectorAll('rect').forEach(r=>r.setAttribute('fill',S.sun));
  const g=document.querySelector('.fgreet:not(.fx)');if(g&&!celeb)g.textContent=greetAt(t)}
 setInterval(()=>{if(document.visibilityState==='visible'&&document.querySelector('.scene'))tickScene()},30000);
-function scene(){const t=sceneHour(),S=skyAt(t),R=fRng('stars');let stars='';for(let i=0;i<40;i++)stars+=`<circle cx="${(R()*400).toFixed(0)}" cy="${(R()*84).toFixed(0)}" r="${(R()*.9+.3).toFixed(1)}" fill="#fff" opacity="${(R()*.6+.3).toFixed(2)}" class="tw" style="animation-delay:${(R()*4).toFixed(1)}s"/>`;
+function scene(){const t=sceneHour(),S=skyAt(t),R=fRng('stars');let stars='';for(let i=0;i<90;i++)stars+=`<circle cx="${(R()*400).toFixed(0)}" cy="${(R()*234-150).toFixed(0)}" r="${(R()*.9+.3).toFixed(1)}" fill="#fff" opacity="${(R()*.6+.3).toFixed(2)}" class="tw" style="animation-delay:${(R()*4).toFixed(1)}s"/>`;
  const reeds=(x0,n,dir)=>{let o='';for(let i=0;i<n;i++){const x=x0+i*5*dir,hh=24+((i*37)%17);o+=`<path d="M${x} 170 q${dir*-3} ${-hh*.6} ${dir*2} ${-hh}" stroke="${S.near}" stroke-width="2" fill="none"/>`;if(i%3===0)o+=`<rect x="${x+dir*1.2-1.6}" y="${170-hh-6}" width="3.2" height="9" rx="1.6" fill="#3a2a18"/>`}return`<g class="reed" style="transform-origin:${x0}px 170px">${o}</g>`};
- return{greet:esc(greetAt(t)),svg:`<svg class="scene" viewBox="0 0 400 170" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><linearGradient id="sk" x1="0" y1="0" x2="0" y2="1">${S.s.map((c,i)=>`<stop id="sk${i}" offset="${[0,.2,.4,.58][i]}" stop-color="${c}"/>`).join('')}</linearGradient><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop id="cg1" offset="1" stop-color="${S.cl}" stop-opacity=".85"/></linearGradient><linearGradient id="wt" x1="0" y1="0" x2="0" y2="1"><stop id="wt0" offset="0" stop-color="${S.w[0]}"/><stop id="wt1" offset="1" stop-color="${S.w[1]}"/></linearGradient><radialGradient id="gl"><stop id="gl0" offset="0" stop-color="${S.sun}" stop-opacity="${S.gl}"/><stop id="gl1" offset="1" stop-color="${S.sun}" stop-opacity="0"/></radialGradient></defs>
- <rect width="400" height="170" fill="url(#sk)"/><g id="stars" opacity="${S.st.toFixed(2)}">${stars}</g><circle id="glc" cx="${S.sx}" cy="${S.sy}" r="60" fill="url(#gl)"/><circle id="sunc" cx="${S.sx}" cy="${S.sy}" r="${S.r}" fill="${S.sun}"/>
+ return{greet:esc(greetAt(t)),svg:`<svg class="scene" viewBox="0 -150 400 320" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><linearGradient id="sk" x1="0" y1="0" x2="0" y2="1">${S.s.map((c,i)=>`<stop id="sk${i}" offset="${[0,.2,.4,.58][i]}" stop-color="${c}"/>`).join('')}</linearGradient><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop id="cg1" offset="1" stop-color="${S.cl}" stop-opacity=".85"/></linearGradient><linearGradient id="wt" x1="0" y1="0" x2="0" y2="1"><stop id="wt0" offset="0" stop-color="${S.w[0]}"/><stop id="wt1" offset="1" stop-color="${S.w[1]}"/></linearGradient><radialGradient id="gl"><stop id="gl0" offset="0" stop-color="${S.sun}" stop-opacity="${S.gl}"/><stop id="gl1" offset="1" stop-color="${S.sun}" stop-opacity="0"/></radialGradient></defs>
+ <rect id="skx" y="-150" width="400" height="152" fill="${S.s[0]}"/><rect width="400" height="170" fill="url(#sk)"/><g id="stars" opacity="${S.st.toFixed(2)}">${stars}</g><circle id="glc" cx="${S.sx}" cy="${S.sy}" r="60" fill="url(#gl)"/><circle id="sunc" cx="${S.sx}" cy="${S.sy}" r="${S.r}" fill="${S.sun}"/>
  <g id="clouds" opacity="${S.co.toFixed(2)}"><g class="clouds">${[[70,40,46,5],[110,33,30,4],[250,52,58,6],[300,45,34,4],[180,22,40,3.5]].map(([x,y,rx,ry])=>`<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="url(#cg)"/>`).join('')}</g></g><g class="mist"><ellipse cx="120" cy="104" rx="90" ry="6" fill="#fff" opacity=".12"/><ellipse cx="300" cy="100" rx="70" ry="5" fill="#fff" opacity=".1"/></g>
  <path id="far" d="M0 104 Q50 78 110 92 T230 84 T330 90 T400 82 V118 H0Z" fill="${S.far}"/>
  <path id="near" d="M0 116 ${Array.from({length:21},(_,i)=>`Q${i*20+10} ${100+((i*53)%14)} ${i*20+20} 114`).join(' ')} V122 H0Z" fill="${S.near}"/>
