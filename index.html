@@ -191,14 +191,21 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 .celeb .btn{width:100%;height:52px;font-size:17px;margin-top:10px}.celeb .fart{margin:8px 0}
 .bubbles i{position:absolute;bottom:-20px;border-radius:99px;border:1.5px solid #ffffff55;animation:bub 3.2s ease-in infinite}
 @keyframes bub{to{transform:translateY(-480px);opacity:0}}
+.tour{position:fixed;inset:0;z-index:60}
+.tdim{position:fixed;inset:0;background:#000b}
+.tspot{position:fixed;border-radius:16px;box-shadow:0 0 0 9999px #000b,0 0 0 2px #ffffffaa inset;pointer-events:none;transition:all .25s ease}
+.tcard{position:fixed;width:min(360px,calc(100vw - 24px));background:var(--card);color:var(--ink);border:1px solid #ffffff22;border-radius:18px;padding:16px 18px;box-shadow:0 14px 40px #0009}
+.tcard h3{font-family:Sora,Inter,sans-serif;font-size:19px;margin:2px 0 6px;color:var(--ink)}.tcard p{margin:0 0 12px;color:var(--mut);font-size:15px}.tcard .tstep{font-size:12px;margin:0;color:var(--mut)}
+.tcard .row{gap:8px}
+@media(prefers-reduced-motion:reduce){.tspot{transition:none}}
 .upd{position:fixed;left:50%;top:calc(10px + env(safe-area-inset-top));transform:translateX(-50%);z-index:30;display:flex;gap:10px;align-items:center;background:var(--ink);color:var(--bg);padding:8px 8px 8px 14px;border-radius:14px;font-size:14px;box-shadow:0 6px 24px #0008;max-width:94vw}
 .upd button{height:36px;border:0;border-radius:10px;padding:0 12px;background:var(--acc);color:#fff;font-weight:600}
 @media(max-width:700px){.wheelwrap{grid-template-columns:1fr;gap:16px}.wheel{max-width:250px;margin:0 auto}.cards{grid-template-columns:1fr}.kcal{grid-template-columns:1fr}
 .mset{grid-template-columns:repeat(3,minmax(0,1fr))}.mset .mname{grid-column:1/-1}.ptitle{grid-template-columns:minmax(0,1fr) 56px}.ptitle .ps{display:none}}
 @media(prefers-reduced-motion:no-preference){.bar i{transition:width .3s}}
-</style></head><body><div id="root"></div><div id="toast"></div><script>
+</style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><script>
 {
-const VERSION='5.1';
+const VERSION='5.2';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -836,6 +843,7 @@ function settings(){const types=[['min','At least'],['max','At most'],['near','A
  <section class="card"><h2>Targets</h2><div class="grid3" style="margin-top:10px"><label class="f">Carbs target (g)<input inputmode="decimal" data-cfg="mc" value="${D.cfg.macros.c}"></label><label class="f">Fat target (g)<input inputmode="decimal" data-cfg="mf" value="${D.cfg.macros.f}"></label><label class="f">Streak threshold (%)<input inputmode="decimal" data-cfg="good" value="${D.cfg.good}"></label></div><p class="sub">Calories and protein targets are set on their metrics above.</p></section>
  <section class="card"><h2>Backup</h2><p class="sub">Data lives in this browser only. Download a backup now and then, and use it to move to a new phone.</p><div class="row"><button class="btn" data-act="dl">Download backup</button><label class="btn sec" style="display:inline-flex;align-items:center">Restore from file<input type="file" accept=".json,application/json" data-restore hidden></label><button class="btn sec" data-act="copy">Copy backup</button></div></section>
  <section class="card"><h2>Hobbies</h2><p class="sub">Hobby sections add an extra tab. Turn on the ones you want.</p><label class="row" style="min-height:44px;margin-top:8px"><input type="checkbox" data-fset="tab" ${D.cfg.fishTab!==false?'checked':''} style="width:22px;height:22px"> Fishing: catch log, photos and species checklist</label>${D.cfg.fishTab!==false?`<label class="f" style="margin-top:8px">Fish weights in<select data-fset="unit"><option value="lboz" ${fUnit()==='lboz'?'selected':''}>Pounds and ounces</option><option value="kg" ${fUnit()==='kg'?'selected':''}>Kilograms</option></select></label>${iconUnlocked()?`<p class="sub" style="margin:14px 0 6px">App icon (secret edition unlocked)</p><div class="row"><button class="btn ${iconPref()==='std'?'':'sec'}" data-act="iconstd">Standard</button><button class="btn ${iconPref()==='fish'?'':'sec'}" data-act="iconfish">Fishing edition</button></div><p class="sub">After switching, remove the app from your home screen and add it again from Safari.</p>`:''}<p class="sub" style="margin:14px 0 6px">The Bank's sky follows real sunrise and sunset. It uses ${(()=>{try{return localStorage.getItem('pgeo')?'your location':'central England'}catch(e){return'central England'}})()} (sunrise ${hm(skyKeys().sr)}, sunset ${hm(skyKeys().ss)} today).</p><div class="row"><button class="btn sec" data-act="geo">Use my location</button>${(()=>{try{return localStorage.getItem('pgeo')?'<button class="btn sec" data-act="geooff">Use central England</button>':''}catch(e){return''}})()}</div>`:''}</section>
+ <section class="card"><h2>App tour</h2><p class="sub">A 30-second walk through the app.</p><button class="btn sec" data-act="tour">Replay the tour</button></section>
  <section class="card"><h2>Preset</h2><p class="sub">Start again from a different preset (${esc((PRESETS[D.cfg.preset]||PRESETS.entrepreneur).n)} now). Your logged days are kept; goals that aren't in the new preset stop counting.</p><button class="btn sec" data-act="represet">Switch preset</button></section></main>`}
 const ICONS={today:'<circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/>',food:'<path d="M7 3v8a2 2 0 0 0 4 0V3M9 11v10M17 3c-2 0-3 3-3 6s1 4 3 4v8"/>',history:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',fishing:'<path d="M3 12c3.5-4.5 8-6 12-5 2.5.6 4.5 2.6 6 5-1.5 2.4-3.5 4.4-6 5-4 1-8.5-.5-12-5z"/><path d="M3 12l-1-3M3 12l-1 3"/><circle cx="16.5" cy="11" r="1" fill="currentColor"/>',settings:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/>'};
 const tabList=()=>[['today','Today'],['food','Food'],['history','Progress'],...(D.cfg.fishTab!==false?[['fishing','Fishing']]:[]),['settings','Settings']];
@@ -880,7 +888,7 @@ function addEntry(it,q,saveIt){const k=it.unit==='g'?q/100:q;
 
 /* ---------- Events ---------- */
 addEventListener('keydown',e=>{if(e.key==='Escape'&&(lb||spSel||celeb||secret)){lb=null;spSel=null;celeb=null;secret=false;rr()}});
-addEventListener('hashchange',()=>{lb=null;spSel=null;celeb=null;picked=null;status='';lastQ='';render();scrollTo(0,0)});
+addEventListener('hashchange',()=>{if(tourPending&&location.hash==='#today'){tourPending=false;setTimeout(startTour,300)}lb=null;spSel=null;celeb=null;picked=null;status='';lastQ='';render();scrollTo(0,0)});
 root.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('[data-floattap]')){floatTap();return}if(e.target.classList&&e.target.classList.contains('sheetbg')&&!celeb){spSel=null;rr();return}const t=e.target.closest('button,a');if(!t)return;const ds=t.dataset;
  if(fishClick(t,ds))return;
  if(ds.wr!=null){wRange=+ds.wr;rr();return}
@@ -891,8 +899,8 @@ root.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('[data-f
   if(o==='back'){ob.step=Math.max(0,ob.step-1);render();scrollTo(0,0)}
   if(o==='cancel'){D.onboarded=true;ob.again=false;location.hash='settings';render()}
   if(o==='signin'){D.onboarded=true;try{localStorage.setItem('pillars2',JSON.stringify(D))}catch(x){}location.hash='settings';render();scrollTo(0,0)}
-  if(o==='account'){ob.done=false;location.hash='settings';ob.again=false;render();scrollTo(0,0)}
-  if(o==='start'){ob.done=false;location.hash='today';ob.again=false;render();scrollTo(0,0)}
+  if(o==='account'){ob.done=false;const again=ob.again;ob.again=false;location.hash='settings';render();scrollTo(0,0);if(!again)tourPending=true}
+  if(o==='start'){ob.done=false;const again=ob.again;ob.again=false;location.hash='today';render();scrollTo(0,0);if(!again)setTimeout(startTour,300)}
   return}
  if(ds.nav!=null){const n=+ds.nav;cur=n===0?TODAY:shift(cur,n);if(cur>TODAY)cur=TODAY;try{sessionStorage.setItem('pcur',cur)}catch(x){}rr();return}
  if(ds.inc||ds.dec){const id=ds.inc||ds.dec,m=mById(id);if(!m)return;const st=+m.st||1,v=val(cur,m)||0;setV(id,Math.max(0,r2(v+(ds.inc?st:-st))));save();rr();return}
@@ -904,6 +912,7 @@ root.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('[data-f
  if(ds.addm!=null){openP.add(+ds.addm);P()[+ds.addm].m.push({id:uid('m'),n:'New metric',u:'',t:1,d:'min',st:1,w:1});save();rr();return}
  if(ds.delp!=null){if(P().length<2){toast('Keep at least one pillar');return}if(t.textContent!=='Tap to confirm'){t.textContent='Tap to confirm';return}P().splice(+ds.delp,1);save();rr();return}
  const a=ds.act;if(!a)return;
+ if(a==='tour'){startTour();return}
  if(a==='iconfish'||a==='iconstd'){try{localStorage.setItem('picon',a==='iconfish'?'fish':'std')}catch(e){}applyIcon();secret=false;rr();toast(a==='iconfish'?'Fishing icon on. Remove the app from your home screen and add it again to see it.':'Standard icon on. Re-add the app to your home screen to see it.');return}
  if(a==='secretclose'){secret=false;rr();return}
  if(a==='geo'){if(!navigator.geolocation){toast('Location is not available on this device');return}toast('Finding your location…');navigator.geolocation.getCurrentPosition(pos=>{try{localStorage.setItem('pgeo',JSON.stringify([+pos.coords.latitude.toFixed(1),+pos.coords.longitude.toFixed(1)]))}catch(e){}skyCache={};rr();toast('Sunrise and sunset set for your area')},()=>toast('Location was blocked. Using central England.'),{maximumAge:864e5,timeout:15000});return}
@@ -1014,6 +1023,32 @@ let taps=[];function floatTap(){const n=Date.now();taps=[...taps.filter(t=>n-t<2
  if(taps.length>=5){taps=[];if(iconUnlocked()){toast('Tight lines. You already found this one.');return}try{localStorage.setItem('piconOk','1')}catch(e){}secret=true;rr()}}
 let secret=false;
 function secretCard(){return`<div class="sheetbg"></div><div class="celeb" role="dialog" aria-modal="true" aria-label="Secret unlocked"><p class="fgreet" style="color:#d9b45a">Secret unlocked</p><img src="icon-fish-512.png" alt="Fishing edition app icon" style="width:132px;height:132px;border-radius:30px;margin:14px auto;display:block;box-shadow:0 10px 30px #0008"><h2 class="sheeth">Fishing edition icon</h2><p class="sub">Only for those in the know. Use it as your home screen icon?</p><button class="btn" data-act="iconfish">Use this icon</button><button class="btn sec" data-act="secretclose" style="margin-top:8px">Maybe later</button></div>`}
+/* ---------- Guided tour for new people ---------- */
+let tour=null,tourPending=false;
+const TOUR=()=>[
+ {v:'today',sel:null,t:'Welcome to Life Pillars',d:'A quick look around. It takes about 30 seconds, and you can skip it anytime.'},
+ {v:'today',sel:'.wheel',t:'Your day at a glance',d:'Each slice is one pillar of your life. It fills up as you hit your goals, and the middle shows your overall score.'},
+ {v:'today',sel:'.cards .mrow',t:'Log what you actually do',d:'Tap + or − (or type a number) for each goal. Scores come from what you did, not how you feel.'},
+ {v:'today',sel:'.nav',t:'Any day, any time',d:'Forgot to log yesterday? Use the arrows to go back and fill it in.'},
+ {v:'today',sel:'.tabs a[href="#food"]',t:'Food',d:'Search foods or add them manually. Calories and protein count towards your physical health.'},
+ {v:'today',sel:'.tabs a[href="#history"]',t:'Progress',d:'Your streak, a 14-day heatmap, week-on-week changes, and weigh-ins with a trend chart.'},
+ ...(D.cfg.fishTab!==false?[{v:'today',sel:'.tabs a[href="#fishing"]',t:'The Bank',d:'Your fishing hub. Log catches with photos, track personal bests and tick off every species.'}]:[]),
+ {v:'today',sel:'.tabs a[href="#settings"]',t:'Make it yours',d:'Change pillars, goals and targets, and create a free account to back up and sync across your devices.'},
+ {v:'today',sel:null,t:"You're all set",d:'Start by logging one thing you have already done today. You can replay this tour from Settings.'}];
+function startTour(){tour={i:0};location.hash='today';setTimeout(showTour,60)}
+function endTour(){tour=null;const el=document.getElementById('tour');if(el)el.innerHTML='';try{localStorage.setItem('ptour','1')}catch(e){}}
+function showTour(){const el=document.getElementById('tour');if(!tour||!el)return;const S=TOUR(),s=S[tour.i];if(!s){endTour();return}
+ if(view()!==s.v){location.hash=s.v;setTimeout(showTour,80);return}
+ const tg=s.sel&&document.querySelector(s.sel);if(tg&&!tg.closest('.tabs'))tg.scrollIntoView({block:'center'});
+ requestAnimationFrame(()=>{const r=tg?tg.getBoundingClientRect():null,pad=8,last=tour.i===S.length-1,vw=innerWidth,vh=innerHeight;
+  const spot=r?`<div class="tspot" style="left:${r.left-pad}px;top:${r.top-pad}px;width:${r.width+pad*2}px;height:${r.height+pad*2}px"></div>`:'<div class="tdim"></div>';
+  let pos='left:50%;top:50%;transform:translate(-50%,-50%)';
+  if(r){const below=r.bottom+pad+14,cardH=190;pos=below+cardH<vh?`top:${below}px`:`top:${Math.max(12,r.top-pad-14-cardH)}px`;pos+=`;left:${Math.max(12,Math.min(vw-12-Math.min(360,vw-24),r.left+r.width/2-Math.min(360,vw-24)/2))}px`}
+  el.innerHTML=`<div class="tour" role="dialog" aria-modal="true" aria-label="App tour">${spot}<div class="tcard" style="${pos}"><p class="tstep">${tour.i+1} of ${S.length}</p><h3>${esc(s.t)}</h3><p>${esc(s.d)}</p><div class="row"><button class="btn" data-tour="next">${last?'Start tracking':'Next'}</button>${tour.i?'<button class="btn sec" data-tour="back">Back</button>':''}${last?'':'<button class="linkbtn" data-tour="skip">Skip tour</button>'}</div></div></div>`;
+  const b=el.querySelector('[data-tour=next]');if(b)b.focus()})}
+document.getElementById('tour').addEventListener('click',e=>{const b=e.target.closest('[data-tour]');if(!b)return;const a=b.dataset.tour;
+ if(a==='next'){tour.i++;if(tour.i>=TOUR().length){endTour();return}showTour()}if(a==='back'){tour.i=Math.max(0,tour.i-1);showTour()}if(a==='skip')endTour()});
+addEventListener('resize',()=>{if(tour)showTour()});addEventListener('keydown',e=>{if(tour&&e.key==='Escape')endTour();if(tour&&e.key==='ArrowRight'){tour.i++;tour.i>=TOUR().length?endTour():showTour()}});
 applyIcon();
 snapAll();render();initSync();setTimeout(checkUpdate,1500);setInterval(()=>{if(document.visibilityState==='visible')checkUpdate()},5*60*1000);
 try{const pv=localStorage.getItem('pver');if(pv&&pv!==VERSION)setTimeout(()=>toast('Updated to v'+VERSION),600);localStorage.setItem('pver',VERSION)}catch(e){}
