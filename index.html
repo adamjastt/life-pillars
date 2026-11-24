@@ -333,9 +333,12 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 .achpop small{display:block;font-size:12px;color:#c9b78a}.achpop b{display:block;font-size:16px}
 @keyframes apop{from{transform:translate(-50%,-30px) scale(.9);opacity:0}}
 .alock{margin-top:10px}.alock>summary{min-height:44px;font-size:14px}
+.av.pic{display:block;padding:0;background:#0f201a}.av.pic img{position:static;transform:none;width:100%;height:100%;object-fit:cover;display:block}
+.pfps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}.pfpb{padding:0;border:3px solid transparent;border-radius:99px;overflow:hidden;aspect-ratio:1;background:none;cursor:pointer;transition:transform .15s,border-color .15s}
+.pfpb img{width:100%;height:100%;object-fit:cover;display:block}.pfpb.on{border-color:#d9b45a;transform:scale(1.06);box-shadow:0 0 0 3px #d9b45a33}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><div id="achpop" aria-live="polite"></div><script>
 {
-const VERSION='7.1';
+const VERSION='7.2';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -902,6 +905,7 @@ function mergeFish(a,b){a=a||{};b=b||{};const o={catches:[],cdel:{...(a.cdel||{}
  const by={};for(const c of[...(a.catches||[]),...(b.catches||[])]){if(o.cdel[c.id])continue;if(!by[c.id]||(c.ts||0)>(by[c.id].ts||0))by[c.id]=c}o.catches=Object.values(by);
  for(const[k,t]of Object.entries(b.ticks||{}))if(!o.ticks[k]||t.t>o.ticks[k].t)o.ticks[k]=t;const ba=a.board,bb=b.board;o.board=!ba?bb:!bb?ba:((bb.t||0)>(ba.t||0)?bb:ba);if(!o.board)delete o.board;return o}
 function fishClick(t,ds){
+ if(ds.pfp){const P=prof();P.avatar=ds.pfp;save();syncSocial();rr();return true}
  if(ds.pv){pv=ds.pv;frArm=null;location.hash='mate';return true}
  if(ds.fracc){acceptReq(+ds.fracc);return true}
  if(ds.frno){dropReq(+ds.frno);return true}
@@ -1257,7 +1261,7 @@ const ACH=[
  {id:'meth5',g:'f',n:'Jack of all trades',d:'Catch on 5 different methods',ic:'hook',goal:5,k:'methods'},
  {id:'ven5',g:'f',n:'Explorer',d:'Fish 5 different venues',ic:'pin',goal:5,k:'venues'},
  {id:'rel25',g:'f',n:'Catch and release',d:'Release 25 fish',ic:'heart',goal:25,k:'released'}];
-const favAv=()=>{const P=D.cfg.prof;if(P&&P.avatar)return P.avatar;let b=null;for(const c of fishD().catches)if((c.g||0)>(b?b.g:0))b=c;return b&&b.species};
+const favAv=()=>{const P=D.cfg.prof;return P&&P.avatar&&pfpOf(P.avatar)?P.avatar:PFP[0][0]};
 const PCODE='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',newCode=()=>Array.from({length:6},()=>PCODE[Math.floor(Math.random()*PCODE.length)]).join('');
 function prof(){const c=D.cfg;if(!c.prof||!c.prof.code){c.prof={name:((fishD().board||{}).name||c.name||(user&&user.email||'').split('@')[0]||'Angler').slice(0,24),code:newCode(),avatar:null,pillars:true,...(c.prof||{})};if(!c.prof.code)c.prof.code=newCode();save()}return c.prof}
 function myStats(){const C=fishD().catches,all=speciesAll(),grp=n=>(all.find(s=>s.n===n)||{}).g,cm=caughtMap(),sp=new Set(C.map(c=>c.species));
@@ -1269,7 +1273,7 @@ function myStats(){const C=fishD().catches,all=speciesAll(),grp=n=>(all.find(s=>
  return s}
 function buildCard(){const P=prof(),s=myStats(),ach={};for(const a of ACH)ach[a.id]=Math.min(s[a.k]||0,a.goal);
  const pb={};for(const c of fishD().catches)if(c.g&&(!pb[c.species]||c.g>pb[c.species]))pb[c.species]=c.g;
- return{v:1,name:P.name,avatar:P.avatar||(s.big&&s.big.species)||null,stats:{catches:s.catches,species:s.species,big:s.big?{sp:s.big.species,g:s.big.g}:null,streak:null},pbs:Object.entries(pb).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([sp,g])=>({sp,g})),ach}}
+ return{v:1,name:P.name,avatar:favAv(),stats:{catches:s.catches,species:s.species,big:s.big?{sp:s.big.species,g:s.big.g}:null,streak:null},pbs:Object.entries(pb).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([sp,g])=>({sp,g})),ach}}
 const achDone=(card,a)=>(card.ach[a.id]||0)>=a.goal;
 let soc={at:0,err:'',fr:[],people:{},cards:{},msg:''},socHash='',pv=null,frArm=null;
 const socErr=e=>/relation|does not exist|schema cache/i.test((e&&e.message)||'')?'setup':((e&&e.message)||'Something went wrong');
@@ -1298,7 +1302,10 @@ async function addByCode(code){code=code.trim().toUpperCase().replace(/[^A-Z0-9]
  if(!r.data){soc.msg='No one has that code. Check it and try again.';rr();return}soc.people[r.data.user_id]=r.data;addFriend(r.data.user_id,r.data.name)}
 async function acceptReq(id){const r=await sb.from('friendships').update({status:'accepted'}).eq('id',id);if(r.error){toast('Could not accept');return}toast("You're now friends");loadSocial(true)}
 async function dropReq(id,msg){const r=await sb.from('friendships').delete().eq('id',id);if(r.error){toast('Something went wrong');return}if(msg)toast(msg);loadSocial(true)}
-function avatarImg(sp,cls){return`<span class="av ${cls||''}">${sp?fishSVG(sp):'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">'+AIC.fish+'</svg>'}</span>`}
+/* Profile pictures: add a file to pfp/ and a line here */
+const PFP=[['pfp:1','pfp1.webp','Village pond'],['pfp:2','pfp2.webp','Pike in the reeds'],['pfp:3','pfp3.webp','Carp medallion'],['pfp:4','pfp4.webp','Pike with attitude'],['pfp:5','pfp5.webp','Koi and the wave']];
+const pfpOf=k=>PFP.find(p=>p[0]===k);
+function avatarImg(sp,cls){const p=sp&&pfpOf(sp);if(p)return`<span class="av pic ${cls||''}"><img src="pfp/${p[1]}" alt=""></span>`;return`<span class="av ${cls||''}">${sp?fishSVG(sp):'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">'+AIC.fish+'</svg>'}</span>`}
 function badge(a,card){const done=achDone(card,a),cur=card.ach[a.id]||0;return`<div class="ach${done?' on':''}"><span class="medal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${AIC[a.ic]||AIC.star}</svg></span><b>${esc(a.n)}</b><small>${esc(a.d)}</small>${!done&&a.goal>1?`<span class="abar"><i style="width:${Math.round(cur/a.goal*100)}%"></i></span><small class="ap">${cur} / ${a.goal}</small>`:''}</div>`}
 function achWall(card,key){return[['f','Fishing']].map(([g,l])=>{const L=ACH.filter(a=>a.g===g&&card.ach[a.id]!=null);if(!L.length)return'';const done=L.filter(a=>achDone(card,a)),left=L.filter(a=>!achDone(card,a)).sort((a,b)=>(card.ach[b.id]||0)/b.goal-(card.ach[a.id]||0)/a.goal),k=key+g;
  return`<div class="ch" style="margin-top:14px"><h3 class="agh">${l}</h3><span class="sub">${done.length} of ${L.length}</span></div>${done.length?`<div class="achs">${done.map(a=>badge(a,card)).join('')}</div>`:'<p class="empty">None unlocked yet.</p>'}
@@ -1313,9 +1320,8 @@ function profilePage(){const mine=view()==='profile',FO=true,back=`<button class
  const card=buildCard(),P=prof(),inn=pendingIn(),out=soc.fr.filter(x=>x.status==='pending'&&x.from_id===user.id),fr=friendIds();
  const nm=id=>esc((soc.people[id]||{}).name||'Someone'),avOf=id=>(soc.cards[id]||{}).avatar||(soc.people[id]||{}).avatar;
  const setup=soc.err==='setup'?`<section class="card"><p class="sub">Profiles and friends aren't switched on on the server yet. Your achievements still work here.</p></section>`:'';
- const caught=[...new Set(fishD().catches.map(c=>c.species))].filter(n=>FIMG[n]),opts=[...caught,...Object.keys(FIMG).filter(n=>!caught.includes(n)).sort()];
- return head('Your angler profile')+`<main class="wrap">${setup}${profTop(card,true)}
- <details class="card pedit" data-keep="pedit" ${openD.has('pedit')?'open':''}><summary>Edit profile</summary><div class="grid3"><label class="f" style="grid-column:1/-1">Display name<input data-prof="name" maxlength="24" value="${esc(P.name)}"></label><label class="f" style="grid-column:1/-1">Profile fish<select data-prof="avatar"><option value="">My biggest catch</option>${opts.map(n=>`<option ${P.avatar===n?'selected':''}>${esc(n)}</option>`).join('')}</select></label></div></details>
+  return head('Your angler profile')+`<main class="wrap">${setup}${profTop(card,true)}
+ <details class="card pedit" data-keep="pedit" ${openD.has('pedit')?'open':''}><summary>Edit profile</summary><div class="grid3"><label class="f" style="grid-column:1/-1">Display name<input data-prof="name" maxlength="24" value="${esc(P.name)}"></label><div style="grid-column:1/-1"><span class="f" style="display:block;margin-bottom:6px">Profile picture</span><div class="pfps">${PFP.map(([k,f,n])=>`<button type="button" class="pfpb${favAv()===k?' on':''}" data-pfp="${k}" aria-label="${esc(n)}" aria-pressed="${favAv()===k}"><img src="pfp/${f}" alt="" loading="lazy"></button>`).join('')}</div></div></div></details>
  ${pbCard(card)}
  <section class="card"><h2>Achievements</h2>${achWall(card,'ame')}</section>
  <h3 class="sgh">Friends</h3>
