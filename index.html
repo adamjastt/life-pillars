@@ -228,6 +228,9 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 .ldr li:nth-child(1) .rk{background:#d9b45a;color:#13241c}.ldr li:nth-child(2) .rk{background:#c9cfd6;color:#13241c}.ldr li:nth-child(3) .rk{background:#c78a52;color:#13241c}
 .ldr .nm{font-weight:600}.ldr small{display:block;color:var(--mut);font-weight:400;font-size:12px}.ldr .vl{text-align:right;font-weight:700;white-space:nowrap}
 .ldrart{max-width:280px;margin:6px auto 0}
+.ldr.ph li{grid-template-columns:36px 52px minmax(0,1fr) auto}
+.lth{width:52px;height:52px;border-radius:12px;overflow:hidden;padding:0;border:0;background:#ffffff10;display:grid;place-items:center;cursor:pointer}
+.lth img{width:100%;height:100%;object-fit:cover;display:block}.lth.none{cursor:default;padding:4px}.lth.none>*{width:100%;height:auto}.lth img.nophoto{opacity:.25}
 .ftabs button{padding:0 8px;font-size:15px}
 .crow{background:var(--card);border:1px solid #ffffff12;border-radius:18px;margin-bottom:12px;overflow:hidden}
 .crhead{display:grid;grid-template-columns:72px minmax(0,1fr) 20px;gap:14px;align-items:center;width:100%;text-align:left;background:none;border:0;padding:10px 14px 10px 10px;color:var(--ink)}
@@ -260,7 +263,7 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 @media(prefers-reduced-motion:no-preference){.bar i{transition:width .3s}}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><script>
 {
-const VERSION='6.0';
+const VERSION='6.1';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -441,9 +444,9 @@ function isTicked(n,cm){const t=fishD().ticks[n];return!!cm[n]||!!(t&&t.v)}
 let idbP=null;const idb=()=>idbP||(idbP=new Promise((res,rej)=>{const r=indexedDB.open('pillars-photos',1);r.onupgradeneeded=()=>r.result.createObjectStore('p');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)}));
 const idbDo=(mode,fn)=>idb().then(db=>new Promise((res,rej)=>{const tx=db.transaction('p',mode),q=fn(tx.objectStore('p'));tx.oncomplete=()=>res(q&&q.result);tx.onerror=()=>rej(tx.error)}));
 const idbPut=(k,b)=>idbDo('readwrite',s=>s.put(b,k)),idbGet=k=>idbDo('readonly',s=>s.get(k)),idbDel=k=>idbDo('readwrite',s=>s.delete(k));
-async function compress(file){let src;try{src=await createImageBitmap(file,{imageOrientation:'from-image'})}catch(e){src=await new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=URL.createObjectURL(file)})}
- const w=src.width||src.naturalWidth,h=src.height||src.naturalHeight,s=Math.min(1,1600/Math.max(w,h)),c=document.createElement('canvas');c.width=Math.round(w*s);c.height=Math.round(h*s);c.getContext('2d').drawImage(src,0,0,c.width,c.height);
- return new Promise(r=>c.toBlob(r,'image/jpeg',.82))}
+async function compress(file,max=1600,q=.82){let src;try{src=await createImageBitmap(file,{imageOrientation:'from-image'})}catch(e){src=await new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=URL.createObjectURL(file)})}
+ const w=src.width||src.naturalWidth,h=src.height||src.naturalHeight,s=Math.min(1,max/Math.max(w,h)),c=document.createElement('canvas');c.width=Math.round(w*s);c.height=Math.round(h*s);c.getContext('2d').drawImage(src,0,0,c.width,c.height);
+ return new Promise(r=>c.toBlob(r,'image/jpeg',q))}
 function stillScene(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)document.querySelectorAll('.scene animate').forEach(a=>a.remove())}
 async function hydratePhotos(){stillScene();const imgs=[...document.querySelectorAll('img[data-pid]')];const need=[];
  for(const im of imgs){const id=im.dataset.pid;if(purl[id]){im.src=purl[id];continue}need.push(im)}
@@ -759,7 +762,7 @@ function fishing(){const C=catches(),cm=caughtMap(),sp=speciesAll(),got=sp.filte
  return`<header class="fhero">${sc.svg}<div class="fhin"><p class="fgreet">${sc.greet}</p><h1>The Bank</h1><p class="fsun">Sunrise ${hm(skyKeys().sr)} · Sunset ${hm(skyKeys().ss)}</p></div></header>
  <div class="fband"><div class="in"><div class="fstats"><div><div class="kbig">${got}</div><div class="sub">species caught</div></div><div><div class="kbig sm">${C.filter(c=>c.date.startsWith(yr)).length}</div><div class="sub">catches in ${yr}</div></div><div><div class="kbig sm">${big?fW(big.g):'–'}</div><div class="sub">${big?'biggest · '+esc(big.species):'biggest fish'}</div></div></div>
  <div class="seg ftabs" role="tablist">${[['log','Catches'],['species','Species'],['gallery','Gallery'],['board','Rankings']].map(([k,l])=>`<button role="tab" aria-selected="${fTab===k}" data-ftab="${k}" class="${fTab===k?'on':''}">${l}</button>`).join('')}</div></div></div>
- <main class="wrap">${fTab==='species'?fishSpecies(cm,sp,got):fTab==='gallery'?fishGallery(C):fTab==='board'?fishBoard():fishLog(C,cm)}</main>${lb?lightbox():''}${spSel?spSheet(cm):''}${celeb?celebrate(cm,sp):''}${secret?secretCard():''}`}
+ <main class="wrap">${fTab==='species'?fishSpecies(cm,sp,got):fTab==='gallery'?fishGallery(C):fTab==='board'?fishBoard():fishLog(C,cm)}</main>${lb?lightbox():''}${blb?boardBox():''}${spSel?spSheet(cm):''}${celeb?celebrate(cm,sp):''}${secret?secretCard():''}`}
 let spSel=null,celeb=null;
 function fishSpecies(cm,sp,got){const groups=[...FISH.map(f=>f[0]),...(fishD().custom.length?['Custom']:[]),'All'],list=spFilter(sp,cm),inG=sp.filter(s=>fGroup==='All'||s.g===fGroup),gotG=inG.filter(s=>isTicked(s.n,cm)).length;
  return`<section class="card"><div class="seg scenes" role="tablist" aria-label="Fishing scene">${groups.map(g=>{const n=sp.filter(s=>(g==='All'||s.g===g)&&isTicked(s.n,cm)).length;return`<button role="tab" aria-selected="${fGroup===g}" data-fgroup="${g}" class="${fGroup===g?'on':''}">${g}${n?` <span class="cnt">${n}</span>`:''}</button>`}).join('')}</div>
@@ -813,6 +816,11 @@ function fishLog(C,cm){return(fForm?fishForm():`<button class="btn bigadd" data-
  <div class="row" style="justify-content:center;margin-top:12px"><button class="btn sec" data-fedit="${c.id}">Edit</button><button class="btn danger" data-fdelc="${c.id}">${fDelArm===c.id?'Tap again to delete':'Delete'}</button></div></div>`:''}</section>`}).join(''):`<p class="empty" style="margin-top:14px">No catches yet. Your first one will tick off a species on the checklist.</p>`)}
 function fishGallery(C){const ps=C.flatMap(c=>(c.photos||[]).map((p,i)=>({p,c,i})));
  return ps.length?`<div class="gal">${ps.map(({p,c,i})=>`<button class="gitem" data-lb="${c.id}:${i}" aria-label="${esc(c.species)}, ${label(c.date)}">${pimg(p,c.species)}<span>${esc(c.species)}${c.g?' · '+fW(c.g):''}</span></button>`).join('')}</div>`:'<p class="empty">Photos you add to catches will appear here.</p>'}
+const bimg=(path,alt,cls)=>`<img data-pid="b:${esc(path)}" data-path="${esc(path)}" ${purl['b:'+path]?`src="${purl['b:'+path]}"`:''} alt="${esc(alt)}" class="${cls||''}" loading="lazy">`;
+let blb=null;
+function boardBox(){const r=(board.rows||[]).find(x=>x.id===blb);if(!r||!r.photo)return'';
+ return`<div class="lb" role="dialog" aria-modal="true" aria-label="Photo"><button class="lbx" data-lbclose aria-label="Close">×</button>${bimg(r.photo,r.species,'lbimg')}
+ <div class="lbcap"><b>${esc(r.species)}${r.grams?' · '+fW(r.grams):''}</b><span>${esc(r.name)} · ${label(r.caught_on)}</span></div></div>`}
 function lightbox(){const all=catches().flatMap(c=>(c.photos||[]).map((p,i)=>({p,c,i}))),k=all.findIndex(x=>x.c.id===lb.c&&x.i===lb.i);if(k<0)return'';const {p,c}=all[k];
  return`<div class="lb" role="dialog" aria-modal="true" aria-label="Photo"><button class="lbx" data-lbclose aria-label="Close">×</button>${pimg(p,c.species,'lbimg')}
  <div class="lbcap"><b>${esc(c.species)}${c.g?' · '+fW(c.g):''}</b><span>${label(c.date)}${c.place?' · '+esc(c.place):''}</span></div>
@@ -822,7 +830,7 @@ function mergeFish(a,b){a=a||{};b=b||{};const o={catches:[],cdel:{...(a.cdel||{}
  const by={};for(const c of[...(a.catches||[]),...(b.catches||[])]){if(o.cdel[c.id])continue;if(!by[c.id]||(c.ts||0)>(by[c.id].ts||0))by[c.id]=c}o.catches=Object.values(by);
  for(const[k,t]of Object.entries(b.ticks||{}))if(!o.ticks[k]||t.t>o.ticks[k].t)o.ticks[k]=t;const ba=a.board,bb=b.board;o.board=!ba?bb:!bb?ba:((bb.t||0)>(ba.t||0)?bb:ba);if(!o.board)delete o.board;return o}
 function fishClick(t,ds){
- if(ds.ftab){fTab=ds.ftab;lb=null;if(fTab==='board')loadBoard(true);rr();return true}
+ if(ds.ftab){fTab=ds.ftab;lb=null;blb=null;if(fTab==='board')loadBoard(true);rr();return true}
  if(ds.bmode){board.mode=ds.bmode;rr();return true}
  if(ds.spsel){spSel=ds.spsel;rr();return true}
  if(ds.spclose!=null){spSel=null;rr();return true}
@@ -839,8 +847,9 @@ function fishClick(t,ds){
  if(ds.fstatus){fStatus=ds.fstatus;rr();return true}
  if(ds.ftick){const n=ds.ftick,F=fishD(),cur2=!!(F.ticks[n]&&F.ticks[n].v);F.ticks[n]={v:!cur2,t:Date.now()};save();rr();return true}
  if(ds.lb){const[c,i]=ds.lb.split(':');lb={c,i:+i};rr();return true}
+ if(ds.blb){blb=ds.blb;rr();return true}
  if(ds.lbnav!=null){const all=catches().flatMap(c=>(c.photos||[]).map((p,i)=>({c:c.id,i})));lb=all[+ds.lbnav];rr();return true}
- if(ds.lbclose!=null){lb=null;rr();return true}
+ if(ds.lbclose!=null){lb=null;blb=null;rr();return true}
  return false}
 function keepForm(){const f=document.getElementById('fform');if(!f||!fForm)return;const e=f.elements;Object.assign(fForm,{species:e.species.value,date:e.date.value,time:e.time.value,g:readFW(f),cm:num(e.cm.value),place:e.place.value,method:e.method.value,bait:e.bait.value,rel:e.rel.checked,notes:e.notes.value})}
 async function addPhotos(files){keepForm();const room=4-(fForm.photos||[]).length;for(const file of[...files].slice(0,room)){try{const b=await compress(file);if(!b)continue;const id=uid('p');await idbPut(id,b);purl[id]=URL.createObjectURL(b);fForm.photos.push({id})}catch(e){toast('Could not read that photo')}}rr()}
@@ -920,7 +929,7 @@ const tabList=()=>[['today','Today'],['food','Food'],['history','Progress'],...(
 const tabs=v=>`<nav class="tabs" style="--n:${tabList().length}">${tabList().map(([k,l])=>`<a href="#${k}" class="${v===k?'on':''}" ${v===k?'aria-current="page"':''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[k]}</svg>${l}</a>`).join('')}</nav>`;
 const view=()=>{const h=location.hash.slice(1);return tabList().some(t=>t[0]===h)?h:'today'};
 function keepOpen(){document.querySelectorAll('details[data-keep]').forEach(d=>d.open?openD.add(d.dataset.keep):openD.delete(d.dataset.keep));document.querySelectorAll('details[data-pi]').forEach(d=>d.open?openP.add(+d.dataset.pi):openP.delete(+d.dataset.pi))}
-function render(){keepOpen();if(!D.onboarded||ob.done){root.innerHTML=onboard();return}const v=view();root.innerHTML=(v==='food'?food():v==='history'?history():v==='settings'?settings():v==='fishing'?fishing():today())+((lb||spSel||celeb||secret)&&v==='fishing'?'':tabs(v));document.body.classList.toggle('fishmode',v==='fishing');if(v==='food')renderResults();if(v==='history')drawW();if(v==='fishing')hydratePhotos()}
+function render(){keepOpen();if(!D.onboarded||ob.done){root.innerHTML=onboard();return}const v=view();root.innerHTML=(v==='food'?food():v==='history'?history():v==='settings'?settings():v==='fishing'?fishing():today())+((lb||blb||spSel||celeb||secret)&&v==='fishing'?'':tabs(v));document.body.classList.toggle('fishmode',v==='fishing');if(v==='food')renderResults();if(v==='history')drawW();if(v==='fishing')hydratePhotos()}
 function rr(){const y=scrollY;render();scrollTo(0,y)}
 let tt;function toast(t){const e=document.getElementById('toast');e.innerHTML=`<div class="toast" role="status">${esc(t)}</div>`;clearTimeout(tt);tt=setTimeout(()=>e.innerHTML='',2600)}
 
@@ -958,8 +967,8 @@ function addEntry(it,q,saveIt){const k=it.unit==='g'?q/100:q;
  save();toast(`Added to ${meal}`)}
 
 /* ---------- Events ---------- */
-addEventListener('keydown',e=>{if(e.key==='Escape'&&(lb||spSel||celeb||secret)){lb=null;spSel=null;celeb=null;secret=false;rr()}});
-addEventListener('hashchange',()=>{if(tourPending&&location.hash==='#today'){tourPending=false;setTimeout(startTour,300)}lb=null;spSel=null;celeb=null;picked=null;status='';lastQ='';render();scrollTo(0,0)});
+addEventListener('keydown',e=>{if(e.key==='Escape'&&(lb||blb||spSel||celeb||secret)){lb=null;blb=null;spSel=null;celeb=null;secret=false;rr()}});
+addEventListener('hashchange',()=>{if(tourPending&&location.hash==='#today'){tourPending=false;setTimeout(startTour,300)}lb=null;spSel=null;celeb=null;picked=null;status='';lastQ='';blb=null;render();scrollTo(0,0)});
 root.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('[data-floattap]')){floatTap();return}if(e.target.classList&&e.target.classList.contains('sheetbg')&&!celeb){spSel=null;rr();return}const t=e.target.closest('button,a');if(!t)return;const ds=t.dataset;
  if(fishClick(t,ds))return;
  if(ds.snap){const t=+ds.snap;if(snapArm!==t){snapArm=t;rr();return}snapArm=null;restoreSnap(t);return}
@@ -986,6 +995,7 @@ root.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('[data-f
  const a=ds.act;if(!a)return;
  if(a==='tour'){startTour();return}
  if(a==='bleave'){leaveBoard();return}
+ if(a==='bphotos'){const F=fishD();F.board={...F.board,photos:!F.board.photos,t:Date.now()};save();board.phErr='';syncBoard().then(()=>{loadBoard(true)});toast(F.board.photos?'Sharing your photos on the leaderboard':'Your photos are private again');rr();return}
  if(a==='iconfish'||a==='iconstd'){try{localStorage.setItem('picon',a==='iconfish'?'fish':'std')}catch(e){}applyIcon();secret=false;rr();toast(a==='iconfish'?'Fishing icon on. Remove the app from your home screen and add it again to see it.':'Standard icon on. Re-add the app to your home screen to see it.');return}
  if(a==='secretclose'){secret=false;rr();return}
  if(a==='geo'){if(!navigator.geolocation){toast('Location is not available on this device');return}toast('Finding your location…');navigator.geolocation.getCurrentPosition(pos=>{try{localStorage.setItem('pgeo',JSON.stringify([+pos.coords.latitude.toFixed(1),+pos.coords.longitude.toFixed(1)]))}catch(e){}skyCache={};rr();toast('Sunrise and sunset set for your area')},()=>toast('Location was blocked. Using central England.'),{maximumAge:864e5,timeout:15000});return}
@@ -1017,7 +1027,7 @@ root.addEventListener('change',e=>{const t=e.target,ds=t.dataset;
 root.addEventListener('toggle',e=>{const d=e.target;if(d.dataset&&d.dataset.keep){d.open?openD.add(d.dataset.keep):openD.delete(d.dataset.keep)}if(d.dataset&&d.dataset.pi!=null){d.open?openP.add(+d.dataset.pi):openP.delete(+d.dataset.pi)}},true);
 root.addEventListener('input',e=>{if(e.target.dataset&&e.target.dataset.suggest){showSugg(e.target);return}if(e.target.dataset.fsq!=null){fQ=e.target.value;const cm=caughtMap(),el=document.getElementById('fsplist');if(el)el.innerHTML=spRows(spFilter(speciesAll(),cm),cm);return}if(e.target.id==='amt')updAmt();if(e.target.id==='fq'){lastQ=e.target.value;if(!lastQ.trim()){picked=null;status='';renderResults()}}});
 root.addEventListener('submit',e=>{e.preventDefault();const f=e.target;
- if(f.id==='bjoin'){const n=f.elements.name.value.trim().slice(0,24);if(!n)return;fishD().board={on:true,name:n,t:Date.now()};boardHash='';save();syncBoard().then(()=>{loadBoard(true);toast("You're on the leaderboard")});rr();return}
+ if(f.id==='bjoin'){const n=f.elements.name.value.trim().slice(0,24);if(!n)return;fishD().board={on:true,name:n,photos:!!(f.elements.photos&&f.elements.photos.checked),t:Date.now()};boardHash='';save();syncBoard().then(()=>{loadBoard(true);toast("You're on the leaderboard")});rr();return}
  if(f.id==='fform'){saveCatch(f);return}
  if(f.id==='fadd'){const n=f.elements.n.value.trim();if(n&&!speciesAll().some(s=>s.n.toLowerCase()===n.toLowerCase())){fishD().custom.push(n);save();toast('Species added')}rr();return}
  if(f.id==='wform'){const kg=readW(f,'w'),d=f.elements.date.value||TODAY;if(kg==null||kg<20||kg>400){toast('Enter a weight');return}if(d>TODAY){toast('That date is in the future');return}
@@ -1120,25 +1130,40 @@ let snapArm=null;
 let board={rows:null,at:0,err:'',mode:'species',sp:null},boardHash='';
 const boardOn=()=>!!(fishD().board&&fishD().board.on);
 async function loadBoard(force){if(!sb||!user)return;if(!force&&board.rows&&Date.now()-board.at<60000)return;
- try{const r=await sb.from('catch_board').select('id,user_id,name,species,grams,cm,caught_on').limit(10000);if(r.error)throw r.error;board.rows=r.data||[];board.at=Date.now();board.err=''}
+ try{let r=await sb.from('catch_board').select('id,user_id,name,species,grams,cm,caught_on,photo').limit(10000);if(r.error&&/photo/i.test(r.error.message||'')){board.noCol=true;r=await sb.from('catch_board').select('id,user_id,name,species,grams,cm,caught_on').limit(10000)}if(r.error)throw r.error;board.rows=r.data||[];board.at=Date.now();board.err=''}
  catch(e){board.err=/relation|does not exist|schema cache/i.test(e.message||'')?'setup':(e.message||'Could not load the leaderboard')}
  if(view()==='fishing'&&fTab==='board')rr()}
-async function syncBoard(){if(!sb||!user||!boardOn())return;const B=fishD().board,rows=fishD().catches.map(c=>({id:c.id,user_id:user.id,name:B.name,species:c.species,grams:c.g||null,cm:c.cm||null,caught_on:c.date}));
- const hsh=JSON.stringify(rows);if(hsh===boardHash)return;
- try{if(rows.length){const u=await sb.from('catch_board').upsert(rows);if(u.error)throw u.error}
+const bDir=()=>`board/${user.id}`;
+async function boardFiles(){const r=await sb.storage.from(BUCKET).list(bDir(),{limit:1000});if(r.error)throw r.error;return new Set((r.data||[]).map(f=>f.name).filter(n=>n.endsWith('.jpg')))}
+async function photoBlob(p){let b=await idbGet(p.id).catch(()=>null);if(!b&&p.path){const r=await sb.storage.from(BUCKET).download(p.path);if(!r.error)b=r.data}return b}
+async function syncBoardPhotos(B){const want={};
+ const F=fishD();if(B.photos)for(const c of F.catches){const p=(c.photos||[]).find(p=>p.path);if(p)want[c.id]=`${c.id}_${p.id}.jpg`}
+ let have;try{have=await boardFiles()}catch(e){board.phErr='setup';return{}}
+ for(const[cid,fn]of Object.entries(want)){if(have.has(fn))continue;const c=F.catches.find(x=>x.id===cid),p=c&&(c.photos||[]).find(p=>p.path);
+  try{const b=p&&await photoBlob(p);if(!b)throw 0;const small=await compress(b,900,.8);const u=await sb.storage.from(BUCKET).upload(`${bDir()}/${fn}`,small,{contentType:'image/jpeg',upsert:true});if(u.error)throw u.error}
+  catch(e){delete want[cid];if(e&&/policy|security|unauthori[sz]ed|403/i.test(e.message||e.error||''))board.phErr='setup'}}
+ const keep=new Set(Object.values(want)),extra=[...have].filter(n=>!keep.has(n));if(extra.length)await sb.storage.from(BUCKET).remove(extra.map(n=>`${bDir()}/${n}`)).catch(()=>{});
+ if(Object.keys(want).length)board.phErr='';
+ const o={};for(const[k,v]of Object.entries(want))o[k]=`${bDir()}/${v}`;return o}
+async function syncBoard(){if(!sb||!user||!boardOn())return;const B=fishD().board;
+ const pre=JSON.stringify([B,fishD().catches.map(c=>[c.id,c.species,c.g,c.cm,c.date,(c.photos||[]).filter(p=>p.path).map(p=>p.id)])]);if(pre===boardHash)return;
+ try{const ph=await syncBoardPhotos(B);
+  let rows=fishD().catches.map(c=>({id:c.id,user_id:user.id,name:B.name,species:c.species,grams:c.g||null,cm:c.cm||null,caught_on:c.date,photo:ph[c.id]||null}));
+  if(rows.length){let u=await sb.from('catch_board').upsert(rows);if(u.error&&/photo/i.test(u.error.message||'')){board.noCol=true;rows=rows.map(({photo,...r})=>r);u=await sb.from('catch_board').upsert(rows)}if(u.error)throw u.error}
   const mine=await sb.from('catch_board').select('id').eq('user_id',user.id);if(mine.error)throw mine.error;const keep=new Set(rows.map(r=>r.id)),gone=(mine.data||[]).map(r=>r.id).filter(id=>!keep.has(id));
   if(gone.length){const d=await sb.from('catch_board').delete().in('id',gone);if(d.error)throw d.error}
-  boardHash=hsh;board.at=0}catch(e){console.warn('board',e)}}
-async function leaveBoard(){const F=fishD();F.board={on:false,name:(F.board||{}).name||'',t:Date.now()};save();if(sb&&user){try{await sb.from('catch_board').delete().eq('user_id',user.id)}catch(e){}}boardHash='';board.at=0;rr();toast('You have left the leaderboard')}
+  boardHash=pre;board.at=0}catch(e){console.warn('board',e)}}
+async function leaveBoard(){const F=fishD();F.board={on:false,name:(F.board||{}).name||'',t:Date.now()};save();if(sb&&user){try{await sb.from('catch_board').delete().eq('user_id',user.id)}catch(e){}try{const h=await boardFiles();if(h.size)await sb.storage.from(BUCKET).remove([...h].map(n=>`${bDir()}/${n}`))}catch(e){}}boardHash='';board.at=0;rr();toast('You have left the leaderboard')}
 function fishBoard(){
  if(!SB_URL||!sb||!user)return`<section class="card"><h2>Leaderboard</h2><p class="sub">Sign in (Settings, then Account and sync) to compare your catches with everyone else using the app.</p></section>`;
- if(!boardOn())return`<section class="card"><h2>Join the leaderboard</h2><p class="sub" style="margin-top:8px">See how your catches stack up against everyone using Life Pillars. Only the species, weight, length, date and your display name are shared. Venues, notes and photos stay private.</p>
-  <form id="bjoin" class="grid3" style="margin-top:10px"><label class="f" style="grid-column:1/-1">Display name<input name="name" maxlength="24" required value="${esc(D.cfg.name||'')}" placeholder="e.g. Adam J"></label><button class="btn" style="grid-column:1/-1">Join the leaderboard</button></form></section>`;
+ if(!boardOn())return`<section class="card"><h2>Join the leaderboard</h2><p class="sub" style="margin-top:8px">See how your catches stack up against everyone using Life Pillars. Your display name and each catch's species, weight, length and date are shared. Venues and notes always stay private.</p>
+  <form id="bjoin" class="grid3" style="margin-top:10px"><label class="f" style="grid-column:1/-1">Display name<input name="name" maxlength="24" required value="${esc(D.cfg.name||'')}" placeholder="e.g. Adam J"></label><label class="row" style="grid-column:1/-1;font-size:14px"><input type="checkbox" name="photos" checked style="width:22px;height:22px"> Show my catch photos on the leaderboard</label><button class="btn" style="grid-column:1/-1">Join the leaderboard</button></form></section>`;
  if(board.err==='setup')return`<section class="card"><h2>Leaderboard</h2><p class="sub">The leaderboard isn't set up on the server yet.</p></section>`;
  if(!board.rows){loadBoard();return`<section class="card"><p class="sub">Loading the leaderboard…</p></section>`}
  const R=board.rows,me=user.id,B=fishD().board;
  const head=`<div class="seg">${[['species','Biggest fish'],['count','Most species']].map(([k,l])=>`<button data-bmode="${k}" class="${board.mode===k?'on':''}">${l}</button>`).join('')}</div>`;
- const foot=`<p class="sub" style="margin-top:14px">Showing as <b>${esc(B.name)}</b>. <button class="linkbtn" data-act="bleave" style="min-height:32px">Leave the leaderboard</button></p>`;
+ const phNote=B.photos&&(board.noCol||board.phErr==='setup')?`<p class="sub" style="margin-top:10px">Photo sharing isn't switched on on the server yet, so photos won't show for now.</p>`:'';
+ const foot=`${phNote}<p class="sub" style="margin-top:14px">Showing as <b>${esc(B.name)}</b>. Your photos are ${B.photos?'shared':'private'}. <button class="linkbtn" data-act="bphotos" style="min-height:32px">${B.photos?'Stop sharing photos':'Share my photos'}</button> · <button class="linkbtn" data-act="bleave" style="min-height:32px">Leave the leaderboard</button></p>`;
  if(board.mode==='count'){const by={};for(const r of R){const u=by[r.user_id]=by[r.user_id]||{name:r.name,sp:new Set(),n:0};u.sp.add(r.species);u.n++;u.name=r.name}
   const L=Object.entries(by).map(([id,u])=>({id,name:u.name,sp:u.sp.size,n:u.n})).sort((a,b)=>b.sp-a.sp||b.n-a.n);
   return`<section class="card"><h2>Leaderboard</h2>${head}<ol class="ldr">${L.slice(0,25).map((x,i)=>`<li class="${x.id===me?'me':''}"><span class="rk">${i+1}</span><span class="nm">${esc(x.name)}${x.id===me?' (you)':''}</span><span class="vl">${x.sp} species<small>${x.n} catch${x.n===1?'':'es'}</small></span></li>`).join('')||'<p class="empty">No catches shared yet.</p>'}</ol>${foot}</section>`}
@@ -1146,7 +1171,7 @@ function fishBoard(){
  const sel=board.sp&&spp.includes(board.sp)?board.sp:spp[0];
  const L=sel?R.filter(r=>r.species===sel&&r.grams).sort((a,b)=>b.grams-a.grams).slice(0,25):[];
  return`<section class="card"><h2>Leaderboard</h2>${head}${spp.length?`<label class="f" style="margin:6px 0 4px">Species<select data-bsp>${spp.map(s=>`<option ${s===sel?'selected':''}>${esc(s)}</option>`).join('')}</select></label>
-  <div class="ldrart">${fishSVG(sel)}</div><ol class="ldr">${L.map((r,i)=>`<li class="${r.user_id===me?'me':''}"><span class="rk">${i===0?'1':i+1}</span><span class="nm">${esc(r.name)}${r.user_id===me?' (you)':''}<small>${label(r.caught_on)}</small></span><span class="vl">${fW(r.grams)}${r.cm?`<small>${fmt(r.cm)} cm</small>`:''}</span></li>`).join('')}</ol>`:'<p class="empty">No weighed catches shared yet. Log a catch with a weight to get on the board.</p>'}${foot}</section>`}
+  <div class="ldrart">${fishSVG(sel)}</div><ol class="ldr ph">${L.map((r,i)=>`<li class="${r.user_id===me?'me':''}"><span class="rk">${i===0?'1':i+1}</span>${r.photo?`<button class="lth" data-blb="${esc(r.id)}" aria-label="Photo of ${esc(r.name)}'s ${esc(r.species)}">${bimg(r.photo,r.species)}</button>`:`<span class="lth none">${fishSVG(r.species)}</span>`}<span class="nm">${esc(r.name)}${r.user_id===me?' (you)':''}<small>${label(r.caught_on)}</small></span><span class="vl">${fW(r.grams)}${r.cm?`<small>${fmt(r.cm)} cm</small>`:''}</span></li>`).join('')}</ol>`:'<p class="empty">No weighed catches shared yet. Log a catch with a weight to get on the board.</p>'}${foot}</section>`}
 /* Suggestions under fishing inputs (iPhone ignores <datalist>) */
 function suggList(kind,q){q=q.trim().toLowerCase();const F=fishD();
  if(kind==='species'){const all=speciesAll();if(!q)return[];const st=all.filter(s=>s.n.toLowerCase().startsWith(q)),inc=all.filter(s=>!s.n.toLowerCase().startsWith(q)&&s.n.toLowerCase().split(/[ ()]+/).some(w=>w.startsWith(q))),mid=all.filter(s=>!st.includes(s)&&!inc.includes(s)&&s.n.toLowerCase().includes(q));return[...st,...inc,...mid].slice(0,6).map(s=>({v:s.n,sub:s.g}))}
