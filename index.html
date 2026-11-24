@@ -124,7 +124,7 @@ input[type=color]{padding:4px;height:44px}
 @media(prefers-reduced-motion:no-preference){.bar i{transition:width .3s}}
 </style></head><body><div id="root"></div><div id="toast"></div><script>
 {
-const VERSION='2.8';
+const VERSION='2.9';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -245,9 +245,9 @@ const wUnit=()=>D.cfg.wUnit||'kg';
 function fmtW(kg,short){if(kg==null)return'–';const u=wUnit();if(u==='kg')return kg.toFixed(1)+(short?'':' kg');const lb=kg*KGLB;if(u==='lb')return lb.toFixed(1)+(short?'':' lb');
  let st=Math.floor(lb/14),r=Math.round((lb-st*14)*10)/10;if(r>=14){st++;r=0}return short?`${st}st ${Math.round(r)}`:`${st} st ${r.toFixed(1)} lb`}
 function fmtD(dk){if(dk==null)return'–';const u=wUnit(),s=dk>0?'+':dk<0?'−':'±',a=Math.abs(dk);return s+(u==='kg'?a.toFixed(1)+' kg':(a*KGLB).toFixed(1)+' lb')}
-function wInputs(pre,kg){const u=wUnit();if(u==='st'){const lb=kg!=null?kg*KGLB:null,st=lb!=null?Math.floor(lb/14):'',rl=lb!=null?Math.round((lb-st*14)*10)/10:'';
- return`<label class="f">Stone<input name="${pre}st" inputmode="decimal" value="${st}"></label><label class="f">Pounds<input name="${pre}lb" inputmode="decimal" value="${rl}"></label>`}
- return`<label class="f">${u==='kg'?'Kilograms':'Pounds'}<input name="${pre}v" inputmode="decimal" value="${kg!=null?(u==='kg'?kg.toFixed(1):(kg*KGLB).toFixed(1)):''}"></label>`}
+function wInputs(pre,kg,goal){const u=wUnit(),G=goal?'Goal weight — ':'';if(u==='st'){const lb=kg!=null?kg*KGLB:null,st=lb!=null?Math.floor(lb/14):'',rl=lb!=null?Math.round((lb-st*14)*10)/10:'';
+ return`<label class="f">${goal?G:'Your weight — '}stone<input name="${pre}st" inputmode="decimal" value="${st}"></label><label class="f">${goal?'and pounds':'and pounds'}<input name="${pre}lb" inputmode="decimal" value="${rl}"></label>`}
+ return`<label class="f">${goal?'Goal weight ('+(u==='kg'?'kg':'lb')+')':('Your weight ('+(u==='kg'?'kg':'lb')+')')}<input name="${pre}v" inputmode="decimal" value="${kg!=null?(u==='kg'?kg.toFixed(1):(kg*KGLB).toFixed(1)):''}"></label>`}
 function readW(f,pre){const u=wUnit(),g=n=>f.elements[pre+n]?num(f.elements[pre+n].value):null;
  if(u==='st'){const s=g('st'),l=g('lb');if(s==null&&l==null)return null;return((s||0)*14+(l||0))/KGLB}const v=g('v');return v==null?null:(u==='kg'?v:v/KGLB)}
 function wList(){const by={};for(const e of D.weights||[])if(!by[e.date]||e.ts>by[e.date].ts)by[e.date]=e;return Object.values(by).sort((a,b)=>a.date<b.date?-1:1)}
@@ -260,7 +260,7 @@ function weighSection(){const L=wList(),last=L[L.length-1],goal=D.cfg.wGoal,ex=(
  ${L.length>1?`<div class="seg" role="group" aria-label="Chart range">${[[30,'1M'],[90,'3M'],[365,'1Y'],[0,'All']].map(([d,l])=>`<button data-wr="${d}" class="${wRange===d?'on':''}">${l}</button>`).join('')}</div><div class="fig wfig"><svg id="wchart" role="img" aria-label="Weight trend chart"></svg></div><p class="sub wkey"><i style="background:#ff7a63"></i>Weigh-ins <i style="background:var(--acc)"></i>7-day average${goal?' <i class="dash"></i>Goal':''}</p>`:''}
  <form id="wform" class="wform"><label class="f">Date<input type="date" name="date" value="${wDate}" max="${TODAY}"></label>${wInputs('w',ex?ex.kg:null)}<button class="btn">${ex?'Update':'Save'}</button></form>
  ${L.length?`<details data-keep="wrec" ${openD.has('wrec')?'open':''}><summary>Recent weigh-ins</summary>${L.slice(-10).reverse().map(e=>`<div class="fe"><div>${label(e.date)}</div><span class="num">${fmtW(e.kg)}</span><button class="x" data-wdel="${e.id}" aria-label="Delete weigh-in ${label(e.date)}">×</button></div>`).join('')}</details>`:''}
- <details data-keep="wcfg" ${openD.has('wcfg')?'open':''} style="margin-top:10px"><summary>Units and goal</summary><form id="wcfg" class="grid3"><label class="f" style="grid-column:1/-1">Units<select name="unit" data-wunit>${[['kg','Kilograms (kg)'],['st','Stone and pounds'],['lb','Pounds (lb)']].map(([v,l])=>`<option value="${v}" ${wUnit()===v?'selected':''}>${l}</option>`).join('')}</select></label>${wInputs('g',goal??null)}<button class="btn sec" style="grid-column:1/-1">Save goal</button></form></details></section>`}
+ <details data-keep="wcfg" ${openD.has('wcfg')?'open':''} style="margin-top:10px"><summary>Units and goal weight</summary><form id="wcfg" class="grid3"><label class="f" style="grid-column:1/-1">Units<select name="unit" data-wunit>${[['kg','Kilograms (kg)'],['st','Stone and pounds'],['lb','Pounds (lb)']].map(([v,l])=>`<option value="${v}" ${wUnit()===v?'selected':''}>${l}</option>`).join('')}</select></label><p class="sub" style="grid-column:1/-1;margin:6px 0 0">Your goal weight is the weight you're aiming to reach. It shows as a dashed line on the chart and as "to goal" above. Leave it blank to remove it.</p>${wInputs('g',goal??null,true)}<button class="btn sec" style="grid-column:1/-1">Save goal weight</button></form></details></section>`}
 let wDate=TODAY,wro=null;const openD=new Set();
 function drawW(){const s=document.getElementById('wchart');if(!s)return;const draw=()=>{const W=s.clientWidth,H=s.clientHeight;if(!W)return;
  let L=wList();const from=wRange?shift(TODAY,-wRange):'0000';const pts=L.filter(e=>e.date>=from);if(pts.length<2){s.innerHTML=`<text x="${W/2}" y="${H/2}" text-anchor="middle" fill="#a9a5b5" font-size="14">Not enough weigh-ins in this range</text>`;return}
@@ -430,7 +430,7 @@ root.addEventListener('input',e=>{if(e.target.id==='amt')updAmt();if(e.target.id
 root.addEventListener('submit',e=>{e.preventDefault();const f=e.target;
  if(f.id==='wform'){const kg=readW(f,'w'),d=f.elements.date.value||TODAY;if(kg==null||kg<20||kg>400){toast('Enter a weight');return}if(d>TODAY){toast('That date is in the future');return}
   const now=Date.now();for(const x of D.weights.filter(x=>x.date===d))D.wdel[x.id]=now;D.weights=D.weights.filter(x=>x.date!==d);D.weights.push({id:uid('w'),ts:now,date:d,kg:Math.round(kg*100)/100});wDate=TODAY;save();rr();toast('Weigh-in saved');return}
- if(f.id==='wcfg'){const kg=readW(f,'g');if(kg==null)delete D.cfg.wGoal;else if(kg>=20&&kg<=400)D.cfg.wGoal=Math.round(kg*100)/100;else{toast('Enter a goal weight');return}save();rr();toast(kg==null?'Goal cleared':'Goal saved');return}
+ if(f.id==='wcfg'){const kg=readW(f,'g');if(kg==null)delete D.cfg.wGoal;else if(kg>=20&&kg<=400)D.cfg.wGoal=Math.round(kg*100)/100;else{toast('Enter a goal weight');return}save();rr();toast(kg==null?'Goal weight removed':'Goal weight saved');return}
  if(f.id==='obform'){finishOb(f);return}
  if(f.id==='newpw'){const m=document.getElementById('pwmsg'),pw=f.elements.pw.value;if(pw!==f.elements.pw2.value){m.textContent='The two passwords don\'t match.';return}m.textContent='Saving…';
   sb.auth.updateUser({password:pw}).then(r=>{if(r.error){m.textContent=/same/i.test(r.error.message)?'That is your current password — choose a different one.':r.error.message;return}recovery=false;changePw=false;rr();toast('Password updated')}).catch(()=>{m.textContent='Can\'t reach the server — check your connection.'});return}
