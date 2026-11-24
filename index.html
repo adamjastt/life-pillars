@@ -265,7 +265,7 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 @media(prefers-reduced-motion:no-preference){.bar i{transition:width .3s}}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><script>
 {
-const VERSION='6.3';
+const VERSION='6.4';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -790,7 +790,7 @@ function fishForm(){const c=fForm,sp=speciesAll(),venues=[...new Set(fishD().cat
  <label class="f">Date<input type="date" name="date" value="${c.date||TODAY}" max="${TODAY}"></label><label class="f">Time<input type="time" name="time" value="${esc(c.time||'')}"></label>
  ${fWInputs(c.g)}<label class="f">Length (cm)<input name="cm" inputmode="decimal" value="${c.cm??''}"></label>
  <label class="f sw" style="grid-column:1/-1">Venue<input name="place" data-suggest="venue" maxlength="80" value="${esc(c.place||'')}" placeholder="Lake, river or beach" autocomplete="off"><div class="sugg" id="sg-venue" role="listbox"></div></label><datalist id="fven">${venues.map(v=>`<option value="${esc(v)}">`).join('')}</datalist>
- <label class="f sw">Method<input name="method" data-suggest="method" maxlength="40" value="${esc(c.method||'')}" placeholder="e.g. Float, lure" autocomplete="off"><div class="sugg" id="sg-method" role="listbox"></div></label><datalist id="fmet">${[...new Set([...methods,'Float','Feeder','Ledger','Lure','Fly','Drop shot','Free-lining','Pole','Surface'])].map(v=>`<option value="${esc(v)}">`).join('')}</datalist>
+ <label class="f sw">Method<input name="method" data-suggest="method" maxlength="40" value="${esc(c.method||'')}" placeholder="Pick one or type your own" autocomplete="off"><div class="sugg" id="sg-method" role="listbox"></div></label><datalist id="fmet">${[...new Set([...methods,'Float','Feeder','Ledger','Lure','Fly','Drop shot','Free-lining','Pole','Surface'])].map(v=>`<option value="${esc(v)}">`).join('')}</datalist>
  <label class="f">Bait<input name="bait" maxlength="40" value="${esc(c.bait||'')}" placeholder="e.g. Maggots"></label>
  <label class="row" style="grid-column:1/-1;font-size:15px"><input type="checkbox" name="rel" ${c.rel!==false?'checked':''} style="width:22px;height:22px"> Released</label>
  <label class="f" style="grid-column:1/-1">Notes<textarea name="notes" rows="2" maxlength="1000">${esc(c.notes||'')}</textarea></label>
@@ -1179,10 +1179,11 @@ function fishBoard(){
   <div class="ldrart">${fishSVG(sel)}</div><ol class="ldr ph">${L.map((r,i)=>{const op=board.open===r.id,I=r.info||{};return`<li class="${r.user_id===me?'me':''}${op?' open':''}"><button class="lrow" data-bopen="${esc(r.id)}" aria-expanded="${op}"><span class="rk">${i+1}</span>${r.photo?`<span class="lth">${bimg(r.photo,r.species)}</span>`:`<span class="lth none">${fishSVG(r.species)}</span>`}<span class="nm">${esc(r.name)}${r.user_id===me?' (you)':''}<small>${label(r.caught_on)}${I.method?' · '+esc(I.method):''}</small></span><span class="vl">${fW(r.grams)}${r.cm?`<small>${fmt(r.cm)} cm</small>`:''}</span></button>
  ${op?`<div class="crbody">${tradeCard({id:r.id,species:r.species,g:r.grams,cm:r.cm,date:r.caught_on,time:I.time,place:I.place,method:I.method,bait:I.bait,notes:I.notes,rel:I.rel},null,i===0,{who:r.name,rank:i+1,n:L.length,maxG:Math.max(...L.map(x=>x.grams||0),1),maxL:Math.max(...L.map(x=>x.cm||0),1)})}${r.photo?`<div class="scphotos" style="justify-content:center"><button class="scph" data-blb="${esc(r.id)}" aria-label="Open photo">${bimg(r.photo,r.species)}</button></div>`:''}</div>`:''}</li>`}).join('')}</ol>`:'<p class="empty">No weighed catches shared yet. Log a catch with a weight to get on the board.</p>'}${foot}</section>`}
 /* Suggestions under fishing inputs (iPhone ignores <datalist>) */
+const METHODS=['Float','Feeder','Method feeder','Ledger','Pole','Waggler','Stick float','Free-lining','Stalking','Surface','Zig rig','Lure','Spinning','Topwater','Popper','Jerkbait','Crankbait','Spinnerbait','Swimbait','Soft plastic','Drop shot','Jig','Ned rig','Texas rig','Carolina rig','Wacky rig','Shore jigging','LRF','HRF','Fly','Dry fly','Nymph','Streamer','Deadbait','Livebait','Bait','Beachcasting','Bottom fishing','Feathers','Uptide','Trolling','Boat fishing'];
 function suggList(kind,q){q=q.trim().toLowerCase();const F=fishD();
  if(kind==='species'){const all=speciesAll();if(!q)return[];const st=all.filter(s=>s.n.toLowerCase().startsWith(q)),inc=all.filter(s=>!s.n.toLowerCase().startsWith(q)&&s.n.toLowerCase().split(/[ ()]+/).some(w=>w.startsWith(q))),mid=all.filter(s=>!st.includes(s)&&!inc.includes(s)&&s.n.toLowerCase().includes(q));return[...st,...inc,...mid].slice(0,6).map(s=>({v:s.n,sub:s.g}))}
- const pool=kind==='venue'?[...new Set(F.catches.map(x=>x.place).filter(Boolean))]:[...new Set([...F.catches.map(x=>x.method).filter(Boolean),'Float','Feeder','Ledger','Lure','Fly','Drop shot','Free-lining','Pole','Surface','Spinning','Bait'])];
- return pool.filter(v=>!q||v.toLowerCase().includes(q)).filter(v=>v.toLowerCase()!==q).slice(0,6).map(v=>({v}))}
+ const pool=kind==='venue'?[...new Set(F.catches.map(x=>x.place).filter(Boolean))]:[...new Set([...F.catches.map(x=>x.method).filter(Boolean),...METHODS])];
+ const hit=pool.filter(v=>!q||v.toLowerCase().includes(q)).filter(v=>v.toLowerCase()!==q);hit.sort((a,b)=>(q&&b.toLowerCase().startsWith(q))-(q&&a.toLowerCase().startsWith(q)));return hit.slice(0,kind==='method'?8:6).map(v=>({v}))}
 function showSugg(inp){const k=inp.dataset.suggest,box=document.getElementById('sg-'+k);if(!box)return;const L=suggList(k,inp.value),q=inp.value.trim();
  if(!L.length){box.classList.remove('on');box.innerHTML='';return}
  const hl=t=>{const i=t.toLowerCase().indexOf(q.toLowerCase());return i<0||!q?esc(t):esc(t.slice(0,i))+'<mark>'+esc(t.slice(i,i+q.length))+'</mark>'+esc(t.slice(i+q.length))};
