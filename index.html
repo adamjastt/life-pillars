@@ -373,9 +373,12 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 .mpsec{margin:18px 0 8px;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:#c9b78a}.mpseg{display:flex;flex-wrap:wrap;gap:6px}.mpseg button{flex:1 1 auto}
 .mplist{display:grid}.mprow{display:grid;grid-template-columns:60px 1fr;gap:10px;align-items:center;width:100%;text-align:left;background:none;border:0;border-top:1px solid var(--line);padding:10px 0;color:var(--ink);font:inherit;cursor:pointer}.mprow:first-child{border-top:0}.mprow b{display:block}.mprow small{color:var(--mut);font-size:12px}.mprow .mpart>*{width:60px}
 @media(prefers-reduced-motion:reduce){.mpanel,.mpbg{transition:none}}
+.mpfilt{margin-top:16px;background:var(--card);border-radius:14px;padding:0 14px}.mpfilt>summary{border:0;background:none;padding:0;min-height:50px;font-weight:600}.mpfilt[open]{padding-bottom:14px}.mpfilt .pill{margin-left:6px}
+.mpsec small{text-transform:none;letter-spacing:0;color:var(--mut);font-weight:400;margin-left:6px}.mappage .mpanel{transition:transform .28s cubic-bezier(.2,.8,.2,1)}
+.mappage.noanim .mpanel,.mappage.noanim .mpbg{transition:none}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><div id="achpop" aria-live="polite"></div><script>
 {
-const VERSION='7.9';
+const VERSION='7.10';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -1066,7 +1069,7 @@ const tabList=()=>fishOnly()?[['fishing','The Bank'],['settings','Settings']]:[[
 const tabs=v=>`<nav class="tabs" style="--n:${tabList().length}">${tabList().map(([k,l])=>`<a href="#${k}" class="${v===k?'on':''}" ${v===k?'aria-current="page"':''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[k]}</svg>${l}${k==='fishing'&&pendingIn().length?'<i class="tdot" aria-label="Friend requests"></i>':''}</a>`).join('')}</nav>`;
 const view=()=>{const h=location.hash.slice(1);if(h==='profile'||(h==='mate'&&pv)||(h==='album'&&alb)||(h==='map'&&D.cfg.fishTab!==false))return h;return tabList().some(t=>t[0]===h)?h:(fishOnly()?'fishing':'today')};
 function keepOpen(){document.querySelectorAll('details[data-keep]').forEach(d=>d.open?openD.add(d.dataset.keep):openD.delete(d.dataset.keep));document.querySelectorAll('details[data-pi]').forEach(d=>d.open?openP.add(+d.dataset.pi):openP.delete(+d.dataset.pi))}
-function render(){keepOpen();stopLoc();if(!D.onboarded||ob.done){root.innerHTML=onboard();return}const v=view();root.innerHTML=(v==='food'?food():v==='history'?history():v==='settings'?settings():v==='fishing'?fishing():v==='profile'||v==='mate'?profilePage():v==='album'?albumPage():v==='map'?mapPage():today())+(v==='map'||(lb||blb||spSel||celeb||secret||gl||albPick||mapPick)&&['fishing','album','mate'].includes(v)?'':tabs(v))+glBox();document.body.classList.toggle('fishmode',['fishing','profile','mate','album','map'].includes(v)||(fishOnly()&&v==='settings'));if(v==='profile'||v==='mate')loadSocial();if(v==='album')loadAlbums();if(v==='food')renderResults();if(v==='history')drawW();if(['fishing','profile','mate','album'].includes(v))hydratePhotos();if(v==='map')initCatchMap();if(v==='fishing'&&mapPick)initPickMap()}
+function render(){keepOpen();stopLoc();if(!D.onboarded||ob.done){root.innerHTML=onboard();return}const v=view();root.innerHTML=(v==='food'?food():v==='history'?history():v==='settings'?settings():v==='fishing'?fishing():v==='profile'||v==='mate'?profilePage():v==='album'?albumPage():v==='map'?mapPage():today())+(v==='map'||(lb||blb||spSel||celeb||secret||gl||albPick||mapPick)&&['fishing','album','mate'].includes(v)?'':tabs(v))+glBox();document.body.classList.toggle('fishmode',['fishing','profile','mate','album','map'].includes(v)||(fishOnly()&&v==='settings'));if(v==='profile'||v==='mate')loadSocial();if(v==='album')loadAlbums();if(v==='food')renderResults();if(v==='history')drawW();if(['fishing','profile','mate','album'].includes(v))hydratePhotos();if(v==='map'){initCatchMap();requestAnimationFrame(()=>{const p=document.querySelector('.mappage.noanim');if(p)p.classList.remove('noanim')})}else mapMenuOn=false;if(v==='fishing'&&mapPick)initPickMap()}
 let morphing=false;
 function morph(to){if(morphing)return;morphing=true;const toFish=to==='fish',o=document.getElementById('morph'),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
  const apply=()=>{D.cfg.mode=to;if(toFish)D.cfg.fishTab=true;save();location.hash='settings';render();scrollTo(0,0)};
@@ -1164,7 +1167,6 @@ root.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('[data-f
  if(a==='reset'){if(!resetArm){resetArm=true;rr();setTimeout(()=>{if(resetArm){resetArm=false;if(view()==='settings')rr()}},4000);return}resetArm=false;D.cfg=PRESET();save();rr();toast('Preset reset')}});
 root.addEventListener('change',e=>{const t=e.target,ds=t.dataset;
  if(ds.bsp!=null){board.sp=t.value;rr();return}
- if(ds.mapsp!=null){mapFilt.sp=t.value;mapSt.c=null;rr();mapMenu(true);return}
  if(ds.albup!=null){const fs=[...(t.files||[])];albPick=null;if(fs.length)albAddBlobs(fs.map(f=>({blob:f,info:null})));return}
  if(ds.fphotos!=null){if(t.files&&t.files.length)addPhotos(t.files);return}
  if(ds.fset){if(ds.fset==='tab'){D.cfg.fishTab=t.checked}else D.cfg.fUnit=t.value;save();rr();return}
@@ -1300,19 +1302,20 @@ function addLocate(L,m){const C=L.Control.extend({options:{position:'bottomright
  m._lifeLoc=go;if(locLast)draw(locLast[0],locLast[1],locLast[2]);
  if(locOn)go(false,false);else try{navigator.permissions&&navigator.permissions.query({name:'geolocation'}).then(r=>{if(r.state==='granted')go(false,false)}).catch(()=>{})}catch(e){}}
 function lastPin(){const c=catches().find(c=>c.loc);if(c)return[c.loc.lat,c.loc.lng];try{const g=JSON.parse(localStorage.getItem('pgeo')||'null');if(g)return g}catch(e){}return null}
-let mapFilt={sp:'',t:'all'},mapRef=null;
-function mapPins(){const now=Date.now(),yr=String(new Date().getFullYear()),d30=iso(new Date(now-30*864e5));return catches().filter(c=>c.loc&&(!mapFilt.sp||c.species===mapFilt.sp)&&(mapFilt.t==='all'||(mapFilt.t==='year'?c.date.startsWith(yr):c.date>=d30)))}
-function mapPage(){const all=catches().filter(c=>c.loc),pins=mapPins(),n=pins.length,filt=mapFilt.sp||mapFilt.t!=='all',sps=[...new Set(all.map(c=>c.species))].sort();
- return`<div class="mappage"><div id="fmap" class="fmap"></div><button class="mback" data-act="pback" aria-label="Back to The Bank">‹</button><div class="mtitle"><b>Catch map</b><small>${all.length?(filt?`${n} of ${all.length} shown`:`${n} pinned catch${n===1?'':'es'}`):'No pinned catches yet'}</small></div>
+let mapFilt={sp:[],t:'all'},mapRef=null,mapFiltOpen=false,mapMenuOn=false;
+function mapPins(){const now=Date.now(),yr=String(new Date().getFullYear()),d30=iso(new Date(now-30*864e5));return catches().filter(c=>c.loc&&(!mapFilt.sp.length||mapFilt.sp.includes(c.species))&&(mapFilt.t==='all'||(mapFilt.t==='year'?c.date.startsWith(yr):c.date>=d30)))}
+function mapPage(){const all=catches().filter(c=>c.loc),pins=mapPins(),n=pins.length,filt=mapFilt.sp.length||mapFilt.t!=='all',sps=[...new Set(all.map(c=>c.species))].sort();
+ return`<div class="mappage${mapMenuOn?' menu noanim':''}"><div id="fmap" class="fmap"></div><button class="mback" data-act="pback" aria-label="Back to The Bank">‹</button><div class="mtitle"><b>Catch map</b><small>${all.length?(filt?`${n} of ${all.length} shown`:`${n} pinned catch${n===1?'':'es'}`):'No pinned catches yet'}</small></div>
  <button class="mmenu${filt?' dot':''}" data-mapmenu aria-label="Map menu" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
  ${all.length?'':'<div class="mempty">Add a pin when you log a catch, or edit an old catch to pin it.</div>'}
  <button class="mpbg" data-mapmenux aria-label="Close menu" tabindex="-1"></button><aside class="mpanel" aria-label="Map menu"><div class="mph"><b>Map</b><button class="mpx" data-mapmenux aria-label="Close menu">×</button></div>
  <button class="btn mpbtn" data-maplog="centre">${PINSVG}<span>Log a catch here<small>Pins it to the middle of the map</small></span></button>
  <button class="btn sec mpbtn" data-maplog="gps"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg><span>Log a catch where I am</span></button>
- <h4 class="mpsec">Show</h4><div class="seg mpseg">${[['all','All time'],['year','This year'],['30','Last 30 days']].map(([k,l])=>`<button data-mapt="${k}" class="${mapFilt.t===k?'on':''}">${l}</button>`).join('')}</div>
- ${sps.length>1?`<label class="f" style="margin-top:10px">Species<select data-mapsp><option value="">All species</option>${sps.map(n=>`<option ${mapFilt.sp===n?'selected':''}>${esc(n)}</option>`).join('')}</select></label>`:''}
- ${filt?'<button class="linkbtn" data-mapclear style="margin-top:4px">Clear filters</button>':''}
- <h4 class="mpsec">Pinned catches</h4>${pins.length?`<div class="mplist">${pins.map(c=>`<button class="mprow" data-mapgo="${c.id}"><span class="mpart">${fishSVG(c.species)}</span><span><b>${esc(c.species)}</b><small>${[c.g?fW(c.g):'',label(c.date),c.place?esc(c.place):''].filter(Boolean).join(' · ')}</small></span></button>`).join('')}</div>`:`<p class="empty">${all.length?'No catches match these filters.':'Nothing pinned yet.'}</p>`}
+${all.length>1?`<details class="mpfilt" ${mapFiltOpen||filt?'open':''}><summary><span>Filter${filt?` <span class="pill">${(mapFilt.t!=='all'?1:0)+mapFilt.sp.length}</span>`:''}</span></summary>
+ <h4 class="mpsec" style="margin-top:6px">Time</h4><div class="seg mpseg">${[['all','All time'],['year','This year'],['30','Last 30 days']].map(([k,l])=>`<button data-mapt="${k}" class="${mapFilt.t===k?'on':''}">${l}</button>`).join('')}</div>
+ ${sps.length>1?`<h4 class="mpsec">Species <small>pick any</small></h4><div class="pickf">${sps.map(n=>{const on=mapFilt.sp.includes(n);return`<button class="chip${on?' on':''}" data-mapsp="${esc(n)}" aria-pressed="${on}">${on?'✓ ':''}${esc(n)}</button>`}).join('')}</div>`:''}
+ ${filt?'<button class="linkbtn" data-mapclear style="margin-top:8px">Clear filters</button>':''}</details>`:''}
+ <h4 class="mpsec">Pinned catches${filt?` <small>${n} of ${all.length}</small>`:''}</h4>${pins.length?`<div class="mplist">${pins.map(c=>`<button class="mprow" data-mapgo="${c.id}"><span class="mpart">${fishSVG(c.species)}</span><span><b>${esc(c.species)}</b><small>${[c.g?fW(c.g):'',label(c.date),c.place?esc(c.place):''].filter(Boolean).join(' · ')}</small></span></button>`).join('')}</div>`:`<p class="empty">${all.length?'No catches match these filters.':'Nothing pinned yet.'}</p>`}
  </aside></div>`}
 function mapBlock(){const n=catches().filter(c=>c.loc).length;return`<div class="mapw" style="margin-top:12px"><div id="fmap" class="fmap"></div></div><p class="sub" style="text-align:center">${n?`${n} pinned catch${n===1?'':'es'}. Only you can see your pins.`:'No pinned catches yet. Add a pin when you log a catch, or edit an old one.'}</p>`}
 async function initCatchMap(){const el=document.getElementById('fmap');if(!el)return;let L;try{L=await leaf()}catch(e){el.innerHTML='<p class="empty" style="padding:24px;text-align:center">The map could not load. Check your connection.</p>';return}
@@ -1341,12 +1344,13 @@ async function exifGps(file){try{const buf=await file.slice(0,262144).arrayBuffe
    const ref=e=>e?String.fromCharCode(v.getUint8(e)):'';let lat=rat(G[2]),lng=rat(G[4]);if(ref(G[1])==='S')lat=-lat;if(ref(G[3])==='W')lng=-lng;
    if(!isFinite(lat)||!isFinite(lng)||(!lat&&!lng)||Math.abs(lat)>90||Math.abs(lng)>180)return null;return{lat:r5(lat),lng:r5(lng)}}
   if((mk&0xFF00)!==0xFF00||mk===0xFFDA)break;o+=2+len}}catch(e){}return null}
-function mapMenu(open){const p=document.querySelector('.mappage');if(!p)return;p.classList.toggle('menu',open);const b=p.querySelector('.mmenu');if(b)b.setAttribute('aria-expanded',open)}
+function mapMenu(open){mapMenuOn=open;const p=document.querySelector('.mappage');if(!p)return;p.classList.remove('noanim');p.classList.toggle('menu',open);const b=p.querySelector('.mmenu');if(b)b.setAttribute('aria-expanded',open)}
 function pinClick(t,ds){
  if(ds.mapmenu!=null){mapMenu(true);return true}
  if(ds.mapmenux!=null){mapMenu(false);return true}
- if(ds.mapt){mapFilt.t=ds.mapt;mapSt.c=null;rr();mapMenu(true);return true}
- if(ds.mapclear!=null){mapFilt={sp:'',t:'all'};mapSt.c=null;rr();mapMenu(true);return true}
+ if(ds.mapt){mapFilt.t=ds.mapt;mapFiltOpen=true;mapSt.c=null;rr();mapMenu(true);return true}
+ if(ds.mapsp!=null&&t.tagName==='BUTTON'){const n=ds.mapsp,a=mapFilt.sp,i=a.indexOf(n);i<0?a.push(n):a.splice(i,1);mapFiltOpen=true;mapSt.c=null;const y=(document.querySelector('.mpanel')||{}).scrollTop||0;rr();mapMenu(true);const p=document.querySelector('.mpanel');if(p)p.scrollTop=y;return true}
+ if(ds.mapclear!=null){mapFilt={sp:[],t:'all'};mapSt.c=null;rr();mapMenu(true);return true}
  if(ds.mapgo){mapMenu(false);const mk=mapRef&&mapRef.mk[ds.mapgo];if(mk){mapRef.m.setView(mk.getLatLng(),Math.max(mapRef.m.getZoom(),16));setTimeout(()=>mk.openPopup(),250)}return true}
  if(ds.maplog){const startForm=(lat,lng,src)=>{fForm={photos:[],date:TODAY,loc:{lat:r5(lat),lng:r5(lng)},locSrc:src};fTab='log';location.hash='fishing';setTimeout(()=>scrollTo(0,0),30)};
   if(ds.maplog==='centre'){if(!mapRef)return true;const c=mapRef.m.getCenter();startForm(c.lat,c.lng,'map')}else gpsHere((lat,lng)=>startForm(lat,lng,'gps'));return true}
