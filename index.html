@@ -172,6 +172,7 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 .scene .tw{animation:tw 3s ease-in-out infinite alternate}@keyframes tw{to{opacity:.15}}
 @media(prefers-reduced-motion:reduce){.scene *{animation:none!important}}
 .fart{width:100%;height:auto;display:block}
+.scenes{margin:0 0 4px;display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;overflow:visible}.scenes button{height:44px}.scenes button:last-child:nth-child(odd){grid-column:1/-1}.scenes .cnt{display:inline-block;min-width:20px;padding:0 6px;margin-left:4px;border-radius:99px;background:#ffffff1f;font-size:12px;line-height:18px}.scenes button.on .cnt{background:#13241c33}
 .spgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:6px}
 .spc{position:relative;display:grid;gap:2px;text-align:left;background:var(--card);border:1px solid #ffffff0c;border-radius:16px;padding:10px 12px 12px;min-height:44px}
 .spc .fart{filter:saturate(.15) brightness(.85);opacity:.7;margin-bottom:4px}.spc:not(.got) b{color:#cfd9cf}
@@ -197,7 +198,7 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 @media(prefers-reduced-motion:no-preference){.bar i{transition:width .3s}}
 </style></head><body><div id="root"></div><div id="toast"></div><script>
 {
-const VERSION='3.9';
+const VERSION='4.0';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -355,11 +356,13 @@ function drawW(){const s=document.getElementById('wchart');if(!s)return;const dr
 
 
 /* ---------- Fishing hub ---------- */
-const FISH=[['Freshwater',['Barbel','Bleak','Bream (common)','Bream (silver)','Bullhead','Carp (common)','Carp (mirror)','Carp (leather)','Carp (ghost)','Carp (grass)','Carp (crucian)','Catfish (wels)','Chub','Dace','Eel','Gudgeon','Ide','Golden orfe','Minnow','Perch','Pike','Roach','Rudd','Ruffe','Stone loach','Stickleback','Tench','Zander']],
- ['Game',['Brown trout','Rainbow trout','Sea trout','Tiger trout','Atlantic salmon','Grayling','Arctic char']],
- ['Sea',['Bass','Cod','Pollack','Coalfish','Whiting','Pouting','Haddock','Ling','Mackerel','Scad','Garfish','Herring','Ballan wrasse','Corkwing wrasse','Cuckoo wrasse','Conger eel','Thornback ray','Small-eyed ray','Spotted ray','Undulate ray','Lesser spotted dogfish','Bull huss','Smoothhound','Tope','Plaice','Flounder','Dab','Sole','Turbot','Brill','Black bream','Gilthead bream','Red mullet','Thick-lipped grey mullet','Thin-lipped grey mullet','Golden grey mullet','Red gurnard','Grey gurnard','Tub gurnard','Lesser weever','Shore rockling','Shanny','Long-spined sea scorpion','Dragonet']]];
+const FISH=[['UK coarse',['Barbel','Bleak','Bream (common)','Bream (silver)','Bullhead','Carp (common)','Carp (mirror)','Carp (leather)','Carp (ghost)','Carp (grass)','Carp (crucian)','Catfish (wels)','Chub','Dace','Eel','Gudgeon','Ide','Golden orfe','Minnow','Perch','Pike','Roach','Rudd','Ruffe','Stone loach','Stickleback','Tench','Zander','Brown trout','Rainbow trout','Sea trout','Tiger trout','Atlantic salmon','Grayling','Arctic char']],
+ ['UK sea',['Bass','Cod','Pollack','Coalfish','Whiting','Pouting','Haddock','Ling','Mackerel','Scad','Garfish','Herring','Ballan wrasse','Corkwing wrasse','Cuckoo wrasse','Conger eel','Thornback ray','Small-eyed ray','Spotted ray','Undulate ray','Lesser spotted dogfish','Bull huss','Smoothhound','Tope','Plaice','Flounder','Dab','Sole','Turbot','Brill','Black bream','Gilthead bream','Red mullet','Thick-lipped grey mullet','Thin-lipped grey mullet','Golden grey mullet','Red gurnard','Grey gurnard','Tub gurnard','Lesser weever','Shore rockling','Shanny','Long-spined sea scorpion','Dragonet']],
+ ['European',['Asp','Nase','Vimba','Huchen','Sterlet','Siberian sturgeon','Iberian barbel','Comizo barbel','Pumpkinseed','Largemouth bass','Black bullhead','Leerfish','Greater amberjack','Common dentex','White seabream','Saddled seabream','European barracuda','Atlantic bonito','Little tunny','Bluefin tuna','Bluefish','Dusky grouper','Meagre','Corb']],
+ ['Other',['Mahseer','Arapaima','Peacock bass','Nile perch','Tigerfish','Snook','Tarpon','Bonefish','Giant trevally','Barramundi','Mahi-mahi','Sailfish','Blue marlin','Yellowfin tuna','Red snapper','Red drum','Walleye','Muskellunge','Smallmouth bass','Channel catfish']]];
+const GAME=new Set(['Brown trout','Rainbow trout','Sea trout','Tiger trout','Atlantic salmon','Grayling','Arctic char']);
 const BUCKET='catch-photos';
-let fTab='log',fForm=null,fGroup='All',fStatus='All',fQ='',fOpen=null,lb=null,fDelArm=null;
+let fTab='log',fForm=null,fGroup='UK coarse',fStatus='All',fQ='',fOpen=null,lb=null,fDelArm=null;
 const purl={};
 const fishD=()=>(D.fish=D.fish||{catches:[],cdel:{},custom:[],ticks:{}});
 const fUnit=()=>D.cfg.fUnit||'lboz';
@@ -567,6 +570,50 @@ const FSPEC={_:{h:17,c:['#4f6a5a','#9fb4a5','#e6eee3'],m:['scales'],tl:'f'},
 'Shore rockling':{h:10,pk:.3,np:.6,c:['#3e3020','#6a5638','#b8a27a'],f:'#4a3a26',d:'lg',an:'lg',bb:'3',tl:'r',m:['mottle:10:#251c10:.4']},
 'Shanny':{h:12,bl:.55,pk:.15,np:.5,c:['#4a4a28','#7c7a46','#cfc79a'],f:'#5a5a32',d:'lg',dh:10,an:'lg',tl:'r',m:['mottle:18:#2a2a14:.5'],ey:.8,ex:.1},
 'Long-spined sea scorpion':{h:16,bl:.4,pk:.2,np:.55,c:['#6a3c28','#9c6440','#e6c9a8'],f:'#7a4a30',d:'sp',dh:13,pe:1.8,tl:'r',m:['mottle:18:#3a1c10:.55','spots:20:#f0d8b8:1'],ey:.75},
+'Asp':{h:14,c:['#3e5560','#b9c6cc','#f2f5f5'],f:'#8f948a',mo:'up',m:['scales:#000:.15'],tl:'d'},
+'Nase':{h:15,c:['#3f4a44','#b3bbb4','#eef0ec'],f:'#c95a3a',dc:'#6a6f66',mo:'dn',m:['scales:#000:.18'],tl:'d'},
+'Vimba':{h:15,c:['#2f3a3a','#9aa29c','#ecd2ae'],f:'#9a8a6a',mo:'dn',m:['scales:#000:.18'],tl:'d'},
+'Huchen':{h:12,c:['#4e3f36','#a88a74','#efe2d6'],f:'#8a6a58',ad:1,m:['spots:40:#2a1c14:1.2:-.95:.1:.12'],tl:'s'},
+'Sterlet':{a:'k',h:9,b:7,pk:.35,np:.6,n:12,c:['#4e4a3e','#8f8a78','#e8e2cc'],f:'#5a5446',d:'bk',an:'bk',tl:'k',bb:'4',mo:'dn',m:['scutes:#e9e2c8','lat:#e9e2c8:.6']},
+'Siberian sturgeon':{a:'k',h:10,b:8,pk:.35,np:.6,n:12,c:['#3e3c36','#6f6c60','#ddd6c0'],f:'#4a463c',d:'bk',an:'bk',tl:'k',bb:'4',mo:'dn',m:['scutes:#d9d2bc','lat:#d9d2bc:.6']},
+'Iberian barbel':{h:13,np:.6,c:['#4d5226','#99914f','#e8dcae'],f:'#8a6a3c',bb:'4',mo:'dn',m:['scales:#2d230c:.3'],tl:'d'},
+'Comizo barbel':{h:13,np:.5,n:24,c:['#5e5a2e','#aa9a5a','#ecdfb2'],f:'#9a6e40',bb:'4',mo:'dn',m:['scales:#2d230c:.3'],tl:'d',hd:.27},
+'Pumpkinseed':{h:24,b:20,c:['#4f6a3a','#a0a060','#f0a040'],f:'#7a7a3a',d:'spc',m:['spots:30:#e08a3a:1.2:-.9:.3','headlines:#3fa0c8','dot:.2:-.25:#c02a2a:2.4'],tl:'e'},
+'Largemouth bass':{h:17,bl:.1,c:['#3f5a2a','#8fa060','#eef0d8'],f:'#6a7a4a',d:'sp',mo:'lip',m:['blotch:9:#22301a:0','scales:#000:.15'],tl:'e'},
+'Black bullhead':{h:13,bl:.5,pk:.2,c:['#2a2822','#4a463a','#d8cfa8'],f:'#2a2822',d:'s',ad:1,adc:'#2a2822',bb:'cat',tl:'s',m:[]},
+'Leerfish':{h:14,c:['#4a5e6a','#c3ccd0','#f4f6f6'],f:'#7a8a92',d:'sp',m:['lat:#3a4a52:.2:3'],tl:'d'},
+'Greater amberjack':{h:15,c:['#55665a','#c8c0a0','#f2ede0'],f:'#8a8a6a',d:'sp',m:['band:#e0b050:.5'],tl:'d'},
+'Common dentex':{h:20,bl:.15,c:['#a07a7a','#d8c0bc','#f2e6e2'],f:'#b08a84',d:'spl',m:['spots:26:#4a7ac0:1:-.9:-.1:.15']},
+'White seabream':{h:21,c:['#5a6268','#c5cbce','#f2f4f4'],f:'#6a7278',d:'spl',m:['bars:6:#20262a:.55','dot:.97:0:#111:3.4']},
+'Saddled seabream':{h:16,c:['#5e6a72','#c8d0d4','#f4f6f6'],f:'#7a868c',d:'spl',er:4,m:['hstripes:5:#5a666c:.8','dot:.98:-.2:#111:4.5']},
+'European barracuda':{h:9,b:8,n:22,c:['#44545e','#b8c4ca','#f2f5f6'],f:'#6a7a84',d:'2',mo:'up',m:['bars:8:#3a4a52:.25'],tl:'f'},
+'Atlantic bonito':{h:15,c:['#1f3f6a','#a8bccc','#f2f5f6'],f:'#2f4a6a',d:'2',m:['hstripes:5:#15284a:1.6'],tl:'d',th:1.3},
+'Little tunny':{h:15,c:['#20506a','#b0c4cc','#f2f5f6'],f:'#2a4f66',d:'2',m:['mack:#0f2a3a','spots:5:#111:2:.3:.6:.25'],tl:'d',th:1.3},
+'Bluefin tuna':{h:19,c:['#14264a','#8aa0b4','#eef2f4'],f:'#1c2e52',d:'2',ac:'#e8c23a',m:['scutes:#e8c23a'],tl:'d',th:1.5},
+'Bluefish':{h:15,c:['#2a5a6a','#b8c8cc','#f2f5f5'],f:'#3a6a76',d:'sp',m:['dot:.22:.15:#111:2.6'],tl:'d'},
+'Dusky grouper':{h:18,bl:.25,c:['#4a3a2a','#7a6248','#c8b494'],f:'#4a3a2a',d:'spl',mo:'lip',m:['mottle:18:#e8dcc4:.35'],tl:'r'},
+'Meagre':{h:15,c:['#5a5a4a','#b8b4a0','#efede4'],f:'#8a7a5a',d:'spl',m:['scales:#000:.15'],tl:'s'},
+'Corb':{h:20,c:['#3e3326','#7a6a4c','#c9b894'],f:'#2a241a',d:'spl',m:['scales:#000:.2'],tl:'s'},
+'Mahseer':{h:20,bl:.12,c:['#5a4a1e','#c8a050','#efdcaa'],f:'#d07a3a',bb:'4',mo:'lip',m:['scales:#3a2a08:.45'],tl:'f'},
+'Arapaima':{h:13,n:16,c:['#2e3c34','#6f7a6a','#d8d0b8'],f:'#5a3a2a',tc:'#b03a2a',d:'bk',an:'bk',tl:'r',m:['scales:#000:.3','band:#b03a2a:0']},
+'Peacock bass':{h:17,c:['#5a6a22','#d8c048','#f3e4a8'],f:'#c0503a',d:'sp',mo:'lip',m:['bars:3:#1a1a10:.85','dot:.98:-.1:#111:4','dot:.98:-.1:#e8a83a:1.8']},
+'Nile perch':{h:18,c:['#5a6670','#c8cfd2','#f2f4f4'],f:'#7a868c',d:'sp',ec:'#e8c23a',tl:'r',m:['scales:#000:.18']},
+'Tigerfish':{h:15,c:['#4a5a5e','#c8d0d2','#f4f6f6'],f:'#d0402a',ad:1,adc:'#d0402a',m:['hstripes:6:#111:1.4'],tl:'d'},
+'Snook':{h:14,n:22,c:['#4e5a4a','#c8c8a8','#f4f2e8'],f:'#c8b04a',d:'sp',mo:'up',m:['lat:#111:.12::1.8'],tl:'f'},
+'Tarpon':{h:17,c:['#3a5060','#c8d2d6','#f6f8f8'],f:'#7a8a92',mo:'up',m:['scales:#000:.35'],tl:'d',th:1.3,er:4},
+'Bonefish':{h:14,c:['#6a7a80','#d0d8da','#f6f8f8'],f:'#a0acb0',mo:'dn',m:['hstripes:6:#8a9aa0:.8'],tl:'d'},
+'Giant trevally':{h:22,bl:.25,pk:.3,c:['#3a3e44','#9aa0a4','#e8eaea'],f:'#3a3e44',d:'sp',m:['scutes:#2a2e32'],tl:'d',th:1.3},
+'Barramundi':{h:17,c:['#5a6260','#c8ccc8','#f2f3f0'],f:'#8a908a',d:'sp',ec:'#e8a03a',tl:'r',m:['scales:#000:.2']},
+'Mahi-mahi':{h:18,bl:.6,pk:.1,c:['#2a8a6a','#b8c84a','#f2e87a'],f:'#2a7a8a',d:'lg',dh:12,an:'lg',m:['spots:30:#2a5ab0:1.4']},
+'Sailfish':{h:12,n:30,dh:16,c:['#1a2e5a','#8aa0b8','#eef2f4'],f:'#22386a',d:'sail',dc:'#2a4a8a',mo:'beak',m:['bars:10:#8ab0d8:.35'],tl:'d',th:1.6},
+'Blue marlin':{h:15,n:30,c:['#14244a','#8098b0','#eef2f4'],f:'#1c2e5a',d:'2',mo:'beak',m:['bars:10:#8ab0d8:.4'],tl:'d',th:1.6},
+'Yellowfin tuna':{h:18,c:['#14264a','#8aa0b4','#eef2f4'],f:'#e8c23a',d:'2',dc:'#e8c23a',ac:'#e8c23a',m:['band:#e8c23a:.45','scutes:#e8c23a'],tl:'d',th:1.5},
+'Red snapper':{h:18,c:['#a8302a','#e07060','#f4d0c8'],f:'#c8483a',d:'spl',ec:'#c02a2a',m:['scales:#5a0a0a:.2']},
+'Red drum':{h:15,c:['#6a4a2a','#c8905a','#f0e0c8'],f:'#a8784a',d:'sp',mo:'dn',m:['dot:.92:-.4:#111:3.4','scales:#000:.15'],tl:'s'},
+'Walleye':{h:14,c:['#4a4a26','#b8a85a','#efe6c0'],f:'#8a7a4a',d:'sp',ec:'#e8e0c0',m:['mottle:10:#2a2a12:.35'],tl:'f'},
+'Muskellunge':{h:11,b:10,n:24,t:150,c:['#4a5a3a','#a8a880','#efe8cc'],f:'#a0603a',d:'bk',an:'bk',mo:'duck',m:['bars:9:#2e3a22:.55'],tl:'f'},
+'Smallmouth bass':{h:16,c:['#4a3e22','#a0864a','#e8dcb4'],f:'#7a6a3a',d:'sp',ec:'#c02a2a',m:['bars:8:#2a2210:.5'],tl:'e'},
+'Channel catfish':{h:12,b:13,bl:.45,pk:.25,c:['#4a5866','#9aa8b2','#eef0f2'],f:'#4a5866',d:'s',ad:1,adc:'#4a5866',bb:'cat',an:'lg',tl:'d',m:['spots:20:#1a2228:1.2']},
 'Dragonet':{h:9,b:7,bl:.2,pk:.2,np:.6,c:['#7a6a3a','#b8a268','#f0e2b8'],f:'#d8b23a',d:'dr',dc:'#e0c040',dc2:'#4a8fd0',m:['spots:22:#3f8fd0:1.2:-1:.2'],tl:'r',ey:.85}};
 
 /* Real sunrise and sunset for today's date (NOAA solar equations). Defaults to central England; Settings can use the phone's location. */
@@ -615,17 +662,17 @@ function scene(){const t=sceneHour(),S=skyAt(t),R=fRng('stars');let stars='';for
  ${reeds(18,9,1)}${reeds(392,7,-1)}</svg>`}}
 function fishing(){const C=catches(),cm=caughtMap(),sp=speciesAll(),got=sp.filter(s=>isTicked(s.n,cm)).length,big=C.filter(c=>c.g).sort((a,b)=>b.g-a.g)[0],yr=String(new Date().getFullYear()),sc=scene();
  return`<header class="fhero">${sc.svg}<div class="fhin"><p class="fgreet">${sc.greet}</p><h1>The Bank</h1><p class="fsun">Sunrise ${hm(skyKeys().sr)} · Sunset ${hm(skyKeys().ss)}</p></div></header>
- <div class="fband"><div class="in"><div class="fstats"><div><div class="kbig">${got}<small> / ${sp.length}</small></div><div class="sub">species caught</div></div><div><div class="kbig sm">${C.filter(c=>c.date.startsWith(yr)).length}</div><div class="sub">catches in ${yr}</div></div><div><div class="kbig sm">${big?fW(big.g):'–'}</div><div class="sub">${big?'biggest · '+esc(big.species):'biggest fish'}</div></div></div>
+ <div class="fband"><div class="in"><div class="fstats"><div><div class="kbig">${got}</div><div class="sub">species caught</div></div><div><div class="kbig sm">${C.filter(c=>c.date.startsWith(yr)).length}</div><div class="sub">catches in ${yr}</div></div><div><div class="kbig sm">${big?fW(big.g):'–'}</div><div class="sub">${big?'biggest · '+esc(big.species):'biggest fish'}</div></div></div>
  <div class="seg ftabs" role="tablist">${[['log','Catches'],['species','Species'],['gallery','Gallery']].map(([k,l])=>`<button role="tab" aria-selected="${fTab===k}" data-ftab="${k}" class="${fTab===k?'on':''}">${l}</button>`).join('')}</div></div></div>
  <main class="wrap">${fTab==='species'?fishSpecies(cm,sp,got):fTab==='gallery'?fishGallery(C):fishLog(C,cm)}</main>${lb?lightbox():''}${spSel?spSheet(cm):''}${celeb?celebrate(cm,sp):''}`}
 let spSel=null,celeb=null;
-function fishSpecies(cm,sp,got){const groups=['All',...FISH.map(f=>f[0]),...(fishD().custom.length?['Custom']:[])],list=spFilter(sp,cm);
- return`<section class="card"><div class="ch"><h2>Species</h2><span class="sub">${got} of ${sp.length} caught</span></div><div class="bar" style="margin:10px 0 6px;--pc:#d9b45a"><i style="width:${Math.round(got/sp.length*100)}%"></i></div>
- <div class="seg">${groups.map(g=>`<button data-fgroup="${g}" class="${fGroup===g?'on':''}">${g}</button>`).join('')}</div>
+function fishSpecies(cm,sp,got){const groups=[...FISH.map(f=>f[0]),...(fishD().custom.length?['Custom']:[]),'All'],list=spFilter(sp,cm),inG=sp.filter(s=>fGroup==='All'||s.g===fGroup),gotG=inG.filter(s=>isTicked(s.n,cm)).length;
+ return`<section class="card"><div class="seg scenes" role="tablist" aria-label="Fishing scene">${groups.map(g=>{const n=sp.filter(s=>(g==='All'||s.g===g)&&isTicked(s.n,cm)).length;return`<button role="tab" aria-selected="${fGroup===g}" data-fgroup="${g}" class="${fGroup===g?'on':''}">${g}${n?` <span class="cnt">${n}</span>`:''}</button>`}).join('')}</div>
+ <div class="ch" style="margin-top:8px"><h2>${fGroup==='All'?'All species':fGroup}</h2><span class="sub">${gotG} of ${inG.length} caught</span></div><div class="bar" style="margin:10px 0 12px;--pc:#d9b45a"><i style="width:${inG.length?Math.round(gotG/inG.length*100):0}%"></i></div>
  <input type="search" data-fsq value="${esc(fQ)}" placeholder="Search species" aria-label="Search species"><div class="seg">${['All','Caught','Not yet'].map(s=>`<button data-fstatus="${s}" class="${fStatus===s?'on':''}">${s}</button>`).join('')}</div></section>
  <div id="fsplist" class="spgrid">${spRows(list,cm)}</div>
  <details data-keep="fadd" ${openD.has('fadd')?'open':''} style="margin-top:16px"><summary>+ Add a species that's not listed</summary><form id="fadd" class="row"><input name="n" maxlength="60" required placeholder="Species name" style="flex:1"><button class="btn">Add</button></form></details>`}
-function spRows(list,cm){return list.map(s=>{const m=cm[s.n],t=isTicked(s.n,cm);return`<button class="spc${t?' got':''}" data-spsel="${esc(s.n)}" aria-label="${esc(s.n)}${t?', caught':', not caught yet'}">${t?'<span class="spok" aria-hidden="true">✓</span>':''}${fishSVG(s.n)}<b>${esc(s.n)}</b><small>${m?(m.pb?'PB '+fW(m.pb.g):m.n+' caught'):t?'Caught':'Not yet'}</small></button>`}).join('')||'<p class="empty">No species match.</p>'}
+function spRows(list,cm){return list.map(s=>{const m=cm[s.n],t=isTicked(s.n,cm);return`<button class="spc${t?' got':''}" data-spsel="${esc(s.n)}" aria-label="${esc(s.n)}${t?', caught':', not caught yet'}">${t?'<span class="spok" aria-hidden="true">✓</span>':''}${fishSVG(s.n)}<b>${esc(s.n)}</b><small>${m?(m.pb?'PB '+fW(m.pb.g):m.n+' caught'):t?'Caught':'Not yet'}${GAME.has(s.n)?' · game':''}</small></button>`}).join('')||'<p class="empty">No species match.</p>'}
 function spSheet(cm){const n=spSel,m=cm[n],t=isTicked(n,cm),g=(speciesAll().find(s=>s.n===n)||{}).g||'Custom',mine=catches().filter(c=>c.species===n),last=mine[0];
  return`<div class="sheetbg" data-spclose></div><div class="sheet" role="dialog" aria-modal="true" aria-label="${esc(n)}"><button class="lbx" data-spclose aria-label="Close">×</button>
  <div class="sheetart${t?'':' dim'}">${fishSVG(n,'fart big')}</div><p class="sub" style="margin:0">${g}</p><h2 class="sheeth">${esc(n)}</h2>
