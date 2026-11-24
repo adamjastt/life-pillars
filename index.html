@@ -205,6 +205,29 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 .sugg button:first-child{border-top:0}.sugg button:hover,.sugg button:focus{background:#ffffff10}
 .sugg .sgart{width:56px}.sugg .sgart .fart{width:56px}.sugg small{color:var(--mut);font-size:12px}
 .sugg mark{background:none;color:#d9b45a;font-weight:600}
+.scard{background:var(--card);border:1px solid #ffffff12;border-radius:20px;overflow:hidden;margin-bottom:16px}
+.scard.ispb{border-color:#d9b45a88}
+.sctop{position:relative;background:radial-gradient(120% 90% at 50% 100%,#2c5a4c,#163029 70%);padding:22px 24px 10px}
+.scart{max-width:460px;margin:0 auto}.scart .fart{filter:drop-shadow(0 8px 14px #0006)}
+.pbribbon{position:absolute;top:12px;left:12px;background:#d9b45a;color:#13241c;font-size:12px;font-weight:700;padding:4px 10px;border-radius:99px}
+.scscene{position:absolute;top:12px;right:12px;font-size:12px;color:#cfe0d4;background:#0006;padding:4px 10px;border-radius:99px}
+.scbody{padding:14px 18px 16px}
+.scbody h3{font-family:Fraunces,Georgia,serif;font-size:24px;margin:0 0 10px;color:var(--ink)}
+.scstats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px 12px;margin:0}
+.scstats div{background:#ffffff08;border-radius:12px;padding:8px 10px}
+.scstats dt{font-size:12px;color:var(--mut)}.scstats dd{margin:2px 0 0;font-weight:600;font-size:15px;overflow-wrap:anywhere}
+.scphotos{display:flex;gap:8px;overflow-x:auto;margin-top:12px}
+.scph{flex:none;width:84px;height:84px;border-radius:12px;overflow:hidden;border:0;padding:0;background:var(--card2)}.scph img{width:100%;height:100%;object-fit:cover;display:block}
+.scmore{background:none;border:0;color:var(--mut);text-decoration:underline;text-underline-offset:3px;min-height:44px;padding:0;margin-top:6px}
+@media(max-width:420px){.scstats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.ldr{list-style:none;margin:10px 0 0;padding:0}
+.ldr li{display:grid;grid-template-columns:36px minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 4px;border-top:1px solid var(--line)}
+.ldr li:first-child{border-top:0}.ldr li.me{background:#d9b45a1a;border-radius:12px}
+.ldr .rk{width:30px;height:30px;border-radius:99px;display:grid;place-items:center;font-weight:700;background:#ffffff12;font-size:14px}
+.ldr li:nth-child(1) .rk{background:#d9b45a;color:#13241c}.ldr li:nth-child(2) .rk{background:#c9cfd6;color:#13241c}.ldr li:nth-child(3) .rk{background:#c78a52;color:#13241c}
+.ldr .nm{font-weight:600}.ldr small{display:block;color:var(--mut);font-weight:400;font-size:12px}.ldr .vl{text-align:right;font-weight:700;white-space:nowrap}
+.ldrart{max-width:280px;margin:6px auto 0}
+.ftabs button{padding:0 8px;font-size:15px}
 .upd{position:fixed;left:50%;top:calc(10px + env(safe-area-inset-top));transform:translateX(-50%);z-index:30;display:flex;gap:10px;align-items:center;background:var(--ink);color:var(--bg);padding:8px 8px 8px 14px;border-radius:14px;font-size:14px;box-shadow:0 6px 24px #0008;max-width:94vw}
 .upd button{height:36px;border:0;border-radius:10px;padding:0 12px;background:var(--acc);color:#fff;font-weight:600}
 @media(max-width:700px){.wheelwrap{grid-template-columns:1fr;gap:16px}.wheel{max-width:250px;margin:0 auto}.cards{grid-template-columns:1fr}.kcal{grid-template-columns:1fr}
@@ -212,7 +235,7 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 @media(prefers-reduced-motion:no-preference){.bar i{transition:width .3s}}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><script>
 {
-const VERSION='5.3';
+const VERSION='5.5';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -709,8 +732,8 @@ function scene(){const t=sceneHour(),S=skyAt(t),R=fRng('stars');let stars='';for
 function fishing(){const C=catches(),cm=caughtMap(),sp=speciesAll(),got=sp.filter(s=>isTicked(s.n,cm)).length,big=C.filter(c=>c.g).sort((a,b)=>b.g-a.g)[0],yr=String(new Date().getFullYear()),sc=scene();
  return`<header class="fhero">${sc.svg}<div class="fhin"><p class="fgreet">${sc.greet}</p><h1>The Bank</h1><p class="fsun">Sunrise ${hm(skyKeys().sr)} · Sunset ${hm(skyKeys().ss)}</p></div></header>
  <div class="fband"><div class="in"><div class="fstats"><div><div class="kbig">${got}</div><div class="sub">species caught</div></div><div><div class="kbig sm">${C.filter(c=>c.date.startsWith(yr)).length}</div><div class="sub">catches in ${yr}</div></div><div><div class="kbig sm">${big?fW(big.g):'–'}</div><div class="sub">${big?'biggest · '+esc(big.species):'biggest fish'}</div></div></div>
- <div class="seg ftabs" role="tablist">${[['log','Catches'],['species','Species'],['gallery','Gallery']].map(([k,l])=>`<button role="tab" aria-selected="${fTab===k}" data-ftab="${k}" class="${fTab===k?'on':''}">${l}</button>`).join('')}</div></div></div>
- <main class="wrap">${fTab==='species'?fishSpecies(cm,sp,got):fTab==='gallery'?fishGallery(C):fishLog(C,cm)}</main>${lb?lightbox():''}${spSel?spSheet(cm):''}${celeb?celebrate(cm,sp):''}${secret?secretCard():''}`}
+ <div class="seg ftabs" role="tablist">${[['log','Catches'],['species','Species'],['gallery','Gallery'],['board','Rankings']].map(([k,l])=>`<button role="tab" aria-selected="${fTab===k}" data-ftab="${k}" class="${fTab===k?'on':''}">${l}</button>`).join('')}</div></div></div>
+ <main class="wrap">${fTab==='species'?fishSpecies(cm,sp,got):fTab==='gallery'?fishGallery(C):fTab==='board'?fishBoard():fishLog(C,cm)}</main>${lb?lightbox():''}${spSel?spSheet(cm):''}${celeb?celebrate(cm,sp):''}${secret?secretCard():''}`}
 let spSel=null,celeb=null;
 function fishSpecies(cm,sp,got){const groups=[...FISH.map(f=>f[0]),...(fishD().custom.length?['Custom']:[]),'All'],list=spFilter(sp,cm),inG=sp.filter(s=>fGroup==='All'||s.g===fGroup),gotG=inG.filter(s=>isTicked(s.n,cm)).length;
  return`<section class="card"><div class="seg scenes" role="tablist" aria-label="Fishing scene">${groups.map(g=>{const n=sp.filter(s=>(g==='All'||s.g===g)&&isTicked(s.n,cm)).length;return`<button role="tab" aria-selected="${fGroup===g}" data-fgroup="${g}" class="${fGroup===g?'on':''}">${g}${n?` <span class="cnt">${n}</span>`:''}</button>`}).join('')}</div>
@@ -745,12 +768,13 @@ function fishForm(){const c=fForm,sp=speciesAll(),venues=[...new Set(fishD().cat
  <p class="sub" style="margin:6px 0 0">${sb&&user?'Photos are backed up privately to your account.':'Photos are kept on this device. Sign in (Settings) to back them up.'}</p></div>
  <button class="btn">${c.editId?'Save changes':'Save catch'}</button><button type="button" class="btn sec" data-fcancel>Cancel</button></form></section>`}
 function fishLog(C,cm){return(fForm?fishForm():`<button class="btn bigadd" data-fnew>+ Log a catch</button>`)+
- (C.length?C.map(c=>{const pb=cm[c.species]&&cm[c.species].pb===c,open=fOpen===c.id;return`<section class="card fcatch"><button class="fhead" data-fexp="${c.id}" aria-expanded="${open}">${(c.photos||[])[0]?pimg(c.photos[0],c.species,'fthumb'):`<span class="fthumb art" aria-hidden="true">${fishSVG(c.species)}</span>`}
- <span class="fmeta"><b>${esc(c.species)}${pb?' <span class="pb">PB</span>':''}</b><small>${[fW(c.g),c.cm?fmt(c.cm)+' cm':''].filter(Boolean).join(' · ')||'No weight'}</small><small>${label(c.date)}${c.place?' · '+esc(c.place):''}</small></span></button>
- ${open?`<div class="fbody">${(c.photos||[]).length?`<div class="fphotos">${c.photos.map((p,i)=>`<button class="fph" data-lb="${c.id}:${i}" aria-label="Open photo">${pimg(p,c.species)}</button>`).join('')}</div>`:''}
- <dl class="fdl">${[['Time',c.time],['Method',c.method],['Bait',c.bait],['Released',c.rel===false?'No':'Yes']].filter(x=>x[1]).map(([k,v])=>`<dt>${k}</dt><dd>${esc(v)}</dd>`).join('')}</dl>${c.notes?`<p>${esc(c.notes)}</p>`:''}
- <div class="row"><button class="btn sec" data-fedit="${c.id}">Edit</button><button class="btn danger" data-fdelc="${c.id}">${fDelArm===c.id?'Tap again to delete':'Delete'}</button></div></div>`:''}</section>`}).join(''):`<p class="empty" style="margin-top:14px">No catches yet. Your first one will tick off a species on the checklist.</p>`)}
-
+ (C.length?C.map(c=>{const pb=cm[c.species]&&cm[c.species].pb===c,open=fOpen===c.id,ph=c.photos||[],g=(speciesAll().find(s=>s.n===c.species)||{}).g||'Custom';
+ const stats=[['Weight',c.g?fW(c.g):'–'],['Length',c.cm?fmt(c.cm)+' cm':'–'],['Caught',label(c.date)+(c.time?' · '+c.time:'')],['Venue',c.place||'–'],['Method',c.method||'–'],['Bait',c.bait||'–']];
+ return`<section class="scard${pb?' ispb':''}"><div class="sctop"><div class="scart">${fishSVG(c.species)}</div>${pb?'<span class="pbribbon">Personal best</span>':''}<span class="scscene">${esc(g)}</span></div>
+ <div class="scbody"><h3>${esc(c.species)}</h3><dl class="scstats">${stats.map(([k,v])=>`<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>
+ ${ph.length?`<div class="scphotos">${ph.map((p,i)=>`<button class="scph" data-lb="${c.id}:${i}" aria-label="Open photo ${i+1} of your ${esc(c.species)}">${pimg(p,c.species)}</button>`).join('')}</div>`:''}
+ <button class="scmore" data-fexp="${c.id}" aria-expanded="${open}">${open?'Less':'Notes, edit and more'}</button>
+ ${open?`<div class="fbody" style="padding:0">${c.notes?`<p>${esc(c.notes)}</p>`:''}<p class="sub">${c.rel===false?'Kept':'Released'}</p><div class="row"><button class="btn sec" data-fedit="${c.id}">Edit</button><button class="btn danger" data-fdelc="${c.id}">${fDelArm===c.id?'Tap again to delete':'Delete'}</button></div></div>`:''}</div></section>`}).join(''):`<p class="empty" style="margin-top:14px">No catches yet. Your first one will tick off a species on the checklist.</p>`)}
 function fishGallery(C){const ps=C.flatMap(c=>(c.photos||[]).map((p,i)=>({p,c,i})));
  return ps.length?`<div class="gal">${ps.map(({p,c,i})=>`<button class="gitem" data-lb="${c.id}:${i}" aria-label="${esc(c.species)}, ${label(c.date)}">${pimg(p,c.species)}<span>${esc(c.species)}${c.g?' · '+fW(c.g):''}</span></button>`).join('')}</div>`:'<p class="empty">Photos you add to catches will appear here.</p>'}
 function lightbox(){const all=catches().flatMap(c=>(c.photos||[]).map((p,i)=>({p,c,i}))),k=all.findIndex(x=>x.c.id===lb.c&&x.i===lb.i);if(k<0)return'';const {p,c}=all[k];
@@ -760,9 +784,10 @@ function lightbox(){const all=catches().flatMap(c=>(c.photos||[]).map((p,i)=>({p
 function mergeFish(a,b){a=a||{};b=b||{};const o={catches:[],cdel:{...(a.cdel||{})},custom:[...new Set([...(a.custom||[]),...(b.custom||[])])],ticks:{...(a.ticks||{})}};
  for(const[k,t]of Object.entries(b.cdel||{}))o.cdel[k]=Math.max(o.cdel[k]||0,t);
  const by={};for(const c of[...(a.catches||[]),...(b.catches||[])]){if(o.cdel[c.id])continue;if(!by[c.id]||(c.ts||0)>(by[c.id].ts||0))by[c.id]=c}o.catches=Object.values(by);
- for(const[k,t]of Object.entries(b.ticks||{}))if(!o.ticks[k]||t.t>o.ticks[k].t)o.ticks[k]=t;return o}
+ for(const[k,t]of Object.entries(b.ticks||{}))if(!o.ticks[k]||t.t>o.ticks[k].t)o.ticks[k]=t;const ba=a.board,bb=b.board;o.board=!ba?bb:!bb?ba:((bb.t||0)>(ba.t||0)?bb:ba);if(!o.board)delete o.board;return o}
 function fishClick(t,ds){
- if(ds.ftab){fTab=ds.ftab;lb=null;rr();return true}
+ if(ds.ftab){fTab=ds.ftab;lb=null;if(fTab==='board')loadBoard(true);rr();return true}
+ if(ds.bmode){board.mode=ds.bmode;rr();return true}
  if(ds.spsel){spSel=ds.spsel;rr();return true}
  if(ds.spclose!=null){spSel=null;rr();return true}
  if(ds.splog){fForm={photos:[],date:TODAY,species:ds.splog};spSel=null;fTab='log';render();scrollTo(0,0);return true}
@@ -920,6 +945,7 @@ root.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('[data-f
  if(ds.delp!=null){if(P().length<2){toast('Keep at least one pillar');return}if(t.textContent!=='Tap to confirm'){t.textContent='Tap to confirm';return}P().splice(+ds.delp,1);save();rr();return}
  const a=ds.act;if(!a)return;
  if(a==='tour'){startTour();return}
+ if(a==='bleave'){leaveBoard();return}
  if(a==='iconfish'||a==='iconstd'){try{localStorage.setItem('picon',a==='iconfish'?'fish':'std')}catch(e){}applyIcon();secret=false;rr();toast(a==='iconfish'?'Fishing icon on. Remove the app from your home screen and add it again to see it.':'Standard icon on. Re-add the app to your home screen to see it.');return}
  if(a==='secretclose'){secret=false;rr();return}
  if(a==='geo'){if(!navigator.geolocation){toast('Location is not available on this device');return}toast('Finding your location…');navigator.geolocation.getCurrentPosition(pos=>{try{localStorage.setItem('pgeo',JSON.stringify([+pos.coords.latitude.toFixed(1),+pos.coords.longitude.toFixed(1)]))}catch(e){}skyCache={};rr();toast('Sunrise and sunset set for your area')},()=>toast('Location was blocked. Using central England.'),{maximumAge:864e5,timeout:15000});return}
@@ -937,6 +963,7 @@ root.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('[data-f
  if(a==='copy')navigator.clipboard.writeText(JSON.stringify(D)).then(()=>toast('Backup copied'),()=>toast('Copy was blocked'));
  if(a==='reset'){if(!resetArm){resetArm=true;rr();setTimeout(()=>{if(resetArm){resetArm=false;if(view()==='settings')rr()}},4000);return}resetArm=false;D.cfg=PRESET();save();rr();toast('Preset reset')}});
 root.addEventListener('change',e=>{const t=e.target,ds=t.dataset;
+ if(ds.bsp!=null){board.sp=t.value;rr();return}
  if(ds.fphotos!=null){if(t.files&&t.files.length)addPhotos(t.files);return}
  if(ds.fset){if(ds.fset==='tab'){D.cfg.fishTab=t.checked}else D.cfg.fUnit=t.value;save();rr();return}
  if(ds.wunit!=null){D.cfg.wUnit=t.value;save();rr();return}
@@ -950,6 +977,7 @@ root.addEventListener('change',e=>{const t=e.target,ds=t.dataset;
 root.addEventListener('toggle',e=>{const d=e.target;if(d.dataset&&d.dataset.keep){d.open?openD.add(d.dataset.keep):openD.delete(d.dataset.keep)}if(d.dataset&&d.dataset.pi!=null){d.open?openP.add(+d.dataset.pi):openP.delete(+d.dataset.pi)}},true);
 root.addEventListener('input',e=>{if(e.target.dataset&&e.target.dataset.suggest){showSugg(e.target);return}if(e.target.dataset.fsq!=null){fQ=e.target.value;const cm=caughtMap(),el=document.getElementById('fsplist');if(el)el.innerHTML=spRows(spFilter(speciesAll(),cm),cm);return}if(e.target.id==='amt')updAmt();if(e.target.id==='fq'){lastQ=e.target.value;if(!lastQ.trim()){picked=null;status='';renderResults()}}});
 root.addEventListener('submit',e=>{e.preventDefault();const f=e.target;
+ if(f.id==='bjoin'){const n=f.elements.name.value.trim().slice(0,24);if(!n)return;fishD().board={on:true,name:n,t:Date.now()};boardHash='';save();syncBoard().then(()=>{loadBoard(true);toast("You're on the leaderboard")});rr();return}
  if(f.id==='fform'){saveCatch(f);return}
  if(f.id==='fadd'){const n=f.elements.n.value.trim();if(n&&!speciesAll().some(s=>s.n.toLowerCase()===n.toLowerCase())){fishD().custom.push(n);save();toast('Species added')}rr();return}
  if(f.id==='wform'){const kg=readW(f,'w'),d=f.elements.date.value||TODAY;if(kg==null||kg<20||kg>400){toast('Enter a weight');return}if(d>TODAY){toast('That date is in the future');return}
@@ -992,7 +1020,7 @@ async function syncNow(){if(!sb||!user)return;if(syncing){again=true;return}sync
  try{const r=await sb.from('pillars_data').select('data').eq('user_id',user.id).maybeSingle();if(r.error)throw r.error;
   if(r.data&&r.data.data){const before=JSON.stringify(D);D=merge(D,r.data.data,freshLogin);freshLogin=false;changed=JSON.stringify(D)!==before;try{localStorage.setItem('pillars2',JSON.stringify(D))}catch(e){}snapAll()}
   const w=await sb.from('pillars_data').upsert({user_id:user.id,data:D,updated_at:new Date().toISOString()});if(w.error)throw w.error;
-  lastSync=new Date();syncErr='';setSync('synced');uploadPending()}
+  lastSync=new Date();syncErr='';setSync('synced');uploadPending();syncBoard()}
  catch(e){console.warn('sync',e);syncErr=(e&&(e.message||e.code))||String(e);setSync(navigator.onLine===false?'offline':'error')}
  syncing=false;if(again){again=false;syncNow()}else if(changed)rr()}
 function initSync(){if(!SB_URL||!SB_KEY)return;const s=document.createElement('script');
@@ -1023,6 +1051,37 @@ let updShown=false;
 async function checkUpdate(){if(updShown||location.protocol==='file:')return;try{const t=await(await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'})).text();const m=t.match(/const VERSION='([^']+)'/);
  if(m&&m[1]!==VERSION){updShown=true;const d=document.createElement('div');d.className='upd';d.innerHTML='<span>New version available</span><button>Update</button>';d.querySelector('button').onclick=()=>location.replace(location.pathname+'?v='+Date.now()+location.hash);document.body.appendChild(d)}}catch(e){}}
 addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checkUpdate()});
+/* ---------- Leaderboard (shared table; venues and photos are never shared) ---------- */
+let board={rows:null,at:0,err:'',mode:'species',sp:null},boardHash='';
+const boardOn=()=>!!(fishD().board&&fishD().board.on);
+async function loadBoard(force){if(!sb||!user)return;if(!force&&board.rows&&Date.now()-board.at<60000)return;
+ try{const r=await sb.from('catch_board').select('id,user_id,name,species,grams,cm,caught_on').limit(10000);if(r.error)throw r.error;board.rows=r.data||[];board.at=Date.now();board.err=''}
+ catch(e){board.err=/relation|does not exist|schema cache/i.test(e.message||'')?'setup':(e.message||'Could not load the leaderboard')}
+ if(view()==='fishing'&&fTab==='board')rr()}
+async function syncBoard(){if(!sb||!user||!boardOn())return;const B=fishD().board,rows=fishD().catches.map(c=>({id:c.id,user_id:user.id,name:B.name,species:c.species,grams:c.g||null,cm:c.cm||null,caught_on:c.date}));
+ const hsh=JSON.stringify(rows);if(hsh===boardHash)return;
+ try{if(rows.length){const u=await sb.from('catch_board').upsert(rows);if(u.error)throw u.error}
+  const mine=await sb.from('catch_board').select('id').eq('user_id',user.id);if(mine.error)throw mine.error;const keep=new Set(rows.map(r=>r.id)),gone=(mine.data||[]).map(r=>r.id).filter(id=>!keep.has(id));
+  if(gone.length){const d=await sb.from('catch_board').delete().in('id',gone);if(d.error)throw d.error}
+  boardHash=hsh;board.at=0}catch(e){console.warn('board',e)}}
+async function leaveBoard(){const F=fishD();F.board={on:false,name:(F.board||{}).name||'',t:Date.now()};save();if(sb&&user){try{await sb.from('catch_board').delete().eq('user_id',user.id)}catch(e){}}boardHash='';board.at=0;rr();toast('You have left the leaderboard')}
+function fishBoard(){
+ if(!SB_URL||!sb||!user)return`<section class="card"><h2>Leaderboard</h2><p class="sub">Sign in (Settings, then Account and sync) to compare your catches with everyone else using the app.</p></section>`;
+ if(!boardOn())return`<section class="card"><h2>Join the leaderboard</h2><p class="sub" style="margin-top:8px">See how your catches stack up against everyone using Life Pillars. Only the species, weight, length, date and your display name are shared. Venues, notes and photos stay private.</p>
+  <form id="bjoin" class="grid3" style="margin-top:10px"><label class="f" style="grid-column:1/-1">Display name<input name="name" maxlength="24" required value="${esc(D.cfg.name||'')}" placeholder="e.g. Adam J"></label><button class="btn" style="grid-column:1/-1">Join the leaderboard</button></form></section>`;
+ if(board.err==='setup')return`<section class="card"><h2>Leaderboard</h2><p class="sub">The leaderboard isn't set up on the server yet.</p></section>`;
+ if(!board.rows){loadBoard();return`<section class="card"><p class="sub">Loading the leaderboard…</p></section>`}
+ const R=board.rows,me=user.id,B=fishD().board;
+ const head=`<div class="seg">${[['species','Biggest fish'],['count','Most species']].map(([k,l])=>`<button data-bmode="${k}" class="${board.mode===k?'on':''}">${l}</button>`).join('')}</div>`;
+ const foot=`<p class="sub" style="margin-top:14px">Showing as <b>${esc(B.name)}</b>. <button class="linkbtn" data-act="bleave" style="min-height:32px">Leave the leaderboard</button></p>`;
+ if(board.mode==='count'){const by={};for(const r of R){const u=by[r.user_id]=by[r.user_id]||{name:r.name,sp:new Set(),n:0};u.sp.add(r.species);u.n++;u.name=r.name}
+  const L=Object.entries(by).map(([id,u])=>({id,name:u.name,sp:u.sp.size,n:u.n})).sort((a,b)=>b.sp-a.sp||b.n-a.n);
+  return`<section class="card"><h2>Leaderboard</h2>${head}<ol class="ldr">${L.slice(0,25).map((x,i)=>`<li class="${x.id===me?'me':''}"><span class="rk">${i+1}</span><span class="nm">${esc(x.name)}${x.id===me?' (you)':''}</span><span class="vl">${x.sp} species<small>${x.n} catch${x.n===1?'':'es'}</small></span></li>`).join('')||'<p class="empty">No catches shared yet.</p>'}</ol>${foot}</section>`}
+ const spp=[...new Set(R.filter(r=>r.grams).map(r=>r.species))].sort((a,b)=>R.filter(r=>r.species===b).length-R.filter(r=>r.species===a).length||a.localeCompare(b));
+ const sel=board.sp&&spp.includes(board.sp)?board.sp:spp[0];
+ const L=sel?R.filter(r=>r.species===sel&&r.grams).sort((a,b)=>b.grams-a.grams).slice(0,25):[];
+ return`<section class="card"><h2>Leaderboard</h2>${head}${spp.length?`<label class="f" style="margin:6px 0 4px">Species<select data-bsp>${spp.map(s=>`<option ${s===sel?'selected':''}>${esc(s)}</option>`).join('')}</select></label>
+  <div class="ldrart">${fishSVG(sel)}</div><ol class="ldr">${L.map((r,i)=>`<li class="${r.user_id===me?'me':''}"><span class="rk">${i===0?'1':i+1}</span><span class="nm">${esc(r.name)}${r.user_id===me?' (you)':''}<small>${label(r.caught_on)}</small></span><span class="vl">${fW(r.grams)}${r.cm?`<small>${fmt(r.cm)} cm</small>`:''}</span></li>`).join('')}</ol>`:'<p class="empty">No weighed catches shared yet. Log a catch with a weight to get on the board.</p>'}${foot}</section>`}
 /* Suggestions under fishing inputs (iPhone ignores <datalist>) */
 function suggList(kind,q){q=q.trim().toLowerCase();const F=fishD();
  if(kind==='species'){const all=speciesAll();if(!q)return[];const st=all.filter(s=>s.n.toLowerCase().startsWith(q)),inc=all.filter(s=>!s.n.toLowerCase().startsWith(q)&&s.n.toLowerCase().split(/[ ()]+/).some(w=>w.startsWith(q))),mid=all.filter(s=>!st.includes(s)&&!inc.includes(s)&&s.n.toLowerCase().includes(q));return[...st,...inc,...mid].slice(0,6).map(s=>({v:s.n,sub:s.g}))}
