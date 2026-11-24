@@ -118,7 +118,7 @@ input[type=color]{padding:4px;height:44px}
 @media(prefers-reduced-motion:no-preference){.bar i{transition:width .3s}}
 </style></head><body><div id="root"></div><div id="toast"></div><script>
 {
-const VERSION='2.6';
+const VERSION='2.7';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -217,6 +217,7 @@ const P=()=>D.cfg.pillars;
 const allM=()=>P().flatMap(p=>p.m);
 const mById=id=>allM().find(m=>m.id===id);
 const day=d=>(D.days[d]=D.days[d]||{v:{},food:[],note:''});
+function setV(id,v){const x=day(cur);x.vt=x.vt||{};x.vt[id]=Date.now();if(v==null)delete x.v[id];else x.v[id]=v}
 function val(d,m){const x=D.days[d];if(!x)return null;
  if(m.food){const f=x.food||[];return f.length?f.reduce((a,e)=>a+(+e[m.food]||0),0):null}
  const v=x.v&&x.v[m.id];return v==null?null:v}
@@ -326,7 +327,7 @@ async function search(q){q=q.trim();lastQ=q;picked=null;if(!q){status='';renderR
  }catch(e){if(my!==seq)return;status=local.length?'Food database unreachable — showing saved and basic foods.':'Food database unreachable. Try again, or quick add manually.'}
  renderResults()}
 function addEntry(it,q,saveIt){const k=it.unit==='g'?q/100:q;
- day(cur).food.push({meal,n:it.n,q,qu:it.unit==='g'?'g':(q===1?'serving':'servings'),kcal:r2(it.kcal*k),p:r2(it.p*k),c:r2(it.c*k),f:r2(it.f*k)});
+ day(cur).food.push({id:uid('f'),ts:Date.now(),meal,n:it.n,q,qu:it.unit==='g'?'g':(q===1?'serving':'servings'),kcal:r2(it.kcal*k),p:r2(it.p*k),c:r2(it.c*k),f:r2(it.f*k)});
  const base={n:it.n,kcal:it.kcal,p:it.p,c:it.c,f:it.f,unit:it.unit,def:it.unit==='g'?q:1,src:it.src==='Mine'?'Mine':it.src};
  D.recent=[base,...D.recent.filter(r=>r.n!==it.n)].slice(0,15);
  if(saveIt&&!D.foods.some(f=>f.n===it.n))D.foods.push({...base,src:'Mine'});
@@ -345,11 +346,11 @@ root.addEventListener('click',e=>{const t=e.target.closest('button,a');if(!t)ret
   if(o==='start'){ob.done=false;location.hash='today';ob.again=false;render();scrollTo(0,0)}
   return}
  if(ds.nav!=null){const n=+ds.nav;cur=n===0?TODAY:shift(cur,n);if(cur>TODAY)cur=TODAY;try{sessionStorage.setItem('pcur',cur)}catch(x){}rr();return}
- if(ds.inc||ds.dec){const id=ds.inc||ds.dec,m=mById(id);if(!m)return;const st=+m.st||1,v=val(cur,m)||0;day(cur).v[id]=Math.max(0,r2(v+(ds.inc?st:-st)));save();rr();return}
+ if(ds.inc||ds.dec){const id=ds.inc||ds.dec,m=mById(id);if(!m)return;const st=+m.st||1,v=val(cur,m)||0;setV(id,Math.max(0,r2(v+(ds.inc?st:-st))));save();rr();return}
  if(ds.go){cur=ds.go;try{sessionStorage.setItem('pcur',cur)}catch(x){}location.hash='today';return}
  if(ds.meal){meal=ds.meal;rr();return}
  if(ds.pick!=null){picked=shown[+ds.pick];renderResults();const a=document.getElementById('amt');if(a){a.focus();a.select()}return}
- if(ds.delfood!=null){const f=day(cur).food;f.splice(+ds.delfood,1);save();rr();return}
+ if(ds.delfood!=null){const x=day(cur),e=x.food[+ds.delfood];if(e){if(e.id){x.fdel=x.fdel||{};x.fdel[e.id]=Date.now()}else x.lu=Date.now();x.food.splice(+ds.delfood,1)}save();rr();return}
  if(ds.delm){const[pi,mi]=ds.delm.split(':').map(Number);P()[pi].m.splice(mi,1);save();rr();return}
  if(ds.addm!=null){openP.add(+ds.addm);P()[+ds.addm].m.push({id:uid('m'),n:'New metric',u:'',t:1,d:'min',st:1,w:1});save();rr();return}
  if(ds.delp!=null){if(P().length<2){toast('Keep at least one pillar');return}if(t.textContent!=='Tap to confirm'){t.textContent='Tap to confirm';return}P().splice(+ds.delp,1);save();rr();return}
@@ -367,8 +368,8 @@ root.addEventListener('click',e=>{const t=e.target.closest('button,a');if(!t)ret
  if(a==='copy')navigator.clipboard.writeText(JSON.stringify(D)).then(()=>toast('Backup copied'),()=>toast('Copy was blocked'));
  if(a==='reset'){if(!resetArm){resetArm=true;rr();setTimeout(()=>{if(resetArm){resetArm=false;if(view()==='settings')rr()}},4000);return}resetArm=false;D.cfg=PRESET();save();rr();toast('Preset reset')}});
 root.addEventListener('change',e=>{const t=e.target,ds=t.dataset;
- if(ds.val){const v=num(t.value);if(v==null||v<0)delete day(cur).v[ds.val];else day(cur).v[ds.val]=v;save();rr();return}
- if(ds.note!=null){day(cur).note=t.value.slice(0,3000);save();return}
+ if(ds.val){const v=num(t.value);setV(ds.val,v==null||v<0?null:v);save();rr();return}
+ if(ds.note!=null){day(cur).note=t.value.slice(0,3000);day(cur).nt=Date.now();save();return}
  if(ds.pset){const[pi,k]=ds.pset.split(':');const v=t.value.trim();if(v)P()[+pi][k]=v;save();rr();return}
  if(ds.mset){const[pi,mi,k]=ds.mset.split(':');const m=P()[+pi].m[+mi];if(['t','st','w'].includes(k)){const v=num(t.value);if(v!=null&&v>0)m[k]=v}else{const v=t.value.trim();if(v||k==='u')m[k]=v}save();rr();return}
  if(ds.cfg){const v=num(t.value);if(v!=null&&v>0){if(ds.cfg==='mc')D.cfg.macros.c=v;else if(ds.cfg==='mf')D.cfg.macros.f=v;else D.cfg.good=Math.min(100,v)}save();rr();return}
@@ -385,24 +386,31 @@ root.addEventListener('submit',e=>{e.preventDefault();const f=e.target;
   addEntry({n,kcal:g('kcal'),p:g('p'),c:g('c'),f:g('f'),unit:'serving',src:'Mine'},1,f.elements.save.checked);rr()}});
 
 /* ---------- Accounts & cloud sync (Supabase) ---------- */
-let recovery=false,changePw=false,syncErr='',sb=null,user=null,syncState='local',lastSync=null,syncTimer=null,syncing=false,again=false,authMsg='',snap={};
+let freshLogin=false,recovery=false,changePw=false,syncErr='',sb=null,user=null,syncState='local',lastSync=null,syncTimer=null,syncing=false,again=false,authMsg='',snap={};
 const SYNC={local:'Saved on this device',syncing:'Syncing…',synced:'Synced',error:'Sync failed — saved on this device',offline:'Offline — will sync later'};
 const dj=x=>JSON.stringify(x,(k,v)=>k==='u'?undefined:v);
 function snapAll(){snap={cfg:JSON.stringify(D.cfg),foods:JSON.stringify([D.foods,D.recent]),days:Object.fromEntries(Object.entries(D.days).map(([d,x])=>[d,dj(x)]))}}
 function stamp(){const now=Date.now(),c=JSON.stringify(D.cfg),f=JSON.stringify([D.foods,D.recent]);
  if(c!==snap.cfg){D.cfgU=now;snap.cfg=c}if(f!==snap.foods){D.foodsU=now;snap.foods=f}
- for(const[d,x]of Object.entries(D.days)){const j=dj(x);if(j!==snap.days[d]){x.u=now;snap.days[d]=j}}}
-function merge(a,b){const o=JSON.parse(JSON.stringify(a));if(!b||!b.cfg)return o;
- if((b.cfgU||0)>(a.cfgU||0)){o.cfg=b.cfg;o.cfgU=b.cfgU}
+ }
+function mergeDay(a,b){const o={v:{},vt:{},food:[],fdel:{},note:'',u:Math.max(a.u||0,b.u||0)},ts=(x,id)=>(x.vt&&x.vt[id]!=null?x.vt[id]:(x.u||0));
+ const ids=new Set([...Object.keys(a.v||{}),...Object.keys(b.v||{}),...Object.keys(a.vt||{}),...Object.keys(b.vt||{})]);
+ for(const id of ids){const ta=ts(a,id),tb=ts(b,id),w=tb>ta?b:a;o.vt[id]=Math.max(ta,tb);if(w.v&&w.v[id]!=null)o.v[id]=w.v[id]}
+ for(const s of[a.fdel||{},b.fdel||{}])for(const[k,t]of Object.entries(s))o.fdel[k]=Math.max(o.fdel[k]||0,t);
+ const seen=new Set();for(const e of[...(a.food||[]),...(b.food||[])]){if(!e.id)continue;if(seen.has(e.id)||o.fdel[e.id])continue;seen.add(e.id);o.food.push(e)}
+ const la=Math.max(a.lu||0,a.u||0),lb=Math.max(b.lu||0,b.u||0),legacy=(lb>la?b:a).food||[];o.food=[...legacy.filter(e=>!e.id),...o.food];o.lu=Math.max(a.lu||0,b.lu||0);
+ const na=a.nt!=null?a.nt:(a.u||0),nb=b.nt!=null?b.nt:(b.u||0);o.note=(nb>na?b:a).note||'';o.nt=Math.max(na,nb);return o}
+function merge(a,b,preferRemote){const o=JSON.parse(JSON.stringify(a));if(!b||!b.cfg)return o;
+ if(preferRemote||(b.cfgU||0)>(a.cfgU||0)){o.cfg=b.cfg;o.cfgU=Math.max(b.cfgU||0,a.cfgU||0)}
  if((b.foodsU||0)>(a.foodsU||0)){o.recent=b.recent||[];o.foodsU=b.foodsU}
  const names=new Set(o.foods.map(f=>f.n));for(const f of b.foods||[])if(!names.has(f.n))o.foods.push(f);
- for(const[d,x]of Object.entries(b.days||{})){const l=o.days[d];if(!l||(x.u||0)>(l.u||0))o.days[d]=x}
+ for(const[d,x]of Object.entries(b.days||{}))o.days[d]=o.days[d]?mergeDay(o.days[d],x):x;
  o.onboarded=!!(a.onboarded||b.onboarded);o.updated=Math.max(a.updated||0,b.updated||0);return o}
 function setSync(s){syncState=s;document.querySelectorAll('[data-syncst]').forEach(e=>e.textContent=SYNC[s])}
 function queueSync(){if(!sb||!user)return;setSync('syncing');clearTimeout(syncTimer);syncTimer=setTimeout(syncNow,2000)}
 async function syncNow(){if(!sb||!user)return;if(syncing){again=true;return}syncing=true;setSync('syncing');let changed=false;
  try{const r=await sb.from('pillars_data').select('data').eq('user_id',user.id).maybeSingle();if(r.error)throw r.error;
-  if(r.data&&r.data.data){const before=JSON.stringify(D);D=merge(D,r.data.data);changed=JSON.stringify(D)!==before;try{localStorage.setItem('pillars2',JSON.stringify(D))}catch(e){}snapAll()}
+  if(r.data&&r.data.data){const before=JSON.stringify(D);D=merge(D,r.data.data,freshLogin);freshLogin=false;changed=JSON.stringify(D)!==before;try{localStorage.setItem('pillars2',JSON.stringify(D))}catch(e){}snapAll()}
   const w=await sb.from('pillars_data').upsert({user_id:user.id,data:D,updated_at:new Date().toISOString()});if(w.error)throw w.error;
   lastSync=new Date();syncErr='';setSync('synced')}
  catch(e){console.warn('sync',e);syncErr=(e&&(e.message||e.code))||String(e);setSync(navigator.onLine===false?'offline':'error')}
@@ -410,7 +418,7 @@ async function syncNow(){if(!sb||!user)return;if(syncing){again=true;return}sync
 function initSync(){if(!SB_URL||!SB_KEY)return;const s=document.createElement('script');
  s.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.js';
  s.onload=async()=>{try{sb=window.supabase.createClient(SB_URL,SB_KEY);const{data}=await sb.auth.getSession();user=data.session?data.session.user:null;
-  sb.auth.onAuthStateChange((ev,ses)=>{if(ev==='PASSWORD_RECOVERY'){recovery=true;setTimeout(()=>{location.hash='settings';rr()},0)}const was=user&&user.id;user=ses?ses.user:null;if(!user)setSync('local');if((user&&user.id)!==was){if(user)syncNow();setTimeout(rr,0)}});
+  sb.auth.onAuthStateChange((ev,ses)=>{if(ev==='PASSWORD_RECOVERY'){recovery=true;setTimeout(()=>{location.hash='settings';rr()},0)}const was=user&&user.id;user=ses?ses.user:null;if(!user)setSync('local');if((user&&user.id)!==was){if(user){if(ev==='SIGNED_IN')freshLogin=true;syncNow()}setTimeout(rr,0)}});
   if(user)syncNow();rr()}catch(e){console.warn(e)}};
  s.onerror=()=>{if(view()==='settings')rr()};document.head.appendChild(s)}
 addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')syncNow()});
