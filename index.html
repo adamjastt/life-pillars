@@ -118,7 +118,7 @@ input[type=color]{padding:4px;height:44px}
 @media(prefers-reduced-motion:no-preference){.bar i{transition:width .3s}}
 </style></head><body><div id="root"></div><div id="toast"></div><script>
 {
-const VERSION='2.5';
+const VERSION='2.6';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -435,6 +435,7 @@ let updShown=false;
 async function checkUpdate(){if(updShown||location.protocol==='file:')return;try{const t=await(await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'})).text();const m=t.match(/const VERSION='([^']+)'/);
  if(m&&m[1]!==VERSION){updShown=true;const d=document.createElement('div');d.className='upd';d.innerHTML='<span>New version available</span><button>Update</button>';d.querySelector('button').onclick=()=>location.replace(location.pathname+'?v='+Date.now()+location.hash);document.body.appendChild(d)}}catch(e){}}
 addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checkUpdate()});
-snapAll();render();initSync();setTimeout(checkUpdate,1500);
+snapAll();render();initSync();setTimeout(checkUpdate,1500);setInterval(()=>{if(document.visibilityState==='visible')checkUpdate()},5*60*1000);
+try{const pv=localStorage.getItem('pver');if(pv&&pv!==VERSION)setTimeout(()=>toast('Updated to v'+VERSION),600);localStorage.setItem('pver',VERSION)}catch(e){}
 }
 </script></body></html>
