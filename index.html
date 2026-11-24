@@ -97,7 +97,7 @@ input[type=color]{padding:4px;height:44px}
 @media(prefers-reduced-motion:no-preference){.bar i{transition:width .3s}}
 </style></head><body><div id="root"></div><div id="toast"></div><script>
 {
-const VERSION='2.2';
+const VERSION='2.3';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -286,6 +286,9 @@ root.addEventListener('click',e=>{const t=e.target.closest('button,a');if(!t)ret
  if(ds.addm!=null){openP.add(+ds.addm);P()[+ds.addm].m.push({id:uid('m'),n:'New metric',u:'',t:1,d:'min',st:1,w:1});save();rr();return}
  if(ds.delp!=null){if(P().length<2){toast('Keep at least one pillar');return}if(t.textContent!=='Tap to confirm'){t.textContent='Tap to confirm';return}P().splice(+ds.delp,1);save();rr();return}
  const a=ds.act;if(!a)return;
+ if(a==='chpw'){changePw=!changePw;rr();return}
+ if(a==='forgot'){const f=document.getElementById('auth'),m=document.getElementById('authmsg'),email=f.elements.email.value.trim();if(!email||!f.elements.email.checkValidity()){m.textContent='Type your email above first, then tap Forgot password.';f.elements.email.focus();return}
+  m.textContent='Sending…';sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname}).then(r=>{m.textContent=r.error?(/fetch|network/i.test(r.error.message)?'Can\'t reach the server — check your connection.':/rate/i.test(r.error.message)?'Too many emails sent — wait a while and try again.':r.error.message):'If that email has an account, a reset link is on its way. Open it on this device.'}).catch(()=>{m.textContent='Can\'t reach the server — check your connection.'});return}
  if(a==='syncnow'){syncNow().then(()=>rr());return}
  if(a==='signout'){if(sb)sb.auth.signOut().then(()=>{user=null;setSync('local');rr();toast('Signed out — your data stays on this device')});return}
  if(a==='addpick'){const q=num(document.getElementById('amt').value);if(!q||q<=0){toast('Enter an amount');return}const sv=document.getElementById('savepick');addEntry(picked,q,sv&&sv.checked);picked=null;rr()}
@@ -304,13 +307,15 @@ root.addEventListener('change',e=>{const t=e.target,ds=t.dataset;
 root.addEventListener('toggle',e=>{const d=e.target;if(d.dataset&&d.dataset.pi!=null){d.open?openP.add(+d.dataset.pi):openP.delete(+d.dataset.pi)}},true);
 root.addEventListener('input',e=>{if(e.target.id==='amt')updAmt();if(e.target.id==='fq'){lastQ=e.target.value;if(!lastQ.trim()){picked=null;status='';renderResults()}}});
 root.addEventListener('submit',e=>{e.preventDefault();const f=e.target;
+ if(f.id==='newpw'){const m=document.getElementById('pwmsg'),pw=f.elements.pw.value;if(pw!==f.elements.pw2.value){m.textContent='The two passwords don\'t match.';return}m.textContent='Saving…';
+  sb.auth.updateUser({password:pw}).then(r=>{if(r.error){m.textContent=/same/i.test(r.error.message)?'That is your current password — choose a different one.':r.error.message;return}recovery=false;changePw=false;rr();toast('Password updated')}).catch(()=>{m.textContent='Can\'t reach the server — check your connection.'});return}
  if(f.id==='auth'){doAuth(f,(e.submitter&&e.submitter.dataset.mode)||'in');return}
  if(f.id==='fs'){search(document.getElementById('fq').value);return}
  if(f.id==='fquick'){const g=k=>num(f.elements[k].value)||0;const n=f.elements.n.value.trim();if(!n||!g('kcal')){toast('Add a name and calories');return}
   addEntry({n,kcal:g('kcal'),p:g('p'),c:g('c'),f:g('f'),unit:'serving',src:'Mine'},1,f.elements.save.checked);rr()}});
 
 /* ---------- Accounts & cloud sync (Supabase) ---------- */
-let syncErr='',sb=null,user=null,syncState='local',lastSync=null,syncTimer=null,syncing=false,again=false,authMsg='',snap={};
+let recovery=false,changePw=false,syncErr='',sb=null,user=null,syncState='local',lastSync=null,syncTimer=null,syncing=false,again=false,authMsg='',snap={};
 const SYNC={local:'Saved on this device',syncing:'Syncing…',synced:'Synced',error:'Sync failed — saved on this device',offline:'Offline — will sync later'};
 const dj=x=>JSON.stringify(x,(k,v)=>k==='u'?undefined:v);
 function snapAll(){snap={cfg:JSON.stringify(D.cfg),foods:JSON.stringify([D.foods,D.recent]),days:Object.fromEntries(Object.entries(D.days).map(([d,x])=>[d,dj(x)]))}}
@@ -335,16 +340,18 @@ async function syncNow(){if(!sb||!user)return;if(syncing){again=true;return}sync
 function initSync(){if(!SB_URL||!SB_KEY)return;const s=document.createElement('script');
  s.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.js';
  s.onload=async()=>{try{sb=window.supabase.createClient(SB_URL,SB_KEY);const{data}=await sb.auth.getSession();user=data.session?data.session.user:null;
-  sb.auth.onAuthStateChange((ev,ses)=>{const was=user&&user.id;user=ses?ses.user:null;if(!user)setSync('local');if((user&&user.id)!==was){if(user)syncNow();setTimeout(rr,0)}});
+  sb.auth.onAuthStateChange((ev,ses)=>{if(ev==='PASSWORD_RECOVERY'){recovery=true;setTimeout(()=>{location.hash='settings';rr()},0)}const was=user&&user.id;user=ses?ses.user:null;if(!user)setSync('local');if((user&&user.id)!==was){if(user)syncNow();setTimeout(rr,0)}});
   if(user)syncNow();rr()}catch(e){console.warn(e)}};
  s.onerror=()=>{if(view()==='settings')rr()};document.head.appendChild(s)}
 addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')syncNow()});
 addEventListener('online',()=>syncNow());
+function pwForm(t){return`<form id="newpw" class="grid3" style="margin-top:12px"><label class="f" style="grid-column:1/-1">${t}<input name="pw" type="password" autocomplete="new-password" minlength="6" required></label><label class="f" style="grid-column:1/-1">Type it again<input name="pw2" type="password" autocomplete="new-password" minlength="6" required></label><button class="btn">Save password</button>${recovery?'':'<button type="button" class="btn sec" data-act="chpw">Cancel</button>'}</form><p class="sub" id="pwmsg" role="status"></p>`}
 function acct(){const head='<section class="card"><h2>Account &amp; sync</h2>';
  if(!SB_URL)return head+'<p class="sub">Cloud sync is not set up yet.</p></section>';
  if(!sb)return head+'<p class="sub">Connecting… if this stays, check your internet connection.</p></section>';
- if(user)return head+`<p style="margin:8px 0 2px">Signed in as <b>${esc(user.email)}</b></p><p class="sub"><span data-syncst>${SYNC[syncState]}</span>${lastSync?' · last synced '+lastSync.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}):''}</p>${syncErr&&syncState!=='synced'?`<p class="sub" style="color:var(--bad)">Details: ${esc(syncErr)}</p>`:''}<div class="row"><button class="btn" data-act="syncnow">Sync now</button><button class="btn sec" data-act="signout">Sign out</button></div></section>`;
- return head+`<p class="sub">Sign in to back up your data and use the same data on your phone and laptop. Anything already on this device is kept and uploaded.</p><form id="auth" class="grid3" style="margin-top:10px"><label class="f" style="grid-column:1/-1">Email<input name="email" type="email" autocomplete="email" required></label><label class="f" style="grid-column:1/-1">Password<input name="pw" type="password" autocomplete="current-password" minlength="6" required></label><button class="btn" data-mode="in">Sign in</button><button class="btn sec" data-mode="up">Create account</button></form><p class="sub" id="authmsg" role="status">${esc(authMsg)}</p></section>`}
+ if(user&&(recovery||changePw))return head+`<p style="margin:8px 0 2px">Signed in as <b>${esc(user.email)}</b></p>${recovery?'<p class="sub">Choose a new password for your account.</p>':''}${pwForm('New password')}</section>`;
+ if(user)return head+`<p style="margin:8px 0 2px">Signed in as <b>${esc(user.email)}</b></p><p class="sub"><span data-syncst>${SYNC[syncState]}</span>${lastSync?' · last synced '+lastSync.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}):''}</p>${syncErr&&syncState!=='synced'?`<p class="sub" style="color:var(--bad)">Details: ${esc(syncErr)}</p>`:''}<div class="row"><button class="btn" data-act="syncnow">Sync now</button><button class="btn sec" data-act="chpw">Change password</button><button class="btn sec" data-act="signout">Sign out</button></div></section>`;
+ return head+`<p class="sub">Sign in to back up your data and use the same data on your phone and laptop. Anything already on this device is kept and uploaded.</p><form id="auth" class="grid3" style="margin-top:10px"><label class="f" style="grid-column:1/-1">Email<input name="email" type="email" autocomplete="email" required></label><label class="f" style="grid-column:1/-1">Password<input name="pw" type="password" autocomplete="current-password" minlength="6" required></label><button class="btn" data-mode="in">Sign in</button><button class="btn sec" data-mode="up">Create account</button><button type="button" class="btn sec" data-act="forgot" style="grid-column:1/-1;background:none;color:var(--mut);font-weight:500">Forgot password?</button></form><p class="sub" id="authmsg" role="status">${esc(authMsg)}</p></section>`}
 async function doAuth(f,mode){const email=f.elements.email.value.trim(),pw=f.elements.pw.value,m=document.getElementById('authmsg');
  if(!sb){m.textContent='Still connecting — try again in a moment.';return}m.textContent='Working…';
  try{if(mode==='up'){const r=await sb.auth.signUp({email,password:pw,options:{emailRedirectTo:location.origin+location.pathname}});if(r.error)throw r.error;
