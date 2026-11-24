@@ -74,8 +74,9 @@ h3{font-size:15px;margin:16px 0 6px;color:var(--mut);font-weight:600}
 .res{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;width:100%;text-align:left;background:none;border:0;border-top:1px solid var(--line);padding:10px 2px;min-height:52px}
 .tag{font-size:11px;padding:2px 8px;border-radius:99px;background:var(--card2);color:var(--mut);white-space:nowrap}
 .pick{background:var(--card2);border-radius:14px;padding:14px;margin-top:10px}
-.grid3{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.grid3{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 10px}
 label.f{display:grid;gap:4px;font-size:13px;color:var(--mut)}
+label.f{min-width:0}input[type=date],input[type=time]{-webkit-appearance:none;appearance:none;display:block;width:100%;min-width:0;max-width:100%;box-sizing:border-box;text-align:left}input::-webkit-date-and-time-value{text-align:left;margin:0}input[type=time]:not(:valid)::-webkit-datetime-edit,input[type=time][value='']::-webkit-datetime-edit{color:var(--mut)}
 details>summary{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:48px;padding:0 16px;border:1px solid #ffffff24;border-radius:12px;background:var(--card2);color:var(--ink);font-weight:500}
 summary::-webkit-details-marker{display:none}
 summary::after{content:'';flex:none;width:8px;height:8px;border-right:2px solid var(--mut);border-bottom:2px solid var(--mut);transform:translateY(-2px) rotate(45deg)}
@@ -265,7 +266,7 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 @media(prefers-reduced-motion:no-preference){.bar i{transition:width .3s}}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><script>
 {
-const VERSION='6.4';
+const VERSION='6.5';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -790,7 +791,7 @@ function fishForm(){const c=fForm,sp=speciesAll(),venues=[...new Set(fishD().cat
  <label class="f">Date<input type="date" name="date" value="${c.date||TODAY}" max="${TODAY}"></label><label class="f">Time<input type="time" name="time" value="${esc(c.time||'')}"></label>
  ${fWInputs(c.g)}<label class="f">Length (cm)<input name="cm" inputmode="decimal" value="${c.cm??''}"></label>
  <label class="f sw" style="grid-column:1/-1">Venue<input name="place" data-suggest="venue" maxlength="80" value="${esc(c.place||'')}" placeholder="Lake, river or beach" autocomplete="off"><div class="sugg" id="sg-venue" role="listbox"></div></label><datalist id="fven">${venues.map(v=>`<option value="${esc(v)}">`).join('')}</datalist>
- <label class="f sw">Method<input name="method" data-suggest="method" maxlength="40" value="${esc(c.method||'')}" placeholder="Pick one or type your own" autocomplete="off"><div class="sugg" id="sg-method" role="listbox"></div></label><datalist id="fmet">${[...new Set([...methods,'Float','Feeder','Ledger','Lure','Fly','Drop shot','Free-lining','Pole','Surface'])].map(v=>`<option value="${esc(v)}">`).join('')}</datalist>
+ <label class="f sw">Method<input name="method" data-suggest="method" maxlength="40" value="${esc(c.method||'')}" placeholder="e.g. Topwater" autocomplete="off"><div class="sugg" id="sg-method" role="listbox"></div></label><datalist id="fmet">${[...new Set([...methods,'Float','Feeder','Ledger','Lure','Fly','Drop shot','Free-lining','Pole','Surface'])].map(v=>`<option value="${esc(v)}">`).join('')}</datalist>
  <label class="f">Bait<input name="bait" maxlength="40" value="${esc(c.bait||'')}" placeholder="e.g. Maggots"></label>
  <label class="row" style="grid-column:1/-1;font-size:15px"><input type="checkbox" name="rel" ${c.rel!==false?'checked':''} style="width:22px;height:22px"> Released</label>
  <label class="f" style="grid-column:1/-1">Notes<textarea name="notes" rows="2" maxlength="1000">${esc(c.notes||'')}</textarea></label>
