@@ -90,6 +90,16 @@ td.n,th.n{text-align:right;white-space:nowrap}
 input[type=color]{padding:4px;height:44px}
 .toast{position:fixed;left:50%;bottom:calc(80px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:14px;z-index:20;max-width:90vw}
 .empty{color:var(--mut);font-size:14px;padding:8px 0}
+.ob{max-width:560px;margin:0 auto;padding:calc(24px + env(safe-area-inset-top)) max(5vw,18px) 40px;min-height:100vh;display:flex;flex-direction:column}
+.dots{display:flex;gap:6px;justify-content:center;margin-bottom:18px}.dots i{width:8px;height:8px;border-radius:9px;background:var(--line)}.dots i.on{background:var(--ink);width:22px}
+.obpic{max-width:240px;width:70%;margin:8px auto 20px}
+.obh{font-size:clamp(28px,7vw,38px);line-height:1.1;margin:0 0 10px;text-wrap:balance}
+.obp{color:var(--mut);margin:0 0 18px;font-size:17px}
+.obact{display:grid;gap:10px;margin-top:auto;padding-top:20px}.obact .btn{height:52px;font-size:17px}
+.presets{display:grid;gap:10px}
+.preset{display:grid;gap:4px;text-align:left;background:var(--card);border:2px solid var(--card);border-radius:16px;padding:14px 16px}
+.preset span{color:var(--mut);font-size:15px}.preset small{color:var(--mut);font-size:13px;opacity:.8}
+.preset.on{border-color:var(--acc);background:color-mix(in srgb,var(--acc) 12%,var(--card))}
 .upd{position:fixed;left:50%;top:calc(10px + env(safe-area-inset-top));transform:translateX(-50%);z-index:30;display:flex;gap:10px;align-items:center;background:var(--ink);color:var(--bg);padding:8px 8px 8px 14px;border-radius:14px;font-size:14px;box-shadow:0 6px 24px #0008;max-width:94vw}
 .upd button{height:36px;border:0;border-radius:10px;padding:0 12px;background:var(--acc);color:#fff;font-weight:600}
 @media(max-width:700px){.wheelwrap{grid-template-columns:1fr;gap:16px}.wheel{max-width:250px;margin:0 auto}.cards{grid-template-columns:1fr}.kcal{grid-template-columns:1fr}
@@ -97,7 +107,7 @@ input[type=color]{padding:4px;height:44px}
 @media(prefers-reduced-motion:no-preference){.bar i{transition:width .3s}}
 </style></head><body><div id="root"></div><div id="toast"></div><script>
 {
-const VERSION='2.3';
+const VERSION='2.4';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -139,6 +149,43 @@ const PRESET=()=>({pillars:[
   {id:'kind',n:'Acts of kindness',u:'acts',t:1,d:'min',st:1,w:1}]}],
  macros:{c:250,f:80},good:70});
 
+
+/* ---------- Starter presets for onboarding ---------- */
+const M=(id,n,u,t,d,st,w,food)=>{const m={id,n,u,t,d,w:w||1};if(food)m.food=food;else m.st=st;return m};
+const PRESETS={
+ entrepreneur:{n:'Entrepreneur',d:'Build the business without letting health and people slide.',ex:'Revenue-generating work, outreach, calls, protein, sleep',make:PRESET},
+ fitness:{n:'Fitness focused',d:'Training and nutrition first, with the rest of life kept in check.',ex:'Training, calories, protein, steps, sleep, water',make:()=>({pillars:[
+  {k:'phys',n:'Physical health',s:'Body',c:'#ff7a63',m:[M('kcal','Calories','kcal',2600,'near',0,1,'kcal'),M('protein','Protein','g',160,'min',0,2,'p'),M('train','Training','min',60,'min',15,2),M('steps','Steps','steps',10000,'min',1000),M('sleep','Sleep','h',8,'min',0.5),M('water','Water','L',3,'min',0.25),M('mobility','Stretching / mobility','min',10,'min',5)]},
+  {k:'wealth',n:'Wealth',s:'Wealth',c:'#3cc985',m:[M('deep','Focused work','h',4,'min',0.5,2),M('learn','Skill learning','min',20,'min',10),M('spend','Non-essential spending','£',15,'max',5)]},
+  {k:'mind',n:'Mental health',s:'Mind',c:'#8d88ff',m:[M('meditate','Meditation / breathwork','min',10,'min',5),M('read','Reading','pages',10,'min',5),M('outdoors','Time outdoors','min',30,'min',15),M('screen','Social media time','h',2,'max',0.5)]},
+  {k:'rel',n:'Relationships',s:'People',c:'#ff6fae',m:[M('qtime','Quality time with others','h',1,'min',0.5),M('reach','People reached out to','people',2,'min',1),M('kind','Acts of kindness','acts',1,'min',1)]}],macros:{c:300,f:80},good:70})},
+ student:{n:'Student',d:'Study consistently, stay healthy and keep spending under control.',ex:'Study hours, assignments, sleep, steps, spending',make:()=>({pillars:[
+  {k:'phys',n:'Physical health',s:'Body',c:'#ff7a63',m:[M('sleep','Sleep','h',8,'min',0.5,2),M('steps','Steps','steps',8000,'min',1000),M('exercise','Exercise','min',30,'min',15),M('water','Water','L',2,'min',0.25),M('kcal','Calories','kcal',2200,'near',0,1,'kcal'),M('protein','Protein','g',100,'min',0,1,'p')]},
+  {k:'wealth',n:'Study & money',s:'Study',c:'#3cc985',m:[M('study','Focused study','h',4,'min',0.5,2),M('tasks','Assignment tasks done','tasks',2,'min',1),M('spend','Non-essential spending','£',10,'max',5)]},
+  {k:'mind',n:'Mental health',s:'Mind',c:'#8d88ff',m:[M('meditate','Meditation / breathwork','min',5,'min',5),M('journal','Journaling','entries',1,'min',1),M('read','Reading for fun','pages',10,'min',5),M('screen','Social media time','h',3,'max',0.5)]},
+  {k:'rel',n:'Relationships',s:'People',c:'#ff6fae',m:[M('qtime','Quality time with others','h',1,'min',0.5),M('reach','People reached out to','people',2,'min',1),M('family','Calls with family','calls',1,'min',1)]}],macros:{c:250,f:70},good:70})},
+ balanced:{n:'Balanced',d:'Gentle daily goals across all four pillars. Easy to start with.',ex:'Steps, sleep, focused work, time outdoors, quality time',make:()=>({pillars:[
+  {k:'phys',n:'Physical health',s:'Body',c:'#ff7a63',m:[M('steps','Steps','steps',8000,'min',1000),M('exercise','Exercise','min',30,'min',15),M('sleep','Sleep','h',7.5,'min',0.5),M('water','Water','L',2,'min',0.25)]},
+  {k:'wealth',n:'Wealth',s:'Wealth',c:'#3cc985',m:[M('deep','Focused work','h',3,'min',0.5,2),M('learn','Skill learning','min',15,'min',5),M('spend','Non-essential spending','£',20,'max',5)]},
+  {k:'mind',n:'Mental health',s:'Mind',c:'#8d88ff',m:[M('meditate','Meditation / breathwork','min',5,'min',5),M('outdoors','Time outdoors','min',20,'min',10),M('screen','Social media time','h',3,'max',0.5)]},
+  {k:'rel',n:'Relationships',s:'People',c:'#ff6fae',m:[M('qtime','Quality time with others','h',1,'min',0.5),M('reach','People reached out to','people',1,'min',1),M('kind','Acts of kindness','acts',1,'min',1)]}],macros:{c:250,f:70},good:70})},
+ blank:{n:'Start from scratch',d:'Four empty pillars. Add your own metrics in Settings.',ex:'You choose everything',make:()=>({pillars:[
+  {k:'phys',n:'Physical health',s:'Body',c:'#ff7a63',m:[]},{k:'wealth',n:'Wealth',s:'Wealth',c:'#3cc985',m:[]},{k:'mind',n:'Mental health',s:'Mind',c:'#8d88ff',m:[]},{k:'rel',n:'Relationships',s:'People',c:'#ff6fae',m:[]}],macros:{c:250,f:70},good:70})}};
+let ob={step:0,preset:'balanced',again:false};
+function demoWheel(){const c=150,cols=['#ff7a63','#3cc985','#8d88ff','#ff6fae'],v=[78,55,88,64];
+ return`<svg class="wheel" viewBox="0 0 300 300" aria-hidden="true">${cols.map((col,i)=>{const a0=(-90+i*90)*Math.PI/180,a1=(i*90)*Math.PI/180,sec=r=>`M${c} ${c}L${(c+r*Math.cos(a0)).toFixed(1)} ${(c+r*Math.sin(a0)).toFixed(1)}A${r} ${r} 0 0 1 ${(c+r*Math.cos(a1)).toFixed(1)} ${(c+r*Math.sin(a1)).toFixed(1)}Z`;return`<path d="${sec(140)}" fill="${col}" opacity=".13"/><path d="${sec(30+1.1*v[i])}" fill="${col}"/>`}).join('')}<line x1="150" y1="8" x2="150" y2="292" stroke="#121016" stroke-width="4"/><line x1="8" y1="150" x2="292" y2="150" stroke="#121016" stroke-width="4"/><circle cx="150" cy="150" r="38" fill="#121016"/><text x="150" y="157" text-anchor="middle" fill="#fff" font-family="Sora,sans-serif" font-size="22" font-weight="700">71%</text></svg>`}
+function onboard(){const pr=PRESETS[ob.preset],dots=`<div class="dots">${[0,1,2,3].map(i=>`<i class="${i===ob.step?'on':''}"></i>`).join('')}</div>`;
+ if(ob.step===0)return`<main class="ob">${dots}<div class="obpic">${demoWheel()}</div><h1 class="obh">Track what you actually do.</h1><p class="obp">Life Pillars scores your days across physical health, wealth, mental health and relationships, based on the goals you hit. No guessing how you feel.</p><div class="obact"><button class="btn" data-ob="next">Get started</button><button class="btn sec" data-ob="signin">I already have an account</button></div></main>`;
+ if(ob.step===1)return`<main class="ob">${dots}<h1 class="obh">Pick a starting point</h1><p class="obp">This sets your pillars and daily goals. You can change any of it later in Settings.</p><div class="presets" role="radiogroup" aria-label="Presets">${Object.entries(PRESETS).map(([k,p])=>`<button class="preset${ob.preset===k?' on':''}" role="radio" aria-checked="${ob.preset===k}" data-ob-preset="${k}"><b>${p.n}</b><span>${p.d}</span><small>${p.ex}</small></button>`).join('')}</div><div class="obact"><button class="btn" data-ob="next">Continue</button><button class="btn sec" data-ob="${ob.again?'cancel':'back'}">${ob.again?'Cancel':'Back'}</button></div></main>`;
+ if(ob.step===2){const cfg=pr.make(),km=cfg.pillars.flatMap(p=>p.m).find(m=>m.food==='kcal'),pm=cfg.pillars.flatMap(p=>p.m).find(m=>m.food==='p');
+  return`<main class="ob">${dots}<h1 class="obh">Make it yours</h1><p class="obp">A couple of quick details. Skip anything you're not sure about.</p><form id="obform" class="grid3" style="margin-top:8px"><label class="f" style="grid-column:1/-1">Your first name<input name="name" maxlength="30" autocomplete="given-name" value="${esc(D.cfg&&D.cfg.name||'')}"></label>
+  ${km?`<label class="f">Daily calories (kcal)<input name="kcal" inputmode="decimal" value="${km.t}"></label>`:''}${pm?`<label class="f">Daily protein (g)<input name="protein" inputmode="decimal" value="${pm.t}"></label>`:''}
+  <div class="obact" style="grid-column:1/-1"><button class="btn">Finish</button><button type="button" class="btn sec" data-ob="back">Back</button></div></form></main>`}
+ return`<main class="ob">${dots}<div class="obpic">${demoWheel()}</div><h1 class="obh">You're all set${D.cfg.name?', '+esc(D.cfg.name):''}.</h1><p class="obp">Log what you do through the day and watch your wheel fill up. Create a free account to back up your data and use it on your phone and computer.</p><div class="obact">${SB_URL&&!user?'<button class="btn" data-ob="account">Create a free account</button><button class="btn sec" data-ob="start">Maybe later</button>':'<button class="btn" data-ob="start">Start tracking</button>'}</div></main>`}
+function finishOb(f){const cfg=PRESETS[ob.preset].make(),g=k=>f.elements[k]?num(f.elements[k].value):null,all=cfg.pillars.flatMap(p=>p.m);
+ const k=g('kcal'),pr=g('protein'),km=all.find(m=>m.food==='kcal'),pm=all.find(m=>m.food==='p');if(km&&k>0)km.t=k;if(pm&&pr>0)pm.t=pr;
+ cfg.name=f.elements.name.value.trim().slice(0,30)||(D.cfg&&D.cfg.name)||'';cfg.preset=ob.preset;D.cfg=cfg;D.onboarded=true;save();ob.step=3;ob.done=true;render();scrollTo(0,0)}
+
 /* Built-in whole foods, per 100 g (approximate UK values) */
 const GENERIC=[['Chicken breast, cooked',165,31,0,3.6],['Turkey breast, cooked',135,30,0,1],['Beef mince 5%, cooked',175,26,0,8],['Salmon, cooked',206,22,0,13],['Tuna, canned in water',116,26,0,1],['Prawns, cooked',99,24,0,0.3],['Egg (1 large ≈ 60 g)',143,12.6,0.7,9.5],['Tofu, firm',144,17,3,9],['White rice, cooked',130,2.7,28,0.3],['Brown rice, cooked',123,2.7,26,1],['Pasta, cooked',158,5.8,31,0.9],['Potato, boiled',87,1.9,20,0.1],['Sweet potato, baked',90,2,21,0.2],['Porridge oats, dry',389,16.9,66,6.9],['Wholemeal bread',247,13,41,3.4],['White bread',265,9,49,3.2],['Banana',89,1.1,23,0.3],['Apple',52,0.3,14,0.2],['Blueberries',57,0.7,14,0.3],['Orange',47,0.9,12,0.1],['Broccoli',34,2.8,7,0.4],['Spinach',23,2.9,3.6,0.4],['Avocado',160,2,9,15],['Greek yoghurt, 0%',59,10,3.6,0.4],['Semi-skimmed milk',46,3.4,4.7,1.7],['Cheddar cheese',403,25,1.3,33],['Cottage cheese',98,11,3.4,4.3],['Whey protein powder',400,80,8,6],['Peanut butter',588,25,20,50],['Almonds',579,21,22,50],['Olive oil',884,0,0,100],['Butter',717,0.9,0.1,81],['Lentils, cooked',116,9,20,0.4],['Chickpeas, canned',139,7,23,2.6],['Honey',304,0.3,82,0],['Dark chocolate 70%',598,7.8,46,43],['Orange juice',45,0.7,10,0.2]].map(a=>({n:a[0],kcal:a[1],p:a[2],c:a[3],f:a[4],unit:'g',def:100,src:'Basic'}));
 
@@ -147,6 +194,7 @@ let D=null;
 try{D=JSON.parse(localStorage.getItem('pillars2')||'null')}catch(e){}
 if(!D||!D.cfg)D={cfg:PRESET(),days:{},foods:[],recent:[],updated:0};
 D.foods=D.foods||[];D.recent=D.recent||[];
+if(!D.onboarded&&(D.cfgU||Object.keys(D.days).length))D.onboarded=true;
 function save(){stamp();D.updated=Date.now();try{localStorage.setItem('pillars2',JSON.stringify(D))}catch(e){toast('Could not save — storage is full or blocked')}queueSync()}
 let cur=TODAY;try{cur=sessionStorage.getItem('pcur')||TODAY}catch(e){}
 if(cur>TODAY)cur=TODAY;
@@ -232,11 +280,11 @@ function settings(){const types=[['min','At least'],['max','At most'],['near','A
  <div class="row" style="margin-bottom:16px"><button class="btn sec" data-act="addp">+ Add pillar</button></div>
  <section class="card"><h2>Targets</h2><div class="grid3" style="margin-top:10px"><label class="f">Carbs target (g)<input inputmode="decimal" data-cfg="mc" value="${D.cfg.macros.c}"></label><label class="f">Fat target (g)<input inputmode="decimal" data-cfg="mf" value="${D.cfg.macros.f}"></label><label class="f">Streak threshold (%)<input inputmode="decimal" data-cfg="good" value="${D.cfg.good}"></label></div><p class="sub">Calories and protein targets are set on their metrics above.</p></section>
  <section class="card"><h2>Backup</h2><p class="sub">Data lives in this browser only. Download a backup now and then, and use it to move to a new phone.</p><div class="row"><button class="btn" data-act="dl">Download backup</button><label class="btn sec" style="display:inline-flex;align-items:center">Restore from file<input type="file" accept=".json,application/json" data-restore hidden></label><button class="btn sec" data-act="copy">Copy backup</button></div></section>
- <section class="card"><h2>Reset</h2><p class="sub">Puts pillars and metrics back to the default preset. Your logged days are kept.</p><button class="btn danger" data-act="reset">${resetArm?'Tap again to reset':'Reset preset'}</button></section></main>`}
+ <section class="card"><h2>Preset</h2><p class="sub">Start again from a different preset (${esc((PRESETS[D.cfg.preset]||PRESETS.entrepreneur).n)} now). Your logged days are kept; goals that aren't in the new preset stop counting.</p><button class="btn sec" data-act="represet">Switch preset</button></section></main>`}
 const ICONS={today:'<circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/>',food:'<path d="M7 3v8a2 2 0 0 0 4 0V3M9 11v10M17 3c-2 0-3 3-3 6s1 4 3 4v8"/>',history:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',settings:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/>'};
 const tabs=v=>`<nav class="tabs">${[['today','Today'],['food','Food'],['history','Progress'],['settings','Settings']].map(([k,l])=>`<a href="#${k}" class="${v===k?'on':''}" ${v===k?'aria-current="page"':''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[k]}</svg>${l}</a>`).join('')}</nav>`;
 const view=()=>{const h=location.hash.slice(1);return['today','food','history','settings'].includes(h)?h:'today'};
-function render(){const v=view();root.innerHTML=(v==='food'?food():v==='history'?history():v==='settings'?settings():today())+tabs(v);if(v==='food')renderResults()}
+function render(){if(!D.onboarded||ob.done){root.innerHTML=onboard();return}const v=view();root.innerHTML=(v==='food'?food():v==='history'?history():v==='settings'?settings():today())+tabs(v);if(v==='food')renderResults()}
 function rr(){const y=scrollY;render();scrollTo(0,y)}
 let tt;function toast(t){const e=document.getElementById('toast');e.innerHTML=`<div class="toast" role="status">${esc(t)}</div>`;clearTimeout(tt);tt=setTimeout(()=>e.innerHTML='',2600)}
 
@@ -276,6 +324,15 @@ function addEntry(it,q,saveIt){const k=it.unit==='g'?q/100:q;
 /* ---------- Events ---------- */
 addEventListener('hashchange',()=>{picked=null;status='';lastQ='';render();scrollTo(0,0)});
 root.addEventListener('click',e=>{const t=e.target.closest('button,a');if(!t)return;const ds=t.dataset;
+ if(ds.obPreset){ob.preset=ds.obPreset;render();return}
+ if(ds.ob){const o=ds.ob;
+  if(o==='next'){ob.step++;render();scrollTo(0,0)}
+  if(o==='back'){ob.step=Math.max(0,ob.step-1);render();scrollTo(0,0)}
+  if(o==='cancel'){D.onboarded=true;ob.again=false;location.hash='settings';render()}
+  if(o==='signin'){D.onboarded=true;try{localStorage.setItem('pillars2',JSON.stringify(D))}catch(x){}location.hash='settings';render();scrollTo(0,0)}
+  if(o==='account'){ob.done=false;location.hash='settings';ob.again=false;render();scrollTo(0,0)}
+  if(o==='start'){ob.done=false;location.hash='today';ob.again=false;render();scrollTo(0,0)}
+  return}
  if(ds.nav!=null){const n=+ds.nav;cur=n===0?TODAY:shift(cur,n);if(cur>TODAY)cur=TODAY;try{sessionStorage.setItem('pcur',cur)}catch(x){}rr();return}
  if(ds.inc||ds.dec){const id=ds.inc||ds.dec,m=mById(id);if(!m)return;const st=+m.st||1,v=val(cur,m)||0;day(cur).v[id]=Math.max(0,r2(v+(ds.inc?st:-st)));save();rr();return}
  if(ds.go){cur=ds.go;try{sessionStorage.setItem('pcur',cur)}catch(x){}location.hash='today';return}
@@ -286,6 +343,7 @@ root.addEventListener('click',e=>{const t=e.target.closest('button,a');if(!t)ret
  if(ds.addm!=null){openP.add(+ds.addm);P()[+ds.addm].m.push({id:uid('m'),n:'New metric',u:'',t:1,d:'min',st:1,w:1});save();rr();return}
  if(ds.delp!=null){if(P().length<2){toast('Keep at least one pillar');return}if(t.textContent!=='Tap to confirm'){t.textContent='Tap to confirm';return}P().splice(+ds.delp,1);save();rr();return}
  const a=ds.act;if(!a)return;
+ if(a==='represet'){ob={step:1,preset:D.cfg.preset||'entrepreneur',again:true};D.onboarded=false;render();scrollTo(0,0);return}
  if(a==='chpw'){changePw=!changePw;rr();return}
  if(a==='forgot'){const f=document.getElementById('auth'),m=document.getElementById('authmsg'),email=f.elements.email.value.trim();if(!email||!f.elements.email.checkValidity()){m.textContent='Type your email above first, then tap Forgot password.';f.elements.email.focus();return}
   m.textContent='Sending…';sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname}).then(r=>{m.textContent=r.error?(/fetch|network/i.test(r.error.message)?'Can\'t reach the server — check your connection.':/rate/i.test(r.error.message)?'Too many emails sent — wait a while and try again.':r.error.message):'If that email has an account, a reset link is on its way. Open it on this device.'}).catch(()=>{m.textContent='Can\'t reach the server — check your connection.'});return}
@@ -307,6 +365,7 @@ root.addEventListener('change',e=>{const t=e.target,ds=t.dataset;
 root.addEventListener('toggle',e=>{const d=e.target;if(d.dataset&&d.dataset.pi!=null){d.open?openP.add(+d.dataset.pi):openP.delete(+d.dataset.pi)}},true);
 root.addEventListener('input',e=>{if(e.target.id==='amt')updAmt();if(e.target.id==='fq'){lastQ=e.target.value;if(!lastQ.trim()){picked=null;status='';renderResults()}}});
 root.addEventListener('submit',e=>{e.preventDefault();const f=e.target;
+ if(f.id==='obform'){finishOb(f);return}
  if(f.id==='newpw'){const m=document.getElementById('pwmsg'),pw=f.elements.pw.value;if(pw!==f.elements.pw2.value){m.textContent='The two passwords don\'t match.';return}m.textContent='Saving…';
   sb.auth.updateUser({password:pw}).then(r=>{if(r.error){m.textContent=/same/i.test(r.error.message)?'That is your current password — choose a different one.':r.error.message;return}recovery=false;changePw=false;rr();toast('Password updated')}).catch(()=>{m.textContent='Can\'t reach the server — check your connection.'});return}
  if(f.id==='auth'){doAuth(f,(e.submitter&&e.submitter.dataset.mode)||'in');return}
@@ -327,7 +386,7 @@ function merge(a,b){const o=JSON.parse(JSON.stringify(a));if(!b||!b.cfg)return o
  if((b.foodsU||0)>(a.foodsU||0)){o.recent=b.recent||[];o.foodsU=b.foodsU}
  const names=new Set(o.foods.map(f=>f.n));for(const f of b.foods||[])if(!names.has(f.n))o.foods.push(f);
  for(const[d,x]of Object.entries(b.days||{})){const l=o.days[d];if(!l||(x.u||0)>(l.u||0))o.days[d]=x}
- o.updated=Math.max(a.updated||0,b.updated||0);return o}
+ o.onboarded=!!(a.onboarded||b.onboarded);o.updated=Math.max(a.updated||0,b.updated||0);return o}
 function setSync(s){syncState=s;document.querySelectorAll('[data-syncst]').forEach(e=>e.textContent=SYNC[s])}
 function queueSync(){if(!sb||!user)return;setSync('syncing');clearTimeout(syncTimer);syncTimer=setTimeout(syncNow,2000)}
 async function syncNow(){if(!sb||!user)return;if(syncing){again=true;return}syncing=true;setSync('syncing');let changed=false;
