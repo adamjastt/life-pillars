@@ -160,7 +160,7 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 .fhero .scene{position:absolute;inset:0;width:100%;height:100%}
 .fhin{position:relative;max-width:980px;margin:0 auto;padding:calc(18px + env(safe-area-inset-top)) max(5vw,16px) 0;text-shadow:0 1px 12px #0008}
 .fhin h1{font-size:clamp(34px,8vw,52px);line-height:1;color:#fff;margin:2px 0 0}
-.fgreet{margin:0;font-size:15px;color:#f4ecd2;font-weight:500}
+.fgreet{margin:0;font-size:15px;color:#f4ecd2;font-weight:500}.fsun{margin:6px 0 0;font-size:13px;color:#f4ecd2;opacity:.9}
 .fband{background:linear-gradient(#08141c,var(--bg));padding:6px max(5vw,16px) 2px}
 .fstats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:end;margin:10px 0 4px}
 .fstats .kbig{font-size:clamp(30px,8vw,42px)}.fstats .kbig small{font-size:16px;color:var(--mut)}.fstats .kbig.sm{font-size:clamp(18px,4.6vw,24px);line-height:1.15}
@@ -197,7 +197,7 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 @media(prefers-reduced-motion:no-preference){.bar i{transition:width .3s}}
 </style></head><body><div id="root"></div><div id="toast"></div><script>
 {
-const VERSION='3.8';
+const VERSION='3.9';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -569,7 +569,16 @@ const FSPEC={_:{h:17,c:['#4f6a5a','#9fb4a5','#e6eee3'],m:['scales'],tl:'f'},
 'Long-spined sea scorpion':{h:16,bl:.4,pk:.2,np:.55,c:['#6a3c28','#9c6440','#e6c9a8'],f:'#7a4a30',d:'sp',dh:13,pe:1.8,tl:'r',m:['mottle:18:#3a1c10:.55','spots:20:#f0d8b8:1'],ey:.75},
 'Dragonet':{h:9,b:7,bl:.2,pk:.2,np:.6,c:['#7a6a3a','#b8a268','#f0e2b8'],f:'#d8b23a',d:'dr',dc:'#e0c040',dc2:'#4a8fd0',m:['spots:22:#3f8fd0:1.2:-1:.2'],tl:'r',ey:.85}};
 
-const SKYK=[[0,'night'],[4.6,'night'],[5.6,'pre'],[7,'dawn'],[10,'morn'],[13,'day'],[16.5,'aft'],[18.8,'dusk'],[20.4,'late'],[21.8,'night'],[24,'night']];
+/* Real sunrise and sunset for today's date (NOAA solar equations). Defaults to central England; Settings can use the phone's location. */
+const geo=()=>{try{const g=JSON.parse(localStorage.getItem('pgeo')||'null');if(g&&g.length===2)return g}catch(e){}return[52.5,-1.5]};
+function sunTimes(d){const[lat,lon]=geo(),rad=Math.PI/180,N=Math.floor((d-new Date(d.getFullYear(),0,0))/864e5),g=2*Math.PI/365*(N-1);
+ const eq=229.18*(.000075+.001868*Math.cos(g)-.032077*Math.sin(g)-.014615*Math.cos(2*g)-.040849*Math.sin(2*g));
+ const dec=.006918-.399912*Math.cos(g)+.070257*Math.sin(g)-.006758*Math.cos(2*g)+.000907*Math.sin(2*g)-.002697*Math.cos(3*g)+.00148*Math.sin(3*g);
+ const c=Math.cos(90.833*rad)/(Math.cos(lat*rad)*Math.cos(dec))-Math.tan(lat*rad)*Math.tan(dec),ha=Math.acos(Math.max(-1,Math.min(1,c)))/rad,off=-d.getTimezoneOffset();
+ const sr=(720-4*(lon+ha)-eq+off)/60,ss=(720-4*(lon-ha)-eq+off)/60;return{sr,ss,noon:(sr+ss)/2}}
+let skyCache={};function skyKeys(){const d=new Date(),k=d.toDateString()+geo().join();if(skyCache.k===k)return skyCache.v;const{sr,ss,noon}=sunTimes(d);
+ const v={sr,ss,keys:[[0,'night'],[sr-1.6,'night'],[sr-.6,'pre'],[sr+.5,'dawn'],[Math.min(sr+3,noon-.5),'morn'],[noon,'day'],[Math.max(ss-2.5,noon+.5),'aft'],[ss-.2,'dusk'],[ss+1,'late'],[ss+2.2,'night'],[24,'night']]};skyCache={k,v};return v}
+const hm=x=>{x=((x%24)+24)%24;const hh=Math.floor(x),mm=Math.round((x-hh)*60);return pad(mm===60?hh+1:hh)+':'+pad(mm===60?0:mm)};
 const SKYP={night:{s:['#060d24','#14224a','#2e2a5c','#4a3a66'],cl:'#6b5a8a',sun:'#f3efd8',far:'#16302a',near:'#0c1a14',w:['#132a3a','#08141c'],gl:.18,st:1,co:.25},
  pre:{s:['#1b2650','#4a4a86','#b07a9a','#e8a98a'],cl:'#c79aa8',sun:'#ffd9b0',far:'#3a5248',near:'#1a2e22',w:['#7a6a80','#1e3440'],gl:.4,st:.3,co:.5},
  dawn:{s:['#2f4f8e','#8a7cc0','#f29c9a','#ffd28c'],cl:'#ffc2a8',sun:'#ffe1b0',far:'#5d7a68',near:'#26402f',w:['#f0b9a0','#4b6a6c'],gl:.6,st:0,co:.75},
@@ -579,11 +588,11 @@ const SKYP={night:{s:['#060d24','#14224a','#2e2a5c','#4a3a66'],cl:'#6b5a8a',sun:
  dusk:{s:['#1d2758','#6b4a8e','#e36f7c','#ffb25c'],cl:'#ff9f8a',sun:'#ffc07a',far:'#4d4f5c',near:'#1c2e24',w:['#e8937e','#2b3d4a'],gl:.6,st:0,co:.75},
  late:{s:['#0f1840','#3a3270','#8a4a78','#d07a6a'],cl:'#a86a8a',sun:'#ffd0a0',far:'#2a3438',near:'#12201a',w:['#5a4a60','#101c24'],gl:.3,st:.5,co:.5}};
 const hx=c=>[1,3,5].map(i=>parseInt(c.slice(i,i+2),16)),mixc=(a,b,f)=>'#'+hx(a).map((v,i)=>Math.round(v+(hx(b)[i]-v)*f).toString(16).padStart(2,'0')).join('');
-function skyAt(t){let k=0;while(k<SKYK.length-2&&SKYK[k+1][0]<=t)k++;const[t0,a]=SKYK[k],[t1,b]=SKYK[k+1],f=(t-t0)/((t1-t0)||1),A=SKYP[a],B=SKYP[b],m=(x,y)=>typeof x==='number'?x+(y-x)*f:mixc(x,y,f);
+function skyAt(t){const K=skyKeys(),SKYK=K.keys;let k=0;while(k<SKYK.length-2&&SKYK[k+1][0]<=t)k++;const[t0,a]=SKYK[k],[t1,b]=SKYK[k+1],f=(t-t0)/((t1-t0)||1),A=SKYP[a],B=SKYP[b],m=(x,y)=>typeof x==='number'?x+(y-x)*f:mixc(x,y,f);
  const o={};for(const key in A)o[key]=Array.isArray(A[key])?A[key].map((v,i)=>m(v,B[key][i])):m(A[key],B[key]);
- const day=t>=6.2&&t<=19.6,p=day?(t-6.2)/13.4:((t>19.6?t-19.6:t+4.4)/10.6);o.sx=20+360*p;o.sy=114-94*Math.sin(Math.PI*p);o.r=day?15:11;if(!day)o.sun='#f3efd8';return o}
+ const a0=K.sr-.35,a1=K.ss+.35,day=t>=a0&&t<=a1,night=24-(a1-a0),p=day?(t-a0)/(a1-a0):((t>a1?t-a1:t+24-a1)/night);o.sx=20+360*p;o.sy=114-94*Math.sin(Math.PI*p);o.r=day?15:11;if(!day)o.sun='#f3efd8';return o}
 const sceneHour=()=>{const d=new Date();return window.__sceneHour??(d.getHours()+d.getMinutes()/60)};
-const greetAt=t=>(t<5?'Night session':t<8.5?'Early start. Tight lines':t<17?'Tight lines':t<21?'Golden hour. Tight lines':'Night session')+(D.cfg.name?', '+D.cfg.name:'');
+const greetAt=t=>{const{sr,ss}=skyKeys();return(t<sr-1.5?'Night session':t<sr+2?'Early start. Tight lines':t<ss-1.5?'Tight lines':t<ss+1.2?'Golden hour. Tight lines':'Night session')+(D.cfg.name?', '+D.cfg.name:'')};
 function tickScene(){const sv=document.querySelector('.scene');if(!sv)return;const t=sceneHour(),S=skyAt(t),$$=id=>sv.querySelector('#'+id);
  S.s.forEach((c,i)=>$$('sk'+i).setAttribute('stop-color',c));$$('cg1').setAttribute('stop-color',S.cl);$$('wt0').setAttribute('stop-color',S.w[0]);$$('wt1').setAttribute('stop-color',S.w[1]);
  $$('gl0').setAttribute('stop-color',S.sun);$$('gl0').setAttribute('stop-opacity',S.gl);$$('gl1').setAttribute('stop-color',S.sun);
@@ -605,7 +614,7 @@ function scene(){const t=sceneHour(),S=skyAt(t),R=fRng('stars');let stars='';for
  <g transform="translate(250 140)">${[0,1.8].map(d=>`<ellipse rx="4" ry="1" fill="none" stroke="#fff" stroke-opacity="0"><animate attributeName="rx" values="4;32" dur="3.6s" begin="${d}s" repeatCount="indefinite"/><animate attributeName="ry" values="1;7" dur="3.6s" begin="${d}s" repeatCount="indefinite"/><animate attributeName="stroke-opacity" values=".8;0" dur="3.6s" begin="${d}s" repeatCount="indefinite"/></ellipse>`).join('')}<g class="bob"><rect x="-1.6" y="-13" width="3.2" height="8" rx="1.6" fill="#ff6a2b"/><rect x="-1.2" y="-5.5" width="2.4" height="6" fill="#f2efe4"/></g></g>
  ${reeds(18,9,1)}${reeds(392,7,-1)}</svg>`}}
 function fishing(){const C=catches(),cm=caughtMap(),sp=speciesAll(),got=sp.filter(s=>isTicked(s.n,cm)).length,big=C.filter(c=>c.g).sort((a,b)=>b.g-a.g)[0],yr=String(new Date().getFullYear()),sc=scene();
- return`<header class="fhero">${sc.svg}<div class="fhin"><p class="fgreet">${sc.greet}</p><h1>The Bank</h1></div></header>
+ return`<header class="fhero">${sc.svg}<div class="fhin"><p class="fgreet">${sc.greet}</p><h1>The Bank</h1><p class="fsun">Sunrise ${hm(skyKeys().sr)} · Sunset ${hm(skyKeys().ss)}</p></div></header>
  <div class="fband"><div class="in"><div class="fstats"><div><div class="kbig">${got}<small> / ${sp.length}</small></div><div class="sub">species caught</div></div><div><div class="kbig sm">${C.filter(c=>c.date.startsWith(yr)).length}</div><div class="sub">catches in ${yr}</div></div><div><div class="kbig sm">${big?fW(big.g):'–'}</div><div class="sub">${big?'biggest · '+esc(big.species):'biggest fish'}</div></div></div>
  <div class="seg ftabs" role="tablist">${[['log','Catches'],['species','Species'],['gallery','Gallery']].map(([k,l])=>`<button role="tab" aria-selected="${fTab===k}" data-ftab="${k}" class="${fTab===k?'on':''}">${l}</button>`).join('')}</div></div></div>
  <main class="wrap">${fTab==='species'?fishSpecies(cm,sp,got):fTab==='gallery'?fishGallery(C):fishLog(C,cm)}</main>${lb?lightbox():''}${spSel?spSheet(cm):''}${celeb?celebrate(cm,sp):''}`}
@@ -747,7 +756,7 @@ function settings(){const types=[['min','At least'],['max','At most'],['near','A
  <div class="row" style="margin-bottom:16px"><button class="btn sec" data-act="addp">+ Add pillar</button></div>
  <section class="card"><h2>Targets</h2><div class="grid3" style="margin-top:10px"><label class="f">Carbs target (g)<input inputmode="decimal" data-cfg="mc" value="${D.cfg.macros.c}"></label><label class="f">Fat target (g)<input inputmode="decimal" data-cfg="mf" value="${D.cfg.macros.f}"></label><label class="f">Streak threshold (%)<input inputmode="decimal" data-cfg="good" value="${D.cfg.good}"></label></div><p class="sub">Calories and protein targets are set on their metrics above.</p></section>
  <section class="card"><h2>Backup</h2><p class="sub">Data lives in this browser only. Download a backup now and then, and use it to move to a new phone.</p><div class="row"><button class="btn" data-act="dl">Download backup</button><label class="btn sec" style="display:inline-flex;align-items:center">Restore from file<input type="file" accept=".json,application/json" data-restore hidden></label><button class="btn sec" data-act="copy">Copy backup</button></div></section>
- <section class="card"><h2>Hobbies</h2><p class="sub">Hobby sections add an extra tab. Turn on the ones you want.</p><label class="row" style="min-height:44px;margin-top:8px"><input type="checkbox" data-fset="tab" ${D.cfg.fishTab!==false?'checked':''} style="width:22px;height:22px"> Fishing: catch log, photos and species checklist</label>${D.cfg.fishTab!==false?`<label class="f" style="margin-top:8px">Fish weights in<select data-fset="unit"><option value="lboz" ${fUnit()==='lboz'?'selected':''}>Pounds and ounces</option><option value="kg" ${fUnit()==='kg'?'selected':''}>Kilograms</option></select></label>`:''}</section>
+ <section class="card"><h2>Hobbies</h2><p class="sub">Hobby sections add an extra tab. Turn on the ones you want.</p><label class="row" style="min-height:44px;margin-top:8px"><input type="checkbox" data-fset="tab" ${D.cfg.fishTab!==false?'checked':''} style="width:22px;height:22px"> Fishing: catch log, photos and species checklist</label>${D.cfg.fishTab!==false?`<label class="f" style="margin-top:8px">Fish weights in<select data-fset="unit"><option value="lboz" ${fUnit()==='lboz'?'selected':''}>Pounds and ounces</option><option value="kg" ${fUnit()==='kg'?'selected':''}>Kilograms</option></select></label><p class="sub" style="margin:14px 0 6px">The Bank's sky follows real sunrise and sunset. It uses ${(()=>{try{return localStorage.getItem('pgeo')?'your location':'central England'}catch(e){return'central England'}})()} (sunrise ${hm(skyKeys().sr)}, sunset ${hm(skyKeys().ss)} today).</p><div class="row"><button class="btn sec" data-act="geo">Use my location</button>${(()=>{try{return localStorage.getItem('pgeo')?'<button class="btn sec" data-act="geooff">Use central England</button>':''}catch(e){return''}})()}</div>`:''}</section>
  <section class="card"><h2>Preset</h2><p class="sub">Start again from a different preset (${esc((PRESETS[D.cfg.preset]||PRESETS.entrepreneur).n)} now). Your logged days are kept; goals that aren't in the new preset stop counting.</p><button class="btn sec" data-act="represet">Switch preset</button></section></main>`}
 const ICONS={today:'<circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/>',food:'<path d="M7 3v8a2 2 0 0 0 4 0V3M9 11v10M17 3c-2 0-3 3-3 6s1 4 3 4v8"/>',history:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',fishing:'<path d="M3 12c3.5-4.5 8-6 12-5 2.5.6 4.5 2.6 6 5-1.5 2.4-3.5 4.4-6 5-4 1-8.5-.5-12-5z"/><path d="M3 12l-1-3M3 12l-1 3"/><circle cx="16.5" cy="11" r="1" fill="currentColor"/>',settings:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/>'};
 const tabList=()=>[['today','Today'],['food','Food'],['history','Progress'],...(D.cfg.fishTab!==false?[['fishing','Fishing']]:[]),['settings','Settings']];
@@ -816,6 +825,8 @@ root.addEventListener('click',e=>{if(e.target.classList&&e.target.classList.cont
  if(ds.addm!=null){openP.add(+ds.addm);P()[+ds.addm].m.push({id:uid('m'),n:'New metric',u:'',t:1,d:'min',st:1,w:1});save();rr();return}
  if(ds.delp!=null){if(P().length<2){toast('Keep at least one pillar');return}if(t.textContent!=='Tap to confirm'){t.textContent='Tap to confirm';return}P().splice(+ds.delp,1);save();rr();return}
  const a=ds.act;if(!a)return;
+ if(a==='geo'){if(!navigator.geolocation){toast('Location is not available on this device');return}toast('Finding your location…');navigator.geolocation.getCurrentPosition(pos=>{try{localStorage.setItem('pgeo',JSON.stringify([+pos.coords.latitude.toFixed(1),+pos.coords.longitude.toFixed(1)]))}catch(e){}skyCache={};rr();toast('Sunrise and sunset set for your area')},()=>toast('Location was blocked. Using central England.'),{maximumAge:864e5,timeout:15000});return}
+ if(a==='geooff'){try{localStorage.removeItem('pgeo')}catch(e){}skyCache={};rr();return}
  if(a==='represet'){ob={step:1,preset:D.cfg.preset||'entrepreneur',again:true};D.onboarded=false;render();scrollTo(0,0);return}
  if(a==='chpw'){changePw=!changePw;rr();return}
  if(a==='forgot'){const f=document.getElementById('auth'),m=document.getElementById('authmsg'),email=f.elements.email.value.trim();if(!email||!f.elements.email.checkValidity()){m.textContent='Type your email above first, then tap Forgot password.';f.elements.email.focus();return}
