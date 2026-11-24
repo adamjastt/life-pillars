@@ -380,9 +380,16 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 .mapsq{flex:none;width:58px;height:54px;padding:0;display:grid;place-items:center;color:#d9b45a}.mapsq svg{width:26px;height:26px}
 .lb .lbimg{touch-action:none;transform-origin:center center;will-change:transform;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}.lb .lbimg.anim{transition:transform .25s ease}.lb .lbimg.zoomed{cursor:grab;position:relative;z-index:2}
 .lb.zooming .lbcap,.lb.zooming .lbn{opacity:0;pointer-events:none;transition:opacity .2s}.lb{overflow:hidden;touch-action:none}
+.pmenu{position:absolute;z-index:40;right:max(5vw,16px);top:calc(66px + env(safe-area-inset-top));width:min(300px,calc(100vw - 32px));background:#13241c;border:1px solid #d9b45a44;border-radius:18px;box-shadow:0 14px 40px #000a;padding:8px;opacity:0;transform:translateY(-8px) scale(.97);transform-origin:top right;pointer-events:none;transition:opacity .18s,transform .18s}
+.pmenu.open{opacity:1;transform:none;pointer-events:auto}
+.pmh{display:flex;align-items:center;gap:12px;padding:8px 8px 12px;border-bottom:1px solid #ffffff14;margin-bottom:6px}.pmh span{min-width:0}.pmh b{display:block;color:#f4ecd2}.pmh small{display:block;color:#a9c0b0;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pmi{display:flex;align-items:center;gap:12px;width:100%;min-height:56px;padding:8px 10px;border:0;border-radius:12px;background:none;color:#eef2e2;font:inherit;font-weight:600;text-align:left;cursor:pointer}.pmi:hover,.pmi:focus-visible{background:#ffffff0d}
+.pmi svg{flex:none;width:24px;height:24px;color:#d9b45a}.pmi span:not(.pill){flex:1}.pmi small{display:block;font-weight:400;font-size:12px;color:#a9c0b0}.pill.red{background:#ff5a5f;color:#fff}
+.code.big{font-size:26px;letter-spacing:.16em}
+@media(prefers-reduced-motion:reduce){.pmenu{transition:none}}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><div id="achpop" aria-live="polite"></div><script>
 {
-const VERSION='7.12';
+const VERSION='7.13';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -878,10 +885,10 @@ function scene(){const t=sceneHour(),S=skyAt(t),R=fRng('stars');let stars='';for
  <g transform="translate(250 140)">${[0,1.8].map(d=>`<ellipse rx="4" ry="1" fill="none" stroke="#fff" stroke-opacity="0"><animate attributeName="rx" values="4;32" dur="3.6s" begin="${d}s" repeatCount="indefinite"/><animate attributeName="ry" values="1;7" dur="3.6s" begin="${d}s" repeatCount="indefinite"/><animate attributeName="stroke-opacity" values=".8;0" dur="3.6s" begin="${d}s" repeatCount="indefinite"/></ellipse>`).join('')}<g class="bob"><rect x="-1.6" y="-13" width="3.2" height="8" rx="1.6" fill="#ff6a2b"/><rect x="-1.2" y="-5.5" width="2.4" height="6" fill="#f2efe4"/></g><circle data-floattap r="16" cy="-6" fill="#fff" fill-opacity="0" style="cursor:pointer"/></g>
  ${reeds(18,9,1)}${reeds(392,7,-1)}</svg>`}}
 function fishing(){const C=catches(),cm=caughtMap(),sp=speciesAll(),got=sp.filter(s=>isTicked(s.n,cm)).length,big=C.filter(c=>c.g).sort((a,b)=>b.g-a.g)[0],yr=String(new Date().getFullYear()),sc=scene();
- return`<header class="fhero">${sc.svg}<div class="fhin">${user?`<button class="fav" data-act="profile" aria-label="Your profile">${avatarImg(favAv(),'sm')}${pendingIn().length?'<i class="tdot"></i>':''}</button>`:''}<p class="fgreet">${sc.greet}</p><h1>The Bank</h1><p class="fsun">Sunrise ${hm(skyKeys().sr)} · Sunset ${hm(skyKeys().ss)}</p></div></header>
+ return`<header class="fhero">${sc.svg}<div class="fhin">${user?`<button class="fav" data-act="pmenu" aria-label="Profile menu" aria-haspopup="menu" aria-expanded="false">${avatarImg(favAv(),'sm')}${pendingIn().length?'<i class="tdot"></i>':''}</button>`:''}<p class="fgreet">${sc.greet}</p><h1>The Bank</h1><p class="fsun">Sunrise ${hm(skyKeys().sr)} · Sunset ${hm(skyKeys().ss)}</p></div></header>
  <div class="fband"><div class="in"><div class="fstats"><div><div class="kbig">${got}</div><div class="sub">species caught</div></div><div><div class="kbig sm">${C.filter(c=>c.date.startsWith(yr)).length}</div><div class="sub">catches in ${yr}</div></div><div><div class="kbig sm">${big?fW(big.g):'–'}</div><div class="sub">${big?'biggest · '+esc(big.species):'biggest fish'}</div></div></div>
  <div class="seg ftabs" role="tablist">${[['log','Catches'],['species','Species'],['gallery','Gallery'],['board','Rankings']].map(([k,l])=>`<button role="tab" aria-selected="${fTab===k}" data-ftab="${k}" class="${fTab===k?'on':''}">${l}</button>`).join('')}</div></div></div>
- <main class="wrap">${fTab==='species'?fishSpecies(cm,sp,got):fTab==='gallery'?fishGallery(C):fTab==='board'?fishBoard():fishLog(C,cm)}</main>${lb?lightbox():''}${blb?boardBox():''}${pickSheet()}${spSel?spSheet(cm):''}${celeb?celebrate(cm,sp):''}${secret?secretCard():''}`}
+ ${user?pmenuHtml():''}<main class="wrap">${fTab==='species'?fishSpecies(cm,sp,got):fTab==='gallery'?fishGallery(C):fTab==='board'?fishBoard():fishLog(C,cm)}</main>${lb?lightbox():''}${blb?boardBox():''}${pickSheet()}${spSel?spSheet(cm):''}${celeb?celebrate(cm,sp):''}${secret?secretCard():''}`}
 let spSel=null,celeb=null;
 function fishSpecies(cm,sp,got){const groups=[...FISH.map(f=>f[0]),...(fishD().custom.length?['Custom']:[]),'All'],list=spFilter(sp,cm),inG=sp.filter(s=>fGroup==='All'||s.g===fGroup),gotG=inG.filter(s=>isTicked(s.n,cm)).length;
  return`<section class="card"><div class="seg scenes" role="tablist" aria-label="Fishing scene">${groups.map(g=>{const n=sp.filter(s=>(g==='All'||s.g===g)&&isTicked(s.n,cm)).length;return`<button role="tab" aria-selected="${fGroup===g}" data-fgroup="${g}" class="${fGroup===g?'on':''}">${g}${n?` <span class="cnt">${n}</span>`:''}</button>`}).join('')}</div>
@@ -953,7 +960,7 @@ function fishClick(t,ds){
  if(pinClick(t,ds))return true;
  if(albClick(t,ds))return true;
  if(ds.pfp){const P=prof();P.avatar=ds.pfp;save();syncSocial();rr();return true}
- if(ds.pv){pv=ds.pv;frArm=null;location.hash='mate';return true}
+ if(ds.pv){pvFrom=view()==='friends'?'friends':view()==='fishing'?'fishing':'profile';pv=ds.pv;frArm=null;location.hash='mate';return true}
  if(ds.fracc){acceptReq(+ds.fracc);return true}
  if(ds.frno){dropReq(+ds.frno);return true}
  if(ds.frdel){const id=+ds.frdel;if(frArm!==id){frArm=id;rr();return true}frArm=null;dropReq(id,'Friend removed');location.hash='profile';return true}
@@ -1071,9 +1078,9 @@ const ICONS={today:'<circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/>'
 const fishOnly=()=>D.cfg.mode==='fish';
 const tabList=()=>fishOnly()?[['fishing','The Bank'],['settings','Settings']]:[['today','Today'],['food','Food'],['history','Progress'],...(D.cfg.fishTab!==false?[['fishing','Fishing']]:[]),['settings','Settings']];
 const tabs=v=>`<nav class="tabs" style="--n:${tabList().length}">${tabList().map(([k,l])=>`<a href="#${k}" class="${v===k?'on':''}" ${v===k?'aria-current="page"':''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[k]}</svg>${l}${k==='fishing'&&pendingIn().length?'<i class="tdot" aria-label="Friend requests"></i>':''}</a>`).join('')}</nav>`;
-const view=()=>{const h=location.hash.slice(1);if(h==='profile'||(h==='mate'&&pv)||(h==='album'&&alb)||(h==='map'&&D.cfg.fishTab!==false))return h;return tabList().some(t=>t[0]===h)?h:(fishOnly()?'fishing':'today')};
+const view=()=>{const h=location.hash.slice(1);if(h==='profile'||h==='friends'||(h==='mate'&&pv)||(h==='album'&&alb)||(h==='map'&&D.cfg.fishTab!==false))return h;return tabList().some(t=>t[0]===h)?h:(fishOnly()?'fishing':'today')};
 function keepOpen(){document.querySelectorAll('details[data-keep]').forEach(d=>d.open?openD.add(d.dataset.keep):openD.delete(d.dataset.keep));document.querySelectorAll('details[data-pi]').forEach(d=>d.open?openP.add(+d.dataset.pi):openP.delete(+d.dataset.pi))}
-function render(){keepOpen();stopLoc();if(!D.onboarded||ob.done){root.innerHTML=onboard();return}const v=view();root.innerHTML=(v==='food'?food():v==='history'?history():v==='settings'?settings():v==='fishing'?fishing():v==='profile'||v==='mate'?profilePage():v==='album'?albumPage():v==='map'?mapPage():today())+(v==='map'||(lb||blb||spSel||celeb||secret||gl||albPick||mapPick)&&['fishing','album','mate'].includes(v)?'':tabs(v))+glBox();document.body.classList.toggle('fishmode',['fishing','profile','mate','album','map'].includes(v)||(fishOnly()&&v==='settings'));if(v==='profile'||v==='mate')loadSocial();if(v==='album')loadAlbums();if(v==='food')renderResults();if(v==='history')drawW();if(['fishing','profile','mate','album'].includes(v))hydratePhotos();if(v==='map'){initCatchMap();requestAnimationFrame(()=>{const p=document.querySelector('.mappage.noanim');if(p)p.classList.remove('noanim')})}else mapMenuOn=false;if(v==='fishing'&&mapPick)initPickMap()}
+function render(){keepOpen();stopLoc();if(!D.onboarded||ob.done){root.innerHTML=onboard();return}const v=view();root.innerHTML=(v==='food'?food():v==='history'?history():v==='settings'?settings():v==='fishing'?fishing():v==='profile'||v==='mate'?profilePage():v==='friends'?friendsPage():v==='album'?albumPage():v==='map'?mapPage():today())+(v==='map'||(lb||blb||spSel||celeb||secret||gl||albPick||mapPick)&&['fishing','album','mate'].includes(v)?'':tabs(v))+glBox();document.body.classList.toggle('fishmode',['fishing','profile','mate','album','map','friends'].includes(v)||(fishOnly()&&v==='settings'));if(v==='profile'||v==='mate'||v==='friends')loadSocial();if(v==='album')loadAlbums();if(v==='food')renderResults();if(v==='history')drawW();if(['fishing','profile','mate','album'].includes(v))hydratePhotos();if(v==='map'){initCatchMap();requestAnimationFrame(()=>{const p=document.querySelector('.mappage.noanim');if(p)p.classList.remove('noanim')})}else mapMenuOn=false;if(v==='fishing'&&mapPick)initPickMap()}
 let morphing=false;
 function morph(to){if(morphing)return;morphing=true;const toFish=to==='fish',o=document.getElementById('morph'),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
  const apply=()=>{D.cfg.mode=to;if(toFish)D.cfg.fishTab=true;save();location.hash='settings';render();scrollTo(0,0)};
@@ -1147,8 +1154,10 @@ root.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('[data-f
  if(ds.delp!=null){if(P().length<2){toast('Keep at least one pillar');return}if(t.textContent!=='Tap to confirm'){t.textContent='Tap to confirm';return}P().splice(+ds.delp,1);save();rr();return}
  const a=ds.act;if(!a)return;
  if(a==='tour'){startTour();return}
- if(a==='profile'){pv=null;soc.msg='';location.hash='profile';return}
- if(a==='pback'){if(view()==='album'){galMode='shared';fTab='gallery'}if(view()==='map')fTab='log';location.hash=view()==='mate'?'profile':'fishing';return}
+ if(a==='profile'){pv=null;soc.msg='';pmenu(false);location.hash='profile';return}
+ if(a==='friends'){pv=null;soc.msg='';pmenu(false);location.hash='friends';return}
+ if(a==='pmenu'){pmenu(!document.querySelector('.pmenu.open'));return}
+ if(a==='pback'){if(view()==='album'){galMode='shared';fTab='gallery'}if(view()==='map')fTab='log';location.hash=view()==='mate'?(pvFrom||'profile'):'fishing';return}
  if(a==='gosettings'){location.hash='settings';return}
  if(a==='copycode'){const c=prof().code;try{navigator.clipboard.writeText(c);toast('Code copied: '+c)}catch(e){toast(c)}return}
  if(a==='bleave'){leaveBoard();return}
@@ -1499,7 +1508,7 @@ function buildCard(){const P=prof(),s=myStats(),ach={};for(const a of ACH)ach[a.
  const pb={};for(const c of fishD().catches)if(c.g&&(!pb[c.species]||c.g>pb[c.species]))pb[c.species]=c.g;
  return{v:1,name:P.name,avatar:favAv(),gallery:P.gallery===false?[]:myGalleryList(),stats:{catches:s.catches,species:s.species,big:s.big?{sp:s.big.species,g:s.big.g}:null,streak:null},pbs:Object.entries(pb).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([sp,g])=>({sp,g})),ach}}
 const achDone=(card,a)=>(card.ach[a.id]||0)>=a.goal;
-let soc={at:0,err:'',fr:[],people:{},cards:{},msg:''},socHash='',pv=null,frArm=null;
+let pvFrom=null,soc={at:0,err:'',fr:[],people:{},cards:{},msg:''},socHash='',pv=null,frArm=null;
 const socErr=e=>/relation|does not exist|schema cache/i.test((e&&e.message)||'')?'setup':((e&&e.message)||'Something went wrong');
 async function syncSocial(){if(!sb||!user)return;const P=prof(),card=buildCard(),h=JSON.stringify([user.id,P.name,P.code,card]);if(h===socHash)return;
  try{let r=await sb.from('profiles').upsert({user_id:user.id,name:P.name,code:P.code,avatar:card.avatar});
@@ -1512,7 +1521,7 @@ async function loadSocial(force){if(!sb||!user)return;if(!force&&Date.now()-soc.
   if(ids.length){const p=await sb.from('profiles').select('user_id,name,code,avatar').in('user_id',ids);if(p.error)throw p.error;for(const x of p.data||[])soc.people[x.user_id]=x}
   const fids=friendIds();if(fids.length){const c=await sb.from('profile_cards').select('user_id,card').in('user_id',fids);if(!c.error)for(const x of c.data||[])soc.cards[x.user_id]=x.card}
   soc.err=''}catch(e){soc.err=socErr(e)}
- if(['profile','mate','settings'].includes(view()))rr();else{const n=document.querySelector('.tabs');if(n)n.outerHTML=tabs(view())}}
+ if(['profile','mate','settings','friends','fishing'].includes(view()))rr();else{const n=document.querySelector('.tabs');if(n)n.outerHTML=tabs(view())}}
 const other=x=>x.from_id===user.id?x.to_id:x.from_id;
 const friendIds=()=>soc.fr.filter(x=>x.status==='accepted').map(other);
 const pendingIn=()=>user?soc.fr.filter(x=>x.status==='pending'&&x.to_id===user.id):[];
@@ -1548,8 +1557,20 @@ function profilePage(){const mine=view()==='profile',FO=true,back=`<button class
  <details class="card pedit" data-keep="pedit" ${openD.has('pedit')?'open':''}><summary>Edit profile</summary><div class="grid3"><label class="f" style="grid-column:1/-1">Display name<input data-prof="name" maxlength="24" value="${esc(P.name)}"></label><div style="grid-column:1/-1"><span class="f" style="display:block;margin-bottom:6px">Profile picture</span><div class="pfps">${PFP.map(([k,f,n])=>`<button type="button" class="pfpb${favAv()===k?' on':''}" data-pfp="${k}" aria-label="${esc(n)}" aria-pressed="${favAv()===k}"><img src="pfp/${f}" alt="" loading="lazy"></button>`).join('')}</div></div></div><label class="tgl" style="margin-top:10px"><span>Show my catch photos to friends<small>Friends see your photo gallery on your profile. Venues stay private.</small></span><input type="checkbox" role="switch" data-prof="gallery" ${P.gallery!==false?'checked':''}></label></details>
  ${pbCard(card)}
  <section class="card"><h2>Achievements</h2>${achWall(card,'ame')}</section>
- <h3 class="sgh">Friends</h3>
- <section class="card"><form id="fradd" class="fradd"><label class="f">Add a friend by code<input name="code" maxlength="7" autocapitalize="characters" autocomplete="off" placeholder="e.g. K7Q2MD" required></label><button class="btn">Send</button></form>${soc.msg?`<p class="sub" style="color:var(--acc)">${esc(soc.msg)}</p>`:''}<p class="sub">Friends can see each other's angler profile, PBs and badges. You can also add people from the leaderboard.</p>
+ <button class="card prow" data-act="friends"><span class="frn"><b>Friends</b><small>${fr.length} friend${fr.length===1?'':'s'}${inn.length?' · '+inn.length+' waiting':''}</small></span>${inn.length?`<span class="pill">${inn.length}</span>`:''}<span class="chev"></span></button></main>`}
+function pmenuHtml(){const n=pendingIn().length,P=D.cfg.prof||{};return`<div class="pmenu" role="menu" aria-label="Profile menu"><div class="pmh">${avatarImg(favAv(),'sm')}<span><b>${esc(P.name||'Angler')}</b><small>${esc((user&&user.email)||'')}</small></span></div>
+ <button role="menuitem" class="pmi" data-act="profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg><span>My profile<small>Your card, PBs and badges</small></span></button>
+ <button role="menuitem" class="pmi" data-act="friends"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="8" r="3.5"/><circle cx="17" cy="9.5" r="2.5"/><path d="M2.5 20c1-3.5 3.5-5.5 6.5-5.5s5.5 2 6.5 5.5M15.5 14.6c2.6-.3 5 1.3 6 4.4"/></svg><span>Friends<small>Add mates, requests and profiles</small></span>${n?`<span class="pill red">${n}</span>`:''}</button></div>`}
+function pmenu(open){const m=document.querySelector('.pmenu'),b=document.querySelector('.fav');if(!m)return;m.classList.toggle('open',open);if(b)b.setAttribute('aria-expanded',open)}
+document.addEventListener('click',e=>{const m=document.querySelector('.pmenu.open');if(m&&!m.contains(e.target)&&!(e.target.closest&&e.target.closest('.fav')))pmenu(false)},true);
+addEventListener('keydown',e=>{if(e.key==='Escape')pmenu(false)});
+function friendsPage(){const back=`<button class="pback" data-act="pback" aria-label="Back">‹</button>`,head=`<header class="fhero sm">${scene().svg}<div class="fhin">${back}<p class="fgreet fx">Social</p><div class="fhtop"><h1>Friends</h1></div></div></header>`;
+ if(!SB_URL||!user)return head+`<main class="wrap"><section class="card"><h2>Sign in first</h2><p class="sub">Friends are linked to your account. Sign in from Settings.</p><button class="btn" data-act="gosettings">Go to Settings</button></section></main>`;
+ const P=prof(),inn=pendingIn(),out=soc.fr.filter(x=>x.status==='pending'&&x.from_id===user.id),fr=friendIds();
+ const nm=id=>esc((soc.people[id]||{}).name||'Someone'),avOf=id=>(soc.cards[id]||{}).avatar||(soc.people[id]||{}).avatar;
+ const setup=soc.err==='setup'?`<section class="card"><p class="sub">Friends aren't switched on on the server yet.</p></section>`:'';
+ return head+`<main class="wrap">${setup}<section class="card"><p class="sub" style="margin:0">Your friend code</p><div class="ch" style="margin-top:4px"><b class="code big">${esc(P.code)}</b><button class="btn sec sm" data-act="copycode">Copy</button></div><p class="sub">Share it with your mates so they can add you.</p></section>
+  <section class="card"><form id="fradd" class="fradd"><label class="f">Add a friend by code<input name="code" maxlength="7" autocapitalize="characters" autocomplete="off" placeholder="e.g. K7Q2MD" required></label><button class="btn">Send</button></form>${soc.msg?`<p class="sub" style="color:var(--acc)">${esc(soc.msg)}</p>`:''}<p class="sub">Friends can see each other's angler profile, PBs and badges. You can also add people from the leaderboard.</p>
  ${inn.length?`<h3 class="agh" style="margin-top:14px">Requests</h3>${inn.map(x=>`<div class="frow">${avatarImg(avOf(x.from_id),'sm')}<span class="frn">${nm(x.from_id)}<small>Wants to be friends</small></span><span class="row" style="flex-wrap:nowrap"><button class="btn sm" data-fracc="${x.id}">Accept</button><button class="btn sec sm" data-frno="${x.id}">Decline</button></span></div>`).join('')}`:''}
  <h3 class="agh" style="margin-top:14px">Your friends${fr.length?' ('+fr.length+')':''}</h3>${fr.map(id=>{const c=soc.cards[id];return`<button class="frow fbtn" data-pv="${id}">${avatarImg(avOf(id),'sm')}<span class="frn">${nm(id)}<small>${c?ACH.filter(a=>achDone(c,a)).length+' achievements · '+c.stats.species+' species':'No profile yet'}</small></span><span class="chev"></span></button>`}).join('')||'<p class="empty">No friends yet. Share your code above.</p>'}
  ${out.length?`<h3 class="agh" style="margin-top:14px">Sent</h3>${out.map(x=>`<div class="frow">${avatarImg(avOf(x.to_id),'sm')}<span class="frn">${nm(x.to_id)}<small>Waiting for them to accept</small></span><button class="btn sec sm" data-frno="${x.id}">Cancel</button></div>`).join('')}`:''}</section></main>`}
