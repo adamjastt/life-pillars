@@ -165,8 +165,6 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 .fstats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:end;margin:10px 0 4px}
 .fstats .kbig{font-size:clamp(30px,8vw,42px)}.fstats .kbig small{font-size:16px;color:var(--mut)}.fstats .kbig.sm{font-size:clamp(18px,4.6vw,24px);line-height:1.15}
 .ftabs{margin:14px 0 6px}.ftabs button{flex:1}
-.scene .rip{animation:rip 3.6s ease-out infinite;transform-box:fill-box;transform-origin:50% 50%}.scene .r2{animation-delay:1.8s}
-@keyframes rip{0%{transform:scale(.4);opacity:.9}100%{transform:scale(3.2);opacity:0}}
 .scene .bob{animation:bob 3s ease-in-out infinite}@keyframes bob{50%{transform:translateY(1.6px)}}
 .scene .reed{animation:sway 6s ease-in-out infinite}@keyframes sway{50%{transform:rotate(2.5deg)}}
 .scene .mist{animation:drift 26s linear infinite alternate}@keyframes drift{to{transform:translateX(40px)}}
@@ -199,7 +197,7 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 @media(prefers-reduced-motion:no-preference){.bar i{transition:width .3s}}
 </style></head><body><div id="root"></div><div id="toast"></div><script>
 {
-const VERSION='3.5';
+const VERSION='3.6';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -380,7 +378,8 @@ const idbPut=(k,b)=>idbDo('readwrite',s=>s.put(b,k)),idbGet=k=>idbDo('readonly',
 async function compress(file){let src;try{src=await createImageBitmap(file,{imageOrientation:'from-image'})}catch(e){src=await new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=URL.createObjectURL(file)})}
  const w=src.width||src.naturalWidth,h=src.height||src.naturalHeight,s=Math.min(1,1600/Math.max(w,h)),c=document.createElement('canvas');c.width=Math.round(w*s);c.height=Math.round(h*s);c.getContext('2d').drawImage(src,0,0,c.width,c.height);
  return new Promise(r=>c.toBlob(r,'image/jpeg',.82))}
-async function hydratePhotos(){const imgs=[...document.querySelectorAll('img[data-pid]')];const need=[];
+function stillScene(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)document.querySelectorAll('.scene animate').forEach(a=>a.remove())}
+async function hydratePhotos(){stillScene();const imgs=[...document.querySelectorAll('img[data-pid]')];const need=[];
  for(const im of imgs){const id=im.dataset.pid;if(purl[id]){im.src=purl[id];continue}need.push(im)}
  const cloud=[];for(const im of need){const id=im.dataset.pid;try{const b=await idbGet(id);if(b){purl[id]=URL.createObjectURL(b);im.src=purl[id];continue}}catch(e){}if(im.dataset.path)cloud.push(im)}
  if(cloud.length&&sb&&user){try{const paths=[...new Set(cloud.map(i=>i.dataset.path))];const r=await sb.storage.from(BUCKET).createSignedUrls(paths,3600);
@@ -585,7 +584,7 @@ function scene(){const h=new Date().getHours(),t=h<5||h>=21?'night':h<8?'dawn':h
  <path d="M0 116 ${Array.from({length:21},(_,i)=>`Q${i*20+10} ${100+((i*53)%14)} ${i*20+20} 114`).join(' ')} V122 H0Z" fill="${S.near}"/>
  <rect y="118" width="400" height="52" fill="url(#wt)"/>
  <g class="shim">${[0,1,2,3,4].map(i=>`<rect x="${S.sx-20+i*7-(i%2)*10}" y="${124+i*8}" width="${30-i*3}" height="1.6" rx=".8" fill="${S.sun}" opacity="${.5-i*.07}"/>`).join('')}</g>
- <g transform="translate(250 140)"><ellipse class="rip" rx="10" ry="2.4" fill="none" stroke="#fff" stroke-opacity=".5"/><ellipse class="rip r2" rx="10" ry="2.4" fill="none" stroke="#fff" stroke-opacity=".5"/><g class="bob"><rect x="-1.6" y="-13" width="3.2" height="8" rx="1.6" fill="#ff6a2b"/><rect x="-1.2" y="-5.5" width="2.4" height="6" fill="#f2efe4"/></g></g>
+ <g transform="translate(250 140)"><ellipse rx="4" ry="1" fill="none" stroke="#fff" stroke-opacity="0"><animate attributeName="rx" values="4;32" dur="3.6s" begin="0s" repeatCount="indefinite"/><animate attributeName="ry" values="1;7" dur="3.6s" begin="0s" repeatCount="indefinite"/><animate attributeName="stroke-opacity" values=".8;0" dur="3.6s" begin="0s" repeatCount="indefinite"/></ellipse><ellipse rx="4" ry="1" fill="none" stroke="#fff" stroke-opacity="0"><animate attributeName="rx" values="4;32" dur="3.6s" begin="1.8s" repeatCount="indefinite"/><animate attributeName="ry" values="1;7" dur="3.6s" begin="1.8s" repeatCount="indefinite"/><animate attributeName="stroke-opacity" values=".8;0" dur="3.6s" begin="1.8s" repeatCount="indefinite"/></ellipse><g class="bob"><rect x="-1.6" y="-13" width="3.2" height="8" rx="1.6" fill="#ff6a2b"/><rect x="-1.2" y="-5.5" width="2.4" height="6" fill="#f2efe4"/></g></g>
  ${reeds(18,9,1)}${reeds(392,7,-1)}</svg>`}}
 function fishing(){const C=catches(),cm=caughtMap(),sp=speciesAll(),got=sp.filter(s=>isTicked(s.n,cm)).length,big=C.filter(c=>c.g).sort((a,b)=>b.g-a.g)[0],yr=String(new Date().getFullYear()),sc=scene();
  return`<header class="fhero">${sc.svg}<div class="fhin"><p class="fgreet">${sc.greet}</p><h1>The Bank</h1></div></header>
