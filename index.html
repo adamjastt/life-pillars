@@ -355,9 +355,15 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 .minipin svg{width:9px;height:12px;vertical-align:-1px}
 .mpick{max-height:92vh}.pmapw{position:relative}.pmapw .fmap{height:52vh;min-height:280px}.pcross{position:absolute;left:50%;top:50%;width:32px;height:42px;transform:translate(-50%,-100%);pointer-events:none;z-index:1000}.pcross svg{width:32px;height:42px;filter:drop-shadow(0 3px 4px #0009)}
 .mapw{position:relative}.maptog{position:absolute;top:10px;right:10px;z-index:1001;border:0;border-radius:10px;padding:8px 12px;background:#13241ce6;color:#f4ecd2;font:inherit;font-size:14px;font-weight:600;box-shadow:0 2px 8px #0006;cursor:pointer}
+.mapbtn{display:flex;align-items:center;gap:12px;width:100%;margin-top:12px;height:auto;min-height:60px;padding:8px 16px;text-align:left;justify-content:flex-start}.mapbtn>svg{width:22px;height:29px;flex:none}.mapbtn span:not(.chev){flex:1}.mapbtn small{display:block;color:var(--mut);font-weight:400;font-size:13px}
+.mappage{position:fixed;inset:0;z-index:5;background:#0c1a15}.mappage .fmap{position:absolute;inset:0;height:auto;min-height:0;border-radius:0}
+.mback{position:absolute;z-index:1001;left:12px;top:calc(12px + env(safe-area-inset-top));width:46px;height:46px;border-radius:99px;border:0;background:#13241ce6;color:#f4ecd2;font-size:30px;line-height:1;padding:0 0 4px;box-shadow:0 2px 10px #0007;cursor:pointer}
+.mtitle{position:absolute;z-index:1001;left:68px;top:calc(12px + env(safe-area-inset-top));background:#13241ce6;color:#f4ecd2;border-radius:14px;padding:6px 14px;box-shadow:0 2px 10px #0007;pointer-events:none}.mtitle b{display:block;font-family:Fraunces,Georgia,serif;font-size:18px}.mtitle small{font-size:12px;color:#c9b78a}
+.mappage .leaflet-top.leaflet-left{top:calc(66px + env(safe-area-inset-top))}
+.mempty{position:absolute;z-index:1001;left:16px;right:16px;bottom:calc(24px + env(safe-area-inset-bottom));background:#13241ce6;color:#f4ecd2;border-radius:14px;padding:14px 16px;text-align:center;font-size:15px}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><div id="achpop" aria-live="polite"></div><script>
 {
-const VERSION='7.6';
+const VERSION='7.7';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -902,7 +908,7 @@ function tradeCard(c,cm,pb,bx){const all=speciesAll(),idx=all.findIndex(s=>s.n==
  <div class="tcstats">${bar('Weight',c.g?c.g/maxG*100:0,c.g?fW(c.g):'–')}${bar('Length',c.cm?c.cm/maxL*100:0,c.cm?fmt(c.cm)+' cm':'–')}${bx?bar('Board rank',(bx.n-bx.rank+1)/bx.n*100,'#'+bx.rank+' of '+bx.n):bar('Catch no.',mine.length?nth/mine.length*100:0,nth+' of '+mine.length)}</div>
  <div class="tcflav">${c.notes?esc(c.notes):[c.method&&'Caught on the '+esc(c.method.toLowerCase())+(c.bait?' with '+esc(c.bait.toLowerCase()):''),c.rel===false?'Kept.':c.rel===true||!bx?'Safely released.':''].filter(Boolean).join('. ')||'Details kept private.'}</div>
  <div class="tcfoot"><span>${esc(c.method||'')}${c.bait?' · '+esc(c.bait):''}</span><span>${bx?'Caught by '+esc(bx.who):'Life Pillars · The Bank'}</span></div></div></div>`}
-function fishLog(C,cm){return(fForm?fishForm():`<button class="btn bigadd" data-fnew>+ Log a catch</button>`)+(C.length&&!fForm?`<div class="seg fview">${[['list','List'],['map','Map']].map(([k,l])=>`<button data-fview="${k}" class="${fView===k?'on':''}">${l}</button>`).join('')}</div>`:'')+(fView==='map'&&!fForm&&C.length?mapBlock():
+function fishLog(C,cm){return(fForm?fishForm():`<button class="btn bigadd" data-fnew>+ Log a catch</button>`)+(C.length&&!fForm?`<button class="btn sec mapbtn" data-fview="map">${PINSVG}<span>Catch map<small>${C.filter(c=>c.loc).length} pinned</small></span><span class="chev"></span></button>`:'')+(
  (C.length?C.map(c=>{const pb=cm[c.species]&&cm[c.species].pb===c,open=fOpen===c.id,ph=c.photos||[];
  return`<section class="crow${open?' open':''}"><button class="crhead" data-fexp="${c.id}" aria-expanded="${open}">${ph[0]?pimg(ph[0],c.species,'crthumb'):`<span class="crthumb art" aria-hidden="true">${fishSVG(c.species)}</span>`}
  <span class="crmeta"><b>${esc(c.species)}${pb?' <span class="pb">PB</span>':''}</b><small>${[c.g?fW(c.g):'',c.cm?fmt(c.cm)+' cm':''].filter(Boolean).join(' · ')||'No weight'}</small><small>${label(c.date)}${c.place?' · '+esc(c.place):''}${c.loc?' · <span class="minipin" aria-label="Pinned">'+PINSVG+'</span>':''}</small></span><span class="crchev" aria-hidden="true"></span></button>
@@ -1046,9 +1052,9 @@ const ICONS={today:'<circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/>'
 const fishOnly=()=>D.cfg.mode==='fish';
 const tabList=()=>fishOnly()?[['fishing','The Bank'],['settings','Settings']]:[['today','Today'],['food','Food'],['history','Progress'],...(D.cfg.fishTab!==false?[['fishing','Fishing']]:[]),['settings','Settings']];
 const tabs=v=>`<nav class="tabs" style="--n:${tabList().length}">${tabList().map(([k,l])=>`<a href="#${k}" class="${v===k?'on':''}" ${v===k?'aria-current="page"':''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[k]}</svg>${l}${k==='fishing'&&pendingIn().length?'<i class="tdot" aria-label="Friend requests"></i>':''}</a>`).join('')}</nav>`;
-const view=()=>{const h=location.hash.slice(1);if(h==='profile'||(h==='mate'&&pv)||(h==='album'&&alb))return h;return tabList().some(t=>t[0]===h)?h:(fishOnly()?'fishing':'today')};
+const view=()=>{const h=location.hash.slice(1);if(h==='profile'||(h==='mate'&&pv)||(h==='album'&&alb)||(h==='map'&&D.cfg.fishTab!==false))return h;return tabList().some(t=>t[0]===h)?h:(fishOnly()?'fishing':'today')};
 function keepOpen(){document.querySelectorAll('details[data-keep]').forEach(d=>d.open?openD.add(d.dataset.keep):openD.delete(d.dataset.keep));document.querySelectorAll('details[data-pi]').forEach(d=>d.open?openP.add(+d.dataset.pi):openP.delete(+d.dataset.pi))}
-function render(){keepOpen();if(!D.onboarded||ob.done){root.innerHTML=onboard();return}const v=view();root.innerHTML=(v==='food'?food():v==='history'?history():v==='settings'?settings():v==='fishing'?fishing():v==='profile'||v==='mate'?profilePage():v==='album'?albumPage():today())+((lb||blb||spSel||celeb||secret||gl||albPick||mapPick)&&['fishing','album','mate'].includes(v)?'':tabs(v))+glBox();document.body.classList.toggle('fishmode',['fishing','profile','mate','album'].includes(v)||(fishOnly()&&v==='settings'));if(v==='profile'||v==='mate')loadSocial();if(v==='album')loadAlbums();if(v==='food')renderResults();if(v==='history')drawW();if(['fishing','profile','mate','album'].includes(v))hydratePhotos();if(v==='fishing'){if(fTab==='log'&&fView==='map'&&!fForm)initCatchMap();if(mapPick)initPickMap()}}
+function render(){keepOpen();if(!D.onboarded||ob.done){root.innerHTML=onboard();return}const v=view();root.innerHTML=(v==='food'?food():v==='history'?history():v==='settings'?settings():v==='fishing'?fishing():v==='profile'||v==='mate'?profilePage():v==='album'?albumPage():v==='map'?mapPage():today())+(v==='map'||(lb||blb||spSel||celeb||secret||gl||albPick||mapPick)&&['fishing','album','mate'].includes(v)?'':tabs(v))+glBox();document.body.classList.toggle('fishmode',['fishing','profile','mate','album','map'].includes(v)||(fishOnly()&&v==='settings'));if(v==='profile'||v==='mate')loadSocial();if(v==='album')loadAlbums();if(v==='food')renderResults();if(v==='history')drawW();if(['fishing','profile','mate','album'].includes(v))hydratePhotos();if(v==='map')initCatchMap();if(v==='fishing'&&mapPick)initPickMap()}
 let morphing=false;
 function morph(to){if(morphing)return;morphing=true;const toFish=to==='fish',o=document.getElementById('morph'),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
  const apply=()=>{D.cfg.mode=to;if(toFish)D.cfg.fishTab=true;save();location.hash='settings';render();scrollTo(0,0)};
@@ -1123,7 +1129,7 @@ root.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('[data-f
  const a=ds.act;if(!a)return;
  if(a==='tour'){startTour();return}
  if(a==='profile'){pv=null;soc.msg='';location.hash='profile';return}
- if(a==='pback'){if(view()==='album'){galMode='shared';fTab='gallery'}location.hash=view()==='mate'?'profile':'fishing';return}
+ if(a==='pback'){if(view()==='album'){galMode='shared';fTab='gallery'}if(view()==='map')fTab='log';location.hash=view()==='mate'?'profile':'fishing';return}
  if(a==='gosettings'){location.hash='settings';return}
  if(a==='copycode'){const c=prof().code;try{navigator.clipboard.writeText(c);toast('Code copied: '+c)}catch(e){toast(c)}return}
  if(a==='bleave'){leaveBoard();return}
@@ -1269,6 +1275,7 @@ const PINSVG='<svg viewBox="0 0 32 42" aria-hidden="true"><path d="M16 41s14-13.
 const r5=n=>+(+n).toFixed(5);
 function addTiles(L,m){mapSt.layer='sat';if(m.attributionControl)m.attributionControl.setPrefix(false);const T=TILES.sat;L.tileLayer(T[0],{attribution:T[1],maxZoom:19,maxNativeZoom:mapSt.layer==='sat'?18:19,subdomains:'abcd'}).addTo(m)}
 function lastPin(){const c=catches().find(c=>c.loc);if(c)return[c.loc.lat,c.loc.lng];try{const g=JSON.parse(localStorage.getItem('pgeo')||'null');if(g)return g}catch(e){}return null}
+function mapPage(){const n=catches().filter(c=>c.loc).length;return`<div class="mappage"><div id="fmap" class="fmap"></div><button class="mback" data-act="pback" aria-label="Back to The Bank">‹</button><div class="mtitle"><b>Catch map</b><small>${n?n+' pinned catch'+(n===1?'':'es'):'No pinned catches yet'}</small></div>${n?'':'<div class="mempty">Add a pin when you log a catch, or edit an old catch to pin it.</div>'}</div>`}
 function mapBlock(){const n=catches().filter(c=>c.loc).length;return`<div class="mapw" style="margin-top:12px"><div id="fmap" class="fmap"></div></div><p class="sub" style="text-align:center">${n?`${n} pinned catch${n===1?'':'es'}. Only you can see your pins.`:'No pinned catches yet. Add a pin when you log a catch, or edit an old one.'}</p>`}
 async function initCatchMap(){const el=document.getElementById('fmap');if(!el)return;let L;try{L=await leaf()}catch(e){el.innerHTML='<p class="empty" style="padding:24px;text-align:center">The map could not load. Check your connection.</p>';return}
  if(!document.body.contains(el)||el.dataset.on)return;el.dataset.on=1;const m=L.map(el,{zoomControl:true});addTiles(L,m);
@@ -1278,7 +1285,7 @@ async function initCatchMap(){const el=document.getElementById('fmap');if(!el)re
   const mk=L.marker(ll,{icon:L.divIcon({className:'fpin',html:PINSVG+(L2.length>1?`<b>${L2.length}</b>`:''),iconSize:[32,42],iconAnchor:[16,41],popupAnchor:[0,-36]})}).addTo(m);
   mk.bindPopup(`<div class="mpop">${L2.map(c=>`<div><span class="mpart">${fishSVG(c.species)}</span><span><b>${esc(c.species)}</b><small>${[c.g?fW(c.g):'',label(c.date),c.place?esc(c.place):''].filter(Boolean).join(' · ')}</small></span><button data-mapopen="${c.id}">Open</button></div>`).join('')}</div>`,{maxWidth:260,minWidth:230});
   if(mapFocus&&L2.some(c=>c.id===mapFocus))focus=mk}
- m.on('popupopen',e=>{e.popup.getElement().querySelectorAll('[data-mapopen]').forEach(b=>b.onclick=()=>{fView='list';fOpen=b.dataset.mapopen;rr();setTimeout(()=>{const r=document.querySelector('.crow.open');if(r)r.scrollIntoView({block:'start'})},60)})});
+ m.on('popupopen',e=>{e.popup.getElement().querySelectorAll('[data-mapopen]').forEach(b=>b.onclick=()=>{fTab='log';fOpen=b.dataset.mapopen;location.hash='fishing';setTimeout(()=>{const r=document.querySelector('.crow.open');if(r)r.scrollIntoView({block:'start'})},60)})});
  const place=()=>{if(focus){m.setView(focus.getLatLng(),16);focus.openPopup()}else if(mapSt.c)m.setView(mapSt.c,mapSt.z);else if(pts.length)m.fitBounds(pts,{padding:[40,40],maxZoom:15});else{const p=lastPin();m.setView(p||[52.5,-1.5],p?12:6)}};
  place();requestAnimationFrame(()=>{m.invalidateSize();if(!focus&&!mapSt.c)place()});setTimeout(()=>{m.invalidateSize();m.on('moveend',()=>{mapSt.c=m.getCenter();mapSt.z=m.getZoom()})},300);mapFocus=null}
 function pickSheet(){return mapPick?`<div class="sheetbg"></div><div class="sheet mpick" role="dialog" aria-label="Pick the spot"><div class="sheeth">Drop a pin on your spot</div><div class="pmapw mapw"><div id="pmap" class="fmap"></div><span class="pcross">${PINSVG}</span></div>
@@ -1297,9 +1304,9 @@ async function exifGps(file){try{const buf=await file.slice(0,262144).arrayBuffe
    if(!isFinite(lat)||!isFinite(lng)||(!lat&&!lng)||Math.abs(lat)>90||Math.abs(lng)>180)return null;return{lat:r5(lat),lng:r5(lng)}}
   if((mk&0xFF00)!==0xFF00||mk===0xFFDA)break;o+=2+len}}catch(e){}return null}
 function pinClick(t,ds){
- if(ds.fview){fView=ds.fview;if(fView==='map')mapSt.c=null;rr();return true}
+ if(ds.fview){mapSt.c=null;location.hash='map';return true}
  if(ds.maplayer){mapSt.layer=ds.maplayer;if(pickMap&&mapPick){const c=pickMap.getCenter();mapPick.c=[c.lat,c.lng];mapPick.z=pickMap.getZoom()}rr();return true}
- if(ds.mapat){fView='map';mapFocus=ds.mapat;fForm=null;rr();scrollTo(0,0);return true}
+ if(ds.mapat){mapFocus=ds.mapat;fForm=null;location.hash='map';return true}
  if(ds.locgps!=null){keepForm();gpsHere((lat,lng)=>{if(!fForm)return;fForm.loc={lat,lng};fForm.locSrc='gps';rr();toast('Pinned to where you are')});return true}
  if(ds.locpick!=null){keepForm();const c=fForm.loc?[fForm.loc.lat,fForm.loc.lng]:lastPin();mapPick={c:c||[52.5,-1.5],z:fForm.loc?17:c?14:6};rr();return true}
  if(ds.locclear!=null){keepForm();fForm.loc=null;fForm.locSrc=null;rr();return true}
