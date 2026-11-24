@@ -288,7 +288,7 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 .mode.on{border-color:var(--acc);background:color-mix(in srgb,var(--acc) 14%,var(--card2))}.mode.on svg{color:var(--acc)}
 .fishmode .mode{background-image:radial-gradient(circle at 50% 115%,transparent 44%,rgba(255,255,255,.04) 46% 52%,transparent 54%);background-size:14px 9px}
 .fishmode .mode.on{background-color:#2a3d24}
-.fhero.sm{height:clamp(150px,26vw,200px)}
+.fhero.sm{height:auto;min-height:calc(140px + env(safe-area-inset-top))}.fhero.sm .fhin{padding-bottom:22px}.fhtop{display:flex;align-items:baseline;justify-content:space-between;gap:12px}.fhtop .fsun{margin:0;flex:none}
 .fishmode .sgh{color:#c9b78a}.fishmode .tgl input:checked{background:#d9b45a}.fishmode .seg2 button.on{background:#d9b45a;color:#13241c}
 .srow.first{border-top:0}
 .morph{position:fixed;inset:0;z-index:60;pointer-events:none;overflow:hidden;display:none}.morph.on{display:block;pointer-events:auto}
@@ -308,7 +308,7 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 @keyframes mbub{0%{opacity:0;transform:translateY(0)}20%{opacity:1}100%{opacity:0;transform:translateY(-60vh)}}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><script>
 {
-const VERSION='6.11';
+const VERSION='6.12';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -967,7 +967,7 @@ function settings(){const types=[['min','At least'],['max','At most'],['near','A
  <div class="pfoot"><button class="btn sec" data-addm="${pi}">+ Add metric</button><button class="linkbtn dlink" data-delp="${pi}">Remove pillar</button></div></div></details>`;
  const fishOn=D.cfg.fishTab!==false,FO=fishOnly();
  const modeCard=`<h3 class="sgh">App mode</h3><section class="card modes"><button class="mode${FO?'':' on'}" data-mode2="full" aria-pressed="${!FO}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">${ICONS.today}</svg><b>Full app</b><small>Pillars, food, progress and fishing</small></button><button class="mode${FO?' on':''}" data-mode2="fish" aria-pressed="${FO}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS.fishing}</svg><b>Fishing only</b><small>Just The Bank, with every fishing feature</small></button></section>`;
- const hero=FO?`<header class="fhero sm">${scene().svg}<div class="fhin"><p class="fgreet">Fishing only</p><h1>Settings</h1><p class="fsun">v${VERSION}</p></div></header>`:`<header class="hero"><div class="in"><div class="top"><h1>Settings</h1><span class="sub">v${VERSION}</span></div></div></header>`;
+ const hero=FO?`<header class="fhero sm">${scene().svg}<div class="fhin"><p class="fgreet">Fishing only</p><div class="fhtop"><h1>Settings</h1><span class="fsun">v${VERSION}</span></div></div></header>`:`<header class="hero"><div class="in"><div class="top"><h1>Settings</h1><span class="sub">v${VERSION}</span></div></div></header>`;
  return`${hero}
  <main class="wrap settings">${modeCard}
  <h3 class="sgh">Account</h3>${acct()}
