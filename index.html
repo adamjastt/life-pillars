@@ -335,7 +335,7 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 .alock{margin-top:10px}.alock>summary{min-height:44px;font-size:14px}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><div id="achpop" aria-live="polite"></div><script>
 {
-const VERSION='7.0';
+const VERSION='7.1';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -1001,7 +1001,7 @@ function settings(){const types=[['min','At least'],['max','At most'],['near','A
  const modeCard=`<h3 class="sgh">App mode</h3><section class="card modes"><button class="mode${FO?'':' on'}" data-mode2="full" aria-pressed="${!FO}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">${ICONS.today}</svg><b>Full app</b><small>Pillars, food, progress and fishing</small></button><button class="mode${FO?' on':''}" data-mode2="fish" aria-pressed="${FO}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS.fishing}</svg><b>Fishing only</b><small>Just The Bank, with every fishing feature</small></button></section>`;
  const hero=FO?`<header class="fhero sm">${scene().svg}<div class="fhin"><p class="fgreet">Fishing only</p><div class="fhtop"><h1>Settings</h1><span class="fsun">v${VERSION}</span></div></div></header>`:`<header class="hero"><div class="in"><div class="top"><h1>Settings</h1><span class="sub">v${VERSION}</span></div></div></header>`;
  return`${hero}
- <main class="wrap settings">${user?`<button class="card prow" data-act="profile">${avatarImg(favAv(),'sm')}<span class="frn"><b>${esc(prof().name)}</b><small>Your profile, achievements and friends</small></span>${pendingIn().length?`<span class="pill">${pendingIn().length} request${pendingIn().length>1?'s':''}</span>`:''}<span class="chev"></span></button>`:''}${modeCard}
+ <main class="wrap settings">${modeCard}
  <h3 class="sgh">Account</h3>${acct()}
  ${FO?'':`<h3 class="sgh">Pillars and goals</h3>
  <section class="card plist"><p class="sub" style="margin:0 0 6px">A pillar's score is the % of its goals you hit, weighted by each metric's weight. Tap a pillar to edit it.</p>${P().map(pillar).join('')}
@@ -1019,10 +1019,10 @@ function settings(){const types=[['min','At least'],['max','At most'],['near','A
 const ICONS={today:'<circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/>',food:'<path d="M7 3v8a2 2 0 0 0 4 0V3M9 11v10M17 3c-2 0-3 3-3 6s1 4 3 4v8"/>',history:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',fishing:'<path d="M3 12c3.5-4.5 8-6 12-5 2.5.6 4.5 2.6 6 5-1.5 2.4-3.5 4.4-6 5-4 1-8.5-.5-12-5z"/><path d="M3 12l-1-3M3 12l-1 3"/><circle cx="16.5" cy="11" r="1" fill="currentColor"/>',settings:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/>'};
 const fishOnly=()=>D.cfg.mode==='fish';
 const tabList=()=>fishOnly()?[['fishing','The Bank'],['settings','Settings']]:[['today','Today'],['food','Food'],['history','Progress'],...(D.cfg.fishTab!==false?[['fishing','Fishing']]:[]),['settings','Settings']];
-const tabs=v=>`<nav class="tabs" style="--n:${tabList().length}">${tabList().map(([k,l])=>`<a href="#${k}" class="${v===k?'on':''}" ${v===k?'aria-current="page"':''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[k]}</svg>${l}${k==='settings'&&pendingIn().length?'<i class="tdot" aria-label="Friend requests"></i>':''}</a>`).join('')}</nav>`;
+const tabs=v=>`<nav class="tabs" style="--n:${tabList().length}">${tabList().map(([k,l])=>`<a href="#${k}" class="${v===k?'on':''}" ${v===k?'aria-current="page"':''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[k]}</svg>${l}${k==='fishing'&&pendingIn().length?'<i class="tdot" aria-label="Friend requests"></i>':''}</a>`).join('')}</nav>`;
 const view=()=>{const h=location.hash.slice(1);if(h==='profile'||(h==='mate'&&pv))return h;return tabList().some(t=>t[0]===h)?h:(fishOnly()?'fishing':'today')};
 function keepOpen(){document.querySelectorAll('details[data-keep]').forEach(d=>d.open?openD.add(d.dataset.keep):openD.delete(d.dataset.keep));document.querySelectorAll('details[data-pi]').forEach(d=>d.open?openP.add(+d.dataset.pi):openP.delete(+d.dataset.pi))}
-function render(){keepOpen();if(!D.onboarded||ob.done){root.innerHTML=onboard();return}const v=view();root.innerHTML=(v==='food'?food():v==='history'?history():v==='settings'?settings():v==='fishing'?fishing():v==='profile'||v==='mate'?profilePage():today())+((lb||blb||spSel||celeb||secret)&&v==='fishing'?'':tabs(v));document.body.classList.toggle('fishmode',v==='fishing'||(fishOnly()&&['settings','profile','mate'].includes(v)));if(v==='profile'||v==='mate')loadSocial();if(v==='food')renderResults();if(v==='history')drawW();if(v==='fishing')hydratePhotos()}
+function render(){keepOpen();if(!D.onboarded||ob.done){root.innerHTML=onboard();return}const v=view();root.innerHTML=(v==='food'?food():v==='history'?history():v==='settings'?settings():v==='fishing'?fishing():v==='profile'||v==='mate'?profilePage():today())+((lb||blb||spSel||celeb||secret)&&v==='fishing'?'':tabs(v));document.body.classList.toggle('fishmode',v==='fishing'||v==='profile'||v==='mate'||(fishOnly()&&v==='settings'));if(v==='profile'||v==='mate')loadSocial();if(v==='food')renderResults();if(v==='history')drawW();if(v==='fishing')hydratePhotos()}
 let morphing=false;
 function morph(to){if(morphing)return;morphing=true;const toFish=to==='fish',o=document.getElementById('morph'),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
  const apply=()=>{D.cfg.mode=to;if(toFish)D.cfg.fishTab=true;save();location.hash='settings';render();scrollTo(0,0)};
@@ -1097,7 +1097,7 @@ root.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('[data-f
  const a=ds.act;if(!a)return;
  if(a==='tour'){startTour();return}
  if(a==='profile'){pv=null;soc.msg='';location.hash='profile';return}
- if(a==='pback'){location.hash=view()==='mate'?'profile':(lastTab||(fishOnly()?'fishing':'settings'));return}
+ if(a==='pback'){location.hash=view()==='mate'?'profile':'fishing';return}
  if(a==='gosettings'){location.hash='settings';return}
  if(a==='copycode'){const c=prof().code;try{navigator.clipboard.writeText(c);toast('Code copied: '+c)}catch(e){toast(c)}return}
  if(a==='bleave'){leaveBoard();return}
@@ -1256,15 +1256,7 @@ const ACH=[
  {id:'photo10',g:'f',n:'Shutterbug',d:'Add photos to 10 catches',ic:'camera',goal:10,k:'photos'},
  {id:'meth5',g:'f',n:'Jack of all trades',d:'Catch on 5 different methods',ic:'hook',goal:5,k:'methods'},
  {id:'ven5',g:'f',n:'Explorer',d:'Fish 5 different venues',ic:'pin',goal:5,k:'venues'},
- {id:'rel25',g:'f',n:'Catch and release',d:'Release 25 fish',ic:'heart',goal:25,k:'released'},
- {id:'st7',g:'p',n:'On a roll',d:'Reach a 7-day streak',ic:'flame',goal:7,k:'best'},
- {id:'st30',g:'p',n:'Unstoppable',d:'Reach a 30-day streak',ic:'flame',goal:30,k:'best'},
- {id:'st100',g:'p',n:'Legend',d:'Reach a 100-day streak',ic:'trophy',goal:100,k:'best'},
- {id:'d30',g:'p',n:'Habit formed',d:'Log 30 days',ic:'cal',goal:30,k:'days'},
- {id:'d100',g:'p',n:'Committed',d:'Log 100 days',ic:'cal',goal:100,k:'days'},
- {id:'d365',g:'p',n:'A year of pillars',d:'Log 365 days',ic:'cal',goal:365,k:'days'},
- {id:'perfect',g:'p',n:'Perfect day',d:'Hit 100% overall in a day',ic:'star',goal:1,k:'perfect'},
- {id:'weigh10',g:'p',n:'On the scales',d:'Log 10 weigh-ins',ic:'scale',goal:10,k:'weighs'}];
+ {id:'rel25',g:'f',n:'Catch and release',d:'Release 25 fish',ic:'heart',goal:25,k:'released'}];
 const favAv=()=>{const P=D.cfg.prof;if(P&&P.avatar)return P.avatar;let b=null;for(const c of fishD().catches)if((c.g||0)>(b?b.g:0))b=c;return b&&b.species};
 const PCODE='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',newCode=()=>Array.from({length:6},()=>PCODE[Math.floor(Math.random()*PCODE.length)]).join('');
 function prof(){const c=D.cfg;if(!c.prof||!c.prof.code){c.prof={name:((fishD().board||{}).name||c.name||(user&&user.email||'').split('@')[0]||'Angler').slice(0,24),code:newCode(),avatar:null,pillars:true,...(c.prof||{})};if(!c.prof.code)c.prof.code=newCode();save()}return c.prof}
@@ -1274,13 +1266,10 @@ function myStats(){const C=fishD().catches,all=speciesAll(),grp=n=>(all.find(s=>
   coarse:[...sp].filter(n=>grp(n)==='UK coarse').length,sea:[...sp].filter(n=>grp(n)==='UK sea').length,abroad:[...sp].filter(n=>grp(n)==='European'||grp(n)==='Other').length?1:0,
   night:C.some(c=>{const h=hr(c);return h!=null&&(h>=22||h<4)})?1:0,dawn:C.some(c=>{const h=hr(c);return h!=null&&h>=4&&h<7})?1:0,winter:C.some(c=>/-(12|01|02)-/.test(c.date))?1:0,
   photos:C.filter(c=>(c.photos||[]).length).length,methods:new Set(C.map(c=>(c.method||'').trim().toLowerCase()).filter(Boolean)).size,venues:new Set(C.map(c=>(c.place||'').trim().toLowerCase()).filter(Boolean)).size,released:C.filter(c=>c.rel!==false).length,big};
- if(!fishOnly()){const days=Object.keys(D.days).filter(logged).sort();let best=0,run=0,prev=null;const g=+D.cfg.good||70;
-  for(const d of days){if(overall(d)>=g){run=prev&&shift(prev,1)===d?run+1:1;best=Math.max(best,run);prev=d}else{run=0;prev=null}}
-  Object.assign(s,{best,days:days.length,perfect:days.some(d=>overall(d)>=100)?1:0,weighs:(D.weights||[]).length,streak:streak()})}
  return s}
-function buildCard(){const P=prof(),s=myStats(),ach={};for(const a of ACH){if(a.g==='p'&&(fishOnly()||!P.pillars))continue;ach[a.id]=Math.min(s[a.k]||0,a.goal)}
+function buildCard(){const P=prof(),s=myStats(),ach={};for(const a of ACH)ach[a.id]=Math.min(s[a.k]||0,a.goal);
  const pb={};for(const c of fishD().catches)if(c.g&&(!pb[c.species]||c.g>pb[c.species]))pb[c.species]=c.g;
- return{v:1,name:P.name,avatar:P.avatar||(s.big&&s.big.species)||null,stats:{catches:s.catches,species:s.species,big:s.big?{sp:s.big.species,g:s.big.g}:null,streak:(!fishOnly()&&P.pillars)?s.streak:null},pbs:Object.entries(pb).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([sp,g])=>({sp,g})),ach}}
+ return{v:1,name:P.name,avatar:P.avatar||(s.big&&s.big.species)||null,stats:{catches:s.catches,species:s.species,big:s.big?{sp:s.big.species,g:s.big.g}:null,streak:null},pbs:Object.entries(pb).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([sp,g])=>({sp,g})),ach}}
 const achDone=(card,a)=>(card.ach[a.id]||0)>=a.goal;
 let soc={at:0,err:'',fr:[],people:{},cards:{},msg:''},socHash='',pv=null,frArm=null;
 const socErr=e=>/relation|does not exist|schema cache/i.test((e&&e.message)||'')?'setup':((e&&e.message)||'Something went wrong');
@@ -1311,12 +1300,12 @@ async function acceptReq(id){const r=await sb.from('friendships').update({status
 async function dropReq(id,msg){const r=await sb.from('friendships').delete().eq('id',id);if(r.error){toast('Something went wrong');return}if(msg)toast(msg);loadSocial(true)}
 function avatarImg(sp,cls){return`<span class="av ${cls||''}">${sp?fishSVG(sp):'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">'+AIC.fish+'</svg>'}</span>`}
 function badge(a,card){const done=achDone(card,a),cur=card.ach[a.id]||0;return`<div class="ach${done?' on':''}"><span class="medal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${AIC[a.ic]||AIC.star}</svg></span><b>${esc(a.n)}</b><small>${esc(a.d)}</small>${!done&&a.goal>1?`<span class="abar"><i style="width:${Math.round(cur/a.goal*100)}%"></i></span><small class="ap">${cur} / ${a.goal}</small>`:''}</div>`}
-function achWall(card,key){return[['f','Fishing'],['p','Life pillars']].map(([g,l])=>{const L=ACH.filter(a=>a.g===g&&card.ach[a.id]!=null);if(!L.length)return'';const done=L.filter(a=>achDone(card,a)),left=L.filter(a=>!achDone(card,a)).sort((a,b)=>(card.ach[b.id]||0)/b.goal-(card.ach[a.id]||0)/a.goal),k=key+g;
+function achWall(card,key){return[['f','Fishing']].map(([g,l])=>{const L=ACH.filter(a=>a.g===g&&card.ach[a.id]!=null);if(!L.length)return'';const done=L.filter(a=>achDone(card,a)),left=L.filter(a=>!achDone(card,a)).sort((a,b)=>(card.ach[b.id]||0)/b.goal-(card.ach[a.id]||0)/a.goal),k=key+g;
  return`<div class="ch" style="margin-top:14px"><h3 class="agh">${l}</h3><span class="sub">${done.length} of ${L.length}</span></div>${done.length?`<div class="achs">${done.map(a=>badge(a,card)).join('')}</div>`:'<p class="empty">None unlocked yet.</p>'}
  ${left.length?`<details class="alock" data-keep="${k}" ${openD.has(k)?'open':''}><summary>Still to unlock (${left.length})</summary><div class="achs">${left.map(a=>badge(a,card)).join('')}</div></details>`:''}`}).join('')}
-function profilePage(){const mine=view()==='profile',FO=fishOnly(),back=`<button class="pback" data-act="pback" aria-label="Back">‹</button>`;
+function profilePage(){const mine=view()==='profile',FO=true,back=`<button class="pback" data-act="pback" aria-label="Back">‹</button>`;
  const head=t=>FO?`<header class="fhero sm">${scene().svg}<div class="fhin">${back}<div class="fhtop"><h1>${t}</h1></div></div></header>`:`<header class="hero"><div class="in"><div class="top">${back}<h1 style="flex:1">${t}</h1></div></div></header>`;
- if(!SB_URL||!user)return head('Profile')+`<main class="wrap"><section class="card"><h2>Sign in first</h2><p class="sub">Your profile and friends are linked to your account. Sign in from Settings.</p><button class="btn" data-act="gosettings">Go to Settings</button></section></main>`;
+ if(!SB_URL||!user)return head('Profile')+`<main class="wrap"><section class="card"><h2>Sign in first</h2><p class="sub">Your angler profile and friends are linked to your account. Sign in from Settings.</p><button class="btn" data-act="gosettings">Go to Settings</button></section></main>`;
  if(!mine){const card=soc.cards[pv],per=soc.people[pv]||{},rel=relWith(pv);
   if(!rel||rel.status!=='accepted')return head(esc(per.name||'Profile'))+`<main class="wrap"><section class="card"><p class="sub">You can see this profile once you're friends.</p></section></main>`;
   if(!card)return head(esc(per.name||'Profile'))+`<main class="wrap"><section class="card"><p class="sub">${per.name?esc(per.name)+" hasn't":"They haven't"} opened the app since profiles were added, so there's nothing to show yet.</p></section></main>`;
@@ -1325,12 +1314,12 @@ function profilePage(){const mine=view()==='profile',FO=fishOnly(),back=`<button
  const nm=id=>esc((soc.people[id]||{}).name||'Someone'),avOf=id=>(soc.cards[id]||{}).avatar||(soc.people[id]||{}).avatar;
  const setup=soc.err==='setup'?`<section class="card"><p class="sub">Profiles and friends aren't switched on on the server yet. Your achievements still work here.</p></section>`:'';
  const caught=[...new Set(fishD().catches.map(c=>c.species))].filter(n=>FIMG[n]),opts=[...caught,...Object.keys(FIMG).filter(n=>!caught.includes(n)).sort()];
- return head('Your profile')+`<main class="wrap">${setup}${profTop(card,true)}
- <details class="card pedit" data-keep="pedit" ${openD.has('pedit')?'open':''}><summary>Edit profile</summary><div class="grid3"><label class="f" style="grid-column:1/-1">Display name<input data-prof="name" maxlength="24" value="${esc(P.name)}"></label><label class="f" style="grid-column:1/-1">Profile fish<select data-prof="avatar"><option value="">My biggest catch</option>${opts.map(n=>`<option ${P.avatar===n?'selected':''}>${esc(n)}</option>`).join('')}</select></label></div>${FO?'':`<label class="tgl"><span>Show life-pillar achievements<small>Streaks and logging badges. Your actual numbers stay private.</small></span><input type="checkbox" role="switch" data-prof="pillars" ${P.pillars?'checked':''}></label>`}</details>
+ return head('Your angler profile')+`<main class="wrap">${setup}${profTop(card,true)}
+ <details class="card pedit" data-keep="pedit" ${openD.has('pedit')?'open':''}><summary>Edit profile</summary><div class="grid3"><label class="f" style="grid-column:1/-1">Display name<input data-prof="name" maxlength="24" value="${esc(P.name)}"></label><label class="f" style="grid-column:1/-1">Profile fish<select data-prof="avatar"><option value="">My biggest catch</option>${opts.map(n=>`<option ${P.avatar===n?'selected':''}>${esc(n)}</option>`).join('')}</select></label></div></details>
  ${pbCard(card)}
  <section class="card"><h2>Achievements</h2>${achWall(card,'ame')}</section>
  <h3 class="sgh">Friends</h3>
- <section class="card"><form id="fradd" class="fradd"><label class="f">Add a friend by code<input name="code" maxlength="7" autocapitalize="characters" autocomplete="off" placeholder="e.g. K7Q2MD" required></label><button class="btn">Send</button></form>${soc.msg?`<p class="sub" style="color:var(--acc)">${esc(soc.msg)}</p>`:''}<p class="sub">Friends can see each other's profile and achievements. You can also add people from the leaderboard.</p>
+ <section class="card"><form id="fradd" class="fradd"><label class="f">Add a friend by code<input name="code" maxlength="7" autocapitalize="characters" autocomplete="off" placeholder="e.g. K7Q2MD" required></label><button class="btn">Send</button></form>${soc.msg?`<p class="sub" style="color:var(--acc)">${esc(soc.msg)}</p>`:''}<p class="sub">Friends can see each other's angler profile, PBs and badges. You can also add people from the leaderboard.</p>
  ${inn.length?`<h3 class="agh" style="margin-top:14px">Requests</h3>${inn.map(x=>`<div class="frow">${avatarImg(avOf(x.from_id),'sm')}<span class="frn">${nm(x.from_id)}<small>Wants to be friends</small></span><span class="row" style="flex-wrap:nowrap"><button class="btn sm" data-fracc="${x.id}">Accept</button><button class="btn sec sm" data-frno="${x.id}">Decline</button></span></div>`).join('')}`:''}
  <h3 class="agh" style="margin-top:14px">Your friends${fr.length?' ('+fr.length+')':''}</h3>${fr.map(id=>{const c=soc.cards[id];return`<button class="frow fbtn" data-pv="${id}">${avatarImg(avOf(id),'sm')}<span class="frn">${nm(id)}<small>${c?ACH.filter(a=>achDone(c,a)).length+' achievements · '+c.stats.species+' species':'No profile yet'}</small></span><span class="chev"></span></button>`}).join('')||'<p class="empty">No friends yet. Share your code above.</p>'}
  ${out.length?`<h3 class="agh" style="margin-top:14px">Sent</h3>${out.map(x=>`<div class="frow">${avatarImg(avOf(x.to_id),'sm')}<span class="frn">${nm(x.to_id)}<small>Waiting for them to accept</small></span><button class="btn sec sm" data-frno="${x.id}">Cancel</button></div>`).join('')}`:''}</section></main>`}
