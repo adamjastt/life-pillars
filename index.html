@@ -392,9 +392,23 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 .mbox{cursor:pointer}.mbox:hover path,.mbox:focus path{filter:brightness(1.2)}
 .news h2{font-size:24px;margin:2px 0 8px}.news h3{font-family:Fraunces,Georgia,serif;font-size:18px;margin:18px 0 4px;color:#e9d9a8}.news p,.news li{line-height:1.55;color:var(--ink);opacity:.92}.news p{margin:6px 0}.news ul{margin:6px 0;padding-left:20px}.news li{margin:3px 0}
 .ndate{font-size:13px;color:var(--mut);margin:0}
+.mbi{position:fixed;inset:0;z-index:70;pointer-events:none}.mbi.on{pointer-events:auto}
+.mbi-dim{position:absolute;inset:0;background:radial-gradient(circle at var(--mx) var(--my),transparent 0,transparent var(--mr),rgba(4,10,8,.72) calc(var(--mr) + 50px));opacity:0;transition:opacity .6s}.mbi.on .mbi-dim{opacity:1}
+.mbi-ring{position:absolute;left:var(--mx);top:var(--my);width:calc(var(--mr)*2);height:calc(var(--mr)*2);margin:calc(var(--mr)*-1) 0 0 calc(var(--mr)*-1);border-radius:99px;border:2px solid #d9b45a;opacity:0}
+.mbi-ring.on{animation:mbring 1.6s ease-out infinite}@keyframes mbring{0%{transform:scale(.7);opacity:.9}100%{transform:scale(1.25);opacity:0}}
+.mbi-bird{position:absolute;left:0;top:0;width:34px;height:28px;will-change:transform;filter:drop-shadow(0 3px 4px #0007);transform:translate(-100px,-100px)}.mbi-bird svg{width:100%;height:100%;overflow:visible}
+.mbi-bird .rb-wing{transform-origin:18px 15px}.mbi-bird.flap .rb-wing{animation:rbflap .14s ease-in-out infinite alternate}@keyframes rbflap{from{transform:rotate(-38deg)}to{transform:rotate(24deg)}}
+.mbi-bird .rb-legs{opacity:0}.mbi-bird.perch .rb-legs{opacity:1}.mbi-bird.perch .rb-body{animation:rbbob 1.2s ease-in-out infinite;transform-origin:20px 30px}@keyframes rbbob{50%{transform:rotate(-4deg) translateY(-.6px)}}
+.mbi-bird.hop .rb-body{transform:translateY(-3px)}.mbi-bird.startle .rb-body{animation:none}
+.mbi-cap{position:absolute;background:#f4ecd2;color:#13241c;border-radius:16px;padding:14px 16px;box-shadow:0 12px 34px #000a;font-size:16px;line-height:1.45;opacity:0;transform:translateY(6px);transition:opacity .25s,transform .25s}
+.mbi-cap::before{content:'';position:absolute;top:-8px;left:calc(var(--tx) - 8px);border:8px solid transparent;border-top:0;border-bottom-color:#f4ecd2}
+.mbi-cap.on{opacity:1;transform:none}.mbi-cap p{margin:0;font-family:Fraunces,Georgia,serif;font-size:17px}.mbi-btns{display:none;gap:8px;margin-top:12px}.mbi-cap.final .mbi-btns{display:flex}.mbi-btns .btn{flex:1;height:44px}
+.mbi-cap .btn.sec{background:#13241c14;color:#13241c;border-color:#13241c33}.mbi-cap .btn:not(.sec){background:#13241c;color:#f4ecd2;border-color:#13241c}
+.mbi-skip{position:absolute;right:16px;bottom:calc(24px + env(safe-area-inset-bottom));background:#0008;color:#f4ecd2;border:1px solid #ffffff33;border-radius:99px;padding:8px 16px;font:inherit;font-size:14px;cursor:pointer}
+.mbi.out{opacity:0;transition:opacity .3s}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><div id="achpop" aria-live="polite"></div><script>
 {
-const VERSION='7.16';
+const VERSION='7.17';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -1085,7 +1099,7 @@ const tabList=()=>fishOnly()?[['fishing','The Bank'],['settings','Settings']]:[[
 const tabs=v=>`<nav class="tabs" style="--n:${tabList().length}">${tabList().map(([k,l])=>`<a href="#${k}" class="${v===k?'on':''}" ${v===k?'aria-current="page"':''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[k]}</svg>${l}${k==='fishing'&&pendingIn().length?'<i class="tdot" aria-label="Friend requests"></i>':''}</a>`).join('')}</nav>`;
 const view=()=>{const h=location.hash.slice(1);if(h==='profile'||h==='friends'||(h==='news'&&D.cfg.fishTab!==false)||(h==='mate'&&pv)||(h==='album'&&alb)||(h==='map'&&D.cfg.fishTab!==false))return h;return tabList().some(t=>t[0]===h)?h:(fishOnly()?'fishing':'today')};
 function keepOpen(){document.querySelectorAll('details[data-keep]').forEach(d=>d.open?openD.add(d.dataset.keep):openD.delete(d.dataset.keep));document.querySelectorAll('details[data-pi]').forEach(d=>d.open?openP.add(+d.dataset.pi):openP.delete(+d.dataset.pi))}
-function render(){keepOpen();stopLoc();if(!D.onboarded||ob.done){root.innerHTML=onboard();return}const v=view();root.innerHTML=(v==='food'?food():v==='history'?history():v==='settings'?settings():v==='fishing'?fishing():v==='profile'||v==='mate'?profilePage():v==='friends'?friendsPage():v==='news'?newsPage():v==='album'?albumPage():v==='map'?mapPage():today())+(v==='map'||(lb||blb||spSel||celeb||secret||gl||albPick||mapPick)&&['fishing','album','mate'].includes(v)?'':tabs(v))+glBox();document.body.classList.toggle('fishmode',['fishing','profile','mate','album','map','friends','news'].includes(v)||(fishOnly()&&v==='settings'));if(v==='profile'||v==='mate'||v==='friends')loadSocial();if(v==='album')loadAlbums();if(v==='food')renderResults();if(v==='history')drawW();if(['fishing','profile','mate','album'].includes(v))hydratePhotos();if(v==='map'){initCatchMap();requestAnimationFrame(()=>{const p=document.querySelector('.mappage.noanim');if(p)p.classList.remove('noanim')})}else mapMenuOn=false;if(v==='fishing'&&mapPick)initPickMap()}
+function render(){keepOpen();stopLoc();if(!D.onboarded||ob.done){root.innerHTML=onboard();return}const v=view();root.innerHTML=(v==='food'?food():v==='history'?history():v==='settings'?settings():v==='fishing'?fishing():v==='profile'||v==='mate'?profilePage():v==='friends'?friendsPage():v==='news'?newsPage():v==='album'?albumPage():v==='map'?mapPage():today())+(v==='map'||(lb||blb||spSel||celeb||secret||gl||albPick||mapPick)&&['fishing','album','mate'].includes(v)?'':tabs(v))+glBox();document.body.classList.toggle('fishmode',['fishing','profile','mate','album','map','friends','news'].includes(v)||(fishOnly()&&v==='settings'));if(v==='profile'||v==='mate'||v==='friends')loadSocial();if(v==='album')loadAlbums();if(v==='food')renderResults();if(v==='history')drawW();if(['fishing','profile','mate','album'].includes(v))hydratePhotos();if(v==='fishing'&&mbIntroDue()&&!mbIntro)setTimeout(mbIntroStart,900);if(v==='map'){initCatchMap();requestAnimationFrame(()=>{const p=document.querySelector('.mappage.noanim');if(p)p.classList.remove('noanim')})}else mapMenuOn=false;if(v==='fishing'&&mapPick)initPickMap()}
 let morphing=false;
 function morph(to){if(morphing)return;morphing=true;const toFish=to==='fish',o=document.getElementById('morph'),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
  const apply=()=>{D.cfg.mode=to;if(toFish)D.cfg.fishTab=true;save();location.hash='settings';render();scrollTo(0,0)};
@@ -1133,7 +1147,7 @@ function addEntry(it,q,saveIt){const k=it.unit==='g'?q/100:q;
 
 /* ---------- Events ---------- */
 addEventListener('keydown',e=>{if(e.key==='Escape'&&(lb||blb||gl||albPick||spSel||celeb||secret)){lb=null;blb=null;gl=null;albPick=null;mapPick=null;pickMap=null;spSel=null;celeb=null;secret=false;rr()}});
-let lastTab=null;addEventListener('hashchange',()=>{{const v=view();if(tabList().some(t=>t[0]===v))lastTab=v}if(tourPending&&location.hash==='#today'){tourPending=false;setTimeout(startTour,300)}lb=null;gl=null;albPick=null;mapPick=null;pickMap=null;spSel=null;celeb=null;picked=null;status='';lastQ='';blb=null;render();scrollTo(0,0)});
+let lastTab=null;addEventListener('hashchange',()=>{if(mbIntro&&location.hash!=='#fishing'&&location.hash!=='#news'){const m=mbIntro;m.stop=true;m.tid.forEach(clearTimeout);m.el.remove();mbIntro=null;mbFlagRot=null}{const v=view();if(tabList().some(t=>t[0]===v))lastTab=v}if(tourPending&&location.hash==='#today'){tourPending=false;setTimeout(startTour,300)}lb=null;gl=null;albPick=null;mapPick=null;pickMap=null;spSel=null;celeb=null;picked=null;status='';lastQ='';blb=null;render();scrollTo(0,0)});
 root.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('[data-floattap]')){floatTap();return}if(e.target.classList&&e.target.classList.contains('sheetbg')&&!celeb){spSel=null;albPick=null;mapPick=null;pickMap=null;rr();return}const t=e.target.closest('button,a');if(!t)return;const ds=t.dataset;
  if(fishClick(t,ds))return;
  if(ds.snap){const t=+ds.snap;if(snapArm!==t){snapArm=t;rr();return}snapArm=null;restoreSnap(t);return}
@@ -1299,6 +1313,38 @@ function snapsCard(){if(snapList===null){loadSnaps();return''}
  return`<details data-keep="snaps" ${openD.has('snaps')?'open':''} style="margin-top:12px"><summary>Automatic backups (${snapList.length})</summary><p class="sub">The app quietly saves a copy on this device every half hour you use it, and before every sync. If anything ever goes missing, restore an earlier copy here.</p>
  ${snapList.map(s=>`<div class="fe"><div>${fm(s.t)}<small>${esc(s.why)} · ${s.vals} entries${s.catches?' · '+s.catches+' catches':''}</small></div><span></span><button class="btn sec" data-snap="${s.t}" style="height:40px">${snapArm===s.t?'Tap to confirm':'Restore'}</button></div>`).join('')||'<p class="empty">No backups yet.</p>'}</details>`}
 let snapArm=null;
+/* ---------- One-time mailbox intro: a robin lands on the flag and gets shooed off ---------- */
+let mbFlagRot=null,mbIntro=null;
+const ROBIN=`<svg viewBox="0 0 40 32" aria-hidden="true"><g class="rb-body"><ellipse cx="20" cy="18" rx="11" ry="9.5" fill="#7a5233"/><path d="M11 16c1-5 6-8 10-7 3 .8 4 3 3.5 6-1 4-5 7-9.5 6.5-2.5-.3-4.4-2.6-4-5.5z" fill="#e2683a"/><circle cx="13" cy="10.5" r="6.2" fill="#7a5233"/><path d="M8.6 12.2c1.4 2.4 4.6 3 6.6 1.6-.6 2.8-3.4 4.4-6 3.2-1.4-.7-1.4-3-.6-4.8z" fill="#e2683a"/><path d="M7.2 10.4 3.2 11.3l4.2 1.2z" fill="#3b2a16"/><circle cx="11.6" cy="9.2" r="1.25" fill="#111"/><circle cx="11.3" cy="8.8" r=".4" fill="#fff"/><path d="M30 17l8 -2.5-6.5 5.5z" fill="#5e3e25"/>
+ <g class="rb-wing"><path d="M18 14c5-2 11-1 13 3-3 3-9 4-13 1z" fill="#5e3e25"/></g><path class="rb-legs" d="M18 27v3.5M22 27v3.5M16.5 30.5h3M20.5 30.5h3" stroke="#3b2a16" stroke-width="1.2" stroke-linecap="round"/></g></svg>`;
+function mbIntroDue(){try{return!localStorage.getItem('pmbintro')&&!!localStorage.getItem('ptour')&&!tour&&NEWS.length}catch(e){return false}}
+function mbIntroStart(){if(mbIntro||!mbIntroDue()||view()!=='fishing'||!document.querySelector('.fhero .mbox'))return;try{localStorage.setItem('pmbintro','1')}catch(e){}
+ scrollTo(0,0);const calm=matchMedia('(prefers-reduced-motion: reduce)').matches,el=document.createElement('div');el.className='mbi';el.innerHTML=`<div class="mbi-dim"></div><div class="mbi-ring"></div><div class="mbi-bird">${ROBIN}</div><div class="mbi-cap" role="status"><p></p><div class="mbi-btns"></div></div><button class="mbi-skip">Skip</button>`;document.body.appendChild(el);
+ mbIntro={el,stop:false,raf:0,tid:[]};const $=s=>el.querySelector(s),bird=$('.mbi-bird'),cap=$('.mbi-cap'),capP=cap.querySelector('p'),btns=cap.querySelector('.mbi-btns'),ring=$('.mbi-ring');
+ const mbRect=()=>{const m=document.querySelector('.fhero .mbox');return m?m.getBoundingClientRect():null},flagEl=()=>document.querySelector('.fhero .mbox .mflag');
+ const setFlag=a=>{mbFlagRot=a;const f=flagEl();if(f){f.querySelectorAll('animateTransform').forEach(x=>x.remove());f.setAttribute('transform',`rotate(${a} 8.15 -14.5)`)}};
+ const flagTop=()=>{const f=flagEl(),p=f&&f.querySelector('path');const r=(p||f).getBoundingClientRect();return[r.left+r.width*.45,r.top]};
+ const place=()=>{const r=mbRect();if(!r)return;const cx=r.left+r.width/2,cy=r.top+r.height*.45,rad=Math.max(46,r.width*.95);el.style.setProperty('--mx',cx+'px');el.style.setProperty('--my',cy+'px');el.style.setProperty('--mr',rad+'px');
+  const w=Math.min(340,innerWidth-32);cap.style.width=w+'px';cap.style.left=Math.max(16,Math.min(innerWidth-w-16,cx-60))+'px';cap.style.top=(r.bottom+22)+'px';cap.style.setProperty('--tx',Math.max(18,Math.min(w-18,cx-Math.max(16,Math.min(innerWidth-w-16,cx-60))))+'px')};
+ const say=(t,show=true)=>{cap.classList.remove('on');setTimeout(()=>{capP.textContent=t;cap.classList.toggle('on',show)},show?180:0)};
+ const wait=ms=>new Promise(r=>{const id=setTimeout(r,ms);mbIntro&&mbIntro.tid.push(id)});
+ const fly=(from,to,ms,arc,ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2)=>new Promise(res=>{const t0=performance.now(),step=now=>{if(!mbIntro||mbIntro.stop)return res();const k=Math.min(1,(now-t0)/ms),e=ease(k),x=from[0]+(to[0]-from[0])*e,y=from[1]+(to[1]-from[1])*e-arc*Math.sin(Math.PI*e);
+  bird.style.transform=`translate(${x}px,${y}px) scaleX(${to[0]>from[0]?-1:1})`;if(k<1)mbIntro.raf=requestAnimationFrame(step);else res()};mbIntro.raf=requestAnimationFrame(step)});
+ const end=go=>{if(!mbIntro)return;mbIntro.stop=true;cancelAnimationFrame(mbIntro.raf);mbIntro.tid.forEach(clearTimeout);el.classList.add('out');mbFlagRot=null;setTimeout(()=>{el.remove();rr()},350);mbIntro=null;if(go)location.hash='news'};
+ $('.mbi-skip').onclick=()=>end(false);addEventListener('resize',place);
+ (async()=>{place();setFlag(0);await wait(60);el.classList.add('on');
+  const BW=34,land=()=>{const[x,y]=flagTop();return[x-BW*.5,y-BW*.8]};
+  if(calm){ring.classList.add('on');say("This little mailbox has turned up on the bank. When its flag is up, there's news waiting for you. Tap it any time to read it.");}
+  else{
+   say("Shh… someone's just turned up on the bank.");await wait(1700);
+   bird.classList.add('flap');const L=land();await fly([innerWidth+40,Math.max(40,L[1]-120)],L,2100,70);bird.classList.remove('flap');bird.classList.add('perch');
+   say("A robin's found the new mailbox, and it's taken quite a shine to that little red flag.");await wait(2600);
+   say("Oi! That flag's not a perch.");await wait(500);
+   for(const a of[-24,16,-20,12,-8,0]){setFlag(a);bird.classList.toggle('hop');await wait(95)}
+   bird.classList.remove('perch');bird.classList.add('flap','startle');const p=land();fly(p,[-60,-80],1500,40).then(()=>{bird.style.opacity=0});await wait(700);
+   ring.classList.add('on');say("When the flag's up like that, there's news waiting for you. Like right now.");await wait(2800);
+   say("Tap the mailbox any time to see what's new on The Bank.")}
+  await wait(250);btns.innerHTML='<button class="btn mbi-go">Read the news</button><button class="btn sec mbi-no">Maybe later</button>';btns.querySelector('.mbi-go').onclick=()=>end(true);btns.querySelector('.mbi-no').onclick=()=>end(false);cap.classList.add('final')})()}
 /* ---------- News / announcements (the mailbox on the hill) ---------- */
 const NEWS=[
  {id:'2026-11-24',date:'2026-11-24',title:"What's new on The Bank",by:'Adam',body:[
@@ -1326,7 +1372,7 @@ function mailbox(){const up=newsUnread();return`<a href="#news" class="mbox${up?
  <rect x="-1.6" y="-14" width="3.2" height="14.5" rx=".6" fill="#5b3a1e"/><rect x="-5" y="-1" width="10" height="2" rx="1" fill="#3b2410" opacity=".6"/>
  <path d="M-8 -14 V-21 a8 6 0 0 1 16 0 V-14 Z" fill="#9a6a35" stroke="#3b2410" stroke-width=".8"/><path d="M-8 -18 H8 M-8 -16 H8" stroke="#6b4320" stroke-width=".45"/>
  <path d="M-8 -14 V-21 a8 6 0 0 1 1 -2.8 V-14 Z" fill="#3b2410" opacity=".35"/><rect x="-8" y="-14.6" width="16" height="1.3" fill="#5b3a1e"/>
- <g class="mflag" ${up?'':'transform="rotate(90 8.15 -14.5)"'}>${up?'<animateTransform attributeName="transform" type="rotate" values="0 8.15 -14.5;-8 8.15 -14.5;0 8.15 -14.5" dur="2.4s" repeatCount="indefinite"/>':''}<rect x="7.6" y="-24" width="1.1" height="9.5" fill="#2a1a0c"/><path d="M8.7 -24 h5 v3.4 h-5 Z" fill="#e0453a"/></g></g></a>`}
+ <g class="mflag" ${mbFlagRot!=null?`transform="rotate(${mbFlagRot} 8.15 -14.5)"`:up?'':'transform="rotate(90 8.15 -14.5)"'}>${up&&mbFlagRot==null?'<animateTransform attributeName="transform" type="rotate" values="0 8.15 -14.5;-8 8.15 -14.5;0 8.15 -14.5" dur="2.4s" repeatCount="indefinite"/>':''}<rect x="7.6" y="-24" width="1.1" height="9.5" fill="#2a1a0c"/><path d="M8.7 -24 h5 v3.4 h-5 Z" fill="#e0453a"/></g></g></a>`}
 function newsPage(){const back=`<button class="pback" data-act="pback" aria-label="Back">‹</button>`,head=`<header class="fhero sm">${scene().svg}<div class="fhin">${back}<p class="fgreet fx">From the mailbox</p><div class="fhtop"><h1>News</h1></div></div></header>`;
  if(NEWS.length)try{localStorage.setItem('pnews',NEWS[0].id)}catch(e){}
  const fd=d=>new Date(d+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
