@@ -283,7 +283,7 @@ root.addEventListener('click',e=>{const t=e.target.closest('button,a');if(!t)ret
  if(ds.addm!=null){openP.add(+ds.addm);P()[+ds.addm].m.push({id:uid('m'),n:'New metric',u:'',t:1,d:'min',st:1,w:1});save();rr();return}
  if(ds.delp!=null){if(P().length<2){toast('Keep at least one pillar');return}if(t.textContent!=='Tap to confirm'){t.textContent='Tap to confirm';return}P().splice(+ds.delp,1);save();rr();return}
  const a=ds.act;if(!a)return;
- if(a==='syncnow'){syncNow();return}
+ if(a==='syncnow'){syncNow().then(()=>rr());return}
  if(a==='signout'){if(sb)sb.auth.signOut().then(()=>{user=null;setSync('local');rr();toast('Signed out — your data stays on this device')});return}
  if(a==='addpick'){const q=num(document.getElementById('amt').value);if(!q||q<=0){toast('Enter an amount');return}const sv=document.getElementById('savepick');addEntry(picked,q,sv&&sv.checked);picked=null;rr()}
  if(a==='cancelpick'){picked=null;renderResults()}
@@ -307,7 +307,7 @@ root.addEventListener('submit',e=>{e.preventDefault();const f=e.target;
   addEntry({n,kcal:g('kcal'),p:g('p'),c:g('c'),f:g('f'),unit:'serving',src:'Mine'},1,f.elements.save.checked);rr()}});
 
 /* ---------- Accounts & cloud sync (Supabase) ---------- */
-let sb=null,user=null,syncState='local',lastSync=null,syncTimer=null,syncing=false,again=false,authMsg='',snap={};
+let syncErr='',sb=null,user=null,syncState='local',lastSync=null,syncTimer=null,syncing=false,again=false,authMsg='',snap={};
 const SYNC={local:'Saved on this device',syncing:'Syncing…',synced:'Synced',error:'Sync failed — saved on this device',offline:'Offline — will sync later'};
 const dj=x=>JSON.stringify(x,(k,v)=>k==='u'?undefined:v);
 function snapAll(){snap={cfg:JSON.stringify(D.cfg),foods:JSON.stringify([D.foods,D.recent]),days:Object.fromEntries(Object.entries(D.days).map(([d,x])=>[d,dj(x)]))}}
@@ -326,8 +326,8 @@ async function syncNow(){if(!sb||!user)return;if(syncing){again=true;return}sync
  try{const r=await sb.from('pillars_data').select('data').eq('user_id',user.id).maybeSingle();if(r.error)throw r.error;
   if(r.data&&r.data.data){const before=JSON.stringify(D);D=merge(D,r.data.data);changed=JSON.stringify(D)!==before;try{localStorage.setItem('pillars2',JSON.stringify(D))}catch(e){}snapAll()}
   const w=await sb.from('pillars_data').upsert({user_id:user.id,data:D,updated_at:new Date().toISOString()});if(w.error)throw w.error;
-  lastSync=new Date();setSync('synced')}
- catch(e){console.warn('sync',e);setSync(navigator.onLine===false?'offline':'error')}
+  lastSync=new Date();syncErr='';setSync('synced')}
+ catch(e){console.warn('sync',e);syncErr=(e&&(e.message||e.code))||String(e);setSync(navigator.onLine===false?'offline':'error')}
  syncing=false;if(again){again=false;syncNow()}else if(changed)rr()}
 function initSync(){if(!SB_URL||!SB_KEY)return;const s=document.createElement('script');
  s.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.js';
@@ -340,7 +340,7 @@ addEventListener('online',()=>syncNow());
 function acct(){const head='<section class="card"><h2>Account &amp; sync</h2>';
  if(!SB_URL)return head+'<p class="sub">Cloud sync is not set up yet.</p></section>';
  if(!sb)return head+'<p class="sub">Connecting… if this stays, check your internet connection.</p></section>';
- if(user)return head+`<p style="margin:8px 0 2px">Signed in as <b>${esc(user.email)}</b></p><p class="sub"><span data-syncst>${SYNC[syncState]}</span>${lastSync?' · last synced '+lastSync.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}):''}</p><div class="row"><button class="btn" data-act="syncnow">Sync now</button><button class="btn sec" data-act="signout">Sign out</button></div></section>`;
+ if(user)return head+`<p style="margin:8px 0 2px">Signed in as <b>${esc(user.email)}</b></p><p class="sub"><span data-syncst>${SYNC[syncState]}</span>${lastSync?' · last synced '+lastSync.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}):''}</p>${syncErr&&syncState!=='synced'?`<p class="sub" style="color:var(--bad)">Details: ${esc(syncErr)}</p>`:''}<div class="row"><button class="btn" data-act="syncnow">Sync now</button><button class="btn sec" data-act="signout">Sign out</button></div></section>`;
  return head+`<p class="sub">Sign in to back up your data and use the same data on your phone and laptop. Anything already on this device is kept and uploaded.</p><form id="auth" class="grid3" style="margin-top:10px"><label class="f" style="grid-column:1/-1">Email<input name="email" type="email" autocomplete="email" required></label><label class="f" style="grid-column:1/-1">Password<input name="pw" type="password" autocomplete="current-password" minlength="6" required></label><button class="btn" data-mode="in">Sign in</button><button class="btn sec" data-mode="up">Create account</button></form><p class="sub" id="authmsg" role="status">${esc(authMsg)}</p></section>`}
 async function doAuth(f,mode){const email=f.elements.email.value.trim(),pw=f.elements.pw.value,m=document.getElementById('authmsg');
  if(!sb){m.textContent='Still connecting — try again in a moment.';return}m.textContent='Working…';
