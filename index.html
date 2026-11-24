@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0d0c11">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Pillars">
@@ -90,12 +90,14 @@ td.n,th.n{text-align:right;white-space:nowrap}
 input[type=color]{padding:4px;height:44px}
 .toast{position:fixed;left:50%;bottom:calc(80px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:14px;z-index:20;max-width:90vw}
 .empty{color:var(--mut);font-size:14px;padding:8px 0}
+.upd{position:fixed;left:50%;top:calc(10px + env(safe-area-inset-top));transform:translateX(-50%);z-index:30;display:flex;gap:10px;align-items:center;background:var(--ink);color:var(--bg);padding:8px 8px 8px 14px;border-radius:14px;font-size:14px;box-shadow:0 6px 24px #0008;max-width:94vw}
+.upd button{height:36px;border:0;border-radius:10px;padding:0 12px;background:var(--acc);color:#fff;font-weight:600}
 @media(max-width:700px){.wheelwrap{grid-template-columns:1fr;gap:16px}.wheel{max-width:250px;margin:0 auto}.cards{grid-template-columns:1fr}.kcal{grid-template-columns:1fr}
 .mset{grid-template-columns:repeat(3,minmax(0,1fr))}.mset .mname{grid-column:1/-1}.ptitle{grid-template-columns:minmax(0,1fr) 56px}.ptitle .ps{display:none}}
 @media(prefers-reduced-motion:no-preference){.bar i{transition:width .3s}}
 </style></head><body><div id="root"></div><div id="toast"></div><script>
 {
-const VERSION='2.1';
+const VERSION='2.2';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -349,6 +351,13 @@ async function doAuth(f,mode){const email=f.elements.email.value.trim(),pw=f.ele
    authMsg=r.data.session?'':'Account created. Check your email for a confirmation link, then sign in here.';m.textContent=authMsg}
   else{const r=await sb.auth.signInWithPassword({email,password:pw});if(r.error)throw r.error;authMsg=''}}
  catch(e){const t=(e&&e.message)||'';m.textContent=/fetch|network/i.test(t)?'Can\'t reach the server — check your connection and try again.':/invalid login/i.test(t)?'Wrong email or password.':/not confirmed/i.test(t)?'Confirm your email first — check your inbox for the link.':t||'Something went wrong.'}}
-snapAll();render();initSync();
+/* Stop double-tap zoom in home-screen mode (iOS ignores some CSS there) */
+let lastTap=0;document.addEventListener('touchend',e=>{const b=e.target.closest&&e.target.closest('button,a');const n=Date.now();if(b&&n-lastTap<350){e.preventDefault();b.click()}lastTap=n},{passive:false});
+/* Update check: home-screen apps can keep an old copy, so look for a newer version */
+let updShown=false;
+async function checkUpdate(){if(updShown||location.protocol==='file:')return;try{const t=await(await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'})).text();const m=t.match(/const VERSION='([^']+)'/);
+ if(m&&m[1]!==VERSION){updShown=true;const d=document.createElement('div');d.className='upd';d.innerHTML='<span>New version available</span><button>Update</button>';d.querySelector('button').onclick=()=>location.replace(location.pathname+'?v='+Date.now()+location.hash);document.body.appendChild(d)}}catch(e){}}
+addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checkUpdate()});
+snapAll();render();initSync();setTimeout(checkUpdate,1500);
 }
 </script></body></html>
