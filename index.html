@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Pillars">
 <link rel="manifest" href="manifest.json"><link rel="apple-touch-icon" href="icon-192.png"><link rel="icon" href="icon-192.png">
 <title>Life Pillars</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Sora:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{color-scheme:dark;--bg:#121016;--card:#1c1a22;--card2:#26232e;--line:#2e2b37;--ink:#f1eff6;--mut:#a9a5b5;--hero:#0d0c11;--acc:#8d88ff;--bad:#ff5a5a}
 *{box-sizing:border-box;min-width:0}
@@ -146,6 +146,50 @@ img.nophoto{opacity:.25}
 .lbn{position:absolute;top:50%;transform:translateY(-50%);width:48px;height:64px;border:0;background:#ffffff14;color:#fff;font-size:30px}.lbn.l{left:0;border-radius:0 12px 12px 0}.lbn.r{right:0;border-radius:12px 0 0 12px}
 .lbcap{position:absolute;left:16px;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));display:grid;gap:2px;color:#fff}.lbcap span{color:#cfcbd8;font-size:14px}
 .obhob{border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:8px 0 0}.obhob legend{padding:0 6px;font-weight:600}.obhob small{font-size:14px}
+
+body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#eef2e2;--mut:#a9c0b0;--acc:#d9b45a;background:var(--bg)}
+.fishmode h1,.fishmode h2,.fishmode .kbig,.fishmode .sheeth{font-family:Fraunces,Georgia,serif;font-weight:600;letter-spacing:-.01em}
+.fishmode .card{border:1px solid #ffffff0c}
+.fishmode .tabs{background:#0b1a15f2;border-top-color:#22423a}.fishmode .tabs a.on{color:#d9b45a}
+.fishmode .btn:not(.sec):not(.danger),.fishmode .seg button.on,.fishmode .bigadd{background-color:#d9b45a;color:#13241c;border-color:#d9b45a;background-image:radial-gradient(circle at 50% 115%,transparent 44%,rgba(90,58,0,.2) 46% 52%,transparent 54%);background-size:14px 9px}
+.fishmode .btn.sec,.fishmode details>summary{background-image:radial-gradient(circle at 50% 115%,transparent 44%,rgba(255,255,255,.045) 46% 52%,transparent 54%);background-size:14px 9px}
+.fishmode input,.fishmode select,.fishmode textarea{background:#0c1a15}
+.fhero{position:relative;height:clamp(190px,34vw,280px);overflow:hidden}
+.fhero .scene{position:absolute;inset:0;width:100%;height:100%}
+.fhin{position:relative;max-width:980px;margin:0 auto;padding:calc(18px + env(safe-area-inset-top)) max(5vw,16px) 0;text-shadow:0 1px 12px #0008}
+.fhin h1{font-size:clamp(34px,8vw,52px);line-height:1;color:#fff;margin:2px 0 0}
+.fgreet{margin:0;font-size:15px;color:#f4ecd2;font-weight:500}
+.fband{background:linear-gradient(#08141c,var(--bg));padding:6px max(5vw,16px) 2px}
+.fstats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:end;margin:10px 0 4px}
+.fstats .kbig{font-size:clamp(30px,8vw,42px)}.fstats .kbig small{font-size:16px;color:var(--mut)}.fstats .kbig.sm{font-size:clamp(18px,4.6vw,24px);line-height:1.15}
+.ftabs{margin:14px 0 6px}.ftabs button{flex:1}
+.scene .rip{animation:rip 3.6s ease-out infinite;transform-origin:center}.scene .r2{animation-delay:1.8s}
+@keyframes rip{0%{transform:scale(.4);opacity:.9}100%{transform:scale(3.2);opacity:0}}
+.scene .bob{animation:bob 3s ease-in-out infinite}@keyframes bob{50%{transform:translateY(1.6px)}}
+.scene .reed{animation:sway 6s ease-in-out infinite}@keyframes sway{50%{transform:rotate(2.5deg)}}
+.scene .mist{animation:drift 26s linear infinite alternate}@keyframes drift{to{transform:translateX(40px)}}
+.scene .shim rect{animation:shim 2.6s ease-in-out infinite alternate}@keyframes shim{to{opacity:.12}}
+.scene .tw{animation:tw 3s ease-in-out infinite alternate}@keyframes tw{to{opacity:.15}}
+@media(prefers-reduced-motion:reduce){.scene *{animation:none!important}}
+.fart{width:100%;height:auto;display:block}
+.spgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:6px}
+.spc{position:relative;display:grid;gap:2px;text-align:left;background:var(--card);border:1px solid #ffffff0c;border-radius:16px;padding:10px 12px 12px;min-height:44px}
+.spc .fart{filter:saturate(.15) brightness(.85);opacity:.7;margin-bottom:4px}.spc:not(.got) b{color:#cfd9cf}
+.spc.got{background:linear-gradient(160deg,#1f4036,var(--card));border-color:#d9b45a55}.spc.got .fart{filter:none;opacity:1}
+.spc b{font-size:14px;line-height:1.25}.spc small{color:var(--mut);font-size:12px}
+.spok{position:absolute;top:8px;right:8px;width:22px;height:22px;border-radius:99px;background:#d9b45a;color:#13241c;font-size:13px;font-weight:700;display:grid;place-items:center}
+.fthumb.art{object-fit:contain;padding:4px;background:linear-gradient(#24463b,#163029)}
+.sheetbg{position:fixed;inset:0;z-index:38;background:#000a}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:39;max-width:620px;margin:0 auto;max-height:90vh;overflow:auto;background:var(--card);border-radius:22px 22px 0 0;padding:18px max(5vw,18px) calc(18px + env(safe-area-inset-bottom));animation:up .25s ease-out}
+@keyframes up{from{transform:translateY(40px);opacity:0}}
+.sheetart{background:radial-gradient(closest-side,#2c5a4c,transparent);border-radius:16px;padding:10px 20px;margin:20px 0 8px}.sheetart.dim .fart{filter:saturate(.25) brightness(.9);opacity:.85}
+.sheeth{font-size:clamp(26px,7vw,34px);margin:0 0 6px}
+.sheet .fe small{display:block;color:var(--mut);font-size:13px}
+.celeb{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:41;width:min(92vw,420px);background:linear-gradient(170deg,#1f4337,#132a23);border:1px solid #d9b45a66;border-radius:24px;padding:24px;text-align:center;overflow:hidden;animation:pop .35s cubic-bezier(.2,1.4,.4,1)}
+@keyframes pop{from{transform:translate(-50%,-50%) scale(.8);opacity:0}}
+.celeb .btn{width:100%;height:52px;font-size:17px;margin-top:10px}.celeb .fart{margin:8px 0}
+.bubbles i{position:absolute;bottom:-20px;border-radius:99px;border:1.5px solid #ffffff55;animation:bub 3.2s ease-in infinite}
+@keyframes bub{to{transform:translateY(-480px);opacity:0}}
 .upd{position:fixed;left:50%;top:calc(10px + env(safe-area-inset-top));transform:translateX(-50%);z-index:30;display:flex;gap:10px;align-items:center;background:var(--ink);color:var(--bg);padding:8px 8px 8px 14px;border-radius:14px;font-size:14px;box-shadow:0 6px 24px #0008;max-width:94vw}
 .upd button{height:36px;border:0;border-radius:10px;padding:0 12px;background:var(--acc);color:#fff;font-weight:600}
 @media(max-width:700px){.wheelwrap{grid-template-columns:1fr;gap:16px}.wheel{max-width:250px;margin:0 auto}.cards{grid-template-columns:1fr}.kcal{grid-template-columns:1fr}
@@ -153,7 +197,7 @@ img.nophoto{opacity:.25}
 @media(prefers-reduced-motion:no-preference){.bar i{transition:width .3s}}
 </style></head><body><div id="root"></div><div id="toast"></div><script>
 {
-const VERSION='3.1';
+const VERSION='3.2';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -347,11 +391,224 @@ async function uploadPending(){if(!sb||!user||uploading)return;uploading=true;le
   p.path=path;c.ts=Date.now();changed=true}}catch(e){console.warn(e)}
  uploading=false;if(changed)save()}
 const pimg=(p,alt,cls)=>`<img data-pid="${p.id}" ${p.path?`data-path="${esc(p.path)}"`:''} ${purl[p.id]?`src="${purl[p.id]}"`:''} alt="${esc(alt)}" class="${cls||''}" loading="lazy">`;
-function fishing(){const C=catches(),cm=caughtMap(),sp=speciesAll(),got=sp.filter(s=>isTicked(s.n,cm)).length,big=C.filter(c=>c.g).sort((a,b)=>b.g-a.g)[0],yr=String(new Date().getFullYear());
- return`<header class="hero"><div class="in"><div class="top"><h1>Fishing</h1><span class="sub">${C.length} catch${C.length===1?'':'es'} logged</span></div>
- <div class="fstats"><div><div class="kbig">${got}<small class="sub" style="font-size:16px"> / ${sp.length}</small></div><div class="sub">species caught</div></div><div><b class="num">${C.filter(c=>c.date.startsWith(yr)).length}</b><div class="sub">catches in ${yr}</div></div><div><b class="num">${big?fW(big.g):'–'}</b><div class="sub">${big?'biggest: '+esc(big.species):'biggest fish'}</div></div></div>
- <div class="seg ftabs" role="tablist">${[['log','Catches'],['species','Species'],['gallery','Gallery']].map(([k,l])=>`<button role="tab" aria-selected="${fTab===k}" data-ftab="${k}" class="${fTab===k?'on':''}">${l}</button>`).join('')}</div></div></header>
- <main class="wrap">${fTab==='species'?fishSpecies(cm,sp,got):fTab==='gallery'?fishGallery(C):fishLog(C,cm)}</main>${lb?lightbox():''}`}
+
+const spFilter=(sp,cm)=>sp.filter(s=>(fGroup==='All'||s.g===fGroup)&&(fStatus==='All'||(fStatus==='Caught')===isTicked(s.n,cm))&&(!fQ||s.n.toLowerCase().includes(fQ.toLowerCase())));
+
+/* ---------- Fish illustrations (drawn in code) ---------- */
+let fArtN=0;
+const fRng=s=>{let h=1779033703;for(const ch of s)h=Math.imul(h^ch.charCodeAt(0),3432918353);return()=>{h=Math.imul(h^h>>>16,2246822507);h=Math.imul(h^h>>>13,3266489909);return((h^=h>>>16)>>>0)/4294967296}};
+const FP=(a)=>a.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ');
+function fishSVG(name,cls){const s=FSPEC[name]||FSPEC._;const id='fa'+(++fArtN),R=fRng(name);
+ const body=s.a==='e'?artEel(s,id,R):s.a==='r'?artRay(s,id,R):s.a==='f'?artFlat(s,id,R):artSide(s,id,R);
+ return`<svg class="${cls||'fart'}" viewBox="0 0 200 100" aria-hidden="true">${body}</svg>`}
+function grad(id,c,dir){return`<linearGradient id="${id}g" x1="0" y1="0" x2="${dir==='h'?1:0}" y2="${dir==='h'?0:1}"><stop offset="0" stop-color="${c[0]}"/><stop offset=".55" stop-color="${c[1]}"/><stop offset="1" stop-color="${c[2]}"/></linearGradient>`}
+function marks(s,id,R,box,yTop,yBot,N,T,cy){let o='';const L=T-N,ux=u=>N+L*u,inside=(u,v)=>cy+(v<0?-yTop(ux(u))*-v:yBot(ux(u))*v);
+ for(const m of s.m||[]){const[k,...a]=m.split(':');
+  if(k==='scales'){o+=`<pattern id="${id}sc" width="7" height="6" patternUnits="userSpaceOnUse"><path d="M0 6a3.5 3.5 0 0 1 7 0" fill="none" stroke="${a[0]||'#000'}" stroke-opacity="${a[1]||.22}" stroke-width=".8"/></pattern><rect x="${N}" y="0" width="${L}" height="100" fill="url(#${id}sc)"/>`}
+  if(k==='bars'){const n=+a[0];for(let i=0;i<n;i++){const u=.32+i*(.6/n);o+=`<path d="M${ux(u)} ${cy-yTop(ux(u))} L${ux(u+.035)} ${cy-yTop(ux(u+.035))} L${ux(u+.05)} ${cy+yBot(ux(u))*.35} L${ux(u+.02)} ${cy+yBot(ux(u))*.35}Z" fill="${a[1]}" opacity="${a[2]||.75}"/>`}}
+  if(k==='spots'||k==='halo'){const n=+a[0],r=+(a[2]||1.6),lo=+(a[3]||-.9),hi=+(a[4]||.5),u0=+(a[5]||.12);for(let i=0;i<n;i++){const u=u0+R()*(.95-u0),v=lo+R()*(hi-lo),x=ux(u),y=inside(u,v),rr=r*(.7+R()*.6);
+   o+=k==='halo'?`<circle cx="${x}" cy="${y}" r="${rr+1}" fill="${a[6]||'#f3e6c8'}" opacity=".85"/><circle cx="${x}" cy="${y}" r="${rr}" fill="${a[1]}"/>`:`<circle cx="${x}" cy="${y}" r="${rr}" fill="${a[1]}" opacity="${a[6]||.9}"/>`}}
+  if(k==='mottle'){const n=+a[0];for(let i=0;i<n;i++){const u=.1+R()*.88,v=-1+R()*1.7;o+=`<ellipse cx="${ux(u)}" cy="${inside(u,v)}" rx="${3+R()*5}" ry="${2+R()*3.5}" fill="${a[1]}" opacity="${a[2]||.35}"/>`}}
+  if(k==='blotch'){const n=+a[0];for(let i=0;i<n;i++){const u=.25+i*(.68/n);o+=`<ellipse cx="${ux(u)}" cy="${cy+(+(a[2]||0))}" rx="3.4" ry="2.6" fill="${a[1]}" opacity=".8"/>`}}
+  if(k==='mirror'){for(let i=0;i<7;i++){const u=.28+i*.09,y=cy-yTop(ux(u))*.72;o+=`<path d="M${ux(u)-5} ${y+3}a5.5 5 0 0 1 11 0" fill="${a[0]||'#000'}" fill-opacity=".14" stroke="${a[0]||'#000'}" stroke-opacity=".35" stroke-width=".8"/>`}for(let i=0;i<4;i++){const u=.45+i*.1;o+=`<path d="M${ux(u)-4} ${cy+3}a4.5 4 0 0 1 9 0" fill="none" stroke="${a[0]||'#000'}" stroke-opacity=".3" stroke-width=".8"/>`}}
+  if(k==='lat'){const pts=[];for(let u=.14;u<=1;u+=.04)pts.push([ux(u),cy-yTop(ux(u))*(+(a[1]||.15))+(a[2]?Math.sin(u*3.2)*-(+a[2]):0)]);o+=`<polyline points="${FP(pts)}" fill="none" stroke="${a[0]}" stroke-width="${a[3]||1.1}" opacity=".85"/>`}
+  if(k==='hstripes'){const n=+a[0];for(let i=0;i<n;i++){const v=-.75+i*(1.2/n),pts=[];for(let u=.16;u<=1;u+=.04)pts.push([ux(u),inside(u,v)]);o+=`<polyline points="${FP(pts)}" fill="none" stroke="${a[1]}" stroke-width="${a[2]||1.4}" opacity=".7"/>`}}
+  if(k==='band'){const pts=[],pb=[];for(let u=.1;u<=1.01;u+=.04){pts.push([ux(u),inside(u,-.12)]);pb.unshift([ux(u),inside(u,.18)])}o+=`<polygon points="${FP(pts.concat(pb))}" fill="${a[0]}" opacity="${a[1]||.65}"/>`}
+  if(k==='mack'){for(let i=0;i<14;i++){const u=.3+i*.05,x=ux(u),yt=cy-yTop(x);o+=`<path d="M${x} ${yt} q${3} ${4} ${-1} ${8} q${-3} ${4} ${1} ${7}" fill="none" stroke="${a[0]}" stroke-width="1.6"/>`}}
+  if(k==='worms'){for(let i=0;i<26;i++){const u=.15+R()*.82,v=-.9+R()*1.6,x=ux(u),y=inside(u,v);o+=`<path d="M${x} ${y} q2 -3 4 0 t4 0" fill="none" stroke="${a[0]}" stroke-width="1.2" opacity=".8"/>`}}
+  if(k==='dot'){o+=`<circle cx="${ux(+a[0])}" cy="${inside(+a[0],+a[1])}" r="${a[3]||3}" fill="${a[2]}"/>`}
+  if(k==='scutes'){for(let u=.45;u<.98;u+=.035){const x=ux(u);o+=`<path d="M${x} ${cy-1.2}l1.6 1.2-1.6 1.2-1.6-1.2z" fill="${a[0]}" opacity=".8"/>`}}
+  if(k==='headlines'){for(let i=0;i<4;i++){o+=`<path d="M${N+4} ${cy-2-i*3}q${L*.25} ${-4-i} ${L*.55} ${-i*2.5}" fill="none" stroke="${a[0]}" stroke-width="1.3" opacity=".9"/>`}}
+  if(k==='dark'){o+=`<rect x="${N}" y="0" width="${L}" height="${cy-yTop(N+L*.45)*.2}" fill="${a[0]}" opacity="${a[1]||.35}"/>`}
+ }return o}
+function artSide(s,id,R){const cy=s.cy||52,N=s.n||18,T=s.t||(s.a==='k'?155:148),L=T-N,top=s.h||17,bot=s.b||top*.9,bl=s.bl||0,pk=s.pk||.42,pd=s.pd||.28;
+ const sh=u=>{u=Math.max(0,Math.min(1,u));const v=u<pk?Math.pow(Math.sin(u/pk*Math.PI/2),s.np||.75):pd+(1-pd)*Math.cos((u-pk)/(1-pk)*Math.PI/2);return bl+(1-bl)*v};
+ const yTop=x=>top*sh((x-N)/L),yBot=x=>bot*sh((x-N)/L)*(s.bf||1);
+ const tp=[],bp=[];for(let u=0;u<=1.0001;u+=.025){const x=N+L*u;tp.push([x,cy-yTop(x)]);bp.unshift([x,cy+yBot(x)])}
+ const bodyPts=[...tp,...bp],c=s.c,fc=s.f||c[0],ux=u=>N+L*u;let fins='',front='';
+ const pdT=yTop(T),pdB=yBot(T),TL=s.tw||30,ph=Math.max(top*.9,13)*(s.th||1);
+ const tail={f:`M${T-2} ${cy-pdT} L${T+TL} ${cy-ph} Q${T+TL*.5} ${cy} ${T+TL} ${cy+ph} L${T-2} ${cy+pdB}Z`,d:`M${T-2} ${cy-pdT} L${T+TL} ${cy-ph*1.05} Q${T+TL*.3} ${cy} ${T+TL} ${cy+ph*1.05} L${T-2} ${cy+pdB}Z`,
+  s:`M${T-2} ${cy-pdT} L${T+TL*.85} ${cy-ph*.8} Q${T+TL*.95} ${cy} ${T+TL*.85} ${cy+ph*.8} L${T-2} ${cy+pdB}Z`,r:`M${T-2} ${cy-pdT} C${T+TL} ${cy-ph*.9} ${T+TL*1.1} ${cy+ph*.9} ${T-2} ${cy+pdB}Z`,
+  e:`M${T-2} ${cy-pdT} L${T+TL*.9} ${cy-ph*.85} Q${T+TL*.7} ${cy} ${T+TL*.9} ${cy+ph*.85} L${T-2} ${cy+pdB}Z`,
+  k:`M${T-2} ${cy-pdT} L${T+44} ${cy-13} L${T+38} ${cy-4} L${T+14} ${cy+8} L${T-2} ${cy+pdB}Z`}[s.tl||'f'];
+ fins+=`<path d="${tail}" fill="${s.tc||fc}" opacity=".95"/>`;
+ const dfin=(u0,u1,hgt,col,spiny,round)=>{const x0=ux(u0),x1=ux(u1),y0=cy-yTop(x0)+1.5,y1=cy-yTop(x1)+1.5;let d;
+  if(spiny){const n=Math.max(4,Math.round((u1-u0)*40));let p=`M${x0} ${y0}`;for(let i=0;i<=n;i++){const x=x0+(x1-x0)*i/n,yb=cy-yTop(x)+1,hh=hgt*(1-.45*i/n);p+=` L${x} ${yb-hh} L${x+(x1-x0)/n*.5} ${yb-hh*.55}`}d=p+` L${x1} ${y1}Z`}
+  else if(round)d=`M${x0} ${y0} C${x0} ${y0-hgt*1.3} ${x1} ${y1-hgt*1.3} ${x1} ${y1}Z`;
+  else d=`M${x0} ${y0} L${x0+(x1-x0)*.22} ${cy-yTop(x0)-hgt} L${x1+2} ${cy-yTop(x1)-hgt*.3} L${x1} ${y1}Z`;
+  return`<path d="${d}" fill="${col||fc}" opacity=".95"/>`};
+ const afin=(u0,u1,hgt,col,round)=>{const x0=ux(u0),x1=ux(u1),y0=cy+yBot(x0)-1.5,y1=cy+yBot(x1)-1.5;return`<path d="${round?`M${x0} ${y0} C${x0} ${y0+hgt*1.3} ${x1} ${y1+hgt*1.3} ${x1} ${y1}Z`:`M${x0} ${y0} L${x0+(x1-x0)*.3} ${cy+yBot(x0)+hgt} L${x1+2} ${cy+yBot(x1)+hgt*.3} L${x1} ${y1}Z`}" fill="${col||fc}" opacity=".95"/>`};
+ const D=s.d||'s',dh=s.dh||top*.55;
+ if(D==='s')fins+=dfin(.4,.6,dh,s.dc);if(D==='sr')fins+=dfin(.38,.62,dh,s.dc,0,1);
+ if(D==='sp'){fins+=dfin(.3,.5,dh,s.dc,1);fins+=dfin(.53,.72,dh*.8,s.dc2)}
+ if(D==='spl'){fins+=dfin(.28,.55,dh,s.dc,1);fins+=dfin(.55,.85,dh*.7,s.dc2)}
+ if(D==='spc'){fins+=dfin(.3,.85,dh*.8,s.dc,1)}
+ if(D==='3'){fins+=dfin(.3,.42,dh,s.dc);fins+=dfin(.47,.62,dh*.8,s.dc);fins+=dfin(.67,.82,dh*.7,s.dc)}
+ if(D==='2'){fins+=dfin(.32,.45,dh,s.dc);fins+=dfin(.55,.7,dh*.8,s.dc)}
+ if(D==='sail'){fins+=dfin(.3,.64,dh*2.6,s.dc,0,1)}
+ if(D==='bk'){fins+=dfin(.72,.86,dh,s.dc)}
+ if(D==='lg'){fins+=dfin(.3,.92,dh*.6,s.dc,0,1)}
+ if(D==='sm'){fins+=dfin(.36,.42,dh*.6,s.dc)}
+ if(D==='k'){fins+=dfin(.4,.5,dh,s.dc);fins+=dfin(.72,.8,dh*.6,s.dc)}
+ if(D==='st'){for(const u of[.3,.4,.5])fins+=`<path d="M${ux(u)} ${cy-yTop(ux(u))+1} l2 -9 l1.5 9z" fill="${fc}"/>`;fins+=dfin(.62,.78,dh*.6,s.dc)}
+ if(D==='dr'){fins+=dfin(.33,.42,dh*2,s.dc);fins+=dfin(.48,.75,dh*1.1,s.dc2)}
+ if(s.ad)fins+=`<path d="M${ux(.84)} ${cy-yTop(ux(.84))+1} q4 -6 9 0z" fill="${s.adc||fc}"/>`;
+ const A=s.an||'n';if(A==='n')fins+=afin(.66,.8,bot*.45,s.ac);if(A==='lg')fins+=afin(.45,.92,bot*.4,s.ac,1);if(A==='2'){fins+=afin(.45,.6,bot*.4,s.ac);fins+=afin(.64,.8,bot*.35,s.ac)}if(A==='bk')fins+=afin(.72,.86,bot*.45,s.ac);if(A==='k')fins+=afin(.68,.76,bot*.4,s.ac);
+ fins+=`<path d="M${ux(.42)} ${cy+yBot(ux(.42))-2} l${-1} ${bot*.4} l${9} ${-bot*.25}z" fill="${s.vc||fc}" opacity=".95"/>`;
+ const hd=s.hd||.2,gx=ux(hd);
+ const pe=s.pe||1,px=gx+3,py=cy+bot*.25;front+=s.gp?`<path d="M${px} ${py} C${px+30*pe} ${py-12*pe} ${px+40*pe} ${py+6*pe} ${px+8} ${py+14*pe}Z" fill="${s.gp}" opacity=".95"/>`:`<path d="M${px} ${py} q${14*pe} ${2*pe} ${18*pe} ${8*pe} q${-10*pe} ${0} ${-17*pe} ${-4*pe}z" fill="${s.pc||fc}" opacity=".9"/>`;
+ front+=`<path d="M${gx} ${cy-yTop(gx)*.75} q${-6} ${yTop(gx)*.75} 0 ${yTop(gx)*.75+yBot(gx)*.7}" fill="none" stroke="#000" stroke-opacity=".28" stroke-width="1.1"/>`;
+ if(s.a==='k')for(let i=0;i<4;i++)front+=`<path d="M${gx+i*2.6} ${cy-3} l-1 7" stroke="#000" stroke-opacity=".3" stroke-width="1"/>`;
+ const ex=ux(s.ex||.075)+(bl?3:0),ey=cy-yTop(ex)*(s.ey||.45),er=s.er||Math.max(2.4,top*.15);
+ front+=`<circle cx="${ex}" cy="${ey}" r="${er}" fill="${s.ec||'#e9dfb8'}"/><circle cx="${ex+.3}" cy="${ey}" r="${er*.55}" fill="#0d0d0d"/><circle cx="${ex-er*.3}" cy="${ey-er*.3}" r="${er*.2}" fill="#fff" opacity=".8"/>`;
+ const mo=s.mo||'n',my=cy+(mo==='dn'?yBot(N+4)*.5:mo==='up'?-yTop(N+4)*.35:2);
+ if(mo==='duck')front+=`<path d="M${N-6} ${cy+1} L${N+12} ${cy+2}" stroke="#000" stroke-opacity=".45" stroke-width="1.2"/>`;
+ else if(mo==='beak')front+=`<path d="M${N} ${cy-1} L${N-22} ${cy} L${N} ${cy+2}Z" fill="${c[0]}"/><path d="M${N-21} ${cy+.4} L${N+4} ${cy+.8}" stroke="#000" stroke-opacity=".4"/>`;
+ else front+=`<path d="M${N+1} ${my} q4 ${mo==='lip'?3:1.5} 8 ${mo==='up'?-1:0}" fill="none" stroke="#000" stroke-opacity=".45" stroke-width="${mo==='lip'?2.4:1.2}" stroke-linecap="round"/>`;
+ const bb=s.bb||'';if(bb==='2'||bb==='4')for(let i=0;i<(bb==='4'?2:1);i++)front+=`<path d="M${N+2+i*4} ${cy+yBot(N+3)*.5} q-1 7 -6 9" fill="none" stroke="${c[0]}" stroke-width="1.2" stroke-linecap="round"/>`;
+ if(bb==='chin')front+=`<path d="M${N+5} ${cy+yBot(N+5)*.9} l-1 5" stroke="${c[0]}" stroke-width="1.2" stroke-linecap="round"/>`;
+ if(bb==='cat')front+=`<path d="M${N+3} ${cy-2} q-10 8 -8 26" fill="none" stroke="${c[0]}" stroke-width="1.4" stroke-linecap="round"/><path d="M${N+4} ${cy+yBot(N+4)*.7} q-4 5 -8 7" fill="none" stroke="${c[0]}" stroke-width="1"/>`;
+ if(bb==='6')for(let i=0;i<3;i++)front+=`<path d="M${N+1} ${cy+1+i} l${-4} ${2+i*1.5}" stroke="${c[0]}" stroke-width="1"/>`;
+ if(bb==='3')front+=`<path d="M${N+1} ${cy-yTop(N+1)*.5} l-5 -3M${N+3} ${cy-yTop(N+3)*.6} l-4 -4M${N+5} ${cy+yBot(N+5)*.9} l-1 5" stroke="${c[0]}" stroke-width="1"/>`;
+ return`<defs>${grad(id,c)}<clipPath id="${id}c"><polygon points="${FP(bodyPts)}"/></clipPath></defs>${fins}<polygon points="${FP(bodyPts)}" fill="url(#${id}g)"/><g clip-path="url(#${id}c)">${marks(s,id,R,0,yTop,yBot,N,T,cy)}<rect x="0" y="${cy-top*1.1}" width="200" height="${top*.55}" fill="#fff" opacity=".07"/></g>${front}`}
+function artEel(s,id,R){const cy=50,c=s.c,pts=[],pb=[],fp=[],fb=[];for(let u=0;u<=1.0001;u+=.02){const x=14+u*178,y=cy+Math.sin(u*Math.PI*1.6-.6)*7*u,w=(s.h||7.5)*(u<.08?.55+u/.08*.45:1-.75*Math.pow((u-.08)/.92,1.4)),fw=u>(s.ds||.3)?w+3.2*(1-u*.4):w;pts.push([x,y-w]);pb.unshift([x,y+w]);fp.push([x,y-fw]);fb.unshift([x,y+(u>.45?w+3*(1-u*.4):w)])}
+ const ey=cy+Math.sin(-.6)*0-3.5;return`<defs>${grad(id,c)}</defs><polygon points="${FP(fp.concat(fb))}" fill="${s.f||c[0]}" opacity=".85"/><polygon points="${FP(pts.concat(pb))}" fill="url(#${id}g)"/><path d="M34 ${cy+1} q8 6 3 12" fill="${s.f||c[0]}" opacity=".9"/><circle cx="22" cy="${ey}" r="2.2" fill="#e9dfb8"/><circle cx="22.3" cy="${ey}" r="1.2" fill="#111"/><path d="M15 ${cy+1.5} q5 1.5 10 0" stroke="#000" stroke-opacity=".45" fill="none" stroke-width="1.2"/>`}
+function artRay(s,id,R){const c=s.c,disc=`M18 50 Q34 40 52 18 Q78 6 104 30 Q114 42 120 50 Q114 58 104 70 Q78 94 52 82 Q34 60 18 50Z`;let m='';
+ for(const k of s.m||[]){const[t,...a]=k.split(':');if(t==='spots')for(let i=0;i<+a[0];i++){const x=34+R()*80,y=22+R()*56;m+=`<circle cx="${x}" cy="${y}" r="${(+a[2]||1.4)*(.6+R()*.8)}" fill="${a[1]}" opacity=".85"/>`}
+  if(t==='mottle')for(let i=0;i<+a[0];i++)m+=`<ellipse cx="${36+R()*76}" cy="${24+R()*52}" rx="${3+R()*6}" ry="${2+R()*4}" fill="${a[1]}" opacity=".4"/>`;
+  if(t==='waves')for(let i=0;i<5;i++)m+=`<path d="M${40+i*14} 22 q8 14 0 28 q-8 14 0 28" fill="none" stroke="${a[0]}" stroke-width="2.6" opacity=".8"/><path d="M${40+i*14} 22 q8 14 0 28 q-8 14 0 28" fill="none" stroke="#fff" stroke-width=".8" stroke-dasharray="1 4" opacity=".9"/>`;
+  if(t==='thorns')for(let x=60;x<180;x+=7)m+=`<path d="M${x} 48.4l2 1.6-2 1.6z" fill="${a[0]}"/>`}
+ return`<defs>${grad(id,c,'h')}<clipPath id="${id}c"><path d="${disc}"/></clipPath></defs><path d="M118 47 L190 49.3 L190 50.7 L118 53Z" fill="${c[0]}"/><path d="M160 48 l5 -4 l2 4zM172 48.5 l4 -3 l2 3.5z" fill="${c[0]}"/><path d="${disc}" fill="url(#${id}g)"/><g clip-path="url(#${id}c)">${m}</g><circle cx="46" cy="44" r="2" fill="#2a2418"/><circle cx="46" cy="56" r="2" fill="#2a2418"/>`}
+function artFlat(s,id,R){const c=s.c,rx=s.rx||62,ry=s.h||30,cx=92,cy=50;let m='';
+ for(const k of s.m||[]){const[t,...a]=k.split(':');if(t==='spots')for(let i=0;i<+a[0];i++){const th=R()*Math.PI*2,r=Math.sqrt(R())*.85;m+=`<circle cx="${cx+Math.cos(th)*rx*r}" cy="${cy+Math.sin(th)*ry*r}" r="${(+a[2]||2)*(.7+R()*.6)}" fill="${a[1]}" opacity="${a[3]||.9}"/>`}
+  if(t==='mottle')for(let i=0;i<+a[0];i++){const th=R()*Math.PI*2,r=Math.sqrt(R())*.85;m+=`<ellipse cx="${cx+Math.cos(th)*rx*r}" cy="${cy+Math.sin(th)*ry*r}" rx="${3+R()*6}" ry="${2+R()*4}" fill="${a[1]}" opacity=".4"/>`}
+  if(t==='arc')m+=`<path d="M${cx-rx*.7} ${cy} Q${cx-rx*.45} ${cy-ry*.45} ${cx-rx*.2} ${cy} L${cx+rx} ${cy}" fill="none" stroke="${a[0]}" stroke-width="1" opacity=".7"/>`;
+  if(t==='line')m+=`<path d="M${cx-rx*.6} ${cy} L${cx+rx} ${cy}" stroke="${a[0]}" stroke-width="1" opacity=".6"/>`;
+  if(t==='dot')m+=`<circle cx="${cx+rx*(+a[0])}" cy="${cy+ry*(+a[1])}" r="${a[3]||3}" fill="${a[2]}"/>`}
+ return`<defs>${grad(id,c)}<clipPath id="${id}c"><ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}"/></clipPath></defs><ellipse cx="${cx+2}" cy="${cy}" rx="${rx+6}" ry="${ry+6}" fill="${s.f||c[0]}" opacity=".85"/><path d="M${cx+rx-2} ${cy-5} L${cx+rx+26} ${cy-15} Q${cx+rx+30} ${cy} ${cx+rx+26} ${cy+15} L${cx+rx-2} ${cy+5}Z" fill="${s.f||c[0]}"/><ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="url(#${id}g)"/><g clip-path="url(#${id}c)">${m}</g><circle cx="${cx-rx*.72}" cy="${cy-ry*.38}" r="2.4" fill="#e9dfb8"/><circle cx="${cx-rx*.62}" cy="${cy-ry*.5}" r="2.4" fill="#e9dfb8"/><circle cx="${cx-rx*.72}" cy="${cy-ry*.38}" r="1.3" fill="#111"/><circle cx="${cx-rx*.62}" cy="${cy-ry*.5}" r="1.3" fill="#111"/><path d="M${cx-rx+2} ${cy-2} q3 3 7 2" stroke="#000" stroke-opacity=".45" fill="none"/>`}
+/* colours: [back, flank, belly] */
+const FSPEC={_:{h:17,c:['#4f6a5a','#9fb4a5','#e6eee3'],m:['scales'],tl:'f'},
+'Barbel':{h:13,np:.6,c:['#5e4f26','#a8904f','#ecdcae'],f:'#b06a3c',bb:'4',mo:'dn',m:['scales:#2d230c:.3'],tl:'d',dh:11},
+'Bleak':{h:11,c:['#4e6e74','#cfdcdc','#f4f7f7'],f:'#b9c6c4',mo:'up',m:['scales:#000:.12'],tl:'d'},
+'Bream (common)':{h:27,b:22,n:22,np:.55,pk:.48,c:['#4d4325','#937c45','#cdb67c'],f:'#3a3222',an:'lg',m:['scales:#1f1a0c:.3'],tl:'d',hd:.22,dh:14},
+'Bream (silver)':{h:25,b:20,n:22,np:.55,pk:.48,c:['#5e6e70','#b4c1c1','#eef2f2'],f:'#8a9696',vc:'#c56f55',an:'lg',m:['scales:#000:.18'],tl:'d',dh:13},
+'Bullhead':{h:12,bl:.55,pk:.18,c:['#3e3322','#6e5a3c','#c9b994'],f:'#5a4a30',d:'2',tl:'r',pe:1.5,m:['mottle:18:#21190d:.5'],mo:'lip',ex:.12,ey:.75},
+'Carp (common)':{h:22,bl:.12,c:['#5a4818','#a98a3c','#e8cf7f'],f:'#7b5f2c',bb:'2',an:'n',d:'lg',dh:10,m:['scales:#2e2306:.38'],tl:'f'},
+'Carp (mirror)':{h:23,bl:.12,c:['#5b4a1d','#9c8340','#e4cb84'],f:'#6f5527',bb:'2',d:'lg',dh:10,m:['mirror:#3a2b0a'],tl:'f'},
+'Carp (leather)':{h:23,bl:.12,c:['#4a3d1d','#86703c','#d8c084'],f:'#5e4a26',bb:'2',d:'lg',dh:10,tl:'f'},
+'Carp (ghost)':{h:22,bl:.12,c:['#8b8678','#d8d2c3','#f5f1e6'],f:'#b9b2a2',bb:'2',d:'lg',dh:10,m:['mirror:#5b5546','mottle:6:#6a6455:.35'],tl:'f'},
+'Carp (grass)':{h:15,c:['#4b5440','#8f9779','#dcdcc8'],f:'#6a705a',m:['scales:#1c2112:.4'],tl:'f'},
+'Carp (crucian)':{h:26,b:21,bl:.1,pk:.45,c:['#5a4a1c','#b0913f','#e9d08a'],f:'#8a6a2e',d:'lg',dh:9,m:['scales:#3b2c08:.33'],tl:'e'},
+'Catfish (wels)':{h:13,b:15,bl:.5,pk:.2,np:.5,n:14,t:156,c:['#2f3129','#5a5c4d','#cfc9b2'],f:'#2c2e26',d:'sm',an:'lg',tl:'r',bb:'cat',m:['mottle:22:#191a14:.55'],mo:'lip',ex:.09,ey:.55,er:2.2},
+'Chub':{h:17,bl:.15,c:['#3f4b32','#a3a68c','#e8e7da'],f:'#3c3a2c',ac:'#c65f2e',vc:'#c65f2e',m:['scales:#141a0b:.5'],tl:'f',hd:.24},
+'Dace':{h:13,c:['#45585c','#c6d0d0','#f2f4f2'],f:'#c9c4a6',m:['scales:#000:.15'],tl:'d'},
+'Eel':{a:'e',h:9,c:['#3d3c20','#6d6a3a','#e0d49a'],f:'#4a4826'},
+'Gudgeon':{h:11,c:['#5d5638','#b5aa85','#f0e7cc'],f:'#a69a72',bb:'2',mo:'dn',m:['blotch:7:#3a3220:2','spots:14:#3a3220:1:-.9:-.3'],tl:'f'},
+'Ide':{h:17,c:['#3f4a4e','#a8b2b2','#e8ecea'],f:'#c46a4a',m:['scales:#000:.22'],tl:'f'},
+'Golden orfe':{h:17,c:['#d2641c','#ee9a3a','#f9d79a'],f:'#e57a2c',m:['scales:#7a3008:.25'],tl:'f'},
+'Minnow':{h:10,c:['#4a5a2e','#9aa36e','#f1d6b0'],f:'#9b9a6a',m:['blotch:9:#2a2f17:0'],tl:'f'},
+'Perch':{h:20,c:['#4e5f22','#a6ab58','#ece6b6'],f:'#7a7a3a',d:'sp',dc:'#5a5f2c',dc2:'#7a7a3a',ac:'#d9532a',vc:'#d9532a',tc:'#c55a2c',m:['bars:6:#23300f:.8','scales:#1a2208:.25','dot:.4:-.85:#111:2.6'],tl:'f',hd:.24,ec:'#e2b33c'},
+'Pike':{h:11,b:10,n:24,t:150,c:['#3c4c22','#7d8a3e','#ece2b4'],f:'#8a6a3a',d:'bk',an:'bk',mo:'duck',m:['spots:40:#e9e0a2:1.4:-.95:.4:.15:.8','mottle:10:#2a3514:.35'],tl:'f',hd:.26,ec:'#d6b03b'},
+'Roach':{h:18,c:['#2f4a5e','#b9c7cc','#eef2f3'],f:'#c9472f',dc:'#7b6a5a',m:['scales:#000:.2'],tl:'f',ec:'#d43a2a'},
+'Rudd':{h:19,c:['#5a5022','#b7a253','#f0e2a8'],f:'#d8322a',d:'bk',m:['scales:#2b2406:.3'],tl:'f',mo:'up',ec:'#e0a23a'},
+'Ruffe':{h:14,bl:.15,c:['#5a5530','#a39a64','#e9dfb8'],f:'#8f8a5c',d:'spc',m:['spots:20:#2c2a14:1.2'],tl:'f',ec:'#7a5ab5'},
+'Stone loach':{h:9,b:9,bl:.3,pk:.25,np:.6,c:['#4b4028','#8a7550','#e0d3b0'],f:'#7a6a48',bb:'6',mo:'dn',m:['mottle:20:#2a2214:.6'],tl:'s'},
+'Stickleback':{h:13,c:['#4d6644','#a8b796','#e2b0a0'],f:'#a8b18f',d:'st',m:[],tl:'s',ec:'#4fb3c8'},
+'Tench':{h:17,bl:.2,c:['#2e4a1c','#5f7a2e','#b7b36a'],f:'#2b3f19',d:'sr',an:'n',tl:'s',pe:1.4,bb:'2',ec:'#d03a2a',m:[]},
+'Zander':{h:14,c:['#4a5548','#9aa493','#e6e8de'],f:'#7c8574',d:'sp',dc:'#7c8574',m:['bars:7:#36402f:.45','spots:16:#2a3028:1.1:-1.6:-1.2:.3'],tl:'f',ec:'#d9d2a0'},
+'Brown trout':{h:16,c:['#5c4a1e','#a68d47','#f0dea6'],f:'#8c7440',ad:1,adc:'#c94a2a',m:['halo:22:#c4361e:1.7:-.6:.25:.15','spots:30:#1b1408:1.5:-.95:-.1:.1'],tl:'s'},
+'Rainbow trout':{h:16,c:['#3e5e44','#9cb39c','#eef0ea'],f:'#7a8f78',ad:1,m:['band:#d96a8a:.6','spots:60:#151a12:1.1:-1:.4:.1'],tl:'e'},
+'Sea trout':{h:16,c:['#3d4d58','#b8c3c8','#f5f7f6'],f:'#7a8792',ad:1,m:['spots:16:#1c2228:1.6:-.9:-.2:.15'],tl:'s'},
+'Tiger trout':{h:16,c:['#5b4a1e','#b39b4f','#f0dfa6'],f:'#b06a3a',ad:1,m:['worms:#3a2a0c'],tl:'s'},
+'Atlantic salmon':{h:16,c:['#3a4f5e','#b9c6cc','#f6f8f8'],f:'#5e6e78',ad:1,m:['spots:10:#141b22:1.5:-.9:-.4:.15'],tl:'e'},
+'Grayling':{h:15,c:['#4d5a5a','#a7b0ae','#ebeeec'],f:'#7a6f74',d:'sail',dc:'#6a4f72',ad:1,m:['spots:10:#1a1e1e:1.2:-.6:0:.15','hstripes:5:#5a6464:1'],tl:'f',mo:'dn'},
+'Arctic char':{h:16,c:['#33402f','#5f6e4e','#d4532e'],f:'#c9482a',ad:1,m:['spots:24:#e8c7a0:1.3:-.9:.3:.15'],tl:'e'},
+'Bass':{h:17,c:['#3f4f5a','#b4c0c6','#f2f4f5'],f:'#6f7d86',d:'sp',m:['scales:#000:.15','dot:.2:-.4:#1e252a:3'],tl:'f',hd:.25},
+'Cod':{h:17,bl:.15,c:['#5e5a36','#a39c6a','#ece8d4'],f:'#79744e',d:'3',an:'2',bb:'chin',m:['spots:60:#3f3b20:1.1:-1:.2:.1:.7','lat:#efe8cc:.1'],tl:'s'},
+'Pollack':{h:16,c:['#4e4c2c','#a59a5e','#eee9d6'],f:'#6c6a40',d:'3',an:'2',m:['lat:#2b2a16:.25:3:1.4'],tl:'e',mo:'up'},
+'Coalfish':{h:16,c:['#232c27','#5f6b64','#dfe3df'],f:'#2e3832',d:'3',an:'2',m:['lat:#d6dbd6:.12'],tl:'f'},
+'Whiting':{h:14,c:['#7c7a62','#cfccb8','#f6f5ee'],f:'#a8a58f',d:'3',an:'2',m:['dot:.22:.1:#2c2a20:2.2'],tl:'s'},
+'Pouting':{h:21,c:['#7a4f22','#c69256','#f0dfc0'],f:'#8a6236',d:'3',an:'2',bb:'chin',m:['bars:5:#5a3412:.55','dot:.22:.15:#1c140a:2.4'],tl:'s'},
+'Haddock':{h:16,c:['#4e5256','#a9adb0','#f1f2f2'],f:'#4a4e52',d:'3',dh:13,an:'2',m:['lat:#16181a:.18','dot:.3:-.45:#16181a:4'],tl:'e'},
+'Ling':{h:10,np:.6,pk:.3,n:16,t:152,c:['#4a4a2a','#7f7d54','#dcd8bd'],f:'#5f5e3a',d:'2',bb:'chin',an:'lg',m:['mottle:22:#2c2c14:.4'],tl:'r'},
+'Mackerel':{h:14,c:['#1f6a6e','#9fc8c2','#f4f7f6'],f:'#3a6e70',d:'2',m:['mack:#0e2a2c'],tl:'d'},
+'Scad':{h:14,c:['#3f6a6a','#b8ccc8','#f3f6f4'],f:'#7a9490',d:'sp',m:['scutes:#2d3f3e'],tl:'d',er:3.6},
+'Garfish':{h:6.5,b:6,n:30,t:160,c:['#1f6467','#a8c7c4','#f2f5f4'],f:'#2c6c6c',d:'bk',an:'bk',mo:'beak',tl:'f',tw:22,th:1.6},
+'Herring':{h:13,c:['#2e5c6a','#c3d2d4','#f5f7f7'],f:'#8aa0a4',m:['scales:#000:.15'],tl:'d',mo:'up'},
+'Ballan wrasse':{h:18,bl:.15,c:['#3d5a2c','#7c8f45','#d8cf8e'],f:'#5e6a34',d:'spl',m:['spots:40:#e6e0a2:1.2:-1:.6:.12:.75','mottle:8:#26361a:.35'],tl:'r',mo:'lip'},
+'Corkwing wrasse':{h:16,bl:.15,c:['#4c5a2a','#8f9446','#dcd59a'],f:'#6a6c34',d:'spl',m:['dot:.97:0:#1a1a0c:3','hstripes:3:#3a4520:1'],tl:'r',mo:'lip'},
+'Cuckoo wrasse':{h:15,bl:.15,c:['#d0642a','#e8903c','#f2c27a'],f:'#e07a34',d:'spl',dc:'#3a7bd5',m:['headlines:#3a7bd5','hstripes:2:#3a7bd5:2'],tl:'r',mo:'lip'},
+'Conger eel':{a:'e',h:8.5,ds:.15,c:['#33363a','#5a5e63','#d8d9d6'],f:'#2f3236'},
+'Thornback ray':{a:'r',c:['#7a6644','#9a8558','#b8a272'],m:['mottle:14:#4a3c22','spots:40:#e7dcb8:1.2','thorns:#e8dcc0']},
+'Small-eyed ray':{a:'r',c:['#6d6a5c','#8a8676','#a6a290'],m:['spots:30:#e3e0d2:1','mottle:6:#4c4a3e']},
+'Spotted ray':{a:'r',c:['#9a8460','#b39c74','#c7b28a'],m:['spots:34:#2e261a:1.6']},
+'Undulate ray':{a:'r',c:['#8a7650','#a48e64','#bba57c'],m:['waves:#3a2e1a']},
+'Lesser spotted dogfish':{a:'k',h:10,b:8,pk:.25,np:.6,n:16,c:['#a68c62','#c8b289','#efe6d0'],f:'#a68c62',d:'k',an:'k',tl:'k',m:['spots:90:#3a2a18:.9:-1:.5:.08']},
+'Bull huss':{a:'k',h:11,b:9,pk:.25,np:.6,n:16,c:['#8a7656','#ad9a76','#ece3cc'],f:'#8a7656',d:'k',an:'k',tl:'k',m:['spots:36:#2a1e10:1.8:-1:.4:.08']},
+'Smoothhound':{a:'k',h:11,b:9,pk:.28,np:.6,n:16,c:['#6f7680','#a1a7ae','#eef0f1'],f:'#6f7680',d:'k',an:'k',tl:'k',m:[]},
+'Tope':{a:'k',h:10,b:8,pk:.3,np:.6,n:14,c:['#5f6873','#9aa2ab','#eef0f2'],f:'#5f6873',d:'k',an:'k',tl:'k',m:[]},
+'Plaice':{a:'f',h:30,c:['#6a5838','#7d6a46','#8a7650'],f:'#6a5a3c',m:['spots:22:#e0632a:2.6','arc:#3a2e1a']},
+'Flounder':{a:'f',h:30,c:['#4f4b34','#625c40','#6e6848'],f:'#55503a',m:['mottle:14:#2e2a1c','line:#2e2a1c']},
+'Dab':{a:'f',h:28,rx:56,c:['#9a8660','#ab9670','#b8a47e'],f:'#9a8660',m:['mottle:10:#6a5a3a','arc:#5a4a2c']},
+'Sole':{a:'f',h:21,rx:70,c:['#5e4a30','#755e3e','#82694a'],f:'#5a4630',m:['mottle:10:#3a2c1a','dot:-.55:-.6:#151008:2.6']},
+'Turbot':{a:'f',h:42,rx:56,c:['#5e5038','#6f604a','#7c6c54'],f:'#5a4c34',m:['mottle:20:#2e2618','spots:30:#9b8a66:1.6']},
+'Brill':{a:'f',h:34,rx:60,c:['#8a7856','#9c8a66','#a99672'],f:'#8a7856',m:['mottle:16:#5a4a30','spots:30:#f0e8d0:1']},
+'Black bream':{h:21,c:['#3e4448','#8e969a','#dfe2e2'],f:'#4b5256',d:'spl',m:['hstripes:6:#2c3235:1','bars:5:#2a2f32:.3'],tl:'f'},
+'Gilthead bream':{h:21,bl:.12,c:['#5c6a70','#b7c2c6','#f0f3f3'],f:'#6a787e',d:'spl',m:['hstripes:5:#5c6a70:.8','dot:.2:-.35:#1e2428:3','headlines:#e0b52a'],tl:'f'},
+'Red mullet':{h:15,bl:.3,pk:.3,c:['#c2463a','#e2786a','#f3d0c4'],f:'#d86a56',d:'2',bb:'2',mo:'dn',m:['hstripes:3:#e9c23a:1.6','scales:#5a120a:.2'],tl:'f'},
+'Thick-lipped grey mullet':{h:16,bl:.15,c:['#3c4a52','#9aa6ac','#eef1f2'],f:'#56636a',d:'2',m:['hstripes:7:#3e4b52:1.2','scales:#000:.15'],tl:'e',mo:'lip'},
+'Thin-lipped grey mullet':{h:16,bl:.15,c:['#465258','#a5afb3','#f0f2f3'],f:'#5c686e',d:'2',m:['hstripes:6:#4a565c:.9','scales:#000:.12'],tl:'e'},
+'Golden grey mullet':{h:16,bl:.15,c:['#435057','#a2adb2','#f0f2f3'],f:'#5a676d',d:'2',m:['hstripes:6:#43505a:1','dot:.18:-.3:#e2b52c:3.2'],tl:'e'},
+'Red gurnard':{h:15,bl:.45,pk:.18,np:.6,c:['#b33a2a','#d96a52','#f2cdbd'],f:'#c4553e',d:'sp',gp:'#d06044',tl:'e',pe:1,m:['lat:#e9b2a0:.15'],ey:.7},
+'Grey gurnard':{h:15,bl:.45,pk:.18,np:.6,c:['#5a5a52','#8e8c80','#e4e1d6'],f:'#6a6a60',d:'sp',gp:'#7a7a70',tl:'e',m:['spots:40:#ecebe2:1:-1:.2:.1'],ey:.7},
+'Tub gurnard':{h:16,bl:.45,pk:.18,np:.6,c:['#b5482c','#d8774e','#f1d0b8'],f:'#c45a3a',d:'sp',gp:'#3a86c8',tl:'e',m:[],ey:.7},
+'Lesser weever':{h:11,c:['#8a7c52','#c1b285','#efe6c8'],f:'#a8996c',d:'sp',dc:'#141414',an:'lg',mo:'up',m:['hstripes:3:#7a6a40:.8'],tl:'s',ey:.75},
+'Shore rockling':{h:10,pk:.3,np:.6,c:['#3e3020','#6a5638','#b8a27a'],f:'#4a3a26',d:'lg',an:'lg',bb:'3',tl:'r',m:['mottle:10:#251c10:.4']},
+'Shanny':{h:12,bl:.55,pk:.15,np:.5,c:['#4a4a28','#7c7a46','#cfc79a'],f:'#5a5a32',d:'lg',dh:10,an:'lg',tl:'r',m:['mottle:18:#2a2a14:.5'],ey:.8,ex:.1},
+'Long-spined sea scorpion':{h:16,bl:.4,pk:.2,np:.55,c:['#6a3c28','#9c6440','#e6c9a8'],f:'#7a4a30',d:'sp',dh:13,pe:1.8,tl:'r',m:['mottle:18:#3a1c10:.55','spots:20:#f0d8b8:1'],ey:.75},
+'Dragonet':{h:9,b:7,bl:.2,pk:.2,np:.6,c:['#7a6a3a','#b8a268','#f0e2b8'],f:'#d8b23a',d:'dr',dc:'#e0c040',dc2:'#4a8fd0',m:['spots:22:#3f8fd0:1.2:-1:.2'],tl:'r',ey:.85}};
+
+function scene(){const h=new Date().getHours(),t=h<5||h>=21?'night':h<8?'dawn':h<17?'day':'dusk';
+ const S={night:{sky:['#081128','#1c2d4d'],sun:'#f3efd8',sy:34,sx:310,r:11,far:'#16302a',near:'#0c1a14',water:['#132a3a','#08141c'],glow:.18},
+  dawn:{sky:['#6d93bd','#f4b483'],sun:'#ffe1b0',sy:96,sx:92,r:16,far:'#5d7a68',near:'#26402f',water:['#c2c9c4','#4b6a6c'],glow:.6},
+  day:{sky:['#78b8de','#dff0f2'],sun:'#fff8de',sy:30,sx:316,r:14,far:'#6f9a72',near:'#2f5a3c',water:['#7fb3bc','#2e6468'],glow:.3},
+  dusk:{sky:['#2a3c6c','#f39461'],sun:'#ffc07a',sy:92,sx:300,r:16,far:'#4d4f5c',near:'#1c2e24',water:['#a38a8c','#2b3d4a'],glow:.6}}[t];
+ const R=fRng('stars');let stars='';if(t==='night')for(let i=0;i<40;i++)stars+=`<circle cx="${(R()*400).toFixed(0)}" cy="${(R()*80).toFixed(0)}" r="${(R()*.9+.3).toFixed(1)}" fill="#fff" opacity="${(R()*.6+.3).toFixed(2)}" class="tw" style="animation-delay:${(R()*4).toFixed(1)}s"/>`;
+ const reeds=(x0,n,dir)=>{let o='';for(let i=0;i<n;i++){const x=x0+i*5*dir,hh=24+((i*37)%17);o+=`<path d="M${x} 170 q${dir*-3} ${-hh*.6} ${dir*2} ${-hh}" stroke="${S.near}" stroke-width="2" fill="none"/>`;if(i%3===0)o+=`<rect x="${x+dir*1.2-1.6}" y="${170-hh-6}" width="3.2" height="9" rx="1.6" fill="#3a2a18"/>`}return`<g class="reed" style="transform-origin:${x0}px 170px">${o}</g>`};
+ const greet={night:'Night session',dawn:'Early start. Tight lines',day:'Tight lines',dusk:'Golden hour. Tight lines'}[t]+(D.cfg.name?`, ${esc(D.cfg.name)}`:'');
+ return{greet,svg:`<svg class="scene" viewBox="0 0 400 170" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${S.sky[0]}"/><stop offset="1" stop-color="${S.sky[1]}"/></linearGradient><linearGradient id="wt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${S.water[0]}"/><stop offset="1" stop-color="${S.water[1]}"/></linearGradient><radialGradient id="gl"><stop offset="0" stop-color="${S.sun}" stop-opacity="${S.glow}"/><stop offset="1" stop-color="${S.sun}" stop-opacity="0"/></radialGradient></defs>
+ <rect width="400" height="170" fill="url(#sk)"/>${stars}<circle cx="${S.sx}" cy="${S.sy}" r="60" fill="url(#gl)"/><circle cx="${S.sx}" cy="${S.sy}" r="${S.r}" fill="${S.sun}"/>
+ <g class="mist"><ellipse cx="120" cy="104" rx="90" ry="6" fill="#fff" opacity=".12"/><ellipse cx="300" cy="100" rx="70" ry="5" fill="#fff" opacity=".1"/></g>
+ <path d="M0 104 Q50 78 110 92 T230 84 T330 90 T400 82 V118 H0Z" fill="${S.far}"/>
+ <path d="M0 116 ${Array.from({length:21},(_,i)=>`Q${i*20+10} ${100+((i*53)%14)} ${i*20+20} 114`).join(' ')} V122 H0Z" fill="${S.near}"/>
+ <rect y="118" width="400" height="52" fill="url(#wt)"/>
+ <g class="shim">${[0,1,2,3,4].map(i=>`<rect x="${S.sx-20+i*7-(i%2)*10}" y="${124+i*8}" width="${30-i*3}" height="1.6" rx=".8" fill="${S.sun}" opacity="${.5-i*.07}"/>`).join('')}</g>
+ <g transform="translate(250 140)"><ellipse class="rip" rx="10" ry="2.4" fill="none" stroke="#fff" stroke-opacity=".5"/><ellipse class="rip r2" rx="10" ry="2.4" fill="none" stroke="#fff" stroke-opacity=".5"/><g class="bob"><rect x="-1.6" y="-13" width="3.2" height="8" rx="1.6" fill="#ff6a2b"/><rect x="-1.2" y="-5.5" width="2.4" height="6" fill="#f2efe4"/></g></g>
+ ${reeds(18,9,1)}${reeds(392,7,-1)}</svg>`}}
+function fishing(){const C=catches(),cm=caughtMap(),sp=speciesAll(),got=sp.filter(s=>isTicked(s.n,cm)).length,big=C.filter(c=>c.g).sort((a,b)=>b.g-a.g)[0],yr=String(new Date().getFullYear()),sc=scene();
+ return`<header class="fhero">${sc.svg}<div class="fhin"><p class="fgreet">${sc.greet}</p><h1>The Bank</h1></div></header>
+ <div class="fband"><div class="in"><div class="fstats"><div><div class="kbig">${got}<small> / ${sp.length}</small></div><div class="sub">species caught</div></div><div><div class="kbig sm">${C.filter(c=>c.date.startsWith(yr)).length}</div><div class="sub">catches in ${yr}</div></div><div><div class="kbig sm">${big?fW(big.g):'–'}</div><div class="sub">${big?'biggest · '+esc(big.species):'biggest fish'}</div></div></div>
+ <div class="seg ftabs" role="tablist">${[['log','Catches'],['species','Species'],['gallery','Gallery']].map(([k,l])=>`<button role="tab" aria-selected="${fTab===k}" data-ftab="${k}" class="${fTab===k?'on':''}">${l}</button>`).join('')}</div></div></div>
+ <main class="wrap">${fTab==='species'?fishSpecies(cm,sp,got):fTab==='gallery'?fishGallery(C):fishLog(C,cm)}</main>${lb?lightbox():''}${spSel?spSheet(cm):''}${celeb?celebrate(cm,sp):''}`}
+let spSel=null,celeb=null;
+function fishSpecies(cm,sp,got){const groups=['All',...FISH.map(f=>f[0]),...(fishD().custom.length?['Custom']:[])],list=spFilter(sp,cm);
+ return`<section class="card"><div class="ch"><h2>Species</h2><span class="sub">${got} of ${sp.length} caught</span></div><div class="bar" style="margin:10px 0 6px;--pc:#d9b45a"><i style="width:${Math.round(got/sp.length*100)}%"></i></div>
+ <div class="seg">${groups.map(g=>`<button data-fgroup="${g}" class="${fGroup===g?'on':''}">${g}</button>`).join('')}</div>
+ <input type="search" data-fsq value="${esc(fQ)}" placeholder="Search species" aria-label="Search species"><div class="seg">${['All','Caught','Not yet'].map(s=>`<button data-fstatus="${s}" class="${fStatus===s?'on':''}">${s}</button>`).join('')}</div></section>
+ <div id="fsplist" class="spgrid">${spRows(list,cm)}</div>
+ <details data-keep="fadd" ${openD.has('fadd')?'open':''} style="margin-top:16px"><summary>+ Add a species that's not listed</summary><form id="fadd" class="row"><input name="n" maxlength="60" required placeholder="Species name" style="flex:1"><button class="btn">Add</button></form></details>`}
+function spRows(list,cm){return list.map(s=>{const m=cm[s.n],t=isTicked(s.n,cm);return`<button class="spc${t?' got':''}" data-spsel="${esc(s.n)}" aria-label="${esc(s.n)}${t?', caught':', not caught yet'}">${t?'<span class="spok" aria-hidden="true">✓</span>':''}${fishSVG(s.n)}<b>${esc(s.n)}</b><small>${m?(m.pb?'PB '+fW(m.pb.g):m.n+' caught'):t?'Caught':'Not yet'}</small></button>`}).join('')||'<p class="empty">No species match.</p>'}
+function spSheet(cm){const n=spSel,m=cm[n],t=isTicked(n,cm),g=(speciesAll().find(s=>s.n===n)||{}).g||'Custom',mine=catches().filter(c=>c.species===n),last=mine[0];
+ return`<div class="sheetbg" data-spclose></div><div class="sheet" role="dialog" aria-modal="true" aria-label="${esc(n)}"><button class="lbx" data-spclose aria-label="Close">×</button>
+ <div class="sheetart${t?'':' dim'}">${fishSVG(n,'fart big')}</div><p class="sub" style="margin:0">${g}</p><h2 class="sheeth">${esc(n)}</h2>
+ ${m?`<div class="fstats"><div><div class="kbig sm">${m.n}</div><div class="sub">caught</div></div><div><div class="kbig sm">${m.pb?fW(m.pb.g):'–'}</div><div class="sub">personal best</div></div><div><div class="kbig sm">${label(m.first)}</div><div class="sub">first caught</div></div></div>
+ ${mine.slice(0,5).map(c=>`<div class="fe"><div>${label(c.date)}${c.place?`<small>${esc(c.place)}</small>`:''}</div><span class="num">${c.g?fW(c.g):''}</span><span></span></div>`).join('')}`
+ :`<p class="sub">${t?'Ticked off as caught before you used the app.':'Not caught yet. This one is still out there.'}</p>`}
+ <div class="obact" style="padding-top:14px"><button class="btn" data-splog="${esc(n)}">Log a ${esc(n.toLowerCase().replace(/ \(.*\)/,''))}</button>${m?'':`<button class="btn sec" data-ftick="${esc(n)}">${t?'Untick':'I\'ve caught one before'}</button>`}</div></div>`}
+function celebrate(cm,sp){const got=sp.filter(s=>isTicked(s.n,cm)).length;
+ return`<div class="sheetbg"></div><div class="celeb" role="dialog" aria-modal="true" aria-label="New species"><div class="bubbles" aria-hidden="true">${Array.from({length:14},(_,i)=>`<i style="left:${(i*7+5)%100}%;animation-delay:${(i%5)*.35}s;width:${6+(i%4)*3}px;height:${6+(i%4)*3}px"></i>`).join('')}</div>
+ <p class="fgreet" style="color:#d9b45a">New species!</p>${fishSVG(celeb,'fart big')}<h2 class="sheeth">${esc(celeb)}</h2><p class="sub">That's ${got} of ${sp.length} species on your list.</p><button class="btn" data-celebok>Get in!</button></div>`}
+
 function fishForm(){const c=fForm,sp=speciesAll(),venues=[...new Set(fishD().catches.map(x=>x.place).filter(Boolean))],methods=[...new Set(fishD().catches.map(x=>x.method).filter(Boolean))];
  return`<section class="card"><h2>${c.editId?'Edit catch':'Log a catch'}</h2><form id="fform" class="grid3" style="margin-top:10px">
  <label class="f" style="grid-column:1/-1">Species<input name="species" list="fsp" required maxlength="60" value="${esc(c.species||'')}" placeholder="Start typing, e.g. Perch" autocomplete="off"></label><datalist id="fsp">${sp.map(s=>`<option value="${esc(s.n)}">`).join('')}</datalist>
@@ -367,21 +624,12 @@ function fishForm(){const c=fForm,sp=speciesAll(),venues=[...new Set(fishD().cat
  <p class="sub" style="margin:6px 0 0">${sb&&user?'Photos are backed up privately to your account.':'Photos are kept on this device. Sign in (Settings) to back them up.'}</p></div>
  <button class="btn">${c.editId?'Save changes':'Save catch'}</button><button type="button" class="btn sec" data-fcancel>Cancel</button></form></section>`}
 function fishLog(C,cm){return(fForm?fishForm():`<button class="btn bigadd" data-fnew>+ Log a catch</button>`)+
- (C.length?C.map(c=>{const pb=cm[c.species]&&cm[c.species].pb===c,open=fOpen===c.id;return`<section class="card fcatch"><button class="fhead" data-fexp="${c.id}" aria-expanded="${open}">${(c.photos||[])[0]?pimg(c.photos[0],c.species,'fthumb'):'<span class="fthumb fnone" aria-hidden="true"></span>'}
+ (C.length?C.map(c=>{const pb=cm[c.species]&&cm[c.species].pb===c,open=fOpen===c.id;return`<section class="card fcatch"><button class="fhead" data-fexp="${c.id}" aria-expanded="${open}">${(c.photos||[])[0]?pimg(c.photos[0],c.species,'fthumb'):`<span class="fthumb art" aria-hidden="true">${fishSVG(c.species)}</span>`}
  <span class="fmeta"><b>${esc(c.species)}${pb?' <span class="pb">PB</span>':''}</b><small>${[fW(c.g),c.cm?fmt(c.cm)+' cm':''].filter(Boolean).join(' · ')||'No weight'}</small><small>${label(c.date)}${c.place?' · '+esc(c.place):''}</small></span></button>
  ${open?`<div class="fbody">${(c.photos||[]).length?`<div class="fphotos">${c.photos.map((p,i)=>`<button class="fph" data-lb="${c.id}:${i}" aria-label="Open photo">${pimg(p,c.species)}</button>`).join('')}</div>`:''}
  <dl class="fdl">${[['Time',c.time],['Method',c.method],['Bait',c.bait],['Released',c.rel===false?'No':'Yes']].filter(x=>x[1]).map(([k,v])=>`<dt>${k}</dt><dd>${esc(v)}</dd>`).join('')}</dl>${c.notes?`<p>${esc(c.notes)}</p>`:''}
  <div class="row"><button class="btn sec" data-fedit="${c.id}">Edit</button><button class="btn danger" data-fdelc="${c.id}">${fDelArm===c.id?'Tap again to delete':'Delete'}</button></div></div>`:''}</section>`}).join(''):`<p class="empty" style="margin-top:14px">No catches yet. Your first one will tick off a species on the checklist.</p>`)}
-const spFilter=(sp,cm)=>sp.filter(s=>(fGroup==='All'||s.g===fGroup)&&(fStatus==='All'||(fStatus==='Caught')===isTicked(s.n,cm))&&(!fQ||s.n.toLowerCase().includes(fQ.toLowerCase())));
-function fishSpecies(cm,sp,got){const groups=['All',...FISH.map(f=>f[0]),...(fishD().custom.length?['Custom']:[])];
- const list=spFilter(sp,cm);
- return`<section class="card"><div class="ch"><h2>Species checklist</h2><span class="sub">${got} of ${sp.length}</span></div><div class="bar" style="margin:10px 0 4px;--pc:#3cc985"><i style="width:${Math.round(got/sp.length*100)}%"></i></div>
- <div class="seg">${groups.map(g=>`<button data-fgroup="${g}" class="${fGroup===g?'on':''}">${g}</button>`).join('')}</div>
- <input type="search" data-fsq value="${esc(fQ)}" placeholder="Search species" aria-label="Search species"><div><div class="seg">${['All','Caught','Not yet'].map(s=>`<button data-fstatus="${s}" class="${fStatus===s?'on':''}">${s}</button>`).join('')}</div></div>
- <div id="fsplist">${spRows(list,cm)}</div>
- <details data-keep="fadd" ${openD.has('fadd')?'open':''} style="margin-top:12px"><summary>+ Add a species that's not listed</summary><form id="fadd" class="row"><input name="n" maxlength="60" required placeholder="Species name" style="flex:1"><button class="btn">Add</button></form></details></section>`}
-function spRows(list,cm){return list.map(s=>{const m=cm[s.n],t=isTicked(s.n,cm);return`<div class="sprow${t?' got':''}"><button class="sptick" data-ftick="${esc(s.n)}" role="checkbox" aria-checked="${t}" ${m?'disabled title="Ticked from your catches"':''} aria-label="${esc(s.n)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5 9-10"/></svg></button>
- <div><b>${esc(s.n)}</b><small>${m?`${m.n} caught · first ${label(m.first)}${m.pb?' · PB '+fW(m.pb.g):''}`:t?'Ticked off':s.g}</small></div></div>`}).join('')||'<p class="empty">No species match.</p>'}
+
 function fishGallery(C){const ps=C.flatMap(c=>(c.photos||[]).map((p,i)=>({p,c,i})));
  return ps.length?`<div class="gal">${ps.map(({p,c,i})=>`<button class="gitem" data-lb="${c.id}:${i}" aria-label="${esc(c.species)}, ${label(c.date)}">${pimg(p,c.species)}<span>${esc(c.species)}${c.g?' · '+fW(c.g):''}</span></button>`).join('')}</div>`:'<p class="empty">Photos you add to catches will appear here.</p>'}
 function lightbox(){const all=catches().flatMap(c=>(c.photos||[]).map((p,i)=>({p,c,i}))),k=all.findIndex(x=>x.c.id===lb.c&&x.i===lb.i);if(k<0)return'';const {p,c}=all[k];
@@ -394,6 +642,10 @@ function mergeFish(a,b){a=a||{};b=b||{};const o={catches:[],cdel:{...(a.cdel||{}
  for(const[k,t]of Object.entries(b.ticks||{}))if(!o.ticks[k]||t.t>o.ticks[k].t)o.ticks[k]=t;return o}
 function fishClick(t,ds){
  if(ds.ftab){fTab=ds.ftab;lb=null;rr();return true}
+ if(ds.spsel){spSel=ds.spsel;rr();return true}
+ if(ds.spclose!=null){spSel=null;rr();return true}
+ if(ds.splog){fForm={photos:[],date:TODAY,species:ds.splog};spSel=null;fTab='log';render();scrollTo(0,0);return true}
+ if(ds.celebok!=null){celeb=null;rr();return true}
  if(ds.fnew!=null){fForm={photos:[],date:TODAY};fTab='log';render();scrollTo(0,0);return true}
  if(ds.fcancel!=null){fForm=null;rr();return true}
  if(ds.fexp){fOpen=fOpen===ds.fexp?null:ds.fexp;fDelArm=null;rr();return true}
@@ -414,7 +666,7 @@ function saveCatch(f){keepForm();const c=fForm;const sp=(c.species||'').trim();i
  const canon=speciesAll().find(s=>s.n.toLowerCase()===sp.toLowerCase()),spn=canon?canon.n:sp;const F=fishD(),now=Date.now(),rec={id:c.editId||uid('c'),ts:now,species:spn,date:c.date||TODAY,time:c.time||'',g:c.g||null,cm:c.cm||null,place:(c.place||'').trim(),method:(c.method||'').trim(),bait:(c.bait||'').trim(),rel:c.rel,notes:(c.notes||'').trim(),photos:c.photos||[]};
  if(c.editId){const old=F.catches.find(x=>x.id===c.editId);if(old)for(const p of old.photos||[])if(!rec.photos.some(q=>q.id===p.id)){idbDel(p.id).catch(()=>{});if(p.path&&sb&&user)sb.storage.from(BUCKET).remove([p.path]).catch(()=>{})}F.catches=F.catches.filter(x=>x.id!==c.editId)}
  if(!canon)F.custom.push(spn);
- F.catches.push(rec);const first=F.catches.filter(x=>x.species===spn).length===1;fForm=null;fOpen=rec.id;save();rr();scrollTo(0,0);toast(first?`New species: ${spn}!`:'Catch saved');uploadPending()}
+ F.catches.push(rec);const first=F.catches.filter(x=>x.species===spn).length===1;fForm=null;fOpen=rec.id;save();rr();scrollTo(0,0);if(first)celeb=spn,rr();else toast('Catch saved');uploadPending()}
 
 /* ---------- Views ---------- */
 const navBar=()=>`<div class="nav"><button data-nav="-1" aria-label="Previous day">‹</button><span class="d">${label(cur)}</span><button data-nav="1" aria-label="Next day" ${cur>=TODAY?'disabled':''}>›</button>${cur!==TODAY?'<button data-nav="0">Today</button>':''}</div>`;
@@ -482,7 +734,7 @@ const ICONS={today:'<circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/>'
 const tabList=()=>[['today','Today'],['food','Food'],['history','Progress'],...(D.cfg.fishTab!==false?[['fishing','Fishing']]:[]),['settings','Settings']];
 const tabs=v=>`<nav class="tabs" style="--n:${tabList().length}">${tabList().map(([k,l])=>`<a href="#${k}" class="${v===k?'on':''}" ${v===k?'aria-current="page"':''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[k]}</svg>${l}</a>`).join('')}</nav>`;
 const view=()=>{const h=location.hash.slice(1);return tabList().some(t=>t[0]===h)?h:'today'};
-function render(){if(!D.onboarded||ob.done){root.innerHTML=onboard();return}const v=view();root.innerHTML=(v==='food'?food():v==='history'?history():v==='settings'?settings():v==='fishing'?fishing():today())+(lb&&v==='fishing'?'':tabs(v));if(v==='food')renderResults();if(v==='history')drawW();if(v==='fishing')hydratePhotos()}
+function render(){if(!D.onboarded||ob.done){root.innerHTML=onboard();return}const v=view();root.innerHTML=(v==='food'?food():v==='history'?history():v==='settings'?settings():v==='fishing'?fishing():today())+((lb||spSel||celeb)&&v==='fishing'?'':tabs(v));document.body.classList.toggle('fishmode',v==='fishing');if(v==='food')renderResults();if(v==='history')drawW();if(v==='fishing')hydratePhotos()}
 function rr(){const y=scrollY;render();scrollTo(0,y)}
 let tt;function toast(t){const e=document.getElementById('toast');e.innerHTML=`<div class="toast" role="status">${esc(t)}</div>`;clearTimeout(tt);tt=setTimeout(()=>e.innerHTML='',2600)}
 
@@ -520,9 +772,9 @@ function addEntry(it,q,saveIt){const k=it.unit==='g'?q/100:q;
  save();toast(`Added to ${meal}`)}
 
 /* ---------- Events ---------- */
-addEventListener('keydown',e=>{if(e.key==='Escape'&&lb){lb=null;rr()}});
-addEventListener('hashchange',()=>{lb=null;picked=null;status='';lastQ='';render();scrollTo(0,0)});
-root.addEventListener('click',e=>{const t=e.target.closest('button,a');if(!t)return;const ds=t.dataset;
+addEventListener('keydown',e=>{if(e.key==='Escape'&&(lb||spSel||celeb)){lb=null;spSel=null;celeb=null;rr()}});
+addEventListener('hashchange',()=>{lb=null;spSel=null;celeb=null;picked=null;status='';lastQ='';render();scrollTo(0,0)});
+root.addEventListener('click',e=>{if(e.target.classList&&e.target.classList.contains('sheetbg')&&!celeb){spSel=null;rr();return}const t=e.target.closest('button,a');if(!t)return;const ds=t.dataset;
  if(fishClick(t,ds))return;
  if(ds.wr!=null){wRange=+ds.wr;rr();return}
  if(ds.wdel){D.wdel[ds.wdel]=Date.now();D.weights=D.weights.filter(x=>x.id!==ds.wdel);save();rr();return}
