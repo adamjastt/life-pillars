@@ -235,7 +235,7 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 @media(prefers-reduced-motion:no-preference){.bar i{transition:width .3s}}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><script>
 {
-const VERSION='5.5';
+const VERSION='5.6';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -324,7 +324,7 @@ try{D=JSON.parse(localStorage.getItem('pillars2')||'null')}catch(e){}
 if(!D||!D.cfg)D={cfg:PRESET(),days:{},foods:[],recent:[],updated:0};
 D.foods=D.foods||[];D.recent=D.recent||[];D.weights=D.weights||[];D.wdel=D.wdel||{};
 if(!D.onboarded&&(D.cfgU||Object.keys(D.days).length))D.onboarded=true;
-function save(){stamp();D.updated=Date.now();try{localStorage.setItem('pillars2',JSON.stringify(D))}catch(e){toast('Could not save — storage is full or blocked')}queueSync()}
+function save(){stamp();takeSnap('While using');D.updated=Date.now();try{localStorage.setItem('pillars2',JSON.stringify(D))}catch(e){toast('Could not save — storage is full or blocked')}queueSync()}
 let cur=TODAY;try{cur=sessionStorage.getItem('pcur')||TODAY}catch(e){}
 if(cur>TODAY)cur=TODAY;
 let meal=(h=>h<11?'Breakfast':h<15?'Lunch':h<21?'Dinner':'Snacks')(new Date().getHours());
@@ -873,7 +873,7 @@ function settings(){const types=[['min','At least'],['max','At most'],['near','A
  <div class="row" style="margin-top:10px"><button class="btn sec" data-addm="${pi}">+ Add metric</button></div></details></section>`).join('')}
  <div class="row" style="margin-bottom:16px"><button class="btn sec" data-act="addp">+ Add pillar</button></div>
  <section class="card"><h2>Targets</h2><div class="grid3" style="margin-top:10px"><label class="f">Carbs target (g)<input inputmode="decimal" data-cfg="mc" value="${D.cfg.macros.c}"></label><label class="f">Fat target (g)<input inputmode="decimal" data-cfg="mf" value="${D.cfg.macros.f}"></label><label class="f">Streak threshold (%)<input inputmode="decimal" data-cfg="good" value="${D.cfg.good}"></label></div><p class="sub">Calories and protein targets are set on their metrics above.</p></section>
- <section class="card"><h2>Backup</h2><p class="sub">Data lives in this browser only. Download a backup now and then, and use it to move to a new phone.</p><div class="row"><button class="btn" data-act="dl">Download backup</button><label class="btn sec" style="display:inline-flex;align-items:center">Restore from file<input type="file" accept=".json,application/json" data-restore hidden></label><button class="btn sec" data-act="copy">Copy backup</button></div></section>
+ <section class="card"><h2>Backup</h2><p class="sub">Data lives in this browser only. Download a backup now and then, and use it to move to a new phone.</p><div class="row"><button class="btn" data-act="dl">Download backup</button><label class="btn sec" style="display:inline-flex;align-items:center">Restore from file<input type="file" accept=".json,application/json" data-restore hidden></label><button class="btn sec" data-act="copy">Copy backup</button></div>${snapsCard()}</section>
  <section class="card"><h2>Hobbies</h2><p class="sub">Hobby sections add an extra tab. Turn on the ones you want.</p><label class="row" style="min-height:44px;margin-top:8px"><input type="checkbox" data-fset="tab" ${D.cfg.fishTab!==false?'checked':''} style="width:22px;height:22px"> Fishing: catch log, photos and species checklist</label>${D.cfg.fishTab!==false?`<label class="f" style="margin-top:8px">Fish weights in<select data-fset="unit"><option value="lboz" ${fUnit()==='lboz'?'selected':''}>Pounds and ounces</option><option value="kg" ${fUnit()==='kg'?'selected':''}>Kilograms</option></select></label>${iconUnlocked()?`<p class="sub" style="margin:14px 0 6px">App icon (secret edition unlocked)</p><div class="row"><button class="btn ${iconPref()==='std'?'':'sec'}" data-act="iconstd">Standard</button><button class="btn ${iconPref()==='fish'?'':'sec'}" data-act="iconfish">Fishing edition</button></div><p class="sub">After switching, remove the app from your home screen and add it again from Safari.</p>`:''}<p class="sub" style="margin:14px 0 6px">The Bank's sky follows real sunrise and sunset. It uses ${(()=>{try{return localStorage.getItem('pgeo')?'your location':'central England'}catch(e){return'central England'}})()} (sunrise ${hm(skyKeys().sr)}, sunset ${hm(skyKeys().ss)} today).</p><div class="row"><button class="btn sec" data-act="geo">Use my location</button>${(()=>{try{return localStorage.getItem('pgeo')?'<button class="btn sec" data-act="geooff">Use central England</button>':''}catch(e){return''}})()}</div>`:''}</section>
  <section class="card"><h2>App tour</h2><p class="sub">A 30-second walk through the app.</p><button class="btn sec" data-act="tour">Replay the tour</button></section>
  <section class="card"><h2>Preset</h2><p class="sub">Start again from a different preset (${esc((PRESETS[D.cfg.preset]||PRESETS.entrepreneur).n)} now). Your logged days are kept; goals that aren't in the new preset stop counting.</p><button class="btn sec" data-act="represet">Switch preset</button></section></main>`}
@@ -923,6 +923,7 @@ addEventListener('keydown',e=>{if(e.key==='Escape'&&(lb||spSel||celeb||secret)){
 addEventListener('hashchange',()=>{if(tourPending&&location.hash==='#today'){tourPending=false;setTimeout(startTour,300)}lb=null;spSel=null;celeb=null;picked=null;status='';lastQ='';render();scrollTo(0,0)});
 root.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('[data-floattap]')){floatTap();return}if(e.target.classList&&e.target.classList.contains('sheetbg')&&!celeb){spSel=null;rr();return}const t=e.target.closest('button,a');if(!t)return;const ds=t.dataset;
  if(fishClick(t,ds))return;
+ if(ds.snap){const t=+ds.snap;if(snapArm!==t){snapArm=t;rr();return}snapArm=null;restoreSnap(t);return}
  if(ds.wr!=null){wRange=+ds.wr;rr();return}
  if(ds.wdel){D.wdel[ds.wdel]=Date.now();D.weights=D.weights.filter(x=>x.id!==ds.wdel);save();rr();return}
  if(ds.obPreset){ob.preset=ds.obPreset;render();return}
@@ -999,13 +1000,20 @@ function snapAll(){snap={cfg:JSON.stringify(D.cfg),foods:JSON.stringify([D.foods
 function stamp(){const now=Date.now(),c=JSON.stringify(D.cfg),f=JSON.stringify([D.foods,D.recent]);
  if(c!==snap.cfg){D.cfgU=now;snap.cfg=c}if(f!==snap.foods){D.foodsU=now;snap.foods=f}
  }
-function mergeDay(a,b){const o={v:{},vt:{},food:[],fdel:{},note:'',u:Math.max(a.u||0,b.u||0)},ts=(x,id)=>(x.vt&&x.vt[id]!=null?x.vt[id]:(x.u||0));
+function mergeDay(a,b){const o={v:{},vt:{},food:[],fdel:{},note:'',u:Math.max(a.u||0,b.u||0)},has=(x,id)=>x.v&&x.v[id]!=null,vt=(x,id)=>x.vt&&x.vt[id]!=null?x.vt[id]:null;
  const ids=new Set([...Object.keys(a.v||{}),...Object.keys(b.v||{}),...Object.keys(a.vt||{}),...Object.keys(b.vt||{})]);
- for(const id of ids){const ta=ts(a,id),tb=ts(b,id),w=tb>ta?b:a;o.vt[id]=Math.max(ta,tb);if(w.v&&w.v[id]!=null)o.v[id]=w.v[id]}
+ for(const id of ids){const ta=vt(a,id),tb=vt(b,id);let w;
+  if(ta!=null&&tb!=null)w=tb>ta?b:a;                                   /* both versioned: newest change wins, including deliberate clears */
+  else if(ta!=null)w=has(b,id)&&(b.u||0)>ta?b:a;                         /* only one side versioned: an older copy can't clear it */
+  else if(tb!=null)w=has(a,id)&&(a.u||0)>tb?a:b;
+  else w=has(a,id)&&has(b,id)?((b.u||0)>(a.u||0)?b:a):has(a,id)?a:b;  /* legacy: never treat "missing" as deleted */
+  if(has(w,id))o.v[id]=w.v[id];else if(has(a,id)&&ta==null&&w===b&&tb==null)o.v[id]=a.v[id];else if(has(b,id)&&tb==null&&w===a&&ta==null)o.v[id]=b.v[id];
+  const t=Math.max(ta||0,tb||0);if(t)o.vt[id]=t}
  for(const s of[a.fdel||{},b.fdel||{}])for(const[k,t]of Object.entries(s))o.fdel[k]=Math.max(o.fdel[k]||0,t);
  const seen=new Set();for(const e of[...(a.food||[]),...(b.food||[])]){if(!e.id)continue;if(seen.has(e.id)||o.fdel[e.id])continue;seen.add(e.id);o.food.push(e)}
  const la=Math.max(a.lu||0,a.u||0),lb=Math.max(b.lu||0,b.u||0),legacy=(lb>la?b:a).food||[];o.food=[...legacy.filter(e=>!e.id),...o.food];o.lu=Math.max(a.lu||0,b.lu||0);
- const na=a.nt!=null?a.nt:(a.u||0),nb=b.nt!=null?b.nt:(b.u||0);o.note=(nb>na?b:a).note||'';o.nt=Math.max(na,nb);return o}
+ const na=a.nt!=null?a.nt:null,nb=b.nt!=null?b.nt:null;let nw;if(na!=null&&nb!=null)nw=nb>na?b:a;else if(na!=null)nw=b.note&&(b.u||0)>na?b:a;else if(nb!=null)nw=a.note&&(a.u||0)>nb?a:b;else nw=(b.note&&((b.u||0)>(a.u||0)||!a.note))?b:a;
+ o.note=nw.note||'';const nt=Math.max(na||0,nb||0);if(nt)o.nt=nt;return o}
 function merge(a,b,preferRemote){const o=JSON.parse(JSON.stringify(a));if(!b||!b.cfg)return o;
  if(preferRemote||(b.cfgU||0)>(a.cfgU||0)){o.cfg=b.cfg;o.cfgU=Math.max(b.cfgU||0,a.cfgU||0)}
  if((b.foodsU||0)>(a.foodsU||0)){o.recent=b.recent||[];o.foodsU=b.foodsU}
@@ -1018,7 +1026,7 @@ function setSync(s){syncState=s;document.querySelectorAll('[data-syncst]').forEa
 function queueSync(){if(!sb||!user)return;setSync('syncing');clearTimeout(syncTimer);syncTimer=setTimeout(syncNow,2000)}
 async function syncNow(){if(!sb||!user)return;if(syncing){again=true;return}syncing=true;setSync('syncing');let changed=false;
  try{const r=await sb.from('pillars_data').select('data').eq('user_id',user.id).maybeSingle();if(r.error)throw r.error;
-  if(r.data&&r.data.data){const before=JSON.stringify(D);D=merge(D,r.data.data,freshLogin);freshLogin=false;changed=JSON.stringify(D)!==before;try{localStorage.setItem('pillars2',JSON.stringify(D))}catch(e){}snapAll()}
+  if(r.data&&r.data.data){const before=JSON.stringify(D);const merged=merge(D,r.data.data,freshLogin);if(JSON.stringify(merged)!==before&&countVals(D))await takeSnap('Before sync',true);D=merged;freshLogin=false;changed=JSON.stringify(D)!==before;try{localStorage.setItem('pillars2',JSON.stringify(D))}catch(e){}snapAll()}
   const w=await sb.from('pillars_data').upsert({user_id:user.id,data:D,updated_at:new Date().toISOString()});if(w.error)throw w.error;
   lastSync=new Date();syncErr='';setSync('synced');uploadPending();syncBoard()}
  catch(e){console.warn('sync',e);syncErr=(e&&(e.message||e.code))||String(e);setSync(navigator.onLine===false?'offline':'error')}
@@ -1051,6 +1059,24 @@ let updShown=false;
 async function checkUpdate(){if(updShown||location.protocol==='file:')return;try{const t=await(await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'})).text();const m=t.match(/const VERSION='([^']+)'/);
  if(m&&m[1]!==VERSION){updShown=true;const d=document.createElement('div');d.className='upd';d.innerHTML='<span>New version available</span><button>Update</button>';d.querySelector('button').onclick=()=>location.replace(location.pathname+'?v='+Date.now()+location.hash);document.body.appendChild(d)}}catch(e){}}
 addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checkUpdate()});
+/* ---------- Automatic local backups (last 15 versions, kept on this device) ---------- */
+let snapDB=null;const sdb=()=>snapDB||(snapDB=new Promise((res,rej)=>{const r=indexedDB.open('pillars-snaps',1);r.onupgradeneeded=()=>r.result.createObjectStore('s');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)}));
+const sdo=(mode,fn)=>sdb().then(db=>new Promise((res,rej)=>{const tx=db.transaction('s',mode),st=tx.objectStore('s'),q=fn(st);tx.oncomplete=()=>res(q&&q.result);tx.onerror=()=>rej(tx.error)}));
+let lastSnap=0,snapList=null;
+function countVals(x){let n=0;for(const d of Object.values(x.days||{}))n+=Object.keys(d.v||{}).length+(d.food||[]).length;return n}
+async function takeSnap(why,force){try{const now=Date.now();if(!force&&now-lastSnap<30*60e3)return;lastSnap=now;const copy=JSON.parse(JSON.stringify(D));
+ await sdo('readwrite',s=>s.put({t:now,why,vals:countVals(copy),catches:((copy.fish||{}).catches||[]).length,d:copy},now));
+ const keys=await sdo('readonly',s=>s.getAllKeys());if(keys.length>15)await sdo('readwrite',s=>{keys.sort((a,b)=>a-b).slice(0,keys.length-15).forEach(k=>s.delete(k))});snapList=null}catch(e){}}
+async function loadSnaps(){try{const all=await sdo('readonly',s=>s.getAll());snapList=(all||[]).map(x=>({t:x.t,why:x.why,vals:x.vals,catches:x.catches})).sort((a,b)=>b.t-a.t)}catch(e){snapList=[]}if(view()==='settings')rr()}
+async function restoreSnap(t){const x=await sdo('readonly',s=>s.get(t));if(!x)return;await takeSnap('Before restoring',true);const now=Date.now(),R=JSON.parse(JSON.stringify(x.d));
+ for(const d of Object.values(R.days||{})){d.vt=d.vt||{};for(const id of Object.keys(d.v||{}))d.vt[id]=now;d.nt=now}
+ R.cfgU=now;R.foodsU=now;if(R.fish)for(const c of R.fish.catches||[])c.ts=now;
+ const keepAcct=D.fish&&D.fish.board;D=R;if(keepAcct&&D.fish)D.fish.board=keepAcct;snapAll();save();rr();toast('Backup restored')}
+function snapsCard(){if(snapList===null){loadSnaps();return''}
+ const fm=t=>new Date(t).toLocaleString('en-GB',{weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+ return`<details data-keep="snaps" ${openD.has('snaps')?'open':''} style="margin-top:12px"><summary>Automatic backups (${snapList.length})</summary><p class="sub">The app quietly saves a copy on this device every half hour you use it, and before every sync. If anything ever goes missing, restore an earlier copy here.</p>
+ ${snapList.map(s=>`<div class="fe"><div>${fm(s.t)}<small>${esc(s.why)} · ${s.vals} entries${s.catches?' · '+s.catches+' catches':''}</small></div><span></span><button class="btn sec" data-snap="${s.t}" style="height:40px">${snapArm===s.t?'Tap to confirm':'Restore'}</button></div>`).join('')||'<p class="empty">No backups yet.</p>'}</details>`}
+let snapArm=null;
 /* ---------- Leaderboard (shared table; venues and photos are never shared) ---------- */
 let board={rows:null,at:0,err:'',mode:'species',sp:null},boardHash='';
 const boardOn=()=>!!(fishD().board&&fishD().board.on);
@@ -1128,7 +1154,7 @@ document.getElementById('tour').addEventListener('click',e=>{const b=e.target.cl
  if(a==='next'){tour.i++;if(tour.i>=TOUR().length){endTour();return}showTour()}if(a==='back'){tour.i=Math.max(0,tour.i-1);showTour()}if(a==='skip')endTour()});
 addEventListener('resize',()=>{if(tour)showTour()});addEventListener('keydown',e=>{if(tour&&e.key==='Escape')endTour();if(tour&&e.key==='ArrowRight'){tour.i++;tour.i>=TOUR().length?endTour():showTour()}});
 applyIcon();
-snapAll();render();initSync();setTimeout(checkUpdate,1500);setInterval(()=>{if(document.visibilityState==='visible')checkUpdate()},5*60*1000);
+snapAll();render();initSync();setTimeout(()=>takeSnap('On open'),1000);setTimeout(checkUpdate,1500);setInterval(()=>{if(document.visibilityState==='visible')checkUpdate()},5*60*1000);
 try{const pv=localStorage.getItem('pver');if(pv&&pv!==VERSION)setTimeout(()=>toast('Updated to v'+VERSION),600);localStorage.setItem('pver',VERSION)}catch(e){}
 }
 </script></body></html>
