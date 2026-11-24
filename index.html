@@ -388,9 +388,13 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 .code.big{font-size:26px;letter-spacing:.16em}
 @media(prefers-reduced-motion:reduce){.pmenu{transition:none}}
 @media(max-width:700px){.fhero:not(.sm){height:calc(min(60vw,290px) + env(safe-area-inset-top))}}
+.fhero .fhin{pointer-events:none}.fhero .fhin>*,.fhero .fhin button{pointer-events:auto}
+.mbox{cursor:pointer}.mbox:hover path,.mbox:focus path{filter:brightness(1.2)}
+.news h2{font-size:24px;margin:2px 0 8px}.news h3{font-family:Fraunces,Georgia,serif;font-size:18px;margin:18px 0 4px;color:#e9d9a8}.news p,.news li{line-height:1.55;color:var(--ink);opacity:.92}.news p{margin:6px 0}.news ul{margin:6px 0;padding-left:20px}.news li{margin:3px 0}
+.ndate{font-size:13px;color:var(--mut);margin:0}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><div id="achpop" aria-live="polite"></div><script>
 {
-const VERSION='7.15';
+const VERSION='7.16';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -574,7 +578,7 @@ const idbPut=(k,b)=>idbDo('readwrite',s=>s.put(b,k)),idbGet=k=>idbDo('readonly',
 async function compress(file,max=1600,q=.82){let src;try{src=await createImageBitmap(file,{imageOrientation:'from-image'})}catch(e){src=await new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=URL.createObjectURL(file)})}
  const w=src.width||src.naturalWidth,h=src.height||src.naturalHeight,s=Math.min(1,max/Math.max(w,h)),c=document.createElement('canvas');c.width=Math.round(w*s);c.height=Math.round(h*s);c.getContext('2d').drawImage(src,0,0,c.width,c.height);
  return new Promise(r=>c.toBlob(r,'image/jpeg',q))}
-function stillScene(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)document.querySelectorAll('.scene animate').forEach(a=>a.remove())}
+function stillScene(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)document.querySelectorAll('.scene animate,.scene animateTransform').forEach(a=>a.remove())}
 async function hydratePhotos(){stillScene();const imgs=[...document.querySelectorAll('img[data-pid]')];const need=[];
  for(const im of imgs){const id=im.dataset.pid;if(purl[id]){im.src=purl[id];continue}need.push(im)}
  const cloud=[];for(const im of need){const id=im.dataset.pid;try{const b=await idbGet(id);if(b){purl[id]=URL.createObjectURL(b);im.src=purl[id];continue}}catch(e){}if(im.dataset.path)cloud.push(im)}
@@ -880,7 +884,7 @@ function scene(){const t=sceneHour(),S=skyAt(t),R=fRng('stars');let stars='';for
  <rect id="skx" y="-150" width="400" height="152" fill="${S.s[0]}"/><rect width="400" height="170" fill="url(#sk)"/><g id="stars" opacity="${S.st.toFixed(2)}">${stars}</g><circle id="glc" cx="${S.sx}" cy="${S.sy}" r="60" fill="url(#gl)"/><circle id="sunc" cx="${S.sx}" cy="${S.sy}" r="${S.r}" fill="${S.sun}"/>
  <g id="clouds" opacity="${S.co.toFixed(2)}"><g class="clouds">${[[70,40,46,5],[110,33,30,4],[250,52,58,6],[300,45,34,4],[180,22,40,3.5]].map(([x,y,rx,ry])=>`<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="url(#cg)"/>`).join('')}</g></g><g class="mist"><ellipse cx="120" cy="104" rx="90" ry="6" fill="#fff" opacity=".12"/><ellipse cx="300" cy="100" rx="70" ry="5" fill="#fff" opacity=".1"/></g>
  <path id="far" d="M0 104 Q50 78 110 92 T230 84 T330 90 T400 82 V118 H0Z" fill="${S.far}"/>
- <path id="near" d="M0 116 ${Array.from({length:21},(_,i)=>`Q${i*20+10} ${100+((i*53)%14)} ${i*20+20} 114`).join(' ')} V122 H0Z" fill="${S.near}"/>
+ <path id="near" d="M0 116 ${Array.from({length:21},(_,i)=>`Q${i*20+10} ${100+((i*53)%14)} ${i*20+20} 114`).join(' ')} V122 H0Z" fill="${S.near}"/>${mailbox()}
  <rect y="118" width="400" height="52" fill="url(#wt)"/>
  <g id="shim" transform="translate(${(S.sx-200).toFixed(1)} 0)"><g class="shim">${[0,1,2,3,4].map(i=>`<rect x="${180+i*7-(i%2)*10}" y="${124+i*8}" width="${30-i*3}" height="1.6" rx=".8" fill="${S.sun}" opacity="${.5-i*.07}"/>`).join('')}</g></g>
  <g transform="translate(250 140)">${[0,1.8].map(d=>`<ellipse rx="4" ry="1" fill="none" stroke="#fff" stroke-opacity="0"><animate attributeName="rx" values="4;32" dur="3.6s" begin="${d}s" repeatCount="indefinite"/><animate attributeName="ry" values="1;7" dur="3.6s" begin="${d}s" repeatCount="indefinite"/><animate attributeName="stroke-opacity" values=".8;0" dur="3.6s" begin="${d}s" repeatCount="indefinite"/></ellipse>`).join('')}<g class="bob"><rect x="-1.6" y="-13" width="3.2" height="8" rx="1.6" fill="#ff6a2b"/><rect x="-1.2" y="-5.5" width="2.4" height="6" fill="#f2efe4"/></g><circle data-floattap r="16" cy="-6" fill="#fff" fill-opacity="0" style="cursor:pointer"/></g>
@@ -1079,9 +1083,9 @@ const ICONS={today:'<circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/>'
 const fishOnly=()=>D.cfg.mode==='fish';
 const tabList=()=>fishOnly()?[['fishing','The Bank'],['settings','Settings']]:[['today','Today'],['food','Food'],['history','Progress'],...(D.cfg.fishTab!==false?[['fishing','Fishing']]:[]),['settings','Settings']];
 const tabs=v=>`<nav class="tabs" style="--n:${tabList().length}">${tabList().map(([k,l])=>`<a href="#${k}" class="${v===k?'on':''}" ${v===k?'aria-current="page"':''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[k]}</svg>${l}${k==='fishing'&&pendingIn().length?'<i class="tdot" aria-label="Friend requests"></i>':''}</a>`).join('')}</nav>`;
-const view=()=>{const h=location.hash.slice(1);if(h==='profile'||h==='friends'||(h==='mate'&&pv)||(h==='album'&&alb)||(h==='map'&&D.cfg.fishTab!==false))return h;return tabList().some(t=>t[0]===h)?h:(fishOnly()?'fishing':'today')};
+const view=()=>{const h=location.hash.slice(1);if(h==='profile'||h==='friends'||(h==='news'&&D.cfg.fishTab!==false)||(h==='mate'&&pv)||(h==='album'&&alb)||(h==='map'&&D.cfg.fishTab!==false))return h;return tabList().some(t=>t[0]===h)?h:(fishOnly()?'fishing':'today')};
 function keepOpen(){document.querySelectorAll('details[data-keep]').forEach(d=>d.open?openD.add(d.dataset.keep):openD.delete(d.dataset.keep));document.querySelectorAll('details[data-pi]').forEach(d=>d.open?openP.add(+d.dataset.pi):openP.delete(+d.dataset.pi))}
-function render(){keepOpen();stopLoc();if(!D.onboarded||ob.done){root.innerHTML=onboard();return}const v=view();root.innerHTML=(v==='food'?food():v==='history'?history():v==='settings'?settings():v==='fishing'?fishing():v==='profile'||v==='mate'?profilePage():v==='friends'?friendsPage():v==='album'?albumPage():v==='map'?mapPage():today())+(v==='map'||(lb||blb||spSel||celeb||secret||gl||albPick||mapPick)&&['fishing','album','mate'].includes(v)?'':tabs(v))+glBox();document.body.classList.toggle('fishmode',['fishing','profile','mate','album','map','friends'].includes(v)||(fishOnly()&&v==='settings'));if(v==='profile'||v==='mate'||v==='friends')loadSocial();if(v==='album')loadAlbums();if(v==='food')renderResults();if(v==='history')drawW();if(['fishing','profile','mate','album'].includes(v))hydratePhotos();if(v==='map'){initCatchMap();requestAnimationFrame(()=>{const p=document.querySelector('.mappage.noanim');if(p)p.classList.remove('noanim')})}else mapMenuOn=false;if(v==='fishing'&&mapPick)initPickMap()}
+function render(){keepOpen();stopLoc();if(!D.onboarded||ob.done){root.innerHTML=onboard();return}const v=view();root.innerHTML=(v==='food'?food():v==='history'?history():v==='settings'?settings():v==='fishing'?fishing():v==='profile'||v==='mate'?profilePage():v==='friends'?friendsPage():v==='news'?newsPage():v==='album'?albumPage():v==='map'?mapPage():today())+(v==='map'||(lb||blb||spSel||celeb||secret||gl||albPick||mapPick)&&['fishing','album','mate'].includes(v)?'':tabs(v))+glBox();document.body.classList.toggle('fishmode',['fishing','profile','mate','album','map','friends','news'].includes(v)||(fishOnly()&&v==='settings'));if(v==='profile'||v==='mate'||v==='friends')loadSocial();if(v==='album')loadAlbums();if(v==='food')renderResults();if(v==='history')drawW();if(['fishing','profile','mate','album'].includes(v))hydratePhotos();if(v==='map'){initCatchMap();requestAnimationFrame(()=>{const p=document.querySelector('.mappage.noanim');if(p)p.classList.remove('noanim')})}else mapMenuOn=false;if(v==='fishing'&&mapPick)initPickMap()}
 let morphing=false;
 function morph(to){if(morphing)return;morphing=true;const toFish=to==='fish',o=document.getElementById('morph'),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
  const apply=()=>{D.cfg.mode=to;if(toFish)D.cfg.fishTab=true;save();location.hash='settings';render();scrollTo(0,0)};
@@ -1295,6 +1299,38 @@ function snapsCard(){if(snapList===null){loadSnaps();return''}
  return`<details data-keep="snaps" ${openD.has('snaps')?'open':''} style="margin-top:12px"><summary>Automatic backups (${snapList.length})</summary><p class="sub">The app quietly saves a copy on this device every half hour you use it, and before every sync. If anything ever goes missing, restore an earlier copy here.</p>
  ${snapList.map(s=>`<div class="fe"><div>${fm(s.t)}<small>${esc(s.why)} · ${s.vals} entries${s.catches?' · '+s.catches+' catches':''}</small></div><span></span><button class="btn sec" data-snap="${s.t}" style="height:40px">${snapArm===s.t?'Tap to confirm':'Restore'}</button></div>`).join('')||'<p class="empty">No backups yet.</p>'}</details>`}
 let snapArm=null;
+/* ---------- News / announcements (the mailbox on the hill) ---------- */
+const NEWS=[
+ {id:'2026-11-24',date:'2026-11-24',title:"What's new on The Bank",by:'Adam',body:[
+  ['p',"A lot has landed on The Bank over the last few weeks. Here's the round-up of the big stuff, in case you missed any of it."],
+  ['h','Every fish, properly drawn'],
+  ['p','All 123 species now have their own lifelike, field-guide style artwork, from bleak to bluefin tuna. Have a scroll through the Species tab, it looks the part now.'],
+  ['h','Pin your swims'],
+  ['p',"Drop a location pin on any catch: use your phone's GPS, pick the spot on a satellite map, or let it pin itself from your photo's location. Tap the map button next to Log a catch to see every pin, with a blue dot showing where you are, road and place names, and filters by species and time."],
+  ['p','Pins are private. Only you can ever see them, even if you share everything else.'],
+  ['h','Angler profiles and friends'],
+  ['p','Tap your picture in the top corner. Your profile shows your PBs, catch stats and 21 badges to unlock, from Night owl to Specimen hunter. Pick a profile picture, then add your mates with your friend code or straight from the leaderboard.'],
+  ['h','Galleries and shared albums'],
+  ['p',"Once you're friends you can scroll through each other's catch photos. Off on a trip together? Start a shared album in the Gallery tab and everyone can chuck their photos in."],
+  ['h','Rankings, upgraded'],
+  ['p',"Tap anyone on the leaderboard and their catch opens up as a trading card, with the photo, method, bait and notes. You choose exactly what goes on yours."],
+  ['h','Fishing only mode'],
+  ['p',"Just here for the fishing? Settings, then App mode, then Fishing only. The rest of the app disappears and it's just The Bank. Watch out for the splash."],
+  ['h','And the little things'],
+  ['ul',['Pinch to zoom on any full-size photo','Topwater and 30 more methods to pick from','A tidier Settings page','More of the scenery on your phone, and this mailbox, which is where news like this will land from now on']],
+  ['p','Tight lines.']]}
+];
+const newsSeen=()=>{try{return localStorage.getItem('pnews')||''}catch(e){return''}};
+const newsUnread=()=>NEWS.length&&newsSeen()!==NEWS[0].id;
+function mailbox(){const up=newsUnread();return`<a href="#news" class="mbox${up?' up':''}" aria-label="${up?'News: new post':'News'}"><g transform="translate(36 117)"><rect x="-15" y="-32" width="30" height="36" fill="transparent"/>
+ <rect x="-1.6" y="-14" width="3.2" height="14.5" rx=".6" fill="#5b3a1e"/><rect x="-5" y="-1" width="10" height="2" rx="1" fill="#3b2410" opacity=".6"/>
+ <path d="M-8 -14 V-21 a8 6 0 0 1 16 0 V-14 Z" fill="#9a6a35" stroke="#3b2410" stroke-width=".8"/><path d="M-8 -18 H8 M-8 -16 H8" stroke="#6b4320" stroke-width=".45"/>
+ <path d="M-8 -14 V-21 a8 6 0 0 1 1 -2.8 V-14 Z" fill="#3b2410" opacity=".35"/><rect x="-8" y="-14.6" width="16" height="1.3" fill="#5b3a1e"/>
+ <g class="mflag" ${up?'':'transform="rotate(90 8.15 -14.5)"'}>${up?'<animateTransform attributeName="transform" type="rotate" values="0 8.15 -14.5;-8 8.15 -14.5;0 8.15 -14.5" dur="2.4s" repeatCount="indefinite"/>':''}<rect x="7.6" y="-24" width="1.1" height="9.5" fill="#2a1a0c"/><path d="M8.7 -24 h5 v3.4 h-5 Z" fill="#e0453a"/></g></g></a>`}
+function newsPage(){const back=`<button class="pback" data-act="pback" aria-label="Back">‹</button>`,head=`<header class="fhero sm">${scene().svg}<div class="fhin">${back}<p class="fgreet fx">From the mailbox</p><div class="fhtop"><h1>News</h1></div></div></header>`;
+ if(NEWS.length)try{localStorage.setItem('pnews',NEWS[0].id)}catch(e){}
+ const fd=d=>new Date(d+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+ return head+`<main class="wrap">${NEWS.map(n=>`<article class="card news"><p class="ndate">${fd(n.date)}${n.by?' · '+esc(n.by):''}</p><h2>${esc(n.title)}</h2>${n.body.map(([k,v])=>k==='h'?`<h3>${esc(v)}</h3>`:k==='ul'?`<ul>${v.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:`<p>${esc(v)}</p>`).join('')}</article>`).join('')||'<section class="card"><p class="sub">No news yet.</p></section>'}</main>`}
 /* ---------- Pinch, drag and double-tap zoom for full-screen photos ---------- */
 let pz=null;
 const pzSet=()=>{const{img,s,x,y}=pz;img.style.transform=`translate(${x}px,${y}px) scale(${s})`;img.classList.toggle('zoomed',s>1.01);const lb=img.closest('.lb');if(lb)lb.classList.toggle('zooming',s>1.01)};
