@@ -293,21 +293,21 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 .srow.first{border-top:0}
 .morph{position:fixed;inset:0;z-index:60;pointer-events:none;overflow:hidden;display:none}.morph.on{display:block;pointer-events:auto}
 .mw{position:absolute;left:0;right:0;height:150vh;display:flex;flex-direction:column}
-.mw.rise{top:100%;animation:mrise 1.9s cubic-bezier(.55,.05,.35,1) forwards}.mw.fall{bottom:100%;animation:mfall 1.9s cubic-bezier(.55,.05,.35,1) forwards}
-@keyframes mrise{0%{transform:translateY(0)}45%,52%{transform:translateY(-122vh)}100%{transform:translateY(-280vh)}}
-@keyframes mfall{0%{transform:translateY(0)}45%,52%{transform:translateY(122vh)}100%{transform:translateY(280vh)}}
-.mwave{display:block;width:200%;height:70px;flex:none;fill:#163a30;animation:mslide 1.2s linear infinite}.mwave .w2{fill:#1f4a3d;opacity:.7}.mwave.bot{fill:#163a30}
+.mw.rise{top:100%;animation:mrise 3.4s cubic-bezier(.45,.05,.4,1) forwards}.mw.fall{bottom:100%;animation:mfall 3.4s cubic-bezier(.45,.05,.4,1) forwards}
+@keyframes mrise{0%{transform:translateY(0)}38%,64%{transform:translateY(-122vh)}100%{transform:translateY(-280vh)}}
+@keyframes mfall{0%{transform:translateY(0)}38%,64%{transform:translateY(122vh)}100%{transform:translateY(280vh)}}
+.mwave{display:block;width:200%;height:70px;flex:none;fill:#163a30;animation:mslide 2.4s linear infinite}.mwave .w2{fill:#1f4a3d;opacity:.7}.mwave.bot{fill:#163a30}
 @keyframes mslide{to{transform:translateX(-50%)}}
 .mbody{flex:1;position:relative;background-color:#163a30;background-image:radial-gradient(circle at 50% 115%,transparent 44%,rgba(217,180,90,.09) 46% 52%,transparent 54%),linear-gradient(#163a30,#0f201a 60%,#163a30);background-size:28px 18px,100% 100%}
-.mfish{position:absolute;top:calc(22vh + 30px);left:105vw;width:min(42vw,220px);fill:#d9b45a;filter:drop-shadow(0 6px 16px #0008);animation:mswim 1.6s ease-in-out .2s forwards}
+.mfish{position:absolute;top:calc(22vh + 30px);left:105vw;width:min(42vw,220px);fill:#d9b45a;filter:drop-shadow(0 6px 16px #0008);animation:mswim 2.8s ease-in-out .4s forwards}
 @keyframes mswim{0%{transform:translateX(0) translateY(0) rotate(0)}25%{transform:translateX(-45vw) translateY(-12px) rotate(4deg)}50%{transform:translateX(-80vw) translateY(10px) rotate(-3deg)}100%{transform:translateX(-160vw) translateY(-6px) rotate(2deg)}}
-.mtxt{position:absolute;top:calc(22vh + 130px);left:0;right:0;text-align:center;font-family:Fraunces,Georgia,serif;font-size:clamp(28px,8vw,44px);font-weight:600;color:#f4ecd2;text-shadow:0 2px 18px #0009;margin:0;opacity:0;animation:mtxt 1.9s ease forwards}
-@keyframes mtxt{0%,25%{opacity:0;transform:translateY(10px)}45%,60%{opacity:1;transform:none}80%,100%{opacity:0}}
-.bubs i{position:absolute;bottom:20%;border-radius:99px;border:1.5px solid #ffffff55;background:#ffffff14;animation:mbub 1.4s ease-in forwards;opacity:0}
+.mtxt{position:absolute;top:calc(22vh + 130px);left:0;right:0;text-align:center;font-family:Fraunces,Georgia,serif;font-size:clamp(28px,8vw,44px);font-weight:600;color:#f4ecd2;text-shadow:0 2px 18px #0009;margin:0;opacity:0;animation:mtxt 3.4s ease forwards}
+@keyframes mtxt{0%,28%{opacity:0;transform:translateY(10px)}40%,66%{opacity:1;transform:none}78%,100%{opacity:0}}
+.bubs i{position:absolute;bottom:20%;border-radius:99px;border:1.5px solid #ffffff55;background:#ffffff14;animation:mbub 2.4s ease-in forwards;opacity:0}
 @keyframes mbub{0%{opacity:0;transform:translateY(0)}20%{opacity:1}100%{opacity:0;transform:translateY(-60vh)}}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><script>
 {
-const VERSION='6.9';
+const VERSION='6.10';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -994,11 +994,11 @@ let morphing=false;
 function morph(to){if(morphing)return;morphing=true;const toFish=to==='fish',o=document.getElementById('morph'),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
  const apply=()=>{D.cfg.mode=to;if(toFish)D.cfg.fishTab=true;save();location.hash='settings';render();scrollTo(0,0)};
  if(calm){apply();morphing=false;toast(toFish?'Fishing only':'Full app');return}
- const bub=Array.from({length:14},(_,i)=>`<i style="left:${(i*7.3+4)%100}%;animation-delay:${(.15+((i*37)%10)/14).toFixed(2)}s;width:${6+(i*5)%10}px;height:${6+(i*5)%10}px"></i>`).join('');
+ const bub=Array.from({length:14},(_,i)=>`<i style="left:${(i*7.3+4)%100}%;animation-delay:${(.3+((i*37)%10)/7).toFixed(2)}s;width:${6+(i*5)%10}px;height:${6+(i*5)%10}px"></i>`).join('');
  o.innerHTML=`<div class="mw ${toFish?'rise':'fall'}"><svg class="mwave top" viewBox="0 0 1200 80" preserveAspectRatio="none"><path d="M0 40 C150 0 300 0 450 40 S750 80 900 40 S1100 0 1200 30 V80 H0Z"/><path class="w2" d="M0 50 C200 20 350 70 600 45 S1000 20 1200 50 V80 H0Z"/></svg><div class="mbody"><div class="bubs">${bub}</div>
  <svg class="mfish" viewBox="0 0 120 50" aria-hidden="true"><path d="M8 25 C30 2 70 2 92 22 L114 6 L108 25 L114 44 L92 28 C70 48 30 48 8 25Z"/><circle cx="24" cy="21" r="3" fill="#13241c"/></svg>
  <p class="mtxt">${toFish?'Gone fishing':'Back on dry land'}</p></div><svg class="mwave bot" viewBox="0 0 1200 80" preserveAspectRatio="none"><path d="M0 40 C150 80 300 80 450 40 S750 0 900 40 S1100 80 1200 50 V0 H0Z"/></svg></div>`;
- o.className='morph on';setTimeout(apply,900);setTimeout(()=>{o.className='morph';o.innerHTML='';morphing=false;toast(toFish?'Fishing only mode on':'Full app is back')},1900)}
+ o.className='morph on';setTimeout(apply,1700);setTimeout(()=>{o.className='morph';o.innerHTML='';morphing=false;toast(toFish?'Fishing only mode on':'Full app is back')},3400)}
 function rr(){const y=scrollY;render();scrollTo(0,y)}
 let tt;function toast(t){const e=document.getElementById('toast');e.innerHTML=`<div class="toast" role="status">${esc(t)}</div>`;clearTimeout(tt);tt=setTimeout(()=>e.innerHTML='',2600)}
 
