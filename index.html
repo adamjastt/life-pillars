@@ -228,6 +228,30 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 .ldr .nm{font-weight:600}.ldr small{display:block;color:var(--mut);font-weight:400;font-size:12px}.ldr .vl{text-align:right;font-weight:700;white-space:nowrap}
 .ldrart{max-width:280px;margin:6px auto 0}
 .ftabs button{padding:0 8px;font-size:15px}
+.crow{background:var(--card);border:1px solid #ffffff12;border-radius:18px;margin-bottom:12px;overflow:hidden}
+.crhead{display:grid;grid-template-columns:72px minmax(0,1fr) 20px;gap:14px;align-items:center;width:100%;text-align:left;background:none;border:0;padding:10px 14px 10px 10px;color:var(--ink)}
+.crthumb{width:72px;height:72px;border-radius:14px;object-fit:cover;display:block;background:var(--card2)}.crthumb.art{display:grid;place-items:center;padding:6px;background:radial-gradient(#2c5a4c,#163029)}
+.crmeta{display:grid;gap:2px}.crmeta b{font-size:17px}.crmeta small{color:var(--mut);font-size:14px}
+.crchev{width:10px;height:10px;border-right:2px solid var(--mut);border-bottom:2px solid var(--mut);transform:rotate(45deg);justify-self:center;transition:transform .2s}
+.crow.open .crchev{transform:rotate(-135deg)}
+.crbody{padding:6px 14px 18px;animation:drop .28s ease-out}
+@keyframes drop{from{opacity:0;transform:translateY(-8px)}}
+.tc{position:relative;max-width:340px;margin:4px auto 0;aspect-ratio:63/88;border-radius:18px;padding:9px;background:linear-gradient(145deg,var(--ac),color-mix(in srgb,var(--ac) 55%,#000) 45%,var(--ac));box-shadow:0 14px 34px #000a;overflow:hidden}
+.tcin{height:100%;border-radius:11px;background:linear-gradient(170deg,var(--mc),var(--dc));display:grid;grid-template-rows:auto auto auto auto 1fr auto;gap:7px;padding:10px;color:#fff}
+.tctop{display:flex;justify-content:space-between;align-items:baseline;gap:8px}.tctop b{font-family:Fraunces,Georgia,serif;font-size:21px;line-height:1.1}.tctop span{font-weight:800;font-size:15px;color:var(--ac);white-space:nowrap}
+.tcart{position:relative;border:3px solid var(--ac);border-radius:8px;background:radial-gradient(120% 100% at 50% 100%,#3f8a8a,#1a3f4a 60%,#0e2430);padding:16px 10px 20px;box-shadow:inset 0 0 0 1px #0005}
+.tcart .fart{filter:drop-shadow(0 6px 10px #0007)}
+.tctype{position:absolute;left:8px;bottom:6px;font-size:11px;font-weight:700;background:var(--ac);color:#13241c;padding:2px 8px;border-radius:99px}
+.tcpb{position:absolute;right:8px;top:6px;font-size:11px;font-weight:800;background:#fff;color:#13241c;padding:2px 8px;border-radius:99px}
+.tcmeta{font-size:11px;color:#ffffffcc;text-align:center}
+.tcstats{display:grid;gap:6px;background:#0003;border-radius:8px;padding:8px}
+.tcs{display:grid;grid-template-columns:64px 1fr auto;gap:8px;align-items:center;font-size:12px}.tcs b{font-size:13px;white-space:nowrap}
+.tcb{height:7px;border-radius:9px;background:#ffffff22;overflow:hidden}.tcb i{display:block;height:100%;background:var(--ac);border-radius:9px}
+.tcflav{font-family:Fraunces,Georgia,serif;font-style:italic;font-size:13px;line-height:1.35;color:#ffffffdd;border-top:1px solid #ffffff2a;padding-top:6px;overflow:hidden}
+.tcfoot{display:flex;justify-content:space-between;gap:8px;font-size:10px;color:#ffffffaa}
+.tc.holo::after{content:'';position:absolute;inset:0;border-radius:18px;pointer-events:none;background:linear-gradient(115deg,transparent 20%,#ff7ad966 35%,#7affd966 45%,#ffe07a66 55%,transparent 70%);background-size:250% 250%;mix-blend-mode:overlay;animation:holo 4s ease-in-out infinite}
+@keyframes holo{0%{background-position:100% 0}50%{background-position:0 100%}100%{background-position:100% 0}}
+@media(prefers-reduced-motion:reduce){.tc.holo::after{animation:none;background-position:50% 50%}.crbody{animation:none}}
 .upd{position:fixed;left:50%;top:calc(10px + env(safe-area-inset-top));transform:translateX(-50%);z-index:30;display:flex;gap:10px;align-items:center;background:var(--ink);color:var(--bg);padding:8px 8px 8px 14px;border-radius:14px;font-size:14px;box-shadow:0 6px 24px #0008;max-width:94vw}
 .upd button{height:36px;border:0;border-radius:10px;padding:0 12px;background:var(--acc);color:#fff;font-weight:600}
 @media(max-width:700px){.wheelwrap{grid-template-columns:1fr;gap:16px}.wheel{max-width:250px;margin:0 auto}.cards{grid-template-columns:1fr}.kcal{grid-template-columns:1fr}
@@ -235,7 +259,7 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 @media(prefers-reduced-motion:no-preference){.bar i{transition:width .3s}}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><script>
 {
-const VERSION='5.6';
+const VERSION='5.7';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -767,14 +791,24 @@ function fishForm(){const c=fForm,sp=speciesAll(),venues=[...new Set(fishD().cat
  ${(c.photos||[]).length<4?`<label class="fphadd"><input type="file" accept="image/*" multiple data-fphotos hidden><span>+ Add photo</span></label>`:''}</div>
  <p class="sub" style="margin:6px 0 0">${sb&&user?'Photos are backed up privately to your account.':'Photos are kept on this device. Sign in (Settings) to back them up.'}</p></div>
  <button class="btn">${c.editId?'Save changes':'Save catch'}</button><button type="button" class="btn sec" data-fcancel>Cancel</button></form></section>`}
+const SCENEC={'UK coarse':['#d9b45a','#2f6b48','#173a2a'],'UK sea':['#7fc4e8','#245a86','#12304a'],'European':['#c9a2ff','#5b3f8f','#2a1d45'],'Other':['#ffb36b','#a04f2a','#4a2414'],'Custom':['#d9d2c0','#5a5a52','#2a2a26']};
+function tradeCard(c,cm,pb){const all=speciesAll(),idx=all.findIndex(s=>s.n===c.species),g=(all[idx]||{}).g||'Custom',[ac,mc,dc]=SCENEC[g]||SCENEC.Custom,mine=fishD().catches.filter(x=>x.species===c.species);
+ const maxG=Math.max(...mine.map(x=>x.g||0),1),maxL=Math.max(...mine.map(x=>x.cm||0),1),nth=[...mine].sort((a,b)=>(a.date+(a.time||'')).localeCompare(b.date+(b.time||''))).findIndex(x=>x.id===c.id)+1;
+ const bar=(k,pct,txt)=>`<div class="tcs"><span>${k}</span><span class="tcb"><i style="width:${Math.max(4,Math.round(pct))}%"></i></span><b>${txt}</b></div>`;
+ return`<div class="tc${pb?' holo':''}" style="--ac:${ac};--mc:${mc};--dc:${dc}"><div class="tcin">
+ <div class="tctop"><b>${esc(c.species)}</b><span>${c.g?fW(c.g):'–'}</span></div>
+ <div class="tcart">${fishSVG(c.species)}<span class="tctype">${esc(g)}${GAME.has(c.species)?' · game':''}</span>${pb?'<span class="tcpb">PB</span>':''}</div>
+ <div class="tcmeta">#${String(idx+1).padStart(3,'0')}/${all.length} · ${label(c.date)}${c.time?' '+esc(c.time):''}${c.place?' · '+esc(c.place):''}</div>
+ <div class="tcstats">${bar('Weight',c.g?c.g/maxG*100:0,c.g?fW(c.g):'–')}${bar('Length',c.cm?c.cm/maxL*100:0,c.cm?fmt(c.cm)+' cm':'–')}${bar('Catch no.',mine.length?nth/mine.length*100:0,nth+' of '+mine.length)}</div>
+ <div class="tcflav">${c.notes?esc(c.notes):[c.method&&'Caught on the '+esc(c.method.toLowerCase())+(c.bait?' with '+esc(c.bait.toLowerCase()):''),c.rel===false?'Kept.':'Safely released.'].filter(Boolean).join('. ')}</div>
+ <div class="tcfoot"><span>${esc(c.method||'')}${c.bait?' · '+esc(c.bait):''}</span><span>Life Pillars · The Bank</span></div></div></div>`}
 function fishLog(C,cm){return(fForm?fishForm():`<button class="btn bigadd" data-fnew>+ Log a catch</button>`)+
- (C.length?C.map(c=>{const pb=cm[c.species]&&cm[c.species].pb===c,open=fOpen===c.id,ph=c.photos||[],g=(speciesAll().find(s=>s.n===c.species)||{}).g||'Custom';
- const stats=[['Weight',c.g?fW(c.g):'–'],['Length',c.cm?fmt(c.cm)+' cm':'–'],['Caught',label(c.date)+(c.time?' · '+c.time:'')],['Venue',c.place||'–'],['Method',c.method||'–'],['Bait',c.bait||'–']];
- return`<section class="scard${pb?' ispb':''}"><div class="sctop"><div class="scart">${fishSVG(c.species)}</div>${pb?'<span class="pbribbon">Personal best</span>':''}<span class="scscene">${esc(g)}</span></div>
- <div class="scbody"><h3>${esc(c.species)}</h3><dl class="scstats">${stats.map(([k,v])=>`<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>
- ${ph.length?`<div class="scphotos">${ph.map((p,i)=>`<button class="scph" data-lb="${c.id}:${i}" aria-label="Open photo ${i+1} of your ${esc(c.species)}">${pimg(p,c.species)}</button>`).join('')}</div>`:''}
- <button class="scmore" data-fexp="${c.id}" aria-expanded="${open}">${open?'Less':'Notes, edit and more'}</button>
- ${open?`<div class="fbody" style="padding:0">${c.notes?`<p>${esc(c.notes)}</p>`:''}<p class="sub">${c.rel===false?'Kept':'Released'}</p><div class="row"><button class="btn sec" data-fedit="${c.id}">Edit</button><button class="btn danger" data-fdelc="${c.id}">${fDelArm===c.id?'Tap again to delete':'Delete'}</button></div></div>`:''}</div></section>`}).join(''):`<p class="empty" style="margin-top:14px">No catches yet. Your first one will tick off a species on the checklist.</p>`)}
+ (C.length?C.map(c=>{const pb=cm[c.species]&&cm[c.species].pb===c,open=fOpen===c.id,ph=c.photos||[];
+ return`<section class="crow${open?' open':''}"><button class="crhead" data-fexp="${c.id}" aria-expanded="${open}">${ph[0]?pimg(ph[0],c.species,'crthumb'):`<span class="crthumb art" aria-hidden="true">${fishSVG(c.species)}</span>`}
+ <span class="crmeta"><b>${esc(c.species)}${pb?' <span class="pb">PB</span>':''}</b><small>${[c.g?fW(c.g):'',c.cm?fmt(c.cm)+' cm':''].filter(Boolean).join(' · ')||'No weight'}</small><small>${label(c.date)}${c.place?' · '+esc(c.place):''}</small></span><span class="crchev" aria-hidden="true"></span></button>
+ ${open?`<div class="crbody">${tradeCard(c,cm,pb)}
+ ${ph.length?`<div class="scphotos" style="justify-content:center">${ph.map((p,i)=>`<button class="scph" data-lb="${c.id}:${i}" aria-label="Open photo ${i+1}">${pimg(p,c.species)}</button>`).join('')}</div>`:''}
+ <div class="row" style="justify-content:center;margin-top:12px"><button class="btn sec" data-fedit="${c.id}">Edit</button><button class="btn danger" data-fdelc="${c.id}">${fDelArm===c.id?'Tap again to delete':'Delete'}</button></div></div>`:''}</section>`}).join(''):`<p class="empty" style="margin-top:14px">No catches yet. Your first one will tick off a species on the checklist.</p>`)}
 function fishGallery(C){const ps=C.flatMap(c=>(c.photos||[]).map((p,i)=>({p,c,i})));
  return ps.length?`<div class="gal">${ps.map(({p,c,i})=>`<button class="gitem" data-lb="${c.id}:${i}" aria-label="${esc(c.species)}, ${label(c.date)}">${pimg(p,c.species)}<span>${esc(c.species)}${c.g?' · '+fW(c.g):''}</span></button>`).join('')}</div>`:'<p class="empty">Photos you add to catches will appear here.</p>'}
 function lightbox(){const all=catches().flatMap(c=>(c.photos||[]).map((p,i)=>({p,c,i}))),k=all.findIndex(x=>x.c.id===lb.c&&x.i===lb.i);if(k<0)return'';const {p,c}=all[k];
