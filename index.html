@@ -51,7 +51,7 @@ h3{font-size:15px;margin:16px 0 6px;color:var(--mut);font-weight:600}
 .link{display:inline-flex;align-items:center;height:44px;padding:0 14px;border-radius:12px;background:var(--card2);text-decoration:none;color:var(--ink);font-weight:600;white-space:nowrap}
 .bar{grid-column:1/-1;height:6px;border-radius:9px;background:var(--card2);overflow:hidden}
 .bar i{display:block;height:100%;background:var(--pc,var(--acc));border-radius:9px}
-.bar.over i{background:var(--bad)}
+.bar.lim{display:flex;position:relative}.bar.lim i{flex:none;border-radius:9px 0 0 9px}.bar.lim:not(.over) i{border-radius:9px}.bar.lim b{display:block;height:100%;background:var(--bad);border-radius:0 9px 9px 0}.bar.lim u{position:absolute;top:-2px;bottom:-2px;width:2px;margin-left:-1px;background:var(--ink,#fff);opacity:.7}
 .btn{border:0;border-radius:12px;height:44px;padding:0 16px;background:var(--ink);color:var(--bg);font-weight:600;white-space:nowrap}
 .btn.sec{background:var(--card2);color:var(--ink)}
 .btn.danger{background:none;border:1px solid var(--bad);color:var(--bad)}
@@ -260,7 +260,7 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 @media(prefers-reduced-motion:no-preference){.bar i{transition:width .3s}}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><script>
 {
-const VERSION='5.9';
+const VERSION='6.0';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -366,7 +366,7 @@ function val(d,m){const x=D.days[d];if(!x)return null;
  if(m.food){const f=x.food||[];return f.length?f.reduce((a,e)=>a+(+e[m.food]||0),0):null}
  const v=x.v&&x.v[m.id];return v==null?null:v}
 function mScore(m,v){if(v==null)return 0;const t=+m.t||1;
- if(m.d==='max')return v<=t?1:Math.max(0,1-(v-t)/t);
+ if(m.d==='max')return v<=t?1:t/v;
  if(m.d==='near'){const r=Math.abs(v-t)/t;return r<=0.1?1:Math.max(0,1-(r-0.1)/0.4)}
  return Math.min(v/t,1)}
 function pScore(p,d){let s=0,w=0;for(const m of p.m){const ww=+m.w||1;w+=ww;s+=ww*mScore(m,val(d,m))}return w?Math.round(100*s/w):0}
@@ -862,7 +862,9 @@ function wheel(d){const ps=P(),n=ps.length||1,c=150;
 function mrow(m){const v=val(cur,m),s=mScore(m,v),over=m.d==='max'&&v!=null&&v>m.t;
  const right=m.food?`<a class="link" href="#food">${v==null?'Log food':fmt(v)+' '+esc(m.u)}</a>`:
  `<div class="stp"><button data-dec="${m.id}" aria-label="Less ${esc(m.n)}">−</button><input inputmode="decimal" data-val="${m.id}" value="${v==null?'':v}" placeholder="0" aria-label="${esc(m.n)} (${esc(m.u)})"><button data-inc="${m.id}" aria-label="More ${esc(m.n)}">+</button></div>`;
- return`<div class="mrow"><div><div class="mn">${esc(m.n)}</div><div class="mt">${goalTxt(m)}</div></div>${right}<div class="bar${over?' over':''}"><i style="width:${Math.round(s*100)}%"></i></div></div>`}
+ return`<div class="mrow"><div><div class="mn">${esc(m.n)}</div><div class="mt">${goalTxt(m)}</div></div>${right}${m.d==='max'?limBar(m,v):`<div class="bar"><i style="width:${Math.round(s*100)}%"></i></div>`}</div>`}
+function limBar(m,v){const t=+m.t||1,x=+v||0,S=Math.max(x,t),pc=n=>(100*n/S).toFixed(1);
+ return`<div class="bar lim${x>t?' over':''}" title="${fmt(x)} of ${fmt(t)} ${esc(m.u)} used"><i style="width:${pc(Math.min(x,t))}%"></i>${x>t?`<b style="width:${pc(x-t)}%"></b><u style="left:${pc(t)}%"></u>`:''}</div>`}
 function today(){const st=streak();
  return`<header class="hero"><div class="in"><div class="top"><h1>Life Pillars</h1><span class="sub">${st?st+'-day streak':'No streak yet'} · <span data-syncst>${SYNC[syncState]}</span></span></div>${navBar()}
  <div class="wheelwrap">${wheel(cur)}<div><div class="legend">${P().map(p=>`<div class="lg"><i style="background:${esc(p.c)}"></i><span>${esc(p.n)}</span><b>${pScore(p,cur)}%</b></div>`).join('')}</div>
