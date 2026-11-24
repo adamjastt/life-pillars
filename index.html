@@ -198,6 +198,13 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 .tcard h3{font-family:Sora,Inter,sans-serif;font-size:19px;margin:2px 0 6px;color:var(--ink)}.tcard p{margin:0 0 12px;color:var(--mut);font-size:15px}.tcard .tstep{font-size:12px;margin:0;color:var(--mut)}
 .tcard .row{gap:8px}
 @media(prefers-reduced-motion:reduce){.tspot{transition:none}}
+.sw{position:relative}
+.sugg{position:absolute;left:0;right:0;top:100%;margin-top:4px;z-index:20;background:var(--card2);border:1px solid #ffffff22;border-radius:14px;box-shadow:0 12px 30px #0009;overflow:hidden;display:none}
+.sugg.on{display:block}
+.sugg button{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;width:100%;text-align:left;background:none;border:0;border-top:1px solid #ffffff12;padding:8px 12px;min-height:48px;color:var(--ink);font-size:16px}
+.sugg button:first-child{border-top:0}.sugg button:hover,.sugg button:focus{background:#ffffff10}
+.sugg .sgart{width:56px}.sugg .sgart .fart{width:56px}.sugg small{color:var(--mut);font-size:12px}
+.sugg mark{background:none;color:#d9b45a;font-weight:600}
 .upd{position:fixed;left:50%;top:calc(10px + env(safe-area-inset-top));transform:translateX(-50%);z-index:30;display:flex;gap:10px;align-items:center;background:var(--ink);color:var(--bg);padding:8px 8px 8px 14px;border-radius:14px;font-size:14px;box-shadow:0 6px 24px #0008;max-width:94vw}
 .upd button{height:36px;border:0;border-radius:10px;padding:0 12px;background:var(--acc);color:#fff;font-weight:600}
 @media(max-width:700px){.wheelwrap{grid-template-columns:1fr;gap:16px}.wheel{max-width:250px;margin:0 auto}.cards{grid-template-columns:1fr}.kcal{grid-template-columns:1fr}
@@ -205,7 +212,7 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 @media(prefers-reduced-motion:no-preference){.bar i{transition:width .3s}}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><script>
 {
-const VERSION='5.2';
+const VERSION='5.3';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -725,11 +732,11 @@ function celebrate(cm,sp){const got=sp.filter(s=>isTicked(s.n,cm)).length;
 
 function fishForm(){const c=fForm,sp=speciesAll(),venues=[...new Set(fishD().catches.map(x=>x.place).filter(Boolean))],methods=[...new Set(fishD().catches.map(x=>x.method).filter(Boolean))];
  return`<section class="card"><h2>${c.editId?'Edit catch':'Log a catch'}</h2><form id="fform" class="grid3" style="margin-top:10px">
- <label class="f" style="grid-column:1/-1">Species<input name="species" list="fsp" required maxlength="60" value="${esc(c.species||'')}" placeholder="Start typing, e.g. Perch" autocomplete="off"></label><datalist id="fsp">${sp.map(s=>`<option value="${esc(s.n)}">`).join('')}</datalist>
+ <label class="f sw" style="grid-column:1/-1">Species<input name="species" data-suggest="species" required maxlength="60" value="${esc(c.species||'')}" placeholder="Start typing, e.g. Perch" autocomplete="off" autocorrect="off" spellcheck="false" role="combobox" aria-autocomplete="list" aria-controls="sg-species"><div class="sugg" id="sg-species" role="listbox"></div></label><datalist id="fsp">${sp.map(s=>`<option value="${esc(s.n)}">`).join('')}</datalist>
  <label class="f">Date<input type="date" name="date" value="${c.date||TODAY}" max="${TODAY}"></label><label class="f">Time<input type="time" name="time" value="${esc(c.time||'')}"></label>
  ${fWInputs(c.g)}<label class="f">Length (cm)<input name="cm" inputmode="decimal" value="${c.cm??''}"></label>
- <label class="f" style="grid-column:1/-1">Venue<input name="place" list="fven" maxlength="80" value="${esc(c.place||'')}" placeholder="Lake, river or beach"></label><datalist id="fven">${venues.map(v=>`<option value="${esc(v)}">`).join('')}</datalist>
- <label class="f">Method<input name="method" list="fmet" maxlength="40" value="${esc(c.method||'')}" placeholder="e.g. Float, lure"></label><datalist id="fmet">${[...new Set([...methods,'Float','Feeder','Ledger','Lure','Fly','Drop shot','Free-lining','Pole','Surface'])].map(v=>`<option value="${esc(v)}">`).join('')}</datalist>
+ <label class="f sw" style="grid-column:1/-1">Venue<input name="place" data-suggest="venue" maxlength="80" value="${esc(c.place||'')}" placeholder="Lake, river or beach" autocomplete="off"><div class="sugg" id="sg-venue" role="listbox"></div></label><datalist id="fven">${venues.map(v=>`<option value="${esc(v)}">`).join('')}</datalist>
+ <label class="f sw">Method<input name="method" data-suggest="method" maxlength="40" value="${esc(c.method||'')}" placeholder="e.g. Float, lure" autocomplete="off"><div class="sugg" id="sg-method" role="listbox"></div></label><datalist id="fmet">${[...new Set([...methods,'Float','Feeder','Ledger','Lure','Fly','Drop shot','Free-lining','Pole','Surface'])].map(v=>`<option value="${esc(v)}">`).join('')}</datalist>
  <label class="f">Bait<input name="bait" maxlength="40" value="${esc(c.bait||'')}" placeholder="e.g. Maggots"></label>
  <label class="row" style="grid-column:1/-1;font-size:15px"><input type="checkbox" name="rel" ${c.rel!==false?'checked':''} style="width:22px;height:22px"> Released</label>
  <label class="f" style="grid-column:1/-1">Notes<textarea name="notes" rows="2" maxlength="1000">${esc(c.notes||'')}</textarea></label>
@@ -941,7 +948,7 @@ root.addEventListener('change',e=>{const t=e.target,ds=t.dataset;
  if(ds.cfg){const v=num(t.value);if(v!=null&&v>0){if(ds.cfg==='mc')D.cfg.macros.c=v;else if(ds.cfg==='mf')D.cfg.macros.f=v;else D.cfg.good=Math.min(100,v)}save();rr();return}
  if(ds.restore!=null&&t.files[0]){t.files[0].text().then(s=>{const j=JSON.parse(s);if(!j.cfg||!j.days)throw 0;D=j;D.foods=D.foods||[];D.recent=D.recent||[];snapAll();D.cfgU=Date.now();Object.values(D.days).forEach(x=>x.u=Date.now());save();rr();toast('Backup restored')}).catch(()=>toast('That file is not a Life Pillars backup'))}});
 root.addEventListener('toggle',e=>{const d=e.target;if(d.dataset&&d.dataset.keep){d.open?openD.add(d.dataset.keep):openD.delete(d.dataset.keep)}if(d.dataset&&d.dataset.pi!=null){d.open?openP.add(+d.dataset.pi):openP.delete(+d.dataset.pi)}},true);
-root.addEventListener('input',e=>{if(e.target.dataset.fsq!=null){fQ=e.target.value;const cm=caughtMap(),el=document.getElementById('fsplist');if(el)el.innerHTML=spRows(spFilter(speciesAll(),cm),cm);return}if(e.target.id==='amt')updAmt();if(e.target.id==='fq'){lastQ=e.target.value;if(!lastQ.trim()){picked=null;status='';renderResults()}}});
+root.addEventListener('input',e=>{if(e.target.dataset&&e.target.dataset.suggest){showSugg(e.target);return}if(e.target.dataset.fsq!=null){fQ=e.target.value;const cm=caughtMap(),el=document.getElementById('fsplist');if(el)el.innerHTML=spRows(spFilter(speciesAll(),cm),cm);return}if(e.target.id==='amt')updAmt();if(e.target.id==='fq'){lastQ=e.target.value;if(!lastQ.trim()){picked=null;status='';renderResults()}}});
 root.addEventListener('submit',e=>{e.preventDefault();const f=e.target;
  if(f.id==='fform'){saveCatch(f);return}
  if(f.id==='fadd'){const n=f.elements.n.value.trim();if(n&&!speciesAll().some(s=>s.n.toLowerCase()===n.toLowerCase())){fishD().custom.push(n);save();toast('Species added')}rr();return}
@@ -1016,6 +1023,18 @@ let updShown=false;
 async function checkUpdate(){if(updShown||location.protocol==='file:')return;try{const t=await(await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'})).text();const m=t.match(/const VERSION='([^']+)'/);
  if(m&&m[1]!==VERSION){updShown=true;const d=document.createElement('div');d.className='upd';d.innerHTML='<span>New version available</span><button>Update</button>';d.querySelector('button').onclick=()=>location.replace(location.pathname+'?v='+Date.now()+location.hash);document.body.appendChild(d)}}catch(e){}}
 addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')checkUpdate()});
+/* Suggestions under fishing inputs (iPhone ignores <datalist>) */
+function suggList(kind,q){q=q.trim().toLowerCase();const F=fishD();
+ if(kind==='species'){const all=speciesAll();if(!q)return[];const st=all.filter(s=>s.n.toLowerCase().startsWith(q)),inc=all.filter(s=>!s.n.toLowerCase().startsWith(q)&&s.n.toLowerCase().split(/[ ()]+/).some(w=>w.startsWith(q))),mid=all.filter(s=>!st.includes(s)&&!inc.includes(s)&&s.n.toLowerCase().includes(q));return[...st,...inc,...mid].slice(0,6).map(s=>({v:s.n,sub:s.g}))}
+ const pool=kind==='venue'?[...new Set(F.catches.map(x=>x.place).filter(Boolean))]:[...new Set([...F.catches.map(x=>x.method).filter(Boolean),'Float','Feeder','Ledger','Lure','Fly','Drop shot','Free-lining','Pole','Surface','Spinning','Bait'])];
+ return pool.filter(v=>!q||v.toLowerCase().includes(q)).filter(v=>v.toLowerCase()!==q).slice(0,6).map(v=>({v}))}
+function showSugg(inp){const k=inp.dataset.suggest,box=document.getElementById('sg-'+k);if(!box)return;const L=suggList(k,inp.value),q=inp.value.trim();
+ if(!L.length){box.classList.remove('on');box.innerHTML='';return}
+ const hl=t=>{const i=t.toLowerCase().indexOf(q.toLowerCase());return i<0||!q?esc(t):esc(t.slice(0,i))+'<mark>'+esc(t.slice(i,i+q.length))+'</mark>'+esc(t.slice(i+q.length))};
+ box.innerHTML=L.map(x=>`<button type="button" role="option" data-sugg="${esc(k)}" data-val="${esc(x.v)}">${k==='species'?`<span class="sgart">${fishSVG(x.v)}</span>`:'<span></span>'}<span>${hl(x.v)}</span>${x.sub?`<small>${esc(x.sub)}</small>`:'<span></span>'}</button>`).join('');box.classList.add('on')}
+document.addEventListener('focusin',e=>{const t=e.target;if(t.dataset&&t.dataset.suggest)showSugg(t)});
+document.addEventListener('focusout',e=>{const t=e.target;if(t.dataset&&t.dataset.suggest)setTimeout(()=>{const b=document.getElementById('sg-'+t.dataset.suggest);if(b&&!b.contains(document.activeElement)){b.classList.remove('on')}},180)});
+document.addEventListener('pointerdown',e=>{const b=e.target.closest&&e.target.closest('[data-sugg]');if(!b)return;e.preventDefault();const k=b.dataset.sugg,inp=document.querySelector(`[data-suggest="${k}"]`);if(inp){inp.value=b.dataset.val;const box=document.getElementById('sg-'+k);box.classList.remove('on');box.innerHTML='';if(fForm)keepForm()}});
 /* Easter egg: tap the float on The Bank five times to unlock the fishing edition icon */
 const iconPref=()=>{try{return localStorage.getItem('picon')||'std'}catch(e){return'std'}},iconUnlocked=()=>{try{return localStorage.getItem('piconOk')==='1'}catch(e){return false}};
 function applyIcon(){const f=iconPref()==='fish';const m=document.getElementById('lman'),t=document.getElementById('ltouch');if(m)m.href=f?'manifest-fish.json':'manifest.json';if(t)t.href=f?'icon-fish-180.png':'icon-192.png'}
