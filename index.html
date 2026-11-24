@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Life Pillars</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><style id="css">
+/* VOICE: personal, calm, a little motivating — a daily check-in, not a dashboard
+   IDEA: a compass / wheel of life you fill in each day
+   PICTURE: four-quadrant wheel, each slice grows with today's score, average in the centre
+   COLOUR and TYPE: deep ink hero, white cards; coral, green, violet, pink per pillar; Sora + Inter
+   LAYOUT: date nav + wheel on top, four check-in cards, 14-day grid, backup footer */
+:root{color-scheme:light dark;--bg:light-dark(#ffffff,#121016);--card:light-dark(#f5f4f8,#1c1a22);--line:light-dark(#e3e1ea,#2c2934);--ink:light-dark(#16141c,#f1eff6);--mut:light-dark(#5d5a68,#a9a5b5);--hero:#14121a;
+--c0:light-dark(#e5533d,#ff7a63);--c1:light-dark(#1f9e63,#3cc985);--c2:light-dark(#5a54d8,#8d88ff);--c3:light-dark(#d63f86,#ff6fae)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Inter,system-ui,sans-serif;overflow-x:clip}
+h1,h2,.num{font-family:Sora,Inter,sans-serif}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--c2);outline-offset:2px}
+.hero{background:var(--hero);color:#f4f2f8;padding:20px max(5vw,16px) 28px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:980px;margin:0 auto}
+h1{font-size:22px;margin:0;line-height:1.1}
+.pill{font-size:13px;padding:6px 10px;border-radius:99px;background:#ffffff1a;color:#d9d5e3;white-space:nowrap}
+.nav{display:flex;align-items:center;justify-content:center;gap:8px;margin:18px auto 6px;max-width:980px}
+.nav button{background:#ffffff14;border:0;border-radius:12px;min-width:44px;height:44px;padding:0 12px;color:#fff}
+.nav .d{font-family:Sora,sans-serif;font-size:20px;min-width:9.5em;text-align:center}
+.wheelwrap{display:grid;grid-template-columns:minmax(0,320px) minmax(0,1fr);gap:28px;align-items:center;max-width:980px;margin:10px auto 0}
+.wheel{width:100%;aspect-ratio:1;display:block}
+.legend{display:grid;gap:10px}
+.lg{display:grid;grid-template-columns:14px 1fr auto;gap:10px;align-items:center;font-size:16px}
+.lg i{width:14px;height:14px;border-radius:4px}
+.lg b{font-family:Sora,sans-serif;font-size:20px}
+.streak{margin-top:8px;color:#bdb8ca;font-size:15px}
+.wrap{max-width:980px;margin:0 auto;padding:24px max(5vw,16px) 40px}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.card{background:var(--card);border-radius:18px;padding:18px;border-top:5px solid var(--pc)}
+.ch{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+h2{font-size:19px;margin:0}
+.big{font-family:Sora,sans-serif;font-size:32px;color:var(--pc);line-height:1}
+.big small{font-size:15px;color:var(--mut)}
+.sc{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:5px;margin:14px 0}
+.sc button{height:44px;border-radius:10px;border:1px solid var(--line);background:var(--bg);font-weight:600}
+.sc button.on{background:var(--pc);border-color:var(--pc);color:#fff}
+.hb{list-style:none;margin:0 0 12px;padding:0;display:grid;gap:4px}
+.hb label{display:flex;gap:10px;align-items:center;min-height:44px;padding:0 4px;border-radius:10px;cursor:pointer}
+.hb input{width:22px;height:22px;accent-color:var(--pc);flex:none}
+.hb .x{margin-left:auto;border:0;background:none;color:var(--mut);min-width:44px;height:44px;font-size:20px}
+.add{display:flex;gap:6px;margin-bottom:12px}
+.add input{flex:1;font-size:16px;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.add button,.btn{border:0;border-radius:10px;padding:0 14px;height:44px;background:var(--ink);color:var(--bg);font-weight:600}
+.btn.ghost{background:none;border:1px solid var(--line);color:var(--ink)}
+textarea{width:100%;font:16px/1.4 Inter,sans-serif;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);resize:vertical;min-height:60px}
+.sec{margin:34px 0 12px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.sec h2{font-size:22px}
+.grid{display:grid;grid-template-columns:4.5em repeat(14,minmax(0,1fr));gap:4px;align-items:center}
+.grid .l{font-size:13px;color:var(--mut)}
+.grid .h{font-size:11px;color:var(--mut);text-align:center}
+.cell{aspect-ratio:1;border-radius:5px;border:1px dashed var(--line);background:none;padding:0}
+.cell.cur{outline:2px solid var(--ink);outline-offset:1px}
+.foot{margin-top:34px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;color:var(--mut);font-size:14px}
+@media(max-width:640px){.wheelwrap{grid-template-columns:1fr;gap:16px}.wheel{max-width:280px;margin:0 auto}.cards{grid-template-columns:1fr}.sc{grid-template-columns:repeat(5,minmax(0,1fr))}.nav .d{font-size:17px;min-width:8em}}
+@media(prefers-reduced-motion:no-preference){.slice{transition:d .4s}.sc button{transition:background .15s}}
+</style></head><body><div id="root"></div><script id="state" type="application/json">null</script><script id="app">
+{
+const P=[{k:'phys',n:'Physical health',s:'Body',c:'--c0'},{k:'wealth',n:'Wealth',s:'Wealth',c:'--c1'},{k:'mind',n:'Mental health',s:'Mind',c:'--c2'},{k:'rel',n:'Relationships',s:'People',c:'--c3'}];
+const DEF={phys:['Trained / moved 30+ min','7–8 hrs sleep','2L water'],wealth:['Revenue-generating work','No impulse spending','Learned a new skill'],mind:['Meditated or journaled','No doom-scrolling','Read 10 pages'],rel:['Quality time with someone','Reached out to friend/family','Did something kind']};
+const CSS=document.getElementById('css').textContent,JS=document.getElementById('app').textContent;
+const root=document.getElementById('root');
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+const pad=n=>String(n).padStart(2,'0');
+const iso=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const shift=(s,n)=>{const d=new Date(s+'T12:00:00');d.setDate(d.getDate()+n);return iso(d)};
+const TODAY=iso(new Date());
+let S=null;try{S=JSON.parse(document.getElementById('state').textContent)}catch(e){}
+try{const l=JSON.parse(localStorage.getItem('pillars')||'null');if(l&&l.habits&&(!S||(l.updated||0)>(S.updated||0)))S=l}catch(e){}
+if(!S||!S.habits)S={habits:JSON.parse(JSON.stringify(DEF)),days:{},updated:0};
+let cur=TODAY,editing=false,art=null,timer=null,state='local';
+try{const c=sessionStorage.getItem('pcur');if(c)cur=c;const y=+sessionStorage.getItem('py');if(y)setTimeout(()=>scrollTo(0,y),30)}catch(e){}
+const get=(d,k)=>(S.days[d]&&S.days[d][k])||{s:null,h:[],n:''};
+const put=(k,fn)=>{S.days[cur]=S.days[cur]||{};const v=get(cur,k);fn(v);S.days[cur][k]=v};
+const done=d=>P.every(p=>get(d,p.k).s!=null);
+function streak(){let d=done(TODAY)?TODAY:shift(TODAY,-1),n=0;while(done(d)){n++;d=shift(d,-1)}return n}
+function label(d){if(d===TODAY)return'Today';if(d===shift(TODAY,-1))return'Yesterday';return new Date(d+'T12:00:00').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'})}
+function sector(i,r){const c=150,a0=(-90+i*90)*Math.PI/180,a1=(i*90)*Math.PI/180;
+return`M${c} ${c}L${(c+r*Math.cos(a0)).toFixed(1)} ${(c+r*Math.sin(a0)).toFixed(1)}A${r} ${r} 0 0 1 ${(c+r*Math.cos(a1)).toFixed(1)} ${(c+r*Math.sin(a1)).toFixed(1)}Z`}
+function wheel(){const sc=P.map(p=>get(cur,p.k).s);const got=sc.filter(v=>v!=null);const avg=got.length?(got.reduce((a,b)=>a+b,0)/got.length).toFixed(1):'–';
+return`<svg class="wheel" viewBox="0 0 300 300" role="img" aria-label="Wheel of today's scores">
+${[0.25,0.5,0.75,1].map(f=>`<circle cx="150" cy="150" r="${(26+114*f).toFixed(0)}" fill="none" stroke="#ffffff1f"/>`).join('')}
+${P.map((p,i)=>`<path d="${sector(i,140)}" fill="var(${p.c})" opacity=".13"/><path class="slice" d="${sector(i,sc[i]==null?0.1:26+11.4*sc[i])}" fill="var(${p.c})"/>`).join('')}
+<line x1="150" y1="8" x2="150" y2="292" stroke="#14121a" stroke-width="4"/><line x1="8" y1="150" x2="292" y2="150" stroke="#14121a" stroke-width="4"/>
+<circle cx="150" cy="150" r="34" fill="#14121a"/><text x="150" y="158" text-anchor="middle" fill="#fff" font-family="Sora,sans-serif" font-size="24" font-weight="700">${avg}</text></svg>`}
+function card(p){const v=get(cur,p.k),hs=S.habits[p.k];
+return`<section class="card" style="--pc:var(${p.c})"><div class="ch"><h2>${p.n}</h2><span class="big">${v.s==null?'–':v.s}<small>/10</small></span></div>
+<div class="sc" role="group" aria-label="${p.n} score">${[1,2,3,4,5,6,7,8,9,10].map(n=>`<button data-score="${p.k}:${n}" class="${v.s===n?'on':''}" aria-pressed="${v.s===n}">${n}</button>`).join('')}</div>
+<ul class="hb">${hs.map((h,i)=>`<li><label><input type="checkbox" data-habit="${p.k}" data-i="${i}" ${v.h.includes(h)?'checked':''}> <span>${esc(h)}</span>${editing?`<button class="x" data-del="${p.k}:${i}" aria-label="Remove ${esc(h)}">×</button>`:''}</label></li>`).join('')||'<li style="color:var(--mut);font-size:14px">No habits yet — tap Edit habits to add some.</li>'}</ul>
+${editing?`<form class="add" data-add="${p.k}"><input placeholder="New habit" maxlength="60" aria-label="New ${p.n} habit"><button>Add</button></form>`:''}
+<textarea data-note="${p.k}" placeholder="Note for the day (optional)" aria-label="${p.n} note">${esc(v.n)}</textarea></section>`}
+function history(){const days=[];for(let i=13;i>=0;i--)days.push(shift(TODAY,-i));
+return`<div class="grid"><span></span>${days.map(d=>`<span class="h">${new Date(d+'T12:00:00').toLocaleDateString('en-GB',{weekday:'narrow'})}</span>`).join('')}
+${P.map(p=>`<span class="l">${p.s}</span>${days.map(d=>{const s=get(d,p.k).s;return`<button class="cell${d===cur?' cur':''}" data-go="${d}" aria-label="${p.s} ${label(d)}: ${s==null?'not scored':s}" style="${s==null?'':`border:0;background:color-mix(in srgb,var(${p.c}) ${20+s*8}%,transparent)`}"></button>`}).join('')}`).join('')}</div>`}
+const STAT={local:'Saved on this device',saving:'Saving…',synced:'Synced',err:'Not synced — saved on this device'};
+function render(){const st=streak();
+root.innerHTML=`<header class="hero"><div class="top"><h1>Life Pillars</h1><span class="pill" id="st">${STAT[state]}</span></div>
+<div class="nav"><button data-nav="-1" aria-label="Previous day">‹</button><span class="d">${label(cur)}</span><button data-nav="1" aria-label="Next day" ${cur>=TODAY?'disabled style="opacity:.3"':''}>›</button>${cur!==TODAY?'<button data-nav="0">Today</button>':''}</div>
+<div class="wheelwrap">${wheel()}<div><div class="legend">${P.map(p=>{const s=get(cur,p.k).s;return`<div class="lg"><i style="background:var(${p.c})"></i><span>${p.n}</span><b>${s==null?'–':s}</b></div>`}).join('')}</div>
+<p class="streak">${st?`🔥 ${st}-day streak of full check-ins`:'Score all four pillars to start a streak'}</p></div></div></header>
+<main class="wrap"><div class="cards">${P.map(card).join('')}</div>
+<div class="sec"><h2>Last 14 days</h2><button class="btn ghost" data-act="edit">${editing?'Done editing':'Edit habits'}</button></div>${history()}
+<div class="foot"><button class="btn ghost" data-act="copy">Copy backup</button><span id="msg">Tap a square to open that day.</span></div></main>`}
+function setStat(s){state=s;const e=document.getElementById('st');if(e)e.textContent=STAT[s]}
+function save(redraw=true){S.updated=Date.now();try{localStorage.setItem('pillars',JSON.stringify(S))}catch(e){}if(redraw){const y=scrollY;render();scrollTo(0,y)}
+if(!art){setStat('local');return}setStat('saving');clearTimeout(timer);timer=setTimeout(publish,1500)}
+function doc(){const j=JSON.stringify(S).replace(/</g,'\\u003c');
+return'<!DOCTYPE html>\n<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Life Pillars</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><style id="css">'+CSS+'</style></head><body><div id="root"></div><script id="state" type="application/json">'+j+'<\/script><script id="app">'+JS+'<\/script></body></html>'}
+function publish(){try{sessionStorage.setItem('pcur',cur);sessionStorage.setItem('py',String(scrollY))}catch(e){}
+art.publish(doc()).then(()=>setStat('synced')).catch(e=>{const c=e&&(e.code||e.message)||'';setStat(/conflict/.test(c)?'synced':'err')})}
+root.addEventListener('click',e=>{const t=e.target.closest('button');if(!t)return;
+if(t.dataset.nav!=null){const n=+t.dataset.nav;cur=n===0?TODAY:shift(cur,n);if(cur>TODAY)cur=TODAY;try{sessionStorage.setItem('pcur',cur)}catch(e){}render();return}
+if(t.dataset.score){const[k,n]=t.dataset.score.split(':');put(k,v=>{v.s=v.s===+n?null:+n});save();return}
+if(t.dataset.go){cur=t.dataset.go;try{sessionStorage.setItem('pcur',cur)}catch(e){}render();scrollTo(0,0);return}
+if(t.dataset.del){e.preventDefault();const[k,i]=t.dataset.del.split(':');S.habits[k].splice(+i,1);save();return}
+if(t.dataset.act==='edit'){editing=!editing;const y=scrollY;render();scrollTo(0,y);return}
+if(t.dataset.act==='copy'){const m=document.getElementById('msg');navigator.clipboard.writeText(JSON.stringify(S)).then(()=>m.textContent='Backup copied — paste it into a note to keep it safe.',()=>m.textContent='Copy was blocked by this browser.')}});
+root.addEventListener('change',e=>{const t=e.target;
+if(t.dataset.habit){const k=t.dataset.habit,h=S.habits[k][+t.dataset.i];put(k,v=>{v.h=v.h.filter(x=>x!==h);if(t.checked)v.h.push(h)});save(false)}
+if(t.dataset.note){put(t.dataset.note,v=>{v.n=t.value.slice(0,1000)});save(false)}});
+root.addEventListener('submit',e=>{e.preventDefault();const f=e.target,k=f.dataset.add,i=f.querySelector('input'),v=i.value.trim();if(v&&!S.habits[k].includes(v)){S.habits[k].push(v);save()}});
+render();
+const u=window.claude&&window.claude.use?window.claude.use('artifact'):Promise.resolve(null);
+u.then(a=>{art=a;if(a)setStat('synced')}).catch(()=>{});
+}
+</script></body></html>
