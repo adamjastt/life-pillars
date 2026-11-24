@@ -167,7 +167,7 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 .ftabs{margin:14px 0 6px}.ftabs button{flex:1}
 .scene .bob{animation:bob 3s ease-in-out infinite}@keyframes bob{50%{transform:translateY(1.6px)}}
 .scene .reed{animation:sway 6s ease-in-out infinite}@keyframes sway{50%{transform:rotate(2.5deg)}}
-.scene .mist{animation:drift 26s linear infinite alternate}@keyframes drift{to{transform:translateX(40px)}}
+.scene .mist{animation:drift 26s linear infinite alternate}.scene .clouds{animation:drift 60s linear infinite alternate}@keyframes drift{to{transform:translateX(40px)}}
 .scene .shim rect{animation:shim 2.6s ease-in-out infinite alternate}@keyframes shim{to{opacity:.12}}
 .scene .tw{animation:tw 3s ease-in-out infinite alternate}@keyframes tw{to{opacity:.15}}
 @media(prefers-reduced-motion:reduce){.scene *{animation:none!important}}
@@ -197,7 +197,7 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 @media(prefers-reduced-motion:no-preference){.bar i{transition:width .3s}}
 </style></head><body><div id="root"></div><div id="toast"></div><script>
 {
-const VERSION='3.6';
+const VERSION='3.7';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -570,16 +570,16 @@ const FSPEC={_:{h:17,c:['#4f6a5a','#9fb4a5','#e6eee3'],m:['scales'],tl:'f'},
 'Dragonet':{h:9,b:7,bl:.2,pk:.2,np:.6,c:['#7a6a3a','#b8a268','#f0e2b8'],f:'#d8b23a',d:'dr',dc:'#e0c040',dc2:'#4a8fd0',m:['spots:22:#3f8fd0:1.2:-1:.2'],tl:'r',ey:.85}};
 
 function scene(){const h=new Date().getHours(),t=h<5||h>=21?'night':h<8?'dawn':h<17?'day':'dusk';
- const S={night:{sky:['#081128','#1c2d4d'],sun:'#f3efd8',sy:34,sx:310,r:11,far:'#16302a',near:'#0c1a14',water:['#132a3a','#08141c'],glow:.18},
-  dawn:{sky:['#6d93bd','#f4b483'],sun:'#ffe1b0',sy:96,sx:92,r:16,far:'#5d7a68',near:'#26402f',water:['#c2c9c4','#4b6a6c'],glow:.6},
-  day:{sky:['#78b8de','#dff0f2'],sun:'#fff8de',sy:30,sx:316,r:14,far:'#6f9a72',near:'#2f5a3c',water:['#7fb3bc','#2e6468'],glow:.3},
-  dusk:{sky:['#2a3c6c','#f39461'],sun:'#ffc07a',sy:92,sx:300,r:16,far:'#4d4f5c',near:'#1c2e24',water:['#a38a8c','#2b3d4a'],glow:.6}}[t];
+ const S={night:{sky:['#060d24','#14224a','#2e2a5c','#4a3a66'],cl:'#6b5a8a',sun:'#f3efd8',sy:34,sx:310,r:11,far:'#16302a',near:'#0c1a14',water:['#132a3a','#08141c'],glow:.18},
+  dawn:{sky:['#2f4f8e','#8a7cc0','#f29c9a','#ffd28c'],cl:'#ffc2a8',sun:'#ffe1b0',sy:96,sx:92,r:16,far:'#5d7a68',near:'#26402f',water:['#f0b9a0','#4b6a6c'],glow:.6},
+  day:{sky:['#3d79c2','#86aee0','#e7aecb','#fbd49c'],cl:'#ffd6c8',sun:'#fff3cf',sy:30,sx:316,r:14,far:'#6f9a72',near:'#2f5a3c',water:['#e9b9b4','#2e6468'],glow:.45},
+  dusk:{sky:['#1d2758','#6b4a8e','#e36f7c','#ffb25c'],cl:'#ff9f8a',sun:'#ffc07a',sy:92,sx:300,r:16,far:'#4d4f5c',near:'#1c2e24',water:['#e8937e','#2b3d4a'],glow:.6}}[t];
  const R=fRng('stars');let stars='';if(t==='night')for(let i=0;i<40;i++)stars+=`<circle cx="${(R()*400).toFixed(0)}" cy="${(R()*80).toFixed(0)}" r="${(R()*.9+.3).toFixed(1)}" fill="#fff" opacity="${(R()*.6+.3).toFixed(2)}" class="tw" style="animation-delay:${(R()*4).toFixed(1)}s"/>`;
  const reeds=(x0,n,dir)=>{let o='';for(let i=0;i<n;i++){const x=x0+i*5*dir,hh=24+((i*37)%17);o+=`<path d="M${x} 170 q${dir*-3} ${-hh*.6} ${dir*2} ${-hh}" stroke="${S.near}" stroke-width="2" fill="none"/>`;if(i%3===0)o+=`<rect x="${x+dir*1.2-1.6}" y="${170-hh-6}" width="3.2" height="9" rx="1.6" fill="#3a2a18"/>`}return`<g class="reed" style="transform-origin:${x0}px 170px">${o}</g>`};
  const greet={night:'Night session',dawn:'Early start. Tight lines',day:'Tight lines',dusk:'Golden hour. Tight lines'}[t]+(D.cfg.name?`, ${esc(D.cfg.name)}`:'');
- return{greet,svg:`<svg class="scene" viewBox="0 0 400 170" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${S.sky[0]}"/><stop offset="1" stop-color="${S.sky[1]}"/></linearGradient><linearGradient id="wt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${S.water[0]}"/><stop offset="1" stop-color="${S.water[1]}"/></linearGradient><radialGradient id="gl"><stop offset="0" stop-color="${S.sun}" stop-opacity="${S.glow}"/><stop offset="1" stop-color="${S.sun}" stop-opacity="0"/></radialGradient></defs>
+ return{greet,svg:`<svg class="scene" viewBox="0 0 400 170" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><linearGradient id="sk" x1="0" y1="0" x2="0" y2="1">${S.sky.map((c,i)=>`<stop offset="${[0,.2,.4,.58][i]}" stop-color="${c}"/>`).join('')}</linearGradient><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="${S.cl}" stop-opacity=".85"/></linearGradient><linearGradient id="wt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${S.water[0]}"/><stop offset="1" stop-color="${S.water[1]}"/></linearGradient><radialGradient id="gl"><stop offset="0" stop-color="${S.sun}" stop-opacity="${S.glow}"/><stop offset="1" stop-color="${S.sun}" stop-opacity="0"/></radialGradient></defs>
  <rect width="400" height="170" fill="url(#sk)"/>${stars}<circle cx="${S.sx}" cy="${S.sy}" r="60" fill="url(#gl)"/><circle cx="${S.sx}" cy="${S.sy}" r="${S.r}" fill="${S.sun}"/>
- <g class="mist"><ellipse cx="120" cy="104" rx="90" ry="6" fill="#fff" opacity=".12"/><ellipse cx="300" cy="100" rx="70" ry="5" fill="#fff" opacity=".1"/></g>
+ <g class="clouds">${[[70,40,46,5],[110,33,30,4],[250,52,58,6],[300,45,34,4],[180,22,40,3.5]].map(([x,y,rx,ry])=>`<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="url(#cg)" opacity="${t==='night'?.25:.75}"/>`).join('')}</g><g class="mist"><ellipse cx="120" cy="104" rx="90" ry="6" fill="#fff" opacity=".12"/><ellipse cx="300" cy="100" rx="70" ry="5" fill="#fff" opacity=".1"/></g>
  <path d="M0 104 Q50 78 110 92 T230 84 T330 90 T400 82 V118 H0Z" fill="${S.far}"/>
  <path d="M0 116 ${Array.from({length:21},(_,i)=>`Q${i*20+10} ${100+((i*53)%14)} ${i*20+20} 114`).join(' ')} V122 H0Z" fill="${S.near}"/>
  <rect y="118" width="400" height="52" fill="url(#wt)"/>
