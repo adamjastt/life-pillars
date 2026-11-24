@@ -378,9 +378,11 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 .mappage.noanim .mpanel,.mappage.noanim .mpbg{transition:none}
 .logrow{display:flex;gap:10px;align-items:stretch;margin-bottom:18px}.logrow .bigadd{flex:1;width:auto;margin:0}
 .mapsq{flex:none;width:58px;height:54px;padding:0;display:grid;place-items:center;color:#d9b45a}.mapsq svg{width:26px;height:26px}
+.lb .lbimg{touch-action:none;transform-origin:center center;will-change:transform;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}.lb .lbimg.anim{transition:transform .25s ease}.lb .lbimg.zoomed{cursor:grab;position:relative;z-index:2}
+.lb.zooming .lbcap,.lb.zooming .lbn{opacity:0;pointer-events:none;transition:opacity .2s}.lb{overflow:hidden;touch-action:none}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><div id="achpop" aria-live="polite"></div><script>
 {
-const VERSION='7.11';
+const VERSION='7.12';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -1283,6 +1285,24 @@ function snapsCard(){if(snapList===null){loadSnaps();return''}
  return`<details data-keep="snaps" ${openD.has('snaps')?'open':''} style="margin-top:12px"><summary>Automatic backups (${snapList.length})</summary><p class="sub">The app quietly saves a copy on this device every half hour you use it, and before every sync. If anything ever goes missing, restore an earlier copy here.</p>
  ${snapList.map(s=>`<div class="fe"><div>${fm(s.t)}<small>${esc(s.why)} · ${s.vals} entries${s.catches?' · '+s.catches+' catches':''}</small></div><span></span><button class="btn sec" data-snap="${s.t}" style="height:40px">${snapArm===s.t?'Tap to confirm':'Restore'}</button></div>`).join('')||'<p class="empty">No backups yet.</p>'}</details>`}
 let snapArm=null;
+/* ---------- Pinch, drag and double-tap zoom for full-screen photos ---------- */
+let pz=null;
+const pzSet=()=>{const{img,s,x,y}=pz;img.style.transform=`translate(${x}px,${y}px) scale(${s})`;img.classList.toggle('zoomed',s>1.01);const lb=img.closest('.lb');if(lb)lb.classList.toggle('zooming',s>1.01)};
+function pzFor(img){if(!pz||pz.img!==img)pz={img,s:1,x:0,y:0,tap:0};return pz}
+function pzClamp(){const r=pz.img.getBoundingClientRect(),w=r.width/pz.s,h=r.height/pz.s,mx=Math.max(0,(w*pz.s-innerWidth)/2+40),my=Math.max(0,(h*pz.s-innerHeight)/2+40);pz.x=Math.max(-mx,Math.min(mx,pz.x));pz.y=Math.max(-my,Math.min(my,pz.y));if(pz.s<=1.01){pz.s=1;pz.x=0;pz.y=0}}
+function pzZoomAt(cx,cy,s){const r=pz.img.getBoundingClientRect(),C=[r.left+r.width/2-pz.x,r.top+r.height/2-pz.y],u=[(cx-C[0]-pz.x)/pz.s,(cy-C[1]-pz.y)/pz.s];pz.s=s;pz.x=cx-C[0]-s*u[0];pz.y=cy-C[1]-s*u[1]}
+function pzToggle(cx,cy){pz.img.classList.add('anim');if(pz.s>1.01){pz.s=1;pz.x=0;pz.y=0}else pzZoomAt(cx,cy,2.5);pzClamp();pzSet();setTimeout(()=>pz&&pz.img.classList.remove('anim'),260)}
+document.addEventListener('touchstart',e=>{const img=e.target.closest&&e.target.closest('.lbimg');if(!img)return;pzFor(img);img.classList.remove('anim');
+ if(e.touches.length===2){const[a,b]=e.touches;pz.d0=Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY);pz.s0=pz.s;pz.m0=[(a.clientX+b.clientX)/2,(a.clientY+b.clientY)/2];pz.t0=[pz.x,pz.y];const r=img.getBoundingClientRect();pz.C=[r.left+r.width/2-pz.x,r.top+r.height/2-pz.y];pz.pinch=true;e.preventDefault();return}
+ const t=e.touches[0],now=Date.now();if(now-pz.tap<300&&Math.hypot(t.clientX-(pz.tp||[0,0])[0],t.clientY-(pz.tp||[0,0])[1])<40){pz.tap=0;pzToggle(t.clientX,t.clientY);e.preventDefault();return}
+ pz.tap=now;pz.tp=[t.clientX,t.clientY];pz.p0=[t.clientX,t.clientY];pz.t0=[pz.x,pz.y];if(pz.s>1.01)e.preventDefault()},{passive:false});
+document.addEventListener('touchmove',e=>{if(!pz||!pz.img.isConnected||!(e.target.closest&&e.target.closest('.lbimg')))return;
+ if(e.touches.length===2&&pz.d0){const[a,b]=e.touches,d=Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY),m=[(a.clientX+b.clientX)/2,(a.clientY+b.clientY)/2],s=Math.max(1,Math.min(5,pz.s0*d/pz.d0)),u=[(pz.m0[0]-pz.C[0]-pz.t0[0])/pz.s0,(pz.m0[1]-pz.C[1]-pz.t0[1])/pz.s0];
+  pz.s=s;pz.x=m[0]-pz.C[0]-s*u[0];pz.y=m[1]-pz.C[1]-s*u[1];pzSet();e.preventDefault();return}
+ if(e.touches.length===1&&pz.s>1.01&&pz.p0){const t=e.touches[0];pz.x=pz.t0[0]+t.clientX-pz.p0[0];pz.y=pz.t0[1]+t.clientY-pz.p0[1];pzSet();e.preventDefault()}},{passive:false});
+document.addEventListener('touchend',e=>{if(!pz||!pz.img.isConnected)return;if(e.touches.length<2){pz.d0=0;if(e.touches.length===1){const t=e.touches[0];pz.p0=[t.clientX,t.clientY];pz.t0=[pz.x,pz.y]}}if(!e.touches.length){pz.img.classList.add('anim');pzClamp();pzSet();setTimeout(()=>pz&&pz.img.classList.remove('anim'),260)}});
+document.addEventListener('dblclick',e=>{const img=e.target.closest&&e.target.closest('.lbimg');if(!img)return;pzFor(img);pzToggle(e.clientX,e.clientY)});
+document.addEventListener('wheel',e=>{const img=e.target.closest&&e.target.closest('.lbimg');if(!img||!e.ctrlKey)return;e.preventDefault();pzFor(img);pzZoomAt(e.clientX,e.clientY,Math.max(1,Math.min(5,pz.s*Math.exp(-e.deltaY/100))));pzClamp();pzSet()},{passive:false});
 /* ---------- Location pins and maps (Leaflet, loaded only when needed) ---------- */
 let fView='list',mapSt={c:null,z:null,layer:'sat'},mapFocus=null,mapPick=null,pickMap=null,leafP=null;
 function leaf(){return leafP||(leafP=new Promise((res,rej)=>{if(window.L)return res(window.L);const c=document.createElement('link');c.rel='stylesheet';c.href='https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css';document.head.appendChild(c);
