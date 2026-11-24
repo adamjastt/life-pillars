@@ -18,7 +18,7 @@ button{cursor:pointer}
 input,select,textarea{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:16px;width:100%}
 .hero{background:var(--hero);padding:calc(14px + env(safe-area-inset-top)) max(5vw,16px) 22px}
 .in{max-width:980px;margin:0 auto}
-.top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:4px 12px;flex-wrap:wrap}
 h1{font-size:22px;margin:0}
 .sub{color:var(--mut);font-size:14px}
 .nav{display:flex;align-items:center;justify-content:center;gap:8px;margin:14px 0 4px}
@@ -94,7 +94,9 @@ input[type=color]{padding:4px;height:44px}
 @media(prefers-reduced-motion:no-preference){.bar i{transition:width .3s}}
 </style></head><body><div id="root"></div><div id="toast"></div><script>
 {
-const VERSION='2.0';
+const VERSION='2.1';
+/* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
+const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
 const pad=n=>String(n).padStart(2,'0');
@@ -142,7 +144,7 @@ let D=null;
 try{D=JSON.parse(localStorage.getItem('pillars2')||'null')}catch(e){}
 if(!D||!D.cfg)D={cfg:PRESET(),days:{},foods:[],recent:[],updated:0};
 D.foods=D.foods||[];D.recent=D.recent||[];
-function save(){D.updated=Date.now();try{localStorage.setItem('pillars2',JSON.stringify(D))}catch(e){toast('Could not save — storage is full or blocked')}}
+function save(){stamp();D.updated=Date.now();try{localStorage.setItem('pillars2',JSON.stringify(D))}catch(e){toast('Could not save — storage is full or blocked')}queueSync()}
 let cur=TODAY;try{cur=sessionStorage.getItem('pcur')||TODAY}catch(e){}
 if(cur>TODAY)cur=TODAY;
 let meal=(h=>h<11?'Breakfast':h<15?'Lunch':h<21?'Dinner':'Snacks')(new Date().getHours());
@@ -181,7 +183,7 @@ function mrow(m){const v=val(cur,m),s=mScore(m,v),over=m.d==='max'&&v!=null&&v>m
  `<div class="stp"><button data-dec="${m.id}" aria-label="Less ${esc(m.n)}">−</button><input inputmode="decimal" data-val="${m.id}" value="${v==null?'':v}" placeholder="0" aria-label="${esc(m.n)} (${esc(m.u)})"><button data-inc="${m.id}" aria-label="More ${esc(m.n)}">+</button></div>`;
  return`<div class="mrow"><div><div class="mn">${esc(m.n)}</div><div class="mt">${goalTxt(m)}</div></div>${right}<div class="bar${over?' over':''}"><i style="width:${Math.round(s*100)}%"></i></div></div>`}
 function today(){const st=streak();
- return`<header class="hero"><div class="in"><div class="top"><h1>Life Pillars</h1><span class="sub">${st?st+'-day streak':'No streak yet'}</span></div>${navBar()}
+ return`<header class="hero"><div class="in"><div class="top"><h1>Life Pillars</h1><span class="sub">${st?st+'-day streak':'No streak yet'} · <span data-syncst>${SYNC[syncState]}</span></span></div>${navBar()}
  <div class="wheelwrap">${wheel(cur)}<div><div class="legend">${P().map(p=>`<div class="lg"><i style="background:${esc(p.c)}"></i><span>${esc(p.n)}</span><b>${pScore(p,cur)}%</b></div>`).join('')}</div>
  <p class="sub">A day counts towards your streak at ${+D.cfg.good||70}% overall or above.</p></div></div></div></header>
  <main class="wrap"><div class="cards">${P().map(p=>`<section class="card" style="--pc:${esc(p.c)}"><div class="ch"><h2>${esc(p.n)}</h2><span class="big">${pScore(p,cur)}<small>%</small></span></div>${p.m.map(mrow).join('')||'<p class="empty">No metrics — add some in Settings.</p>'}</section>`).join('')}</div>
@@ -219,7 +221,7 @@ function history(){const days=[];for(let i=13;i>=0;i--)days.push(shift(TODAY,-i)
  <section class="card"><h2>Focus next</h2><p class="sub">Your least-hit goals over the last 7 days.</p>${ms.map(({m,s})=>`<div class="mrow"><div><div class="mn">${esc(m.n)}</div><div class="mt">${goalTxt(m)}</div></div><b class="num">${Math.round(s*100)}%</b><div class="bar"><i style="width:${Math.round(s*100)}%"></i></div></div>`).join('')}</section></main>`}
 function settings(){const types=[['min','At least'],['max','At most'],['near','Around']];
  return`<header class="hero"><div class="in"><div class="top"><h1>Settings</h1><span class="sub">v${VERSION}</span></div><p class="sub">Your pillars and metrics are your preset. Each pillar's score is the weighted % of its goals hit.</p></div></header>
- <main class="wrap">${P().map((p,pi)=>`<section class="card" style="border-top:5px solid ${esc(p.c)}"><div class="ptitle"><label class="f">Pillar name<input data-pset="${pi}:n" value="${esc(p.n)}" maxlength="40"></label><label class="f ps">Short name<input data-pset="${pi}:s" value="${esc(p.s)}" maxlength="10"></label><label class="f">Colour<input type="color" data-pset="${pi}:c" value="${esc(p.c)}"></label><button class="btn danger" data-delp="${pi}">Remove</button></div>
+ <main class="wrap">${acct()}${P().map((p,pi)=>`<section class="card" style="border-top:5px solid ${esc(p.c)}"><div class="ptitle"><label class="f">Pillar name<input data-pset="${pi}:n" value="${esc(p.n)}" maxlength="40"></label><label class="f ps">Short name<input data-pset="${pi}:s" value="${esc(p.s)}" maxlength="10"></label><label class="f">Colour<input type="color" data-pset="${pi}:c" value="${esc(p.c)}"></label><button class="btn danger" data-delp="${pi}">Remove</button></div>
  <details data-pi="${pi}" ${openP.has(pi)?'open':''}><summary>${p.m.length} metric${p.m.length===1?'':'s'} · tap to edit</summary>${p.m.map((m,mi)=>`<div class="mset"><label class="f mname">Metric ${m.food?'<span class="tag">from food log</span>':''}<input data-mset="${pi}:${mi}:n" value="${esc(m.n)}" maxlength="50"></label><label class="f">Unit<input data-mset="${pi}:${mi}:u" value="${esc(m.u)}" maxlength="10"></label><label class="f">Target<input inputmode="decimal" data-mset="${pi}:${mi}:t" value="${m.t}"></label>
  <label class="f">Goal type<select data-mset="${pi}:${mi}:d">${types.map(([v,l])=>`<option value="${v}" ${m.d===v?'selected':''}>${l}</option>`).join('')}</select></label>
  <label class="f">+/− step<input inputmode="decimal" data-mset="${pi}:${mi}:st" value="${m.st??''}" ${m.food?'disabled':''}></label><label class="f">Weight<input inputmode="decimal" data-mset="${pi}:${mi}:w" value="${m.w??1}"></label><button class="x" data-delm="${pi}:${mi}" aria-label="Remove ${esc(m.n)}">×</button></div>`).join('')}
@@ -281,6 +283,8 @@ root.addEventListener('click',e=>{const t=e.target.closest('button,a');if(!t)ret
  if(ds.addm!=null){openP.add(+ds.addm);P()[+ds.addm].m.push({id:uid('m'),n:'New metric',u:'',t:1,d:'min',st:1,w:1});save();rr();return}
  if(ds.delp!=null){if(P().length<2){toast('Keep at least one pillar');return}if(t.textContent!=='Tap to confirm'){t.textContent='Tap to confirm';return}P().splice(+ds.delp,1);save();rr();return}
  const a=ds.act;if(!a)return;
+ if(a==='syncnow'){syncNow();return}
+ if(a==='signout'){if(sb)sb.auth.signOut().then(()=>{user=null;setSync('local');rr();toast('Signed out — your data stays on this device')});return}
  if(a==='addpick'){const q=num(document.getElementById('amt').value);if(!q||q<=0){toast('Enter an amount');return}const sv=document.getElementById('savepick');addEntry(picked,q,sv&&sv.checked);picked=null;rr()}
  if(a==='cancelpick'){picked=null;renderResults()}
  if(a==='addp'){P().push({k:uid('p'),n:'New pillar',s:'New',c:'#f5c04a',m:[]});save();rr()}
@@ -293,13 +297,57 @@ root.addEventListener('change',e=>{const t=e.target,ds=t.dataset;
  if(ds.pset){const[pi,k]=ds.pset.split(':');const v=t.value.trim();if(v)P()[+pi][k]=v;save();rr();return}
  if(ds.mset){const[pi,mi,k]=ds.mset.split(':');const m=P()[+pi].m[+mi];if(['t','st','w'].includes(k)){const v=num(t.value);if(v!=null&&v>0)m[k]=v}else{const v=t.value.trim();if(v||k==='u')m[k]=v}save();rr();return}
  if(ds.cfg){const v=num(t.value);if(v!=null&&v>0){if(ds.cfg==='mc')D.cfg.macros.c=v;else if(ds.cfg==='mf')D.cfg.macros.f=v;else D.cfg.good=Math.min(100,v)}save();rr();return}
- if(ds.restore!=null&&t.files[0]){t.files[0].text().then(s=>{const j=JSON.parse(s);if(!j.cfg||!j.days)throw 0;D=j;D.foods=D.foods||[];D.recent=D.recent||[];save();rr();toast('Backup restored')}).catch(()=>toast('That file is not a Life Pillars backup'))}});
+ if(ds.restore!=null&&t.files[0]){t.files[0].text().then(s=>{const j=JSON.parse(s);if(!j.cfg||!j.days)throw 0;D=j;D.foods=D.foods||[];D.recent=D.recent||[];snapAll();D.cfgU=Date.now();Object.values(D.days).forEach(x=>x.u=Date.now());save();rr();toast('Backup restored')}).catch(()=>toast('That file is not a Life Pillars backup'))}});
 root.addEventListener('toggle',e=>{const d=e.target;if(d.dataset&&d.dataset.pi!=null){d.open?openP.add(+d.dataset.pi):openP.delete(+d.dataset.pi)}},true);
 root.addEventListener('input',e=>{if(e.target.id==='amt')updAmt();if(e.target.id==='fq'){lastQ=e.target.value;if(!lastQ.trim()){picked=null;status='';renderResults()}}});
 root.addEventListener('submit',e=>{e.preventDefault();const f=e.target;
+ if(f.id==='auth'){doAuth(f,(e.submitter&&e.submitter.dataset.mode)||'in');return}
  if(f.id==='fs'){search(document.getElementById('fq').value);return}
  if(f.id==='fquick'){const g=k=>num(f.elements[k].value)||0;const n=f.elements.n.value.trim();if(!n||!g('kcal')){toast('Add a name and calories');return}
   addEntry({n,kcal:g('kcal'),p:g('p'),c:g('c'),f:g('f'),unit:'serving',src:'Mine'},1,f.elements.save.checked);rr()}});
-render();
+
+/* ---------- Accounts & cloud sync (Supabase) ---------- */
+let sb=null,user=null,syncState='local',lastSync=null,syncTimer=null,syncing=false,again=false,authMsg='',snap={};
+const SYNC={local:'Saved on this device',syncing:'Syncing…',synced:'Synced',error:'Sync failed — saved on this device',offline:'Offline — will sync later'};
+const dj=x=>JSON.stringify(x,(k,v)=>k==='u'?undefined:v);
+function snapAll(){snap={cfg:JSON.stringify(D.cfg),foods:JSON.stringify([D.foods,D.recent]),days:Object.fromEntries(Object.entries(D.days).map(([d,x])=>[d,dj(x)]))}}
+function stamp(){const now=Date.now(),c=JSON.stringify(D.cfg),f=JSON.stringify([D.foods,D.recent]);
+ if(c!==snap.cfg){D.cfgU=now;snap.cfg=c}if(f!==snap.foods){D.foodsU=now;snap.foods=f}
+ for(const[d,x]of Object.entries(D.days)){const j=dj(x);if(j!==snap.days[d]){x.u=now;snap.days[d]=j}}}
+function merge(a,b){const o=JSON.parse(JSON.stringify(a));if(!b||!b.cfg)return o;
+ if((b.cfgU||0)>(a.cfgU||0)){o.cfg=b.cfg;o.cfgU=b.cfgU}
+ if((b.foodsU||0)>(a.foodsU||0)){o.recent=b.recent||[];o.foodsU=b.foodsU}
+ const names=new Set(o.foods.map(f=>f.n));for(const f of b.foods||[])if(!names.has(f.n))o.foods.push(f);
+ for(const[d,x]of Object.entries(b.days||{})){const l=o.days[d];if(!l||(x.u||0)>(l.u||0))o.days[d]=x}
+ o.updated=Math.max(a.updated||0,b.updated||0);return o}
+function setSync(s){syncState=s;document.querySelectorAll('[data-syncst]').forEach(e=>e.textContent=SYNC[s])}
+function queueSync(){if(!sb||!user)return;setSync('syncing');clearTimeout(syncTimer);syncTimer=setTimeout(syncNow,2000)}
+async function syncNow(){if(!sb||!user)return;if(syncing){again=true;return}syncing=true;setSync('syncing');let changed=false;
+ try{const r=await sb.from('pillars_data').select('data').eq('user_id',user.id).maybeSingle();if(r.error)throw r.error;
+  if(r.data&&r.data.data){const before=JSON.stringify(D);D=merge(D,r.data.data);changed=JSON.stringify(D)!==before;try{localStorage.setItem('pillars2',JSON.stringify(D))}catch(e){}snapAll()}
+  const w=await sb.from('pillars_data').upsert({user_id:user.id,data:D,updated_at:new Date().toISOString()});if(w.error)throw w.error;
+  lastSync=new Date();setSync('synced')}
+ catch(e){console.warn('sync',e);setSync(navigator.onLine===false?'offline':'error')}
+ syncing=false;if(again){again=false;syncNow()}else if(changed)rr()}
+function initSync(){if(!SB_URL||!SB_KEY)return;const s=document.createElement('script');
+ s.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.js';
+ s.onload=async()=>{try{sb=window.supabase.createClient(SB_URL,SB_KEY);const{data}=await sb.auth.getSession();user=data.session?data.session.user:null;
+  sb.auth.onAuthStateChange((ev,ses)=>{const was=user&&user.id;user=ses?ses.user:null;if(!user)setSync('local');if((user&&user.id)!==was){if(user)syncNow();setTimeout(rr,0)}});
+  if(user)syncNow();rr()}catch(e){console.warn(e)}};
+ s.onerror=()=>{if(view()==='settings')rr()};document.head.appendChild(s)}
+addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')syncNow()});
+addEventListener('online',()=>syncNow());
+function acct(){const head='<section class="card"><h2>Account &amp; sync</h2>';
+ if(!SB_URL)return head+'<p class="sub">Cloud sync is not set up yet.</p></section>';
+ if(!sb)return head+'<p class="sub">Connecting… if this stays, check your internet connection.</p></section>';
+ if(user)return head+`<p style="margin:8px 0 2px">Signed in as <b>${esc(user.email)}</b></p><p class="sub"><span data-syncst>${SYNC[syncState]}</span>${lastSync?' · last synced '+lastSync.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}):''}</p><div class="row"><button class="btn" data-act="syncnow">Sync now</button><button class="btn sec" data-act="signout">Sign out</button></div></section>`;
+ return head+`<p class="sub">Sign in to back up your data and use the same data on your phone and laptop. Anything already on this device is kept and uploaded.</p><form id="auth" class="grid3" style="margin-top:10px"><label class="f" style="grid-column:1/-1">Email<input name="email" type="email" autocomplete="email" required></label><label class="f" style="grid-column:1/-1">Password<input name="pw" type="password" autocomplete="current-password" minlength="6" required></label><button class="btn" data-mode="in">Sign in</button><button class="btn sec" data-mode="up">Create account</button></form><p class="sub" id="authmsg" role="status">${esc(authMsg)}</p></section>`}
+async function doAuth(f,mode){const email=f.elements.email.value.trim(),pw=f.elements.pw.value,m=document.getElementById('authmsg');
+ if(!sb){m.textContent='Still connecting — try again in a moment.';return}m.textContent='Working…';
+ try{if(mode==='up'){const r=await sb.auth.signUp({email,password:pw,options:{emailRedirectTo:location.origin+location.pathname}});if(r.error)throw r.error;
+   authMsg=r.data.session?'':'Account created. Check your email for a confirmation link, then sign in here.';m.textContent=authMsg}
+  else{const r=await sb.auth.signInWithPassword({email,password:pw});if(r.error)throw r.error;authMsg=''}}
+ catch(e){const t=(e&&e.message)||'';m.textContent=/fetch|network/i.test(t)?'Can\'t reach the server — check your connection and try again.':/invalid login/i.test(t)?'Wrong email or password.':/not confirmed/i.test(t)?'Confirm your email first — check your inbox for the link.':t||'Something went wrong.'}}
+snapAll();render();initSync();
 }
 </script></body></html>
