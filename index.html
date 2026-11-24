@@ -363,9 +363,19 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 .mempty{position:absolute;z-index:1001;left:16px;right:16px;bottom:calc(24px + env(safe-area-inset-bottom));background:#13241ce6;color:#f4ecd2;border-radius:14px;padding:14px 16px;text-align:center;font-size:15px}
 .leaflet-control .mlocate,.mlocate{width:46px;height:46px;border-radius:12px;border:0;background:#13241ce6;color:#f4ecd2;display:grid;place-items:center;box-shadow:0 2px 10px #0007;cursor:pointer;margin:0 6px 18px 0}.mlocate svg{width:24px;height:24px}.mlocate.on{color:#4ea3ff}
 .mdot{filter:drop-shadow(0 0 6px #2f80edaa)}.mappage .leaflet-bottom.leaflet-right{margin-bottom:calc(env(safe-area-inset-bottom) + 6px)}
+.mmenu{position:absolute;z-index:1001;right:12px;top:calc(12px + env(safe-area-inset-top));width:46px;height:46px;border-radius:12px;border:0;background:#13241ce6;color:#f4ecd2;display:grid;place-items:center;box-shadow:0 2px 10px #0007;cursor:pointer}.mmenu svg{width:24px;height:24px}
+.mmenu.dot::after{content:'';position:absolute;top:8px;right:8px;width:9px;height:9px;border-radius:99px;background:#d9b45a;box-shadow:0 0 0 2px #13241c}
+.mpbg{position:absolute;inset:0;z-index:1002;border:0;padding:0;width:100%;height:100%;background:#0007;opacity:0;pointer-events:none;transition:opacity .25s}
+.mpanel{position:absolute;z-index:1003;top:0;right:0;bottom:0;width:min(86vw,360px);background:var(--bg);color:var(--ink);box-shadow:-8px 0 30px #0008;transform:translateX(105%);transition:transform .28s cubic-bezier(.2,.8,.2,1);overflow-y:auto;padding:calc(14px + env(safe-area-inset-top)) 18px calc(24px + env(safe-area-inset-bottom))}
+.mappage.menu .mpbg{opacity:1;pointer-events:auto}.mappage.menu .mpanel{transform:none}
+.mph{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.mph b{font-family:Fraunces,Georgia,serif;font-size:24px}.mpx{width:40px;height:40px;border:0;border-radius:99px;background:var(--card2);color:var(--ink);font-size:24px;line-height:1;cursor:pointer}
+.mpbtn{display:flex;align-items:center;gap:12px;width:100%;height:auto;min-height:56px;padding:8px 14px;text-align:left;justify-content:flex-start;margin-bottom:8px}.mpbtn>svg{width:22px;height:28px;flex:none}.mpbtn small{display:block;font-weight:400;font-size:12px;opacity:.75}
+.mpsec{margin:18px 0 8px;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:#c9b78a}.mpseg{display:flex;flex-wrap:wrap;gap:6px}.mpseg button{flex:1 1 auto}
+.mplist{display:grid}.mprow{display:grid;grid-template-columns:60px 1fr;gap:10px;align-items:center;width:100%;text-align:left;background:none;border:0;border-top:1px solid var(--line);padding:10px 0;color:var(--ink);font:inherit;cursor:pointer}.mprow:first-child{border-top:0}.mprow b{display:block}.mprow small{color:var(--mut);font-size:12px}.mprow .mpart>*{width:60px}
+@media(prefers-reduced-motion:reduce){.mpanel,.mpbg{transition:none}}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><div id="achpop" aria-live="polite"></div><script>
 {
-const VERSION='7.8';
+const VERSION='7.9';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -1154,6 +1164,7 @@ root.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('[data-f
  if(a==='reset'){if(!resetArm){resetArm=true;rr();setTimeout(()=>{if(resetArm){resetArm=false;if(view()==='settings')rr()}},4000);return}resetArm=false;D.cfg=PRESET();save();rr();toast('Preset reset')}});
 root.addEventListener('change',e=>{const t=e.target,ds=t.dataset;
  if(ds.bsp!=null){board.sp=t.value;rr();return}
+ if(ds.mapsp!=null){mapFilt.sp=t.value;mapSt.c=null;rr();mapMenu(true);return}
  if(ds.albup!=null){const fs=[...(t.files||[])];albPick=null;if(fs.length)albAddBlobs(fs.map(f=>({blob:f,info:null})));return}
  if(ds.fphotos!=null){if(t.files&&t.files.length)addPhotos(t.files);return}
  if(ds.fset){if(ds.fset==='tab'){D.cfg.fishTab=t.checked}else D.cfg.fUnit=t.value;save();rr();return}
@@ -1282,23 +1293,36 @@ function stopLoc(){if(locWatch!=null&&navigator.geolocation)navigator.geolocatio
 function addLocate(L,m){const C=L.Control.extend({options:{position:'bottomright'},onAdd(){const b=L.DomUtil.create('button','mlocate');b.type='button';b.title='Show where I am';b.setAttribute('aria-label','Show where I am');
   b.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>';L.DomEvent.disableClickPropagation(b);L.DomEvent.on(b,'click',e=>{L.DomEvent.preventDefault(e);go(true,true)});return b}});
  m.addControl(new C());let dot=null,ring=null,follow=false;
- const draw=(lat,lng,acc)=>{locLast=[lat,lng,acc];if(!m._loaded&&!m._size)return;if(!dot){ring=L.circle([lat,lng],{radius:acc,color:'#4ea3ff',weight:1,fillColor:'#4ea3ff',fillOpacity:.15,interactive:false}).addTo(m);dot=L.circleMarker([lat,lng],{radius:8,color:'#fff',weight:3,fillColor:'#2f80ed',fillOpacity:1,className:'mdot'}).addTo(m).bindTooltip('You are here')}else{dot.setLatLng([lat,lng]);ring.setLatLng([lat,lng]).setRadius(acc)}
+ const draw=(lat,lng,acc)=>{locLast=[lat,lng,acc,Date.now()];if(!m._loaded&&!m._size)return;if(!dot){ring=L.circle([lat,lng],{radius:acc,color:'#4ea3ff',weight:1,fillColor:'#4ea3ff',fillOpacity:.15,interactive:false}).addTo(m);dot=L.circleMarker([lat,lng],{radius:8,color:'#fff',weight:3,fillColor:'#2f80ed',fillOpacity:1,className:'mdot'}).addTo(m).bindTooltip('You are here')}else{dot.setLatLng([lat,lng]);ring.setLatLng([lat,lng]).setRadius(acc)}
   const b=m.getContainer().querySelector('.mlocate');if(b)b.classList.add('on');if(follow){m.setView([lat,lng],Math.max(m.getZoom(),16));follow=false}};
- const go=(centre,ask)=>{if(!navigator.geolocation){if(ask)toast('Location is not available on this device');return}follow=centre;if(locLast&&centre){draw(...locLast)}
+ const go=(centre,ask)=>{if(!navigator.geolocation){if(ask)toast('Location is not available on this device');return}follow=centre;if(locLast&&centre){draw(locLast[0],locLast[1],locLast[2])}
   if(locWatch==null){if(ask)toast('Finding you…');locWatch=navigator.geolocation.watchPosition(p=>{locOn=true;draw(p.coords.latitude,p.coords.longitude,Math.min(p.coords.accuracy||30,2000))},()=>{stopLoc();if(ask)toast('Location was blocked. Allow it for this site in your phone settings.')},{enableHighAccuracy:true,maximumAge:10000,timeout:20000})}};
- m._lifeLoc=go;if(locLast)draw(...locLast);
+ m._lifeLoc=go;if(locLast)draw(locLast[0],locLast[1],locLast[2]);
  if(locOn)go(false,false);else try{navigator.permissions&&navigator.permissions.query({name:'geolocation'}).then(r=>{if(r.state==='granted')go(false,false)}).catch(()=>{})}catch(e){}}
 function lastPin(){const c=catches().find(c=>c.loc);if(c)return[c.loc.lat,c.loc.lng];try{const g=JSON.parse(localStorage.getItem('pgeo')||'null');if(g)return g}catch(e){}return null}
-function mapPage(){const n=catches().filter(c=>c.loc).length;return`<div class="mappage"><div id="fmap" class="fmap"></div><button class="mback" data-act="pback" aria-label="Back to The Bank">‹</button><div class="mtitle"><b>Catch map</b><small>${n?n+' pinned catch'+(n===1?'':'es'):'No pinned catches yet'}</small></div>${n?'':'<div class="mempty">Add a pin when you log a catch, or edit an old catch to pin it.</div>'}</div>`}
+let mapFilt={sp:'',t:'all'},mapRef=null;
+function mapPins(){const now=Date.now(),yr=String(new Date().getFullYear()),d30=iso(new Date(now-30*864e5));return catches().filter(c=>c.loc&&(!mapFilt.sp||c.species===mapFilt.sp)&&(mapFilt.t==='all'||(mapFilt.t==='year'?c.date.startsWith(yr):c.date>=d30)))}
+function mapPage(){const all=catches().filter(c=>c.loc),pins=mapPins(),n=pins.length,filt=mapFilt.sp||mapFilt.t!=='all',sps=[...new Set(all.map(c=>c.species))].sort();
+ return`<div class="mappage"><div id="fmap" class="fmap"></div><button class="mback" data-act="pback" aria-label="Back to The Bank">‹</button><div class="mtitle"><b>Catch map</b><small>${all.length?(filt?`${n} of ${all.length} shown`:`${n} pinned catch${n===1?'':'es'}`):'No pinned catches yet'}</small></div>
+ <button class="mmenu${filt?' dot':''}" data-mapmenu aria-label="Map menu" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+ ${all.length?'':'<div class="mempty">Add a pin when you log a catch, or edit an old catch to pin it.</div>'}
+ <button class="mpbg" data-mapmenux aria-label="Close menu" tabindex="-1"></button><aside class="mpanel" aria-label="Map menu"><div class="mph"><b>Map</b><button class="mpx" data-mapmenux aria-label="Close menu">×</button></div>
+ <button class="btn mpbtn" data-maplog="centre">${PINSVG}<span>Log a catch here<small>Pins it to the middle of the map</small></span></button>
+ <button class="btn sec mpbtn" data-maplog="gps"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg><span>Log a catch where I am</span></button>
+ <h4 class="mpsec">Show</h4><div class="seg mpseg">${[['all','All time'],['year','This year'],['30','Last 30 days']].map(([k,l])=>`<button data-mapt="${k}" class="${mapFilt.t===k?'on':''}">${l}</button>`).join('')}</div>
+ ${sps.length>1?`<label class="f" style="margin-top:10px">Species<select data-mapsp><option value="">All species</option>${sps.map(n=>`<option ${mapFilt.sp===n?'selected':''}>${esc(n)}</option>`).join('')}</select></label>`:''}
+ ${filt?'<button class="linkbtn" data-mapclear style="margin-top:4px">Clear filters</button>':''}
+ <h4 class="mpsec">Pinned catches</h4>${pins.length?`<div class="mplist">${pins.map(c=>`<button class="mprow" data-mapgo="${c.id}"><span class="mpart">${fishSVG(c.species)}</span><span><b>${esc(c.species)}</b><small>${[c.g?fW(c.g):'',label(c.date),c.place?esc(c.place):''].filter(Boolean).join(' · ')}</small></span></button>`).join('')}</div>`:`<p class="empty">${all.length?'No catches match these filters.':'Nothing pinned yet.'}</p>`}
+ </aside></div>`}
 function mapBlock(){const n=catches().filter(c=>c.loc).length;return`<div class="mapw" style="margin-top:12px"><div id="fmap" class="fmap"></div></div><p class="sub" style="text-align:center">${n?`${n} pinned catch${n===1?'':'es'}. Only you can see your pins.`:'No pinned catches yet. Add a pin when you log a catch, or edit an old one.'}</p>`}
 async function initCatchMap(){const el=document.getElementById('fmap');if(!el)return;let L;try{L=await leaf()}catch(e){el.innerHTML='<p class="empty" style="padding:24px;text-align:center">The map could not load. Check your connection.</p>';return}
  if(!document.body.contains(el)||el.dataset.on)return;el.dataset.on=1;const m=L.map(el,{zoomControl:true});addTiles(L,m);
- const G={};for(const c of catches().filter(c=>c.loc)){const k=c.loc.lat.toFixed(4)+','+c.loc.lng.toFixed(4);(G[k]=G[k]||[]).push(c)}
+ mapRef={m,mk:{}};const G={};for(const c of mapPins()){const k=c.loc.lat.toFixed(4)+','+c.loc.lng.toFixed(4);(G[k]=G[k]||[]).push(c)}
  const pts=[];let focus=null;
  for(const L2 of Object.values(G)){const c0=L2[0],ll=[c0.loc.lat,c0.loc.lng];pts.push(ll);
   const mk=L.marker(ll,{icon:L.divIcon({className:'fpin',html:PINSVG+(L2.length>1?`<b>${L2.length}</b>`:''),iconSize:[32,42],iconAnchor:[16,41],popupAnchor:[0,-36]})}).addTo(m);
   mk.bindPopup(`<div class="mpop">${L2.map(c=>`<div><span class="mpart">${fishSVG(c.species)}</span><span><b>${esc(c.species)}</b><small>${[c.g?fW(c.g):'',label(c.date),c.place?esc(c.place):''].filter(Boolean).join(' · ')}</small></span><button data-mapopen="${c.id}">Open</button></div>`).join('')}</div>`,{maxWidth:260,minWidth:230});
-  if(mapFocus&&L2.some(c=>c.id===mapFocus))focus=mk}
+  for(const c of L2)mapRef.mk[c.id]=mk;if(mapFocus&&L2.some(c=>c.id===mapFocus))focus=mk}
  m.on('popupopen',e=>{e.popup.getElement().querySelectorAll('[data-mapopen]').forEach(b=>b.onclick=()=>{fTab='log';fOpen=b.dataset.mapopen;location.hash='fishing';setTimeout(()=>{const r=document.querySelector('.crow.open');if(r)r.scrollIntoView({block:'start'})},60)})});
  const place=()=>{if(focus){m.setView(focus.getLatLng(),16);focus.openPopup()}else if(mapSt.c)m.setView(mapSt.c,mapSt.z);else if(pts.length)m.fitBounds(pts,{padding:[40,40],maxZoom:15});else{const p=lastPin();m.setView(p||[52.5,-1.5],p?12:6)}};
  place();requestAnimationFrame(()=>{m.invalidateSize();if(!focus&&!mapSt.c)place()});setTimeout(()=>{m.invalidateSize();m.on('moveend',()=>{mapSt.c=m.getCenter();mapSt.z=m.getZoom()})},300);mapFocus=null}
@@ -1306,7 +1330,7 @@ function pickSheet(){return mapPick?`<div class="sheetbg"></div><div class="shee
  <p class="sub" style="margin:8px 0">Drag the map so the pin sits on the spot, then set it.</p><div class="row"><button class="btn" data-pickset>Set pin here</button><button class="btn sec" data-pickgps>Go to my location</button><button class="btn sec" data-pickx>Cancel</button></div></div>`:''}
 async function initPickMap(){const el=document.getElementById('pmap');if(!el)return;let L;try{L=await leaf()}catch(e){el.innerHTML='<p class="empty" style="padding:24px;text-align:center">The map could not load. Check your connection.</p>';return}
  if(!document.body.contains(el)||el.dataset.on)return;el.dataset.on=1;pickMap=L.map(el,{zoomControl:true});addTiles(L,pickMap);pickMap.setView(mapPick.c,mapPick.z);requestAnimationFrame(()=>{pickMap&&pickMap.invalidateSize();pickMap&&pickMap.setView(mapPick.c,mapPick.z)});pickMap.on('moveend',()=>{const c=pickMap.getCenter();mapPick.c=[c.lat,c.lng];mapPick.z=pickMap.getZoom()})}
-function gpsHere(ok){if(!navigator.geolocation){toast('Location is not available on this device');return}toast('Finding your location…');navigator.geolocation.getCurrentPosition(p=>ok(r5(p.coords.latitude),r5(p.coords.longitude)),()=>toast('Location was blocked. Allow it in your browser settings, or pick on the map.'),{enableHighAccuracy:true,timeout:15000})}
+function gpsHere(ok){if(locLast&&Date.now()-(locLast[3]||0)<60000){ok(r5(locLast[0]),r5(locLast[1]));return}if(!navigator.geolocation){toast('Location is not available on this device');return}toast('Finding your location…');navigator.geolocation.getCurrentPosition(p=>ok(r5(p.coords.latitude),r5(p.coords.longitude)),()=>toast('Location was blocked. Allow it in your browser settings, or pick on the map.'),{enableHighAccuracy:true,timeout:15000,maximumAge:30000})}
 function locRow(c){return`<div style="grid-column:1/-1"><span class="f">Location pin</span><div class="flocrow">${c.loc?`<span class="pinon">${PINSVG}<span>Pinned${c.locSrc==='photo'?' from your photo':''}<small>${c.loc.lat.toFixed(4)}, ${c.loc.lng.toFixed(4)}</small></span></span><button type="button" class="btn sec sm" data-locpick>Move</button><button type="button" class="btn sec sm" data-locclear>Remove</button>`:`<button type="button" class="btn sec sm" data-locgps>Use my location</button><button type="button" class="btn sec sm" data-locpick>Pick on map</button>`}</div><p class="sub" style="margin:6px 0 0">Only you can see your pins.</p></div>`}
 async function exifGps(file){try{const buf=await file.slice(0,262144).arrayBuffer(),v=new DataView(buf);if(v.byteLength<4||v.getUint16(0)!==0xFFD8)return null;let o=2;
  while(o<v.byteLength-10){const mk=v.getUint16(o),len=v.getUint16(o+2);
@@ -1317,7 +1341,15 @@ async function exifGps(file){try{const buf=await file.slice(0,262144).arrayBuffe
    const ref=e=>e?String.fromCharCode(v.getUint8(e)):'';let lat=rat(G[2]),lng=rat(G[4]);if(ref(G[1])==='S')lat=-lat;if(ref(G[3])==='W')lng=-lng;
    if(!isFinite(lat)||!isFinite(lng)||(!lat&&!lng)||Math.abs(lat)>90||Math.abs(lng)>180)return null;return{lat:r5(lat),lng:r5(lng)}}
   if((mk&0xFF00)!==0xFF00||mk===0xFFDA)break;o+=2+len}}catch(e){}return null}
+function mapMenu(open){const p=document.querySelector('.mappage');if(!p)return;p.classList.toggle('menu',open);const b=p.querySelector('.mmenu');if(b)b.setAttribute('aria-expanded',open)}
 function pinClick(t,ds){
+ if(ds.mapmenu!=null){mapMenu(true);return true}
+ if(ds.mapmenux!=null){mapMenu(false);return true}
+ if(ds.mapt){mapFilt.t=ds.mapt;mapSt.c=null;rr();mapMenu(true);return true}
+ if(ds.mapclear!=null){mapFilt={sp:'',t:'all'};mapSt.c=null;rr();mapMenu(true);return true}
+ if(ds.mapgo){mapMenu(false);const mk=mapRef&&mapRef.mk[ds.mapgo];if(mk){mapRef.m.setView(mk.getLatLng(),Math.max(mapRef.m.getZoom(),16));setTimeout(()=>mk.openPopup(),250)}return true}
+ if(ds.maplog){const startForm=(lat,lng,src)=>{fForm={photos:[],date:TODAY,loc:{lat:r5(lat),lng:r5(lng)},locSrc:src};fTab='log';location.hash='fishing';setTimeout(()=>scrollTo(0,0),30)};
+  if(ds.maplog==='centre'){if(!mapRef)return true;const c=mapRef.m.getCenter();startForm(c.lat,c.lng,'map')}else gpsHere((lat,lng)=>startForm(lat,lng,'gps'));return true}
  if(ds.fview){mapSt.c=null;location.hash='map';return true}
  if(ds.maplayer){mapSt.layer=ds.maplayer;if(pickMap&&mapPick){const c=pickMap.getCenter();mapPick.c=[c.lat,c.lng];mapPick.z=pickMap.getZoom()}rr();return true}
  if(ds.mapat){mapFocus=ds.mapat;fForm=null;location.hash='map';return true}
