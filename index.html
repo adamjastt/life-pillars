@@ -376,9 +376,11 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 .mpfilt{margin-top:16px;background:var(--card);border-radius:14px;padding:0 14px}.mpfilt>summary{border:0;background:none;padding:0;min-height:50px;font-weight:600}.mpfilt[open]{padding-bottom:14px}.mpfilt .pill{margin-left:6px}
 .mpsec small{text-transform:none;letter-spacing:0;color:var(--mut);font-weight:400;margin-left:6px}.mappage .mpanel{transition:transform .28s cubic-bezier(.2,.8,.2,1)}
 .mappage.noanim .mpanel,.mappage.noanim .mpbg{transition:none}
+.logrow{display:flex;gap:10px;align-items:stretch;margin-bottom:18px}.logrow .bigadd{flex:1;width:auto;margin:0}
+.mapsq{flex:none;width:58px;height:54px;padding:0;display:grid;place-items:center;color:#d9b45a}.mapsq svg{width:26px;height:26px}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><div id="achpop" aria-live="polite"></div><script>
 {
-const VERSION='7.10';
+const VERSION='7.11';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -923,7 +925,7 @@ function tradeCard(c,cm,pb,bx){const all=speciesAll(),idx=all.findIndex(s=>s.n==
  <div class="tcstats">${bar('Weight',c.g?c.g/maxG*100:0,c.g?fW(c.g):'–')}${bar('Length',c.cm?c.cm/maxL*100:0,c.cm?fmt(c.cm)+' cm':'–')}${bx?bar('Board rank',(bx.n-bx.rank+1)/bx.n*100,'#'+bx.rank+' of '+bx.n):bar('Catch no.',mine.length?nth/mine.length*100:0,nth+' of '+mine.length)}</div>
  <div class="tcflav">${c.notes?esc(c.notes):[c.method&&'Caught on the '+esc(c.method.toLowerCase())+(c.bait?' with '+esc(c.bait.toLowerCase()):''),c.rel===false?'Kept.':c.rel===true||!bx?'Safely released.':''].filter(Boolean).join('. ')||'Details kept private.'}</div>
  <div class="tcfoot"><span>${esc(c.method||'')}${c.bait?' · '+esc(c.bait):''}</span><span>${bx?'Caught by '+esc(bx.who):'Life Pillars · The Bank'}</span></div></div></div>`}
-function fishLog(C,cm){return(fForm?fishForm():`<button class="btn bigadd" data-fnew>+ Log a catch</button>`)+(C.length&&!fForm?`<button class="btn sec mapbtn" data-fview="map">${PINSVG}<span>Catch map<small>${C.filter(c=>c.loc).length} pinned</small></span><span class="chev"></span></button>`:'')+(
+function fishLog(C,cm){return(fForm?fishForm():`<div class="logrow"><button class="btn bigadd" data-fnew>+ Log a catch</button>${C.length?`<button class="btn sec mapsq" data-fview="map" aria-label="Catch map" title="Catch map"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><path d="M9 4 3 6.5v13.5l6-2.5 6 2.5 6-2.5V4l-6 2.5z"/><path d="M9 4v13.5M15 6.5V20"/></svg></button>`:''}</div>`)+(
  (C.length?C.map(c=>{const pb=cm[c.species]&&cm[c.species].pb===c,open=fOpen===c.id,ph=c.photos||[];
  return`<section class="crow${open?' open':''}"><button class="crhead" data-fexp="${c.id}" aria-expanded="${open}">${ph[0]?pimg(ph[0],c.species,'crthumb'):`<span class="crthumb art" aria-hidden="true">${fishSVG(c.species)}</span>`}
  <span class="crmeta"><b>${esc(c.species)}${pb?' <span class="pb">PB</span>':''}</b><small>${[c.g?fW(c.g):'',c.cm?fmt(c.cm)+' cm':''].filter(Boolean).join(' · ')||'No weight'}</small><small>${label(c.date)}${c.place?' · '+esc(c.place):''}${c.loc?' · <span class="minipin" aria-label="Pinned">'+PINSVG+'</span>':''}</small></span><span class="crchev" aria-hidden="true"></span></button>
