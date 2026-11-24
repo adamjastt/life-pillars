@@ -198,7 +198,7 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 @media(prefers-reduced-motion:no-preference){.bar i{transition:width .3s}}
 </style></head><body><div id="root"></div><div id="toast"></div><script>
 {
-const VERSION='4.8';
+const VERSION='4.9';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -403,7 +403,7 @@ let fArtN=0;
 const fRng=s=>{let h=1779033703;for(const ch of s)h=Math.imul(h^ch.charCodeAt(0),3432918353);return()=>{h=Math.imul(h^h>>>16,2246822507);h=Math.imul(h^h>>>13,3266489909);return((h^=h>>>16)>>>0)/4294967296}};
 const FP=(a)=>a.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ');
 /* Your own artwork: put an image in the repo's fish/ folder and list it here, e.g. 'Perch':'perch.png'. It replaces the drawing for that species. */
-const FIMG={'Barbel':'barbel.webp','Bleak':'bleak.webp','Bream (common)':'bream-common.webp','Bream (silver)':'bream-silver.webp','Brown trout':'brown-trout.webp','Bullhead':'bullhead.webp','Carp (common)':'carp-common.webp','Carp (crucian)':'carp-crucian.webp','Carp (ghost)':'carp-ghost.webp','Carp (grass)':'carp-grass.webp','Carp (leather)':'carp-leather.webp','Carp (mirror)':'carp-mirror.webp','Catfish (wels)':'catfish-wels.webp','Chub':'chub.webp','Dace':'dace.webp','Eel':'eel.webp','Golden orfe':'golden-orfe.webp','Gudgeon':'gudgeon.webp','Ide':'ide.webp','Minnow':'minnow.webp'};
+const FIMG={'Barbel':'barbel.webp','Bleak':'bleak.webp','Bream (common)':'bream-common.webp','Bream (silver)':'bream-silver.webp','Brown trout':'brown-trout.webp','Bullhead':'bullhead.webp','Carp (common)':'carp-common.webp','Carp (crucian)':'carp-crucian.webp','Carp (ghost)':'carp-ghost.webp','Carp (grass)':'carp-grass.webp','Carp (leather)':'carp-leather.webp','Carp (mirror)':'carp-mirror.webp','Catfish (wels)':'catfish-wels.webp','Chub':'chub.webp','Dace':'dace.webp','Eel':'eel.webp','Golden orfe':'golden-orfe.webp','Gudgeon':'gudgeon.webp','Ide':'ide.webp','Minnow':'minnow.webp','Perch':'perch.webp','Pike':'pike.webp','Rainbow trout':'rainbow-trout.webp','Roach':'roach.webp','Rudd':'rudd.webp','Ruffe':'ruffe.webp','Stickleback':'stickleback.webp','Stone loach':'stone-loach.webp','Tench':'tench.webp','Zander':'zander.webp'};
 function fishSVG(name,cls){if(FIMG[name])return`<img class="${cls||'fart'} fimg" src="fish/${FIMG[name]}" alt="" loading="lazy">`;const s=FSPEC[name]||FSPEC._;const id='fa'+(++fArtN),R=fRng(name);
  const body=s.a==='e'?artEel(s,id,R):s.a==='r'?artRay(s,id,R):s.a==='f'?artFlat(s,id,R):artSide(s,id,R,name);
  return`<svg class="${cls||'fart'}" viewBox="0 0 200 100" aria-hidden="true">${body}</svg>`}
