@@ -471,7 +471,7 @@ img.fimg{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-w
 .mbi.out{opacity:0;transition:opacity .3s}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><div id="achpop" aria-live="polite"></div><script>
 {
-const VERSION='7.33';
+const VERSION='7.34';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -1594,8 +1594,8 @@ async function albPickGo(){const want=[...albPick];albPick=null;const list=[];
  for(const k of want){const[cid,i]=k.split(':'),c=fishD().catches.find(x=>x.id===cid),p=c&&(c.photos||[])[+i];if(!p)continue;const b=await photoBlob(p).catch(()=>null);if(b)list.push({blob:b,info:{sp:c.species,g:c.g||null,d:c.date}})}
  if(list.length)albAddBlobs(list);else{toast("Couldn't load those photos");rr()}}
 const FLIPSVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 0 1-13.7 5.6M4 12a8 8 0 0 1 13.7-5.6"/><path d="M18 2.5v4.3h-4.3M6 21.5v-4.3h4.3"/></svg>';
-const flipOn=new Set(),crPh={};
-function flipInline(key,front,back){if(!front)return back;const on=flipOn.has(key);
+const flipPhoto=new Set(),crPh={};
+function flipInline(key,front,back){if(!front)return back;const on=!flipPhoto.has(key);
  return`<div class="flipbox" data-fk="${esc(key)}"><div class="flipw${on?' on':''}"><div class="fface ffront" aria-hidden="${on}">${front}</div><div class="fface fback" aria-hidden="${!on}">${back}</div></div><button class="lbflip" data-flip aria-pressed="${on}">${FLIPSVG}<span>${on?'Photo':'Catch card'}</span></button></div>`}
 const flipWrap=(front,back)=>`<div class="flipw"><div class="fface ffront">${front}</div>${back?`<div class="fface fback" aria-hidden="true">${back}</div>`:''}</div>${back?`<button class="lbflip" data-flip aria-pressed="false">${FLIPSVG}<span>Catch card</span></button>`:''}`;
 function glCard(x){const c=x.c||(x.sp?{species:x.sp,g:x.g,date:x.d}:null);if(!c)return'';if(x.own)return tradeCard(c,caughtMap(),x.pb);return tradeCard(c,null,!!x.pb,x.bx||{who:x.who||'',maxG:c.g||1,maxL:1})}
@@ -1735,7 +1735,7 @@ document.addEventListener('dragstart',e=>{if(e.target.classList&&e.target.classL
 document.addEventListener('change',e=>{const k=e.target&&e.target.dataset&&e.target.dataset.pvd;if(!k)return;pvF[k]=e.target.value||'';rr()});
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-flip]');if(!b)return;const box=b.closest('.lb,.flipbox'),w=box&&box.querySelector('.flipw');if(!w)return;e.stopPropagation();
  const on=!w.classList.contains('on');if(on&&pz&&pz.s>1.01){pz.s=1;pz.x=0;pz.y=0;pzSet()}w.classList.toggle('on',on);box.classList.toggle('flipped',on);b.setAttribute('aria-pressed',on);b.querySelector('span').textContent=on?'Photo':'Catch card';
- w.querySelector('.fback').setAttribute('aria-hidden',!on);w.querySelector('.ffront').setAttribute('aria-hidden',on);const fk=box.dataset.fk;if(fk)on?flipOn.add(fk):flipOn.delete(fk)},true);
+ w.querySelector('.fback').setAttribute('aria-hidden',!on);w.querySelector('.ffront').setAttribute('aria-hidden',on);const fk=box.dataset.fk;if(fk)on?flipPhoto.delete(fk):flipPhoto.add(fk)},true);
 function friendsPage(){const back=`<button class="pback" data-act="pback" aria-label="Back">‹</button>`,head=`<header class="fhero sm">${scene().svg}<div class="fhin">${back}<p class="fgreet fx">Social</p><div class="fhtop"><h1>Friends</h1></div></div></header>`;
  if(!SB_URL||!user)return head+`<main class="wrap"><section class="card"><h2>Sign in first</h2><p class="sub">Friends are linked to your account. Sign in from Settings.</p><button class="btn" data-act="gosettings">Go to Settings</button></section></main>`;
  const P=prof(),inn=pendingIn(),out=soc.fr.filter(x=>x.status==='pending'&&x.from_id===user.id),fr=friendIds();
