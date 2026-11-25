@@ -348,20 +348,25 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 .gcard::after{display:none}
 .gca{position:absolute;inset:12% 10% 34%;display:flex;align-items:center;justify-content:center}.gca>*{max-width:100%;max-height:100%}
 .gpb{position:absolute;top:8px;left:8px;background:var(--ac);color:#1a1405;font-size:11px;padding:2px 7px;border-radius:99px}
-.flipw{position:relative;width:100%;height:100%;display:grid;grid-template:minmax(0,1fr)/minmax(0,1fr);perspective:1400px}
+.flipw{position:relative;width:var(--cw);height:var(--ch);flex:none;display:grid;grid-template:minmax(0,1fr)/minmax(0,1fr);perspective:1400px}
 .fface{grid-area:1/1;display:flex;align-items:center;justify-content:center;min-width:0;min-height:0;height:100%;backface-visibility:hidden;-webkit-backface-visibility:hidden;transition:transform .8s cubic-bezier(.3,.75,.25,1)}
 .fback{transform:rotateY(180deg);pointer-events:none}
 .flipw.on .ffront{transform:rotateY(-180deg);pointer-events:none}.flipw.on .fback{transform:rotateY(0);pointer-events:auto}
 .fback .tc,.lbcard .tc{width:min(340px,88vw,calc((100dvh - 190px)*.716));max-width:none;margin:0}
-.lbcard{display:flex;align-items:center;justify-content:center;width:100%;height:100%}
-.lbflip{position:absolute;left:8px;top:calc(8px + env(safe-area-inset-top));height:48px;padding:0 16px 0 12px;border:0;border-radius:99px;background:#ffffff26;color:#fff;display:inline-flex;align-items:center;gap:8px;font:600 15px/1 inherit;z-index:2;transition:opacity .2s}
+.lbcard{display:flex;align-items:center;justify-content:center;flex:none}
+.lbflip{position:relative;flex:none;height:46px;padding:0 16px 0 12px;border:0;border-radius:99px;background:#ffffff26;color:#fff;display:inline-flex;align-items:center;gap:8px;font:600 15px/1 inherit;z-index:2;transition:opacity .2s}
 .lbflip svg{width:20px;height:20px;transition:transform .8s cubic-bezier(.3,.75,.25,1)}
 .lb.flipped .lbflip svg{transform:rotate(180deg)}
 .lb .lbcap{transition:opacity .3s}.lb.flipped .lbcap{opacity:0;pointer-events:none}
 .lb.zooming .lbflip{opacity:0;pointer-events:none}
 .lb.cardonly .lbcap{display:none}
 .fhero.sm .mbox{display:none}
-.fback .tc,.lbcard .tc{--cw:min(340px,88vw,calc((100dvh - 200px)*.716));width:var(--cw);height:calc(var(--cw)*88/63);aspect-ratio:auto;flex:none}
+.lb{--cw:min(380px,88vw,calc((100dvh - 300px)*.716));--ch:calc(var(--cw)*88/63);flex-direction:column;gap:16px}
+.lb.cardonly{--cw:min(380px,88vw,calc((100dvh - 230px)*.716))}
+.ffront{border-radius:18px;background:#ffffff0b;overflow:hidden}
+.ffront .lbimg{max-width:100%;max-height:100%;object-fit:contain}
+.lb.zooming .ffront{overflow:visible;background:none}
+.fback .tc,.lbcard .tc{width:var(--cw);height:var(--ch);aspect-ratio:auto;flex:none}
 .fback .tc .tcin,.lbcard .tc .tcin{height:100%;box-sizing:border-box}
 @media (prefers-reduced-motion:reduce){.fface,.lbflip svg{transition-duration:.01s}}.pstats b small{font-size:13px;color:var(--mut);font-weight:500}.pstats span{font-size:12px;color:var(--mut)}
 .pedit{padding:0 18px}.pedit>summary{border:0;background:none;padding:0;min-height:56px}.pedit[open]{padding-bottom:16px}
@@ -453,7 +458,7 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 .mbi.out{opacity:0;transition:opacity .3s}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><div id="achpop" aria-live="polite"></div><script>
 {
-const VERSION='7.27';
+const VERSION='7.28';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -1576,7 +1581,7 @@ async function albPickGo(){const want=[...albPick];albPick=null;const list=[];
  for(const k of want){const[cid,i]=k.split(':'),c=fishD().catches.find(x=>x.id===cid),p=c&&(c.photos||[])[+i];if(!p)continue;const b=await photoBlob(p).catch(()=>null);if(b)list.push({blob:b,info:{sp:c.species,g:c.g||null,d:c.date}})}
  if(list.length)albAddBlobs(list);else{toast("Couldn't load those photos");rr()}}
 const FLIPSVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 0 1-13.7 5.6M4 12a8 8 0 0 1 13.7-5.6"/><path d="M18 2.5v4.3h-4.3M6 21.5v-4.3h4.3"/></svg>';
-const flipWrap=(front,back)=>back?`<div class="flipw"><div class="fface ffront">${front}</div><div class="fface fback" aria-hidden="true">${back}</div></div><button class="lbflip" data-flip aria-pressed="false">${FLIPSVG}<span>Catch card</span></button>`:front;
+const flipWrap=(front,back)=>`<div class="flipw"><div class="fface ffront">${front}</div>${back?`<div class="fface fback" aria-hidden="true">${back}</div>`:''}</div>${back?`<button class="lbflip" data-flip aria-pressed="false">${FLIPSVG}<span>Catch card</span></button>`:''}`;
 function glCard(x){const c=x.c||(x.sp?{species:x.sp,g:x.g,date:x.d}:null);if(!c)return'';if(x.own)return tradeCard(c,caughtMap(),x.pb);return tradeCard(c,null,!!x.pb,x.bx||{who:x.who||'',maxG:c.g||1,maxL:1})}
 function glBox(){if(!gl)return'';let x=gl.list[gl.i];if(!x)return'';const n=gl.list.length,own=x.user_id&&x.user_id===user.id,canDel=x.item&&(own||(albs.list.find(a=>a.id===alb)||{}).owner===user.id);
  const sp=x.c?x.c.species:x.sp,front=x.p?pimg(x.p,sp,'lbimg'):x.path?bimg(x.path,sp||'Photo','lbimg'):'',back=glCard(x);
