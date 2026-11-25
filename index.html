@@ -361,6 +361,7 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 .lb .lbcap{transition:opacity .3s}.lb.flipped .lbcap{opacity:0;pointer-events:none}
 .lb.zooming .lbflip{opacity:0;pointer-events:none}
 .lb.cardonly .lbcap{display:none}
+img.fimg{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-webkit-user-drag:none;pointer-events:none}
 .flipbox{max-width:340px;margin:4px auto 0;display:grid;justify-items:center;gap:12px}
 .flipbox .flipw{width:100%;height:auto;aspect-ratio:63/88;display:block}
 .flipbox .fface{position:absolute;inset:0;height:auto}
@@ -470,7 +471,7 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 .mbi.out{opacity:0;transition:opacity .3s}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><div id="achpop" aria-live="polite"></div><script>
 {
-const VERSION='7.32';
+const VERSION='7.33';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -1729,6 +1730,8 @@ function pmenuHtml(){const n=pendingIn().length,P=D.cfg.prof||{};return`<div cla
 function pmenu(open){const m=document.querySelector('.pmenu'),b=document.querySelector('.fav');if(!m)return;m.classList.toggle('open',open);if(b)b.setAttribute('aria-expanded',open)}
 document.addEventListener('click',e=>{const m=document.querySelector('.pmenu.open');if(m&&!m.contains(e.target)&&!(e.target.closest&&e.target.closest('.fav')))pmenu(false)},true);
 addEventListener('keydown',e=>{if(e.key==='Escape')pmenu(false)});
+document.addEventListener('contextmenu',e=>{if(e.target.closest&&e.target.closest('.fimg,.tcart,.spart,.pvsart,.gca,.pbart'))e.preventDefault()});
+document.addEventListener('dragstart',e=>{if(e.target.classList&&e.target.classList.contains('fimg'))e.preventDefault()});
 document.addEventListener('change',e=>{const k=e.target&&e.target.dataset&&e.target.dataset.pvd;if(!k)return;pvF[k]=e.target.value||'';rr()});
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-flip]');if(!b)return;const box=b.closest('.lb,.flipbox'),w=box&&box.querySelector('.flipw');if(!w)return;e.stopPropagation();
  const on=!w.classList.contains('on');if(on&&pz&&pz.s>1.01){pz.s=1;pz.x=0;pz.y=0;pzSet()}w.classList.toggle('on',on);box.classList.toggle('flipped',on);b.setAttribute('aria-pressed',on);b.querySelector('span').textContent=on?'Photo':'Catch card';
