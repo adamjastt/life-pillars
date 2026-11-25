@@ -93,3 +93,8 @@ do $$ begin
   begin alter publication supabase_realtime add table public.sessions; exception when duplicate_object then null; end;
   begin alter publication supabase_realtime add table public.session_members; exception when duplicate_object then null; end;
 end $$;
+
+-- table access (this project doesn't grant it automatically)
+grant select, insert, update, delete on public.sessions, public.session_members, public.session_events, public.push_subs to authenticated;
+grant all on public.sessions, public.session_members, public.session_events, public.push_subs to service_role;
+grant execute on function public.in_session(uuid), public.in_session_t(text), public.session_owner(uuid), public.session_live(uuid), public.mates(uuid, uuid) to authenticated;
