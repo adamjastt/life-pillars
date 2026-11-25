@@ -361,6 +361,18 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 .lb .lbcap{transition:opacity .3s}.lb.flipped .lbcap{opacity:0;pointer-events:none}
 .lb.zooming .lbflip{opacity:0;pointer-events:none}
 .lb.cardonly .lbcap{display:none}
+.flipbox{max-width:340px;margin:4px auto 0;display:grid;justify-items:center;gap:12px}
+.flipbox .flipw{width:100%;height:auto;aspect-ratio:63/88;display:block}
+.flipbox .fface{position:absolute;inset:0;height:auto}
+.flipbox .ffront{border-radius:18px;overflow:hidden;background:#0004;box-shadow:0 14px 34px #000a}
+.flipbox .fback .tc{position:absolute;inset:0;width:auto;height:auto;margin:0;max-width:none;aspect-ratio:auto}
+.flipbox .lbflip{background:#ffffff1a;border:1px solid #ffffff22}
+.crphoto{display:block;width:100%;height:100%;padding:0;border:0;background:none;cursor:zoom-in;position:relative}
+.crphoto .crimg{width:100%;height:100%;object-fit:cover;display:block}
+.crphoto::after{content:'';position:absolute;top:10px;right:10px;width:30px;height:30px;border-radius:99px;background:#0009 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.4' stroke-linecap='round'%3E%3Ccircle cx='10.5' cy='10.5' r='6'/%3E%3Cpath d='M15 15l5 5M10.5 8v5M8 10.5h5'/%3E%3C/svg%3E") center/18px no-repeat}
+.crcount{position:absolute;left:10px;top:12px;background:#0009;color:#fff;font-size:12px;padding:3px 9px;border-radius:99px;pointer-events:none}
+.crnav{position:absolute;top:50%;transform:translateY(-50%);width:38px;height:38px;border-radius:99px;border:0;background:#0008;color:#fff;font-size:24px;line-height:1;z-index:2}
+.crnav.l{left:8px}.crnav.r{right:8px}
 .fhero.sm .mbox{display:none}
 .lb{--cw:min(380px,88vw,calc((100dvh - 300px)*.716));--ch:calc(var(--cw)*88/63);flex-direction:column;gap:16px}
 .lb.cardonly{--cw:min(380px,88vw,calc((100dvh - 230px)*.716))}
@@ -458,7 +470,7 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 .mbi.out{opacity:0;transition:opacity .3s}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><div id="achpop" aria-live="polite"></div><script>
 {
-const VERSION='7.31';
+const VERSION='7.32';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -1008,8 +1020,7 @@ function fishLog(C,cm){return(fForm?fishForm():`<div class="logrow"><button clas
  (C.length?C.map(c=>{const pb=cm[c.species]&&cm[c.species].pb===c,open=fOpen===c.id,ph=c.photos||[];
  return`<section class="crow${open?' open':''}"><button class="crhead" data-fexp="${c.id}" aria-expanded="${open}">${ph[0]?pimg(ph[0],c.species,'crthumb'):`<span class="crthumb art" aria-hidden="true">${fishSVG(c.species)}</span>`}
  <span class="crmeta"><b>${esc(c.species)}${pb?' <span class="pb">PB</span>':''}</b><small>${[c.g?fW(c.g):'',c.cm?fmt(c.cm)+' cm':''].filter(Boolean).join(' · ')||'No weight'}</small><small>${label(c.date)}${c.place?' · '+esc(c.place):''}${c.loc?' · <span class="minipin" aria-label="Pinned">'+PINSVG+'</span>':''}</small></span><span class="crchev" aria-hidden="true"></span></button>
- ${open?`<div class="crbody">${tradeCard(c,cm,pb)}
- ${ph.length?`<div class="scphotos" style="justify-content:center">${ph.map((p,i)=>`<button class="scph" data-lb="${c.id}:${i}" aria-label="Open photo ${i+1}">${pimg(p,c.species)}</button>`).join('')}</div>`:''}
+ ${open?`<div class="crbody">${(()=>{const n=ph.length,k=Math.min(crPh[c.id]||0,Math.max(0,n-1));return flipInline('c:'+c.id,n?`<button class="crphoto" data-lb="${c.id}:${k}" aria-label="Open photo full screen">${pimg(ph[k],c.species,'crimg')}</button>${n>1?`<span class="crcount">${k+1} / ${n}</span><button class="crnav l" data-crph="${c.id}:${(k-1+n)%n}" aria-label="Previous photo">‹</button><button class="crnav r" data-crph="${c.id}:${(k+1)%n}" aria-label="Next photo">›</button>`:''}`:'',tradeCard(c,cm,pb))})()}
  <div class="row" style="justify-content:center;margin-top:12px">${c.loc?`<button class="btn sec" data-mapat="${c.id}">View on map</button>`:''}<button class="btn sec" data-fedit="${c.id}">Edit</button><button class="btn danger" data-fdelc="${c.id}">${fDelArm===c.id?'Tap again to delete':'Delete'}</button></div></div>`:''}</section>`}).join(''):`<p class="empty" style="margin-top:14px">No catches yet. Your first one will tick off a species on the checklist.</p>`))}
 function myGallery(C){const ps=C.flatMap(c=>(c.photos||[]).map((p,i)=>({p,c,i})));
  return ps.length?`<div class="gal">${ps.map(({p,c,i})=>`<button class="gitem" data-lb="${c.id}:${i}" aria-label="${esc(c.species)}, ${label(c.date)}">${pimg(p,c.species)}<span>${esc(c.species)}${c.g?' · '+fW(c.g):''}</span></button>`).join('')}</div>`:'<p class="empty">Photos you add to catches will appear here.</p>'}
@@ -1056,6 +1067,7 @@ function fishClick(t,ds){
  if(ds.fgroup){fGroup=ds.fgroup;rr();return true}
  if(ds.fstatus){fStatus=ds.fstatus;rr();return true}
  if(ds.ftick){const n=ds.ftick,F=fishD(),cur2=!!(F.ticks[n]&&F.ticks[n].v);F.ticks[n]={v:!cur2,t:Date.now()};save();rr();return true}
+ if(ds.crph){const[c,i]=ds.crph.split(':');crPh[c]=+i;rr();return true}
  if(ds.lb){const[c,i]=ds.lb.split(':');lb={c,i:+i};rr();return true}
  if(ds.blb){blb=ds.blb;rr();return true}
  if(ds.lbnav!=null){const all=catches().flatMap(c=>(c.photos||[]).map((p,i)=>({c:c.id,i})));lb=all[+ds.lbnav];rr();return true}
@@ -1581,6 +1593,9 @@ async function albPickGo(){const want=[...albPick];albPick=null;const list=[];
  for(const k of want){const[cid,i]=k.split(':'),c=fishD().catches.find(x=>x.id===cid),p=c&&(c.photos||[])[+i];if(!p)continue;const b=await photoBlob(p).catch(()=>null);if(b)list.push({blob:b,info:{sp:c.species,g:c.g||null,d:c.date}})}
  if(list.length)albAddBlobs(list);else{toast("Couldn't load those photos");rr()}}
 const FLIPSVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 0 1-13.7 5.6M4 12a8 8 0 0 1 13.7-5.6"/><path d="M18 2.5v4.3h-4.3M6 21.5v-4.3h4.3"/></svg>';
+const flipOn=new Set(),crPh={};
+function flipInline(key,front,back){if(!front)return back;const on=flipOn.has(key);
+ return`<div class="flipbox" data-fk="${esc(key)}"><div class="flipw${on?' on':''}"><div class="fface ffront" aria-hidden="${on}">${front}</div><div class="fface fback" aria-hidden="${!on}">${back}</div></div><button class="lbflip" data-flip aria-pressed="${on}">${FLIPSVG}<span>${on?'Photo':'Catch card'}</span></button></div>`}
 const flipWrap=(front,back)=>`<div class="flipw"><div class="fface ffront">${front}</div>${back?`<div class="fface fback" aria-hidden="true">${back}</div>`:''}</div>${back?`<button class="lbflip" data-flip aria-pressed="false">${FLIPSVG}<span>Catch card</span></button>`:''}`;
 function glCard(x){const c=x.c||(x.sp?{species:x.sp,g:x.g,date:x.d}:null);if(!c)return'';if(x.own)return tradeCard(c,caughtMap(),x.pb);return tradeCard(c,null,!!x.pb,x.bx||{who:x.who||'',maxG:c.g||1,maxL:1})}
 function glBox(){if(!gl)return'';let x=gl.list[gl.i];if(!x)return'';const n=gl.list.length,own=x.user_id&&x.user_id===user.id,canDel=x.item&&(own||(albs.list.find(a=>a.id===alb)||{}).owner===user.id);
@@ -1715,9 +1730,9 @@ function pmenu(open){const m=document.querySelector('.pmenu'),b=document.querySe
 document.addEventListener('click',e=>{const m=document.querySelector('.pmenu.open');if(m&&!m.contains(e.target)&&!(e.target.closest&&e.target.closest('.fav')))pmenu(false)},true);
 addEventListener('keydown',e=>{if(e.key==='Escape')pmenu(false)});
 document.addEventListener('change',e=>{const k=e.target&&e.target.dataset&&e.target.dataset.pvd;if(!k)return;pvF[k]=e.target.value||'';rr()});
-document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-flip]');if(!b)return;const box=b.closest('.lb'),w=box&&box.querySelector('.flipw');if(!w)return;e.stopPropagation();
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-flip]');if(!b)return;const box=b.closest('.lb,.flipbox'),w=box&&box.querySelector('.flipw');if(!w)return;e.stopPropagation();
  const on=!w.classList.contains('on');if(on&&pz&&pz.s>1.01){pz.s=1;pz.x=0;pz.y=0;pzSet()}w.classList.toggle('on',on);box.classList.toggle('flipped',on);b.setAttribute('aria-pressed',on);b.querySelector('span').textContent=on?'Photo':'Catch card';
- w.querySelector('.fback').setAttribute('aria-hidden',!on);w.querySelector('.ffront').setAttribute('aria-hidden',on)},true);
+ w.querySelector('.fback').setAttribute('aria-hidden',!on);w.querySelector('.ffront').setAttribute('aria-hidden',on);const fk=box.dataset.fk;if(fk)on?flipOn.add(fk):flipOn.delete(fk)},true);
 function friendsPage(){const back=`<button class="pback" data-act="pback" aria-label="Back">‹</button>`,head=`<header class="fhero sm">${scene().svg}<div class="fhin">${back}<p class="fgreet fx">Social</p><div class="fhtop"><h1>Friends</h1></div></div></header>`;
  if(!SB_URL||!user)return head+`<main class="wrap"><section class="card"><h2>Sign in first</h2><p class="sub">Friends are linked to your account. Sign in from Settings.</p><button class="btn" data-act="gosettings">Go to Settings</button></section></main>`;
  const P=prof(),inn=pendingIn(),out=soc.fr.filter(x=>x.status==='pending'&&x.from_id===user.id),fr=friendIds();
@@ -1822,7 +1837,7 @@ function fishBoard(){
  const L=sel?R.filter(r=>r.species===sel&&r.grams).sort((a,b)=>b.grams-a.grams).slice(0,25):[];
  return`<section class="card"><h2>Leaderboard</h2>${head}${spp.length?`<label class="f" style="margin:6px 0 4px">Species<select data-bsp>${spp.map(s=>`<option ${s===sel?'selected':''}>${esc(s)}</option>`).join('')}</select></label>
   <div class="ldrart">${fishSVG(sel)}</div><ol class="ldr ph">${L.map((r,i)=>{const op=board.open===r.id,I=r.info||{};return`<li class="${r.user_id===me?'me':''}${op?' open':''}"><button class="lrow" data-bopen="${esc(r.id)}" aria-expanded="${op}"><span class="rk">${i+1}</span>${r.photo?`<span class="lth">${bimg(r.photo,r.species)}</span>`:`<span class="lth none">${fishSVG(r.species)}</span>`}<span class="nm">${esc(r.name)}${r.user_id===me?' (you)':''}<small>${label(r.caught_on)}${I.method?' · '+esc(I.method):''}</small></span><span class="vl">${fW(r.grams)}${r.cm?`<small>${fmt(r.cm)} cm</small>`:''}</span></button>
- ${op?`<div class="crbody">${tradeCard({id:r.id,species:r.species,g:r.grams,cm:r.cm,date:r.caught_on,time:I.time,place:I.place,method:I.method,bait:I.bait,notes:I.notes,rel:I.rel},null,i===0,{who:r.name,rank:i+1,n:L.length,maxG:Math.max(...L.map(x=>x.grams||0),1),maxL:Math.max(...L.map(x=>x.cm||0),1)})}${r.photo?`<div class="scphotos" style="justify-content:center"><button class="scph" data-blb="${esc(r.id)}" aria-label="Open photo">${bimg(r.photo,r.species)}</button></div>`:''}${r.user_id!==me?(()=>{const rel=relWith(r.user_id);return`<div class="row" style="justify-content:center;margin-top:12px">${rel&&rel.status==='accepted'?`<button class="btn sec" data-pv="${esc(r.user_id)}">View ${esc(r.name)}'s profile</button>`:rel?`<span class="sub">Friend request ${rel.to_id===me?'waiting for you on your profile':'sent'}</span>`:`<button class="btn sec" data-addf="${esc(r.user_id)}" data-addn="${esc(r.name)}">Add ${esc(r.name)} as a friend</button>`}</div>`})():''}</div>`:''}</li>`}).join('')}</ol>`:'<p class="empty">No weighed catches shared yet. Log a catch with a weight to get on the board.</p>'}${foot}</section>`}
+ ${op?`<div class="crbody">${flipInline('b:'+r.id,r.photo?`<button class="crphoto" data-blb="${esc(r.id)}" aria-label="Open photo full screen">${bimg(r.photo,r.species,'crimg')}</button>`:'',tradeCard({id:r.id,species:r.species,g:r.grams,cm:r.cm,date:r.caught_on,time:I.time,place:I.place,method:I.method,bait:I.bait,notes:I.notes,rel:I.rel},null,i===0,{who:r.name,rank:i+1,n:L.length,maxG:Math.max(...L.map(x=>x.grams||0),1),maxL:Math.max(...L.map(x=>x.cm||0),1)}))}${r.user_id!==me?(()=>{const rel=relWith(r.user_id);return`<div class="row" style="justify-content:center;margin-top:12px">${rel&&rel.status==='accepted'?`<button class="btn sec" data-pv="${esc(r.user_id)}">View ${esc(r.name)}'s profile</button>`:rel?`<span class="sub">Friend request ${rel.to_id===me?'waiting for you on your profile':'sent'}</span>`:`<button class="btn sec" data-addf="${esc(r.user_id)}" data-addn="${esc(r.name)}">Add ${esc(r.name)} as a friend</button>`}</div>`})():''}</div>`:''}</li>`}).join('')}</ol>`:'<p class="empty">No weighed catches shared yet. Log a catch with a weight to get on the board.</p>'}${foot}</section>`}
 /* Suggestions under fishing inputs (iPhone ignores <datalist>) */
 const METHODS=['Float','Feeder','Method feeder','Ledger','Pole','Waggler','Stick float','Free-lining','Stalking','Surface','Zig rig','Lure','Spinning','Topwater','Popper','Jerkbait','Crankbait','Spinnerbait','Swimbait','Soft plastic','Drop shot','Jig','Ned rig','Texas rig','Carolina rig','Wacky rig','Shore jigging','LRF','HRF','Fly','Dry fly','Nymph','Streamer','Deadbait','Livebait','Bait','Beachcasting','Bottom fishing','Feathers','Uptide','Trolling','Boat fishing'];
 function suggList(kind,q){q=q.trim().toLowerCase();const F=fishD();
