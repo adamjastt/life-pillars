@@ -459,7 +459,7 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 .mbi.out{opacity:0;transition:opacity .3s}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><div id="achpop" aria-live="polite"></div><script>
 {
-const VERSION='7.29';
+const VERSION='7.30';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -1615,7 +1615,7 @@ function albClick(t,ds){
  if(ds.pvt){pvF.t=ds.pvt;rr();return true}
  if(ds.pvsp){const i=pvF.sp.indexOf(ds.pvsp);i<0?pvF.sp.push(ds.pvsp):pvF.sp.splice(i,1);rr();return true}
  if(ds.pvclear!=null){pvF={t:'all',a:'',b:'',sp:[]};rr();return true}
- if(ds.pvtab){pvTab=pvTab===ds.pvtab?null:ds.pvtab;rr();if(pvTab)setTimeout(()=>{const el=document.querySelector('.pvsec');if(el)el.scrollIntoView({behavior:'smooth',block:'start'})},60);return true}
+ if(ds.pvtab){pvTab=pvTab===ds.pvtab?null:ds.pvtab;rr();if(pvTab)setTimeout(()=>{const el=document.querySelector('.pvsec');if(!el)return;const r=el.getBoundingClientRect();if(r.top<innerHeight*.62)return;const st=document.querySelector('.ptop'),top=st?st.getBoundingClientRect().top:r.top-200;scrollTo({top:scrollY+top-70,behavior:'smooth'})},60);return true}
  if(ds.gl){const[k,i]=ds.gl.split(':');openGl(k,+i);return true}
  if(ds.glnav!=null){gl.i=+ds.glnav;albArm=null;rr();return true}
  return false}
