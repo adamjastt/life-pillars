@@ -321,7 +321,33 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 .pback{background:none;border:0;color:inherit;font-size:34px;line-height:1;padding:0 10px 0 0;cursor:pointer;min-height:44px}
 .fhin .pback{color:#fff;text-shadow:0 1px 10px #0008;margin-bottom:2px}
 .ptop{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center}.ptop h2{margin:0;font-size:24px}.ptop .sub{margin:4px 0 0}.code{letter-spacing:.12em;color:var(--ink)}
-.pstats{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(64px,1fr));gap:8px;margin-top:4px}.pstats span{white-space:nowrap}.pstats div{background:var(--card2);border-radius:12px;padding:10px;text-align:center}.pstats b{display:block;font-size:22px}.pstats b small{font-size:13px;color:var(--mut);font-weight:500}.pstats span{font-size:12px;color:var(--mut)}
+.pstats{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(64px,1fr));gap:8px;margin-top:4px}.pstats span{white-space:nowrap}.pstats div{background:var(--card2);border-radius:12px;padding:10px;text-align:center}.pstats b{display:block;font-size:22px}
+.pstats button{background:var(--card2);border-radius:12px;padding:10px;text-align:center;border:1.5px solid transparent;color:inherit;font:inherit;cursor:pointer;position:relative}
+.pstats button::after{content:'';position:absolute;right:7px;top:8px;width:6px;height:6px;border-right:2px solid var(--mut);border-bottom:2px solid var(--mut);transform:rotate(45deg);opacity:.7;transition:transform .2s}
+.pstats button.on{border-color:var(--acc)}.pstats button.on::after{transform:rotate(-135deg);top:11px}
+.phint{grid-column:1/-1;text-align:center;margin:8px 0 0;font-size:13px}
+.pvsp{display:grid;grid-template-columns:repeat(auto-fill,minmax(98px,1fr));gap:8px;margin-bottom:6px}
+.pvs{background:var(--card2);border-radius:12px;padding:8px 6px 9px;text-align:center;display:grid;gap:2px;align-content:start}
+.pvs b{font-size:12.5px;line-height:1.2}.pvs small{font-size:11px;color:var(--mut)}
+.pvsart{display:flex;align-items:center;justify-content:center;height:46px}.pvsart>*{max-width:100%;max-height:100%}
+.gcard{background:radial-gradient(circle at 50% 38%,var(--mc),var(--dc) 75%);box-shadow:inset 0 0 0 3px var(--ac);cursor:pointer}
+.gcard::after{display:none}
+.gca{position:absolute;inset:12% 10% 34%;display:flex;align-items:center;justify-content:center}.gca>*{max-width:100%;max-height:100%}
+.gpb{position:absolute;top:8px;left:8px;background:var(--ac);color:#1a1405;font-size:11px;padding:2px 7px;border-radius:99px}
+.flipw{position:relative;width:100%;height:100%;display:grid;grid-template:minmax(0,1fr)/minmax(0,1fr);perspective:1400px}
+.fface{grid-area:1/1;display:flex;align-items:center;justify-content:center;min-width:0;min-height:0;height:100%;backface-visibility:hidden;-webkit-backface-visibility:hidden;transition:transform .8s cubic-bezier(.3,.75,.25,1)}
+.fback{transform:rotateY(180deg);pointer-events:none}
+.flipw.on .ffront{transform:rotateY(-180deg);pointer-events:none}.flipw.on .fback{transform:rotateY(0);pointer-events:auto}
+.fback .tc,.lbcard .tc{width:min(340px,88vw,calc((100dvh - 190px)*.716));max-width:none;margin:0}
+.lbcard{display:flex;align-items:center;justify-content:center;width:100%;height:100%}
+.lbflip{position:absolute;left:8px;top:calc(8px + env(safe-area-inset-top));height:48px;padding:0 16px 0 12px;border:0;border-radius:99px;background:#ffffff26;color:#fff;display:inline-flex;align-items:center;gap:8px;font:600 15px/1 inherit;z-index:2;transition:opacity .2s}
+.lbflip svg{width:20px;height:20px;transition:transform .8s cubic-bezier(.3,.75,.25,1)}
+.lb.flipped .lbflip svg{transform:rotate(180deg)}
+.lb .lbcap{transition:opacity .3s}.lb.flipped .lbcap{opacity:0;pointer-events:none}
+.lb.zooming .lbflip{opacity:0;pointer-events:none}
+.lb.cardonly .lbcap{display:none}
+.fhero.sm .mbox{display:none}
+@media (prefers-reduced-motion:reduce){.fface,.lbflip svg{transition-duration:.01s}}.pstats b small{font-size:13px;color:var(--mut);font-weight:500}.pstats span{font-size:12px;color:var(--mut)}
 .pedit{padding:0 18px}.pedit>summary{border:0;background:none;padding:0;min-height:56px}.pedit[open]{padding-bottom:16px}
 .pbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-top:10px}.pbi{background:var(--card2);border-radius:12px;padding:8px 10px 10px;display:grid;gap:2px}.pbi b{font-size:14px}.pbi span:last-child{color:var(--acc);font-weight:600;font-size:14px}.pbart>*{width:100%;height:auto;display:block}
 .agh{font-size:15px;margin:0}.achs{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:10px}
@@ -411,7 +437,7 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 .mbi.out{opacity:0;transition:opacity .3s}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><div id="achpop" aria-live="polite"></div><script>
 {
-const VERSION='7.20';
+const VERSION='7.21';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -953,8 +979,8 @@ function tradeCard(c,cm,pb,bx){const all=speciesAll(),idx=all.findIndex(s=>s.n==
  return`<div class="tc${pb?' holo':''}" style="--ac:${ac};--mc:${mc};--dc:${dc}"><div class="tcin">
  <div class="tctop"><b>${esc(c.species)}</b><span>${c.g?fW(c.g):'–'}</span></div>
  <div class="tcart">${fishSVG(c.species)}<span class="tctype">${esc(g)}${GAME.has(c.species)?' · game':''}</span>${pb?'<span class="tcpb">PB</span>':''}</div>
- <div class="tcmeta">#${String(idx+1).padStart(3,'0')}/${all.length} · ${label(c.date)}${c.time?' '+esc(c.time):''}${c.place?' · '+esc(c.place):''}</div>
- <div class="tcstats">${bar('Weight',c.g?c.g/maxG*100:0,c.g?fW(c.g):'–')}${bar('Length',c.cm?c.cm/maxL*100:0,c.cm?fmt(c.cm)+' cm':'–')}${bx?bar('Board rank',(bx.n-bx.rank+1)/bx.n*100,'#'+bx.rank+' of '+bx.n):bar('Catch no.',mine.length?nth/mine.length*100:0,nth+' of '+mine.length)}</div>
+ <div class="tcmeta">#${String(idx+1).padStart(3,'0')}/${all.length}${c.date?' · '+label(c.date):''}${c.time?' '+esc(c.time):''}${c.place?' · '+esc(c.place):''}</div>
+ <div class="tcstats">${bar('Weight',c.g?c.g/maxG*100:0,c.g?fW(c.g):'–')}${bar('Length',c.cm?c.cm/maxL*100:0,c.cm?fmt(c.cm)+' cm':'–')}${bx?(bx.rank?bar('Board rank',(bx.n-bx.rank+1)/bx.n*100,'#'+bx.rank+' of '+bx.n):bx.tot?bar('Catch no.',bx.nth/bx.tot*100,bx.nth+' of '+bx.tot):''):bar('Catch no.',mine.length?nth/mine.length*100:0,nth+' of '+mine.length)}</div>
  <div class="tcflav">${c.notes?esc(c.notes):[c.method&&'Caught on the '+esc(c.method.toLowerCase())+(c.bait?' with '+esc(c.bait.toLowerCase()):''),c.rel===false?'Kept.':c.rel===true||!bx?'Safely released.':''].filter(Boolean).join('. ')||'Details kept private.'}</div>
  <div class="tcfoot"><span>${esc(c.method||'')}${c.bait?' · '+esc(c.bait):''}</span><span>${bx?'Caught by '+esc(bx.who):'Life Pillars · The Bank'}</span></div></div></div>`}
 function fishLog(C,cm){return(fForm?fishForm():`<div class="logrow"><button class="btn bigadd" data-fnew>+ Log a catch</button>${C.length?`<button class="btn sec mapsq" data-fview="map" aria-label="Catch map" title="Catch map"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><path d="M9 4 3 6.5v13.5l6-2.5 6 2.5 6-2.5V4l-6 2.5z"/><path d="M9 4v13.5M15 6.5V20"/></svg></button>`:''}</div>`)+(
@@ -969,10 +995,12 @@ function myGallery(C){const ps=C.flatMap(c=>(c.photos||[]).map((p,i)=>({p,c,i}))
 const bimg=(path,alt,cls)=>`<img data-pid="b:${esc(path)}" data-path="${esc(path)}" ${purl['b:'+path]?`src="${purl['b:'+path]}"`:''} alt="${esc(alt)}" class="${cls||''}" loading="lazy">`;
 let blb=null;
 function boardBox(){const r=(board.rows||[]).find(x=>x.id===blb);if(!r||!r.photo)return'';
- return`<div class="lb" role="dialog" aria-modal="true" aria-label="Photo"><button class="lbx" data-lbclose aria-label="Close">×</button>${bimg(r.photo,r.species,'lbimg')}
+ const L=(board.rows||[]).filter(x=>x.species===r.species&&x.grams).sort((a,b)=>b.grams-a.grams).slice(0,25),ri=L.findIndex(x=>x.id===r.id),I=r.info||{};
+ const card=tradeCard({id:r.id,species:r.species,g:r.grams,cm:r.cm,date:r.caught_on,time:I.time,place:I.place,method:I.method,bait:I.bait,notes:I.notes,rel:I.rel},null,ri===0,ri<0?{who:r.name,maxG:r.grams||1,maxL:r.cm||1}:{who:r.name,rank:ri+1,n:L.length,maxG:Math.max(...L.map(x=>x.grams||0),1),maxL:Math.max(...L.map(x=>x.cm||0),1)});
+ return`<div class="lb" role="dialog" aria-modal="true" aria-label="Photo"><button class="lbx" data-lbclose aria-label="Close">×</button>${flipWrap(bimg(r.photo,r.species,'lbimg'),card)}
  <div class="lbcap"><b>${esc(r.species)}${r.grams?' · '+fW(r.grams):''}</b><span>${esc(r.name)} · ${label(r.caught_on)}</span></div></div>`}
-function lightbox(){const all=catches().flatMap(c=>(c.photos||[]).map((p,i)=>({p,c,i}))),k=all.findIndex(x=>x.c.id===lb.c&&x.i===lb.i);if(k<0)return'';const {p,c}=all[k];
- return`<div class="lb" role="dialog" aria-modal="true" aria-label="Photo"><button class="lbx" data-lbclose aria-label="Close">×</button>${pimg(p,c.species,'lbimg')}
+function lightbox(){const all=catches().flatMap(c=>(c.photos||[]).map((p,i)=>({p,c,i}))),k=all.findIndex(x=>x.c.id===lb.c&&x.i===lb.i);if(k<0)return'';const {p,c}=all[k],cm=caughtMap();
+ return`<div class="lb" role="dialog" aria-modal="true" aria-label="Photo"><button class="lbx" data-lbclose aria-label="Close">×</button>${flipWrap(pimg(p,c.species,'lbimg'),tradeCard(c,cm,!!(cm[c.species]&&cm[c.species].pb===c)))}
  <div class="lbcap"><b>${esc(c.species)}${c.g?' · '+fW(c.g):''}</b><span>${label(c.date)}${c.place?' · '+esc(c.place):''}</span></div>
  ${all.length>1?`<button class="lbn l" data-lbnav="${(k-1+all.length)%all.length}" aria-label="Previous photo">‹</button><button class="lbn r" data-lbnav="${(k+1)%all.length}" aria-label="Next photo">›</button>`:''}</div>`}
 function mergeFish(a,b){a=a||{};b=b||{};const o={catches:[],cdel:{...(a.cdel||{})},custom:[...new Set([...(a.custom||[]),...(b.custom||[])])],ticks:{...(a.ticks||{})}};
@@ -983,7 +1011,7 @@ function fishClick(t,ds){
  if(pinClick(t,ds))return true;
  if(albClick(t,ds))return true;
  if(ds.pfp){const P=prof();P.avatar=ds.pfp;save();syncSocial();rr();return true}
- if(ds.pv){pvFrom=view()==='friends'?'friends':view()==='fishing'?'fishing':'profile';pv=ds.pv;frArm=null;location.hash='mate';return true}
+ if(ds.pv){pvTab=null;pvFrom=view()==='friends'?'friends':view()==='fishing'?'fishing':'profile';pv=ds.pv;frArm=null;location.hash='mate';return true}
  if(ds.fracc){acceptReq(+ds.fracc);return true}
  if(ds.frno){dropReq(+ds.frno);return true}
  if(ds.frdel){const id=+ds.frdel;if(frArm!==id){frArm=id;rr();return true}frArm=null;dropReq(id,'Friend removed');location.hash='profile';return true}
@@ -1531,12 +1559,18 @@ async function albAddBlobs(list){const a=alb;let n=0;albBusy='Adding photos…';
 async function albPickGo(){const want=[...albPick];albPick=null;const list=[];
  for(const k of want){const[cid,i]=k.split(':'),c=fishD().catches.find(x=>x.id===cid),p=c&&(c.photos||[])[+i];if(!p)continue;const b=await photoBlob(p).catch(()=>null);if(b)list.push({blob:b,info:{sp:c.species,g:c.g||null,d:c.date}})}
  if(list.length)albAddBlobs(list);else{toast("Couldn't load those photos");rr()}}
-function glBox(){if(!gl)return'';const x=gl.list[gl.i];if(!x)return'';const n=gl.list.length,own=x.user_id&&x.user_id===user.id,canDel=x.item&&(own||(albs.list.find(a=>a.id===alb)||{}).owner===user.id);
- return`<div class="lb" role="dialog" aria-modal="true" aria-label="Photo"><button class="lbx" data-lbclose aria-label="Close">×</button>${bimg(x.path,x.sp||'Photo','lbimg')}
- <div class="lbcap"><b>${x.sp?esc(x.sp)+(x.g?' · '+fW(x.g):''):'&nbsp;'}</b><span>${[x.by,x.d?label(x.d):''].filter(Boolean).join(' · ')}</span>${canDel?`<button class="linkbtn" data-albrm="${x.item}" style="color:#ffb3b3;min-height:36px;justify-self:start">${albArm===x.item?'Tap again to remove':'Remove from album'}</button>`:''}</div>
+const FLIPSVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 0 1-13.7 5.6M4 12a8 8 0 0 1 13.7-5.6"/><path d="M18 2.5v4.3h-4.3M6 21.5v-4.3h4.3"/></svg>';
+const flipWrap=(front,back)=>back?`<div class="flipw"><div class="fface ffront">${front}</div><div class="fface fback" aria-hidden="true">${back}</div></div><button class="lbflip" data-flip aria-pressed="false">${FLIPSVG}<span>Catch card</span></button>`:front;
+function glCard(x){const c=x.c||(x.sp?{species:x.sp,g:x.g,date:x.d}:null);if(!c)return'';if(x.own)return tradeCard(c,caughtMap(),x.pb);return tradeCard(c,null,!!x.pb,x.bx||{who:x.who||'',maxG:c.g||1,maxL:1})}
+function glBox(){if(!gl)return'';let x=gl.list[gl.i];if(!x)return'';const n=gl.list.length,own=x.user_id&&x.user_id===user.id,canDel=x.item&&(own||(albs.list.find(a=>a.id===alb)||{}).owner===user.id);
+ const sp=x.c?x.c.species:x.sp,front=x.p?pimg(x.p,sp,'lbimg'):x.path?bimg(x.path,sp||'Photo','lbimg'):'',back=glCard(x);
+ if(x.c&&!x.sp)x={...x,sp:x.c.species,g:x.c.g,d:x.c.date};
+ return`<div class="lb${front?'':' cardonly'}" role="dialog" aria-modal="true" aria-label="${front?'Photo':'Catch card'}"><button class="lbx" data-lbclose aria-label="Close">×</button>${front?flipWrap(front,back):`<div class="lbcard">${back}</div>`}
+ <div class="lbcap"${front?'':' hidden'}><b>${x.sp?esc(x.sp)+(x.g?' · '+fW(x.g):''):'&nbsp;'}</b><span>${[x.by,x.d?label(x.d):''].filter(Boolean).join(' · ')}</span>${canDel?`<button class="linkbtn" data-albrm="${x.item}" style="color:#ffb3b3;min-height:36px;justify-self:start">${albArm===x.item?'Tap again to remove':'Remove from album'}</button>`:''}</div>
  ${n>1?`<button class="lbn l" data-glnav="${(gl.i-1+n)%n}" aria-label="Previous photo">‹</button><button class="lbn r" data-glnav="${(gl.i+1)%n}" aria-label="Next photo">›</button>`:''}</div>`}
 function openGl(kind,i){let list=[];if(kind==='f'){const c=soc.cards[pv];list=((c&&c.gallery)||[]).map(x=>({...x,by:esc((c||{}).name||'')}))}
- else{list=(albs.items[alb]||[]).map(x=>({path:x.path,sp:(x.info||{}).sp,g:(x.info||{}).g,d:(x.info||{}).d,by:pname(x.user_id),user_id:x.user_id,item:x.id}))}gl={list,i};rr()}
+ else if(kind==='p'){const mine=view()==='profile';list=pvItems(mine?buildCard():soc.cards[pv]||{},mine)}
+ else{list=(albs.items[alb]||[]).map(x=>({path:x.path,sp:(x.info||{}).sp,g:(x.info||{}).g,d:(x.info||{}).d,by:pname(x.user_id),who:x.user_id===(user&&user.id)?prof().name:(soc.people[x.user_id]||{}).name||'',user_id:x.user_id,item:x.id}))}gl={list,i};rr()}
 function albClick(t,ds){
  if(ds.gmode){galMode=ds.gmode;albForm=null;rr();return true}
  if(ds.albnew!=null){albForm={name:'',sel:[]};rr();setTimeout(()=>{const i=document.querySelector('[data-albname]');if(i)i.focus()},50);return true}
@@ -1554,6 +1588,7 @@ function albClick(t,ds){
  if(ds.albleave!=null){if(albArm!=='leave'){albArm='leave';rr();return true}albArm=null;sb.from('album_members').delete().eq('album_id',alb).eq('user_id',user.id).then(r=>{toast(r.error?'Something went wrong':'You left the album');galMode='shared';location.hash='fishing';loadAlbums(true)});return true}
  if(ds.albdel!=null){if(albArm!=='del'){albArm='del';rr();return true}albArm=null;const a=alb,paths=(albs.items[a]||[]).map(x=>x.path);(async()=>{if(paths.length)await sb.storage.from(BUCKET).remove(paths).catch(()=>{});const r=await sb.from('albums').delete().eq('id',a);toast(r.error?'Could not delete the album':'Album deleted');galMode='shared';location.hash='fishing';loadAlbums(true)})();return true}
  if(ds.albrm){const id=ds.albrm;if(albArm!==id){albArm=id;rr();return true}albArm=null;const x=(albs.items[alb]||[]).find(y=>y.id===id);gl=null;(async()=>{const r=await sb.from('album_items').delete().eq('id',id);if(!r.error&&x)await sb.storage.from(BUCKET).remove([x.path]).catch(()=>{});toast(r.error?'Could not remove it':'Removed from the album');loadAlbums(true)})();return true}
+ if(ds.pvtab){pvTab=pvTab===ds.pvtab?null:ds.pvtab;rr();if(pvTab)setTimeout(()=>{const el=document.querySelector('.pvsec');if(el)el.scrollIntoView({behavior:'smooth',block:'start'})},60);return true}
  if(ds.gl){const[k,i]=ds.gl.split(':');openGl(k,+i);return true}
  if(ds.glnav!=null){gl.i=+ds.glnav;albArm=null;rr();return true}
  return false}
@@ -1593,7 +1628,9 @@ function myStats(){const C=fishD().catches,all=speciesAll(),grp=n=>(all.find(s=>
  return s}
 function buildCard(){const P=prof(),s=myStats(),ach={};for(const a of ACH)ach[a.id]=Math.min(s[a.k]||0,a.goal);
  const pb={};for(const c of fishD().catches)if(c.g&&(!pb[c.species]||c.g>pb[c.species]))pb[c.species]=c.g;
- return{v:1,name:P.name,avatar:favAv(),gallery:P.gallery===false?[]:myGalleryList(),stats:{catches:s.catches,species:s.species,big:s.big?{sp:s.big.species,g:s.big.g}:null,streak:null},pbs:Object.entries(pb).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([sp,g])=>({sp,g})),ach}}
+ const gOk=P.gallery!==false,cmx=caughtMap();
+ const log=catches().slice(0,200).map(c=>({id:c.id,sp:c.species,g:c.g||null,cm:c.cm||null,d:c.date,t:c.time||null,m:c.method||null,b:c.bait||null,n:c.notes?String(c.notes).slice(0,160):null,rel:c.rel!==false,ph:gOk?(c.photos||[]).map(p=>p.path).filter(Boolean):[]}));
+ return{v:2,name:P.name,avatar:favAv(),gallery:gOk?myGalleryList():[],log,spp:speciesAll().filter(x=>isTicked(x.n,cmx)).map(x=>x.n),stats:{catches:s.catches,species:s.species,big:s.big?{sp:s.big.species,g:s.big.g}:null,streak:null},pbs:Object.entries(pb).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([sp,g])=>({sp,g})),ach}}
 const achDone=(card,a)=>(card.ach[a.id]||0)>=a.goal;
 let pvFrom=null,soc={at:0,err:'',fr:[],people:{},cards:{},msg:''},socHash='',pv=null,frArm=null;
 const socErr=e=>/relation|does not exist|schema cache/i.test((e&&e.message)||'')?'setup':((e&&e.message)||'Something went wrong');
@@ -1630,13 +1667,13 @@ function badge(a,card){const done=achDone(card,a),cur=card.ach[a.id]||0;return`<
 function achWall(card,key){return[['f','Fishing']].map(([g,l])=>{const L=ACH.filter(a=>a.g===g&&card.ach[a.id]!=null);if(!L.length)return'';const done=L.filter(a=>achDone(card,a)),left=L.filter(a=>!achDone(card,a)).sort((a,b)=>(card.ach[b.id]||0)/b.goal-(card.ach[a.id]||0)/a.goal),k=key+g;
  return`<div class="ch" style="margin-top:14px"><h3 class="agh">${l}</h3><span class="sub">${done.length} of ${L.length}</span></div>${done.length?`<div class="achs">${done.map(a=>badge(a,card)).join('')}</div>`:'<p class="empty">None unlocked yet.</p>'}
  ${left.length?`<details class="alock" data-keep="${k}" ${openD.has(k)?'open':''}><summary>Still to unlock (${left.length})</summary><div class="achs">${left.map(a=>badge(a,card)).join('')}</div></details>`:''}`}).join('')}
-function profilePage(){const mine=view()==='profile',FO=true,back=`<button class="pback" data-act="pback" aria-label="Back">‹</button>`;
+function profilePage(){{const key=view()+':'+(view()==='mate'?pv:'');if(pvTabFor!==key){pvTabFor=key;pvTab=null}}const mine=view()==='profile',FO=true,back=`<button class="pback" data-act="pback" aria-label="Back">‹</button>`;
  const head=t=>FO?`<header class="fhero sm">${scene().svg}<div class="fhin">${back}<div class="fhtop"><h1>${t}</h1></div></div></header>`:`<header class="hero"><div class="in"><div class="top">${back}<h1 style="flex:1">${t}</h1></div></div></header>`;
  if(!SB_URL||!user)return head('Profile')+`<main class="wrap"><section class="card"><h2>Sign in first</h2><p class="sub">Your angler profile and friends are linked to your account. Sign in from Settings.</p><button class="btn" data-act="gosettings">Go to Settings</button></section></main>`;
  if(!mine){const card=soc.cards[pv],per=soc.people[pv]||{},rel=relWith(pv);
   if(!rel||rel.status!=='accepted')return head(esc(per.name||'Profile'))+`<main class="wrap"><section class="card"><p class="sub">You can see this profile once you're friends.</p></section></main>`;
   if(!card)return head(esc(per.name||'Profile'))+`<main class="wrap"><section class="card"><p class="sub">${per.name?esc(per.name)+" hasn't":"They haven't"} opened the app since profiles were added, so there's nothing to show yet.</p></section></main>`;
-  return head(esc(card.name))+`<main class="wrap">${profTop(card,false)}${pbCard(card)}${(card.gallery||[]).length?`<section class="card"><div class="ch"><h2>Gallery</h2><span class="sub">${card.gallery.length} photo${card.gallery.length===1?'':'s'}</span></div><div class="gal" style="margin-top:10px">${card.gallery.map((x,i)=>`<button class="gitem" data-gl="f:${i}" aria-label="${esc(x.sp)}">${bimg(x.path,x.sp)}<span>${esc(x.sp)}${x.g?' · '+fW(x.g):''}</span></button>`).join('')}</div></section>`:''}<section class="card"><h2>Achievements</h2>${achWall(card,'am'+pv)}</section><p class="sub" style="text-align:center"><button class="linkbtn dlink" data-frdel="${rel.id}">${frArm===rel.id?'Tap again to remove':'Remove friend'}</button></p></main>`}
+  return head(esc(card.name))+`<main class="wrap">${profTop(card,false)}${pbCard(card)}<section class="card"><h2>Achievements</h2>${achWall(card,'am'+pv)}</section><p class="sub" style="text-align:center"><button class="linkbtn dlink" data-frdel="${rel.id}">${frArm===rel.id?'Tap again to remove':'Remove friend'}</button></p></main>`}
  const card=buildCard(),P=prof(),inn=pendingIn(),out=soc.fr.filter(x=>x.status==='pending'&&x.from_id===user.id),fr=friendIds();
  const nm=id=>esc((soc.people[id]||{}).name||'Someone'),avOf=id=>(soc.cards[id]||{}).avatar||(soc.people[id]||{}).avatar;
  const setup=soc.err==='setup'?`<section class="card"><p class="sub">Profiles and friends aren't switched on on the server yet. Your achievements still work here.</p></section>`:'';
@@ -1651,6 +1688,9 @@ function pmenuHtml(){const n=pendingIn().length,P=D.cfg.prof||{};return`<div cla
 function pmenu(open){const m=document.querySelector('.pmenu'),b=document.querySelector('.fav');if(!m)return;m.classList.toggle('open',open);if(b)b.setAttribute('aria-expanded',open)}
 document.addEventListener('click',e=>{const m=document.querySelector('.pmenu.open');if(m&&!m.contains(e.target)&&!(e.target.closest&&e.target.closest('.fav')))pmenu(false)},true);
 addEventListener('keydown',e=>{if(e.key==='Escape')pmenu(false)});
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-flip]');if(!b)return;const box=b.closest('.lb'),w=box&&box.querySelector('.flipw');if(!w)return;e.stopPropagation();
+ const on=!w.classList.contains('on');if(on&&pz&&pz.s>1.01){pz.s=1;pz.x=0;pz.y=0;pzSet()}w.classList.toggle('on',on);box.classList.toggle('flipped',on);b.setAttribute('aria-pressed',on);b.querySelector('span').textContent=on?'Photo':'Catch card';
+ w.querySelector('.fback').setAttribute('aria-hidden',!on);w.querySelector('.ffront').setAttribute('aria-hidden',on)},true);
 function friendsPage(){const back=`<button class="pback" data-act="pback" aria-label="Back">‹</button>`,head=`<header class="fhero sm">${scene().svg}<div class="fhin">${back}<p class="fgreet fx">Social</p><div class="fhtop"><h1>Friends</h1></div></div></header>`;
  if(!SB_URL||!user)return head+`<main class="wrap"><section class="card"><h2>Sign in first</h2><p class="sub">Friends are linked to your account. Sign in from Settings.</p><button class="btn" data-act="gosettings">Go to Settings</button></section></main>`;
  const P=prof(),inn=pendingIn(),out=soc.fr.filter(x=>x.status==='pending'&&x.from_id===user.id),fr=friendIds();
@@ -1663,7 +1703,31 @@ function friendsPage(){const back=`<button class="pback" data-act="pback" aria-l
  ${out.length?`<h3 class="agh" style="margin-top:14px">Sent</h3>${out.map(x=>`<div class="frow">${avatarImg(avOf(x.to_id),'sm')}<span class="frn">${nm(x.to_id)}<small>Waiting for them to accept</small></span><button class="btn sec sm" data-frno="${x.id}">Cancel</button></div>`).join('')}`:''}</section></main>`}
 function profTop(card,mine){const n=ACH.filter(a=>achDone(card,a)).length,tot=ACH.filter(a=>card.ach[a.id]!=null).length,st=card.stats;
  return`<section class="card ptop">${avatarImg(card.avatar,'lg')}<div class="pmain"><h2>${esc(card.name)}</h2>${mine?`<p class="sub">Friend code <b class="code">${esc(prof().code)}</b> <button class="linkbtn" data-act="copycode" style="min-height:32px">Copy</button></p>`:''}</div>
- <div class="pstats"><div><b>${st.species}</b><span>species</span></div><div><b>${st.catches}</b><span>catches</span></div><div><b>${n}<small>/${tot}</small></b><span>badges</span></div>${st.streak!=null?`<div><b>${st.streak}</b><span>streak</span></div>`:''}</div></section>`}
+ <div class="pstats"><button data-pvtab="species" aria-pressed="${pvTab==='species'}" class="${pvTab==='species'?'on':''}"><b>${st.species}</b><span>species</span></button><button data-pvtab="catches" aria-pressed="${pvTab==='catches'}" class="${pvTab==='catches'?'on':''}"><b>${st.catches}</b><span>catches</span></button><div><b>${n}<small>/${tot}</small></b><span>badges</span></div>${st.streak!=null?`<div><b>${st.streak}</b><span>streak</span></div>`:''}</div>${pvTab?'':'<p class="sub phint">Tap species or catches to look through them.</p>'}</section>${pvTab==='species'?pvSpecies(card,mine):pvTab==='catches'?pvCatches(card,mine):''}`}
+let pvTab=null,pvTabFor=null;
+const byOld=(a,b)=>(a.d+(a.t||'')).localeCompare(b.d+(b.t||''));
+function pvItems(card,mine){const out=[];
+ if(mine){const cm=caughtMap();for(const c of catches()){const pb=!!(cm[c.species]&&cm[c.species].pb===c),ph=c.photos||[];if(ph.length)ph.forEach(p=>out.push({own:1,c,p,pb}));else out.push({own:1,c,pb})}return out}
+ const who=card.name||'';
+ if(card.log){const L=card.log;for(const e of L){const same=L.filter(y=>y.sp===e.sp),srt=[...same].sort(byOld),maxG=Math.max(...same.map(y=>y.g||0),1);
+  const c={id:e.id,species:e.sp,g:e.g,cm:e.cm,date:e.d,time:e.t,method:e.m,bait:e.b,notes:e.n,rel:e.rel},bx={who,maxG,maxL:Math.max(...same.map(y=>y.cm||0),1),nth:srt.indexOf(e)+1,tot:same.length},pb=!!e.g&&e.g===maxG;
+  if((e.ph||[]).length)e.ph.forEach(path=>out.push({c,path,bx,pb}));else out.push({c,bx,pb})}return out}
+ return(card.gallery||[]).map(x=>({path:x.path,c:{species:x.sp,g:x.g,date:x.d},bx:{who,maxG:x.g||1,maxL:1},pb:false}))}
+function pvCatches(card,mine){const it=pvItems(card,mine),nph=it.filter(x=>x.p||x.path).length,ncat=new Set(it.map(x=>x.c.id||x.path)).size;
+ const old=!mine&&!card.log;
+ return`<section class="card pvsec"><div class="ch"><h2>Catches</h2><span class="sub">${nph} photo${nph===1?'':'s'}${it.length-nph?' · '+(it.length-nph)+' card'+(it.length-nph===1?'':'s'):''}</span></div>
+ ${it.length?`<p class="sub" style="margin:2px 0 10px">Tap any photo, then flip it to see the catch card.</p><div class="gal">${it.map((x,i)=>{const c=x.c,cap=`<span>${esc(c.species)}${c.g?' · '+fW(c.g):''}${c.date?`<small>${label(c.date)}</small>`:''}</span>`;
+  if(x.p||x.path)return`<button class="gitem" data-gl="p:${i}" aria-label="${esc(c.species)} photo">${x.p?pimg(x.p,c.species):bimg(x.path,c.species)}${cap}</button>`;
+  const g=(speciesAll().find(y=>y.n===c.species)||{}).g||'Custom',[ac,mc,dc]=SCENEC[g]||SCENEC.Custom;
+  return`<button class="gitem gcard" data-gl="p:${i}" aria-label="${esc(c.species)} catch card" style="--ac:${ac};--mc:${mc};--dc:${dc}"><i class="gca">${fishSVG(c.species)}</i>${x.pb?'<b class="gpb">PB</b>':''}${cap}</button>`}).join('')}</div>`:`<p class="empty">${mine?'No catches yet.':'No catches to show yet.'}</p>`}
+ ${old?'<p class="sub" style="margin-top:10px">Catches without photos show up here once they update the app.</p>':''}</section>`}
+function pvSpecies(card,mine){const names=mine?speciesAll().filter(x=>isTicked(x.n,caughtMap())).map(x=>x.n):card.spp;
+ if(!names)return`<section class="card pvsec"><h2>Species</h2><p class="sub">Their species list shows up once they update the app.</p></section>`;
+ const all=speciesAll(),grp=n=>(all.find(y=>y.n===n)||{}).g||'Custom',best={};
+ for(const x of pvItems(card,mine))if(x.c.g&&(!best[x.c.species]||x.c.g>best[x.c.species]))best[x.c.species]=x.c.g;
+ const groups=[...FISH.map(f=>f[0]),'Custom'].filter(g=>names.some(n=>grp(n)===g));
+ return`<section class="card pvsec"><div class="ch"><h2>Species</h2><span class="sub">${names.length} of ${all.length}</span></div>
+ ${names.length?groups.map(g=>`<h3 class="agh">${esc(g)}</h3><div class="pvsp">${names.filter(n=>grp(n)===g).map(n=>`<div class="pvs"><span class="pvsart">${fishSVG(n)}</span><b>${esc(n)}</b>${best[n]?`<small>PB ${fW(best[n])}</small>`:''}</div>`).join('')}</div>`).join(''):'<p class="empty">No species ticked off yet.</p>'}</section>`}
 function pbCard(card){return card.pbs&&card.pbs.length?`<section class="card"><h2>Personal bests</h2><div class="pbs">${card.pbs.map(p=>`<div class="pbi"><span class="pbart">${fishSVG(p.sp)}</span><b>${esc(p.sp)}</b><span>${fW(p.g)}</span></div>`).join('')}</div></section>`:''}
 let achSeen=null;function checkAch(){try{const card=buildCard(),now=ACH.filter(a=>achDone(card,a)).map(a=>a.id);if(achSeen===null){achSeen=JSON.parse(localStorage.getItem('pach')||'null');if(!achSeen){achSeen=now;localStorage.setItem('pach',JSON.stringify(now));return}}
  const nu=now.filter(id=>!achSeen.includes(id));if(nu.length){achSeen=[...achSeen,...nu];localStorage.setItem('pach',JSON.stringify(achSeen));const a=ACH.find(x=>x.id===nu[0]);showAch(a,nu.length-1)}}catch(e){}}
