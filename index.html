@@ -489,7 +489,7 @@ img.fimg{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-w
 .mbi.out{opacity:0;transition:opacity .3s}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><div id="achpop" aria-live="polite"></div><script>
 {
-const VERSION='7.38';
+const VERSION='7.39';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -1684,15 +1684,19 @@ function pushCard(){if(!('Notification' in window)||!('serviceWorker' in navigat
  if(!pushSt.checked)pushCheck();
  if(Notification.permission==='denied')return`<section class="card spush"><b>Lock-screen alerts are blocked</b><p class="sub">Turn notifications on for Life Pillars in your phone's Settings, then come back here.</p></section>`;
  return pushSt.on?`<section class="card spush on"><b>Lock-screen alerts are on</b><p class="sub">You'll get a notification when someone in your session catches a fish.</p><button class="linkbtn" data-pushoff>Turn off on this phone</button></section>`
-  :`<section class="card spush"><b>Get alerts on your lock screen</b><p class="sub">Know the moment a mate lands one, even with your phone in your pocket.</p><button class="btn sec" data-pushon ${pushSt.busy?'disabled':''}>${pushSt.busy?'Turning on…':'Turn on alerts'}</button></section>`}
+  :`<section class="card spush"><b>Get alerts on your lock screen</b><p class="sub">Know the moment a mate lands one, even with your phone in your pocket.</p><button class="btn sec" data-pushon ${pushSt.busy?'disabled':''}>${pushSt.busy?'Turning on…':'Turn on alerts'}</button>${pushSt.err?`<p class="sub" style="margin-top:8px;font-size:12px;word-break:break-word">Last error: ${esc(pushSt.err)}</p>`:''}</section>`}
 const b64u=s=>{const p='='.repeat((4-s.length%4)%4),b=atob((s+p).replace(/-/g,'+').replace(/_/g,'/'));return Uint8Array.from([...b].map(c=>c.charCodeAt(0)))};
 async function swReg(){if(!('serviceWorker' in navigator))return null;try{return await navigator.serviceWorker.register('sw.js')}catch(e){return null}}
 async function pushCheck(){pushSt.checked=true;try{const reg=await swReg();const sub=reg&&reg.pushManager&&await reg.pushManager.getSubscription();pushSt.on=!!sub&&Notification.permission==='granted'}catch(e){}if(sesView())rr()}
-async function pushOn(){if(!sb||!user)return;pushSt.busy=true;rr();try{const perm=await Notification.requestPermission();if(perm!=='granted'){toast('Notifications were not allowed');return}
-  const reg=await swReg();if(!reg)throw new Error('no sw');await navigator.serviceWorker.ready;let sub=await reg.pushManager.getSubscription();
+async function pushOn(){if(!sb||!user)return;pushSt.busy=true;rr();let step='permission';
+ try{const perm=await Notification.requestPermission();if(perm!=='granted'){toast('Notifications were not allowed');return}
+  step='worker';await swReg();const reg=await Promise.race([navigator.serviceWorker.ready,new Promise((_,j)=>setTimeout(()=>j(new Error('timed out waiting for the app worker')),15000))]);
+  step='subscribe';let sub=await reg.pushManager.getSubscription();
   if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64u(VAPID_PUB)});const j=sub.toJSON();
-  const r=await sb.from('push_subs').upsert({endpoint:j.endpoint,user_id:user.id,p256dh:j.keys.p256dh,auth:j.keys.auth});if(r.error)throw r.error;pushSt.on=true;toast("Alerts are on")}
- catch(e){console.warn('push',e);toast(socErr(e)==='setup'?"Alerts aren't switched on on the server yet":"Couldn't turn on alerts on this phone")}finally{pushSt.busy=false;rr()}}
+  step='save';const r=await sb.from('push_subs').upsert({endpoint:j.endpoint,user_id:user.id,p256dh:j.keys.p256dh,auth:j.keys.auth},{onConflict:'endpoint'});if(r.error)throw r.error;
+  pushSt.on=true;toast('Alerts are on')}
+ catch(e){const m=(e&&(e.message||e.name))||String(e);console.warn('push',step,e);pushSt.err=`${step}: ${m}`;
+  toast(socErr(e)==='setup'?"Alerts aren't switched on on the server yet":`Couldn't turn on alerts (${step}: ${m.slice(0,90)})`)}finally{pushSt.busy=false;rr()}}
 async function pushOff(){try{const reg=await swReg(),sub=reg&&await reg.pushManager.getSubscription();if(sub){const ep=sub.endpoint;await sub.unsubscribe();if(sb)await sb.from('push_subs').delete().eq('endpoint',ep)}}catch(e){}pushSt.on=false;toast('Alerts turned off on this phone');rr()}
 if('serviceWorker' in navigator){swReg();navigator.serviceWorker.addEventListener('message',e=>{const d=e.data||{};if(d.type==='open'){try{const u=new URL(d.url),s=u.searchParams.get('s');if(s){sesId=s;loadSessions(true);location.hash='session'}}catch(_){}}})}
 {const q=new URLSearchParams(location.search).get('s');if(q&&/^[0-9a-f-]{36}$/i.test(q)){sesId=q;try{history.replaceState(null,'',location.pathname+'#session')}catch(e){}}}
