@@ -326,6 +326,7 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 .pstats button::after{content:'';position:absolute;right:7px;top:8px;width:6px;height:6px;border-right:2px solid var(--mut);border-bottom:2px solid var(--mut);transform:rotate(45deg);opacity:.7;transition:transform .2s}
 .pstats button.on{border-color:var(--acc)}.pstats button.on::after{transform:rotate(-135deg);top:11px}
 .phint{grid-column:1/-1;text-align:center;margin:8px 0 0;font-size:13px}
+.pvsort{margin:2px 0 8px}.pvsort button{flex:1;height:36px}
 .pvsp{display:grid;grid-template-columns:repeat(auto-fill,minmax(98px,1fr));gap:8px;margin-bottom:6px}
 .pvs{background:var(--card2);border-radius:12px;padding:8px 6px 9px;text-align:center;display:grid;gap:2px;align-content:start}
 .pvs b{font-size:12.5px;line-height:1.2}.pvs small{font-size:11px;color:var(--mut)}
@@ -439,7 +440,7 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 .mbi.out{opacity:0;transition:opacity .3s}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><div id="achpop" aria-live="polite"></div><script>
 {
-const VERSION='7.23';
+const VERSION='7.24';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -1590,6 +1591,7 @@ function albClick(t,ds){
  if(ds.albleave!=null){if(albArm!=='leave'){albArm='leave';rr();return true}albArm=null;sb.from('album_members').delete().eq('album_id',alb).eq('user_id',user.id).then(r=>{toast(r.error?'Something went wrong':'You left the album');galMode='shared';location.hash='fishing';loadAlbums(true)});return true}
  if(ds.albdel!=null){if(albArm!=='del'){albArm='del';rr();return true}albArm=null;const a=alb,paths=(albs.items[a]||[]).map(x=>x.path);(async()=>{if(paths.length)await sb.storage.from(BUCKET).remove(paths).catch(()=>{});const r=await sb.from('albums').delete().eq('id',a);toast(r.error?'Could not delete the album':'Album deleted');galMode='shared';location.hash='fishing';loadAlbums(true)})();return true}
  if(ds.albrm){const id=ds.albrm;if(albArm!==id){albArm=id;rr();return true}albArm=null;const x=(albs.items[alb]||[]).find(y=>y.id===id);gl=null;(async()=>{const r=await sb.from('album_items').delete().eq('id',id);if(!r.error&&x)await sb.storage.from(BUCKET).remove([x.path]).catch(()=>{});toast(r.error?'Could not remove it':'Removed from the album');loadAlbums(true)})();return true}
+ if(ds.pvsort){pvSort=ds.pvsort;rr();return true}
  if(ds.pvtab){pvTab=pvTab===ds.pvtab?null:ds.pvtab;rr();if(pvTab)setTimeout(()=>{const el=document.querySelector('.pvsec');if(el)el.scrollIntoView({behavior:'smooth',block:'start'})},60);return true}
  if(ds.gl){const[k,i]=ds.gl.split(':');openGl(k,+i);return true}
  if(ds.glnav!=null){gl.i=+ds.glnav;albArm=null;rr();return true}
@@ -1669,7 +1671,7 @@ function badge(a,card){const done=achDone(card,a),cur=card.ach[a.id]||0;return`<
 function achWall(card,key){return[['f','Fishing']].map(([g,l])=>{const L=ACH.filter(a=>a.g===g&&card.ach[a.id]!=null);if(!L.length)return'';const done=L.filter(a=>achDone(card,a)),left=L.filter(a=>!achDone(card,a)).sort((a,b)=>(card.ach[b.id]||0)/b.goal-(card.ach[a.id]||0)/a.goal),k=key+g;
  return`<div class="ch" style="margin-top:14px"><h3 class="agh">${l}</h3><span class="sub">${done.length} of ${L.length}</span></div>${done.length?`<div class="achs">${done.map(a=>badge(a,card)).join('')}</div>`:'<p class="empty">None unlocked yet.</p>'}
  ${left.length?`<details class="alock" data-keep="${k}" ${openD.has(k)?'open':''}><summary>Still to unlock (${left.length})</summary><div class="achs">${left.map(a=>badge(a,card)).join('')}</div></details>`:''}`}).join('')}
-function profilePage(){{const key=view()+':'+(view()==='mate'?pv:'');if(pvTabFor!==key){pvTabFor=key;pvTab=null}}const mine=view()==='profile',FO=true,back=`<button class="pback" data-act="pback" aria-label="Back">‹</button>`;
+function profilePage(){{const key=view()+':'+(view()==='mate'?pv:'');if(pvTabFor!==key){pvTabFor=key;pvTab=null;pvSort='date'}}const mine=view()==='profile',FO=true,back=`<button class="pback" data-act="pback" aria-label="Back">‹</button>`;
  const head=t=>FO?`<header class="fhero sm">${scene().svg}<div class="fhin">${back}<div class="fhtop"><h1>${t}</h1></div></div></header>`:`<header class="hero"><div class="in"><div class="top">${back}<h1 style="flex:1">${t}</h1></div></div></header>`;
  if(!SB_URL||!user)return head('Profile')+`<main class="wrap"><section class="card"><h2>Sign in first</h2><p class="sub">Your angler profile and friends are linked to your account. Sign in from Settings.</p><button class="btn" data-act="gosettings">Go to Settings</button></section></main>`;
  if(!mine){const card=soc.cards[pv],per=soc.people[pv]||{},rel=relWith(pv);
@@ -1706,9 +1708,12 @@ function friendsPage(){const back=`<button class="pback" data-act="pback" aria-l
 function profTop(card,mine){const n=ACH.filter(a=>achDone(card,a)).length,tot=ACH.filter(a=>card.ach[a.id]!=null).length,st=card.stats;
  return`<section class="card ptop">${avatarImg(card.avatar,'lg')}<div class="pmain"><h2>${esc(card.name)}</h2>${mine?`<p class="sub">Friend code <b class="code">${esc(prof().code)}</b> <button class="linkbtn" data-act="copycode" style="min-height:32px">Copy</button></p>`:''}</div>
  <div class="pstats"><button data-pvtab="species" aria-pressed="${pvTab==='species'}" class="${pvTab==='species'?'on':''}"><b>${st.species}</b><span>species</span></button><button data-pvtab="catches" aria-pressed="${pvTab==='catches'}" class="${pvTab==='catches'?'on':''}"><b>${st.catches}</b><span>catches</span></button><div><b>${n}<small>/${tot}</small></b><span>badges</span></div>${st.streak!=null?`<div><b>${st.streak}</b><span>streak</span></div>`:''}</div>${pvTab?'':'<p class="sub phint">Tap species or catches to look through them.</p>'}</section>${pvTab==='species'?pvSpecies(card,mine):pvTab==='catches'?pvCatches(card,mine):''}`}
-let pvTab=null,pvTabFor=null;
+let pvTab=null,pvTabFor=null,pvSort='date';
 const byOld=(a,b)=>(a.d+(a.t||'')).localeCompare(b.d+(b.t||''));
-function pvItems(card,mine){const out=[];
+function pvItems(card,mine){const it=pvItemsRaw(card,mine),k=x=>(x.c.date||'')+(x.c.time||''),ix=new Map(it.map((x,i)=>[x,i]));
+ const cmp=pvSort==='weight'?(a,b)=>(b.c.g||0)-(a.c.g||0)||k(b).localeCompare(k(a)):pvSort==='species'?(a,b)=>(a.c.species||'').localeCompare(b.c.species||'')||k(b).localeCompare(k(a)):(a,b)=>k(b).localeCompare(k(a));
+ return it.sort((a,b)=>cmp(a,b)||ix.get(a)-ix.get(b))}
+function pvItemsRaw(card,mine){const out=[];
  if(mine){const cm=caughtMap();for(const c of catches()){const pb=!!(cm[c.species]&&cm[c.species].pb===c),ph=c.photos||[];if(ph.length)ph.forEach(p=>out.push({own:1,c,p,pb}));else out.push({own:1,c,pb})}return out}
  const who=card.name||'';
  if(card.log){const L=card.log;for(const e of L){const same=L.filter(y=>y.sp===e.sp),srt=[...same].sort(byOld),maxG=Math.max(...same.map(y=>y.g||0),1);
@@ -1718,7 +1723,7 @@ function pvItems(card,mine){const out=[];
 function pvCatches(card,mine){const it=pvItems(card,mine),nph=it.filter(x=>x.p||x.path).length,ncat=new Set(it.map(x=>x.c.id||x.path)).size;
  const old=!mine&&!card.log;
  return`<section class="card pvsec"><div class="ch"><h2>Catches</h2><span class="sub">${nph} photo${nph===1?'':'s'}${it.length-nph?' · '+(it.length-nph)+' card'+(it.length-nph===1?'':'s'):''}</span></div>
- ${it.length?`<p class="sub" style="margin:2px 0 10px">Tap any photo, then flip it to see the catch card.</p><div class="gal">${it.map((x,i)=>{const c=x.c,cap=`<span>${esc(c.species)}${c.g?' · '+fW(c.g):''}${c.date?`<small>${label(c.date)}</small>`:''}</span>`;
+ ${it.length?`<div class="seg pvsort" role="group" aria-label="Sort catches">${[['date','Newest'],['species','Species'],['weight','Heaviest']].map(([k,l])=>`<button data-pvsort="${k}" class="${pvSort===k?'on':''}" aria-pressed="${pvSort===k}">${l}</button>`).join('')}</div><p class="sub" style="margin:2px 0 10px">Tap any photo, then flip it to see the catch card.</p><div class="gal">${it.map((x,i)=>{const c=x.c,cap=`<span>${esc(c.species)}${c.g?' · '+fW(c.g):''}${c.date?`<small>${label(c.date)}</small>`:''}</span>`;
   if(x.p||x.path)return`<button class="gitem" data-gl="p:${i}" aria-label="${esc(c.species)} photo">${x.p?pimg(x.p,c.species):bimg(x.path,c.species)}${cap}</button>`;
   const g=(speciesAll().find(y=>y.n===c.species)||{}).g||'Custom',[ac,mc,dc]=SCENEC[g]||SCENEC.Custom;
   return`<button class="gitem gcard" data-gl="p:${i}" aria-label="${esc(c.species)} catch card" style="--ac:${ac};--mc:${mc};--dc:${dc}"><i class="gca">${fishSVG(c.species)}</i>${x.pb?'<b class="gpb">PB</b>':''}${cap}</button>`}).join('')}</div>`:`<p class="empty">${mine?'No catches yet.':'No catches to show yet.'}</p>`}
