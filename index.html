@@ -327,7 +327,7 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 .pstats button.on{border-color:var(--acc)}.pstats button.on::after{transform:rotate(-135deg);top:11px}
 .phint{grid-column:1/-1;text-align:center;margin:8px 0 0;font-size:13px}
 .pvbar{display:flex;gap:6px;align-items:center;margin:2px 0 8px}
-.pvsort{margin:0;flex:1;min-width:0}.pvsort button{flex:1;height:38px;white-space:nowrap;padding:0 8px}
+.pvsort{margin:0;flex:1;min-width:0;gap:5px}.pvsort button{flex:1 1 0;min-width:0;height:38px;white-space:nowrap;padding:0 6px;font-size:14px}
 .pvfbtn{position:relative;flex:none;height:38px;display:inline-flex;align-items:center;gap:6px;padding:0 12px;border-radius:99px;border:1px solid var(--line);background:none;color:inherit;font:inherit;font-size:14px;cursor:pointer}
 .pvfbtn svg{width:18px;height:18px}.pvfbtn.open,.pvfbtn.act{border-color:var(--acc);color:var(--acc)}
 .pvfbtn i{position:absolute;top:-5px;right:-5px;min-width:18px;height:18px;border-radius:99px;background:var(--acc);color:#13241c;font:700 11px/18px Inter,sans-serif;font-style:normal;text-align:center;padding:0 4px}
@@ -336,7 +336,7 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 @keyframes pvin{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
 .pvpanel .mpsec{margin:10px 0 8px}
 .pvfoot{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
-@media(max-width:400px){.pvfbtn span{display:none}.pvfbtn{width:38px;padding:0;justify-content:center}}
+@media(max-width:460px){.pvfbtn span{display:none}.pvfbtn{width:38px;padding:0;justify-content:center}}
 .pvp{margin:0 0 8px;gap:6px}.pvp .chip small{opacity:.65;font-size:12px}.pvp .linkbtn{min-height:36px}
 .pvrng{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 8px}.pvrng input{min-width:0;width:100%}
 .pvsum{margin:0 0 6px;font-size:13px}.pvsum .linkbtn{min-height:30px}
@@ -453,7 +453,7 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 .mbi.out{opacity:0;transition:opacity .3s}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><div id="achpop" aria-live="polite"></div><script>
 {
-const VERSION='7.26';
+const VERSION='7.27';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
