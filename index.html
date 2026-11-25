@@ -408,7 +408,7 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 .mbi.out{opacity:0;transition:opacity .3s}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><div id="achpop" aria-live="polite"></div><script>
 {
-const VERSION='7.17';
+const VERSION='7.18';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -1333,7 +1333,7 @@ function mbIntroStart(){if(mbIntro||!mbIntroDue()||view()!=='fishing'||!document
  const end=go=>{if(!mbIntro)return;mbIntro.stop=true;cancelAnimationFrame(mbIntro.raf);mbIntro.tid.forEach(clearTimeout);el.classList.add('out');mbFlagRot=null;setTimeout(()=>{el.remove();rr()},350);mbIntro=null;if(go)location.hash='news'};
  $('.mbi-skip').onclick=()=>end(false);addEventListener('resize',place);
  (async()=>{place();setFlag(0);await wait(60);el.classList.add('on');
-  const BW=34,land=()=>{const[x,y]=flagTop();return[x-BW*.5,y-BW*.8]};
+  const r0=mbRect(),BW=Math.max(10,(r0?r0.width:30)*.42);bird.style.width=BW+'px';bird.style.height=(BW*28/34)+'px';const land=()=>{const[x,y]=flagTop();return[x-BW*.5,y-BW*28/34*.95]};
   if(calm){ring.classList.add('on');say("This little mailbox has turned up on the bank. When its flag is up, there's news waiting for you. Tap it any time to read it.");}
   else{
    say("Shh… someone's just turned up on the bank.");await wait(1700);
