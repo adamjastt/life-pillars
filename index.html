@@ -265,6 +265,7 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 @media(prefers-reduced-motion:reduce){.tc.holo::after{animation:none;background-position:50% 50%}.crbody{animation:none}}
 .upd{position:fixed;left:50%;top:calc(10px + env(safe-area-inset-top));transform:translateX(-50%);z-index:30;display:flex;gap:10px;align-items:center;background:var(--ink);color:var(--bg);padding:8px 8px 8px 14px;border-radius:14px;font-size:14px;box-shadow:0 6px 24px #0008;max-width:94vw}
 .upd button{height:36px;border:0;border-radius:10px;padding:0 12px;background:var(--acc);color:#fff;font-weight:600}
+.upd{width:max-content;white-space:nowrap;gap:12px;padding:8px 8px 8px 16px;font-weight:500}.upd span{white-space:nowrap}.upd button{flex:none;white-space:nowrap;min-width:0;width:auto;padding:0 16px;font-size:14px;line-height:36px}
 @media(max-width:700px){.wheelwrap{grid-template-columns:1fr;gap:16px}.wheel{max-width:250px;margin:0 auto}.cards{grid-template-columns:1fr}.kcal{grid-template-columns:1fr}
 .mset{grid-template-columns:repeat(3,minmax(0,1fr))}.mset .mname{grid-column:1/-1}.ptitle{grid-template-columns:minmax(0,1fr) 56px}.ptitle .ps{display:none}}
 @media(prefers-reduced-motion:no-preference){.bar i{transition:width .3s}}
@@ -458,7 +459,7 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 .mbi.out{opacity:0;transition:opacity .3s}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><div id="achpop" aria-live="polite"></div><script>
 {
-const VERSION='7.28';
+const VERSION='7.29';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
