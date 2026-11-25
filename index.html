@@ -236,6 +236,9 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 .lth{width:52px;height:52px;border-radius:12px;overflow:hidden;padding:0;border:0;background:#ffffff10;display:grid;place-items:center}
 .lth img{width:100%;height:100%;object-fit:cover;display:block}.lth.none{cursor:default;padding:4px}.lth.none>*{width:100%;height:auto}.lth img.nophoto{opacity:.25}
 .ftabs button{padding:0 8px;font-size:15px}
+.ftabs button{display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.ftabs .fti{width:18px;height:18px;flex:none}
+@media(max-width:520px){.ftabs button{flex-direction:column;gap:2px;height:54px;border-radius:16px;font-size:12.5px;padding:0 4px;line-height:1.1}.ftabs .fti{width:20px;height:20px}}
 .crow{background:var(--card);border:1px solid #ffffff12;border-radius:18px;margin-bottom:12px;overflow:hidden}
 .crhead{display:grid;grid-template-columns:72px minmax(0,1fr) 20px;gap:14px;align-items:center;width:100%;text-align:left;background:none;border:0;padding:10px 14px 10px 10px;color:var(--ink)}
 .crthumb{width:72px;height:72px;border-radius:14px;object-fit:cover;display:block;background:var(--card2)}.crthumb.art{display:grid;place-items:center;padding:6px;background:radial-gradient(#2c5a4c,#163029)}
@@ -408,7 +411,7 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 .mbi.out{opacity:0;transition:opacity .3s}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><div id="achpop" aria-live="polite"></div><script>
 {
-const VERSION='7.19';
+const VERSION='7.20';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -906,8 +909,9 @@ function scene(){const t=sceneHour(),S=skyAt(t),R=fRng('stars');let stars='';for
 function fishing(){const C=catches(),cm=caughtMap(),sp=speciesAll(),got=sp.filter(s=>isTicked(s.n,cm)).length,big=C.filter(c=>c.g).sort((a,b)=>b.g-a.g)[0],yr=String(new Date().getFullYear()),sc=scene();
  return`<header class="fhero">${sc.svg}<div class="fhin">${user?`<button class="fav" data-act="pmenu" aria-label="Profile menu" aria-haspopup="menu" aria-expanded="false">${avatarImg(favAv(),'sm')}${pendingIn().length?'<i class="tdot"></i>':''}</button>`:''}<p class="fgreet">${sc.greet}</p><h1>The Bank</h1><p class="fsun">Sunrise ${hm(skyKeys().sr)} · Sunset ${hm(skyKeys().ss)}</p></div></header>
  <div class="fband"><div class="in"><div class="fstats"><div><div class="kbig">${got}</div><div class="sub">species caught</div></div><div><div class="kbig sm">${C.filter(c=>c.date.startsWith(yr)).length}</div><div class="sub">catches in ${yr}</div></div><div><div class="kbig sm">${big?fW(big.g):'–'}</div><div class="sub">${big?'biggest · '+esc(big.species):'biggest fish'}</div></div></div>
- <div class="seg ftabs" role="tablist">${[['log','Catches'],['species','Species'],['gallery','Gallery'],['board','Rankings']].map(([k,l])=>`<button role="tab" aria-selected="${fTab===k}" data-ftab="${k}" class="${fTab===k?'on':''}">${l}</button>`).join('')}</div></div></div>
+ <div class="seg ftabs" role="tablist">${[['log','Catches'],['species','Species'],['gallery','Gallery'],['board','Rankings']].map(([k,l])=>`<button role="tab" aria-selected="${fTab===k}" data-ftab="${k}" class="${fTab===k?'on':''}"><svg class="fti" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${FTI[k]}</svg><span>${l}</span></button>`).join('')}</div></div></div>
  ${user?pmenuHtml():''}<main class="wrap">${fTab==='species'?fishSpecies(cm,sp,got):fTab==='gallery'?fishGallery(C):fTab==='board'?fishBoard():fishLog(C,cm)}</main>${lb?lightbox():''}${blb?boardBox():''}${pickSheet()}${spSel?spSheet(cm):''}${celeb?celebrate(cm,sp):''}${secret?secretCard():''}`}
+const FTI={log:'<circle cx="15" cy="3.6" r="1.6"/><path d="M15 5.2V14a5 5 0 0 1-10 0v-2.2l3.2 2.4"/>',species:'<path d="M2 12c3.3-5.2 7.6-6.8 11.2-5.7 2.4.7 4.3 2.9 5.7 5.7-1.4 2.8-3.3 5-5.7 5.7C9.6 18.8 5.3 17.2 2 12z"/><path d="M18.9 12l3-3.2v6.4z"/><circle cx="6.3" cy="11.2" r=".9" fill="currentColor"/><path d="M9.4 8.4c1 2.2 1 5 0 7.2"/>',gallery:'<rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="9" cy="10" r="1.7"/><path d="M21 15.5l-5-5L6.5 19"/>',board:'<path d="M8 4h8v5.5a4 4 0 0 1-8 0z"/><path d="M8 6H5.2a3 3 0 0 0 3.1 4M16 6h2.8a3 3 0 0 1-3.1 4M12 13.5V17M8.5 20.5h7M9.8 17h4.4v3.5H9.8z"/>'};
 let spSel=null,celeb=null;
 function fishSpecies(cm,sp,got){const groups=[...FISH.map(f=>f[0]),...(fishD().custom.length?['Custom']:[]),'All'],list=spFilter(sp,cm),inG=sp.filter(s=>fGroup==='All'||s.g===fGroup),gotG=inG.filter(s=>isTicked(s.n,cm)).length;
  return`<section class="card"><div class="seg scenes" role="tablist" aria-label="Fishing scene">${groups.map(g=>{const n=sp.filter(s=>(g==='All'||s.g===g)&&isTicked(s.n,cm)).length;return`<button role="tab" aria-selected="${fGroup===g}" data-fgroup="${g}" class="${fGroup===g?'on':''}">${g}${n?` <span class="cnt">${n}</span>`:''}</button>`}).join('')}</div>
