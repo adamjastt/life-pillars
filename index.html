@@ -326,7 +326,17 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 .pstats button::after{content:'';position:absolute;right:7px;top:8px;width:6px;height:6px;border-right:2px solid var(--mut);border-bottom:2px solid var(--mut);transform:rotate(45deg);opacity:.7;transition:transform .2s}
 .pstats button.on{border-color:var(--acc)}.pstats button.on::after{transform:rotate(-135deg);top:11px}
 .phint{grid-column:1/-1;text-align:center;margin:8px 0 0;font-size:13px}
-.pvsort{margin:2px 0 8px}.pvsort button{flex:1;height:36px;white-space:nowrap}
+.pvbar{display:flex;gap:6px;align-items:center;margin:2px 0 8px}
+.pvsort{margin:0;flex:1;min-width:0}.pvsort button{flex:1;height:38px;white-space:nowrap;padding:0 8px}
+.pvfbtn{position:relative;flex:none;height:38px;display:inline-flex;align-items:center;gap:6px;padding:0 12px;border-radius:99px;border:1px solid var(--line);background:none;color:inherit;font:inherit;font-size:14px;cursor:pointer}
+.pvfbtn svg{width:18px;height:18px}.pvfbtn.open,.pvfbtn.act{border-color:var(--acc);color:var(--acc)}
+.pvfbtn i{position:absolute;top:-5px;right:-5px;min-width:18px;height:18px;border-radius:99px;background:var(--acc);color:#13241c;font:700 11px/18px Inter,sans-serif;font-style:normal;text-align:center;padding:0 4px}
+.pvpanel{background:var(--card2);border-radius:14px;padding:4px 12px 12px;margin:0 0 10px}
+.pvpanel.in{animation:pvin .22s ease-out}
+@keyframes pvin{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.pvpanel .mpsec{margin:10px 0 8px}
+.pvfoot{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
+@media(max-width:400px){.pvfbtn span{display:none}.pvfbtn{width:38px;padding:0;justify-content:center}}
 .pvp{margin:0 0 8px;gap:6px}.pvp .chip small{opacity:.65;font-size:12px}.pvp .linkbtn{min-height:36px}
 .pvrng{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 8px}.pvrng input{min-width:0;width:100%}
 .pvsum{margin:0 0 6px;font-size:13px}.pvsum .linkbtn{min-height:30px}
@@ -443,7 +453,7 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 .mbi.out{opacity:0;transition:opacity .3s}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><div id="achpop" aria-live="polite"></div><script>
 {
-const VERSION='7.25';
+const VERSION='7.26';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -1595,9 +1605,9 @@ function albClick(t,ds){
  if(ds.albdel!=null){if(albArm!=='del'){albArm='del';rr();return true}albArm=null;const a=alb,paths=(albs.items[a]||[]).map(x=>x.path);(async()=>{if(paths.length)await sb.storage.from(BUCKET).remove(paths).catch(()=>{});const r=await sb.from('albums').delete().eq('id',a);toast(r.error?'Could not delete the album':'Album deleted');galMode='shared';location.hash='fishing';loadAlbums(true)})();return true}
  if(ds.albrm){const id=ds.albrm;if(albArm!==id){albArm=id;rr();return true}albArm=null;const x=(albs.items[alb]||[]).find(y=>y.id===id);gl=null;(async()=>{const r=await sb.from('album_items').delete().eq('id',id);if(!r.error&&x)await sb.storage.from(BUCKET).remove([x.path]).catch(()=>{});toast(r.error?'Could not remove it':'Removed from the album');loadAlbums(true)})();return true}
  if(ds.pvsort){pvSort=ds.pvsort;rr();return true}
+ if(ds.pvfilt!=null){pvOpen=!pvOpen;pvAnim=pvOpen;rr();return true}
  if(ds.pvt){pvF.t=ds.pvt;rr();return true}
  if(ds.pvsp){const i=pvF.sp.indexOf(ds.pvsp);i<0?pvF.sp.push(ds.pvsp):pvF.sp.splice(i,1);rr();return true}
- if(ds.pvspall!=null){pvF.sp=[];rr();return true}
  if(ds.pvclear!=null){pvF={t:'all',a:'',b:'',sp:[]};rr();return true}
  if(ds.pvtab){pvTab=pvTab===ds.pvtab?null:ds.pvtab;rr();if(pvTab)setTimeout(()=>{const el=document.querySelector('.pvsec');if(el)el.scrollIntoView({behavior:'smooth',block:'start'})},60);return true}
  if(ds.gl){const[k,i]=ds.gl.split(':');openGl(k,+i);return true}
@@ -1678,7 +1688,7 @@ function badge(a,card){const done=achDone(card,a),cur=card.ach[a.id]||0;return`<
 function achWall(card,key){return[['f','Fishing']].map(([g,l])=>{const L=ACH.filter(a=>a.g===g&&card.ach[a.id]!=null);if(!L.length)return'';const done=L.filter(a=>achDone(card,a)),left=L.filter(a=>!achDone(card,a)).sort((a,b)=>(card.ach[b.id]||0)/b.goal-(card.ach[a.id]||0)/a.goal),k=key+g;
  return`<div class="ch" style="margin-top:14px"><h3 class="agh">${l}</h3><span class="sub">${done.length} of ${L.length}</span></div>${done.length?`<div class="achs">${done.map(a=>badge(a,card)).join('')}</div>`:'<p class="empty">None unlocked yet.</p>'}
  ${left.length?`<details class="alock" data-keep="${k}" ${openD.has(k)?'open':''}><summary>Still to unlock (${left.length})</summary><div class="achs">${left.map(a=>badge(a,card)).join('')}</div></details>`:''}`}).join('')}
-function profilePage(){{const key=view()+':'+(view()==='mate'?pv:'');if(pvTabFor!==key){pvTabFor=key;pvTab=null;pvSort='date';pvF={t:'all',a:'',b:'',sp:[]}}}const mine=view()==='profile',FO=true,back=`<button class="pback" data-act="pback" aria-label="Back">‹</button>`;
+function profilePage(){{const key=view()+':'+(view()==='mate'?pv:'');if(pvTabFor!==key){pvTabFor=key;pvTab=null;pvSort='date';pvOpen=false;pvF={t:'all',a:'',b:'',sp:[]}}}const mine=view()==='profile',FO=true,back=`<button class="pback" data-act="pback" aria-label="Back">‹</button>`;
  const head=t=>FO?`<header class="fhero sm">${scene().svg}<div class="fhin">${back}<div class="fhtop"><h1>${t}</h1></div></div></header>`:`<header class="hero"><div class="in"><div class="top">${back}<h1 style="flex:1">${t}</h1></div></div></header>`;
  if(!SB_URL||!user)return head('Profile')+`<main class="wrap"><section class="card"><h2>Sign in first</h2><p class="sub">Your angler profile and friends are linked to your account. Sign in from Settings.</p><button class="btn" data-act="gosettings">Go to Settings</button></section></main>`;
  if(!mine){const card=soc.cards[pv],per=soc.people[pv]||{},rel=relWith(pv);
@@ -1738,13 +1748,17 @@ function pvCatches(card,mine){const it=pvItems(card,mine),raw=pvItemsRaw(card,mi
   const g=(speciesAll().find(y=>y.n===c.species)||{}).g||'Custom',[ac,mc,dc]=SCENEC[g]||SCENEC.Custom;
   return`<button class="gitem gcard" data-gl="p:${i}" aria-label="${esc(c.species)} catch card" style="--ac:${ac};--mc:${mc};--dc:${dc}"><i class="gca">${fishSVG(c.species)}</i>${x.pb?'<b class="gpb">PB</b>':''}${cap}</button>`}).join('')}</div>`:`<p class="empty">${raw.length?'No catches match these filters. <button class="linkbtn" data-pvclear>Clear filters</button>':mine?'No catches yet.':'No catches to show yet.'}</p>`}
  ${old?'<p class="sub" style="margin-top:10px">Catches without photos show up here once they update the app.</p>':''}</section>`}
+const FILTSVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg>';
+let pvOpen=false,pvAnim=false;
 function pvTools(raw){const f=pvF,tl={all:'All time','7':'Last 7 days','30':'Last 30 days',custom:'Custom'};
  const spc={};for(const x of raw)spc[x.c.species]=(spc[x.c.species]||0)+1;const sps=Object.keys(spc).sort((a,b)=>a.localeCompare(b));
- const lab={date:f.t==='all'?'Newest':tl[f.t],species:f.sp.length?`Species (${f.sp.length})`:'Species',weight:'Heaviest'};
- const sum=[f.t!=='all'&&pvSort!=='date'?tl[f.t]+(f.t==='custom'&&(f.a||f.b)?` (${f.a?label(f.a):'start'} to ${f.b?label(f.b):'today'})`:''):'',f.sp.length&&pvSort!=='species'?f.sp.length===1?esc(f.sp[0]):f.sp.length+' species':''].filter(Boolean);
- const panel=pvSort==='date'?`<div class="pickf pvp">${['all','7','30','custom'].map(k=>[k,tl[k]]).map(([k,l])=>`<button class="chip${f.t===k?' on':''}" data-pvt="${k}" aria-pressed="${f.t===k}">${l}</button>`).join('')}</div>${f.t==='custom'?`<div class="pvrng"><label class="f">From<input type="date" data-pvd="a" value="${esc(f.a)}" max="${TODAY}"></label><label class="f">To<input type="date" data-pvd="b" value="${esc(f.b)}" max="${TODAY}"></label></div>`:''}`
-  :pvSort==='species'?`<div class="pickf pvp">${sps.map(n=>{const on=f.sp.includes(n);return`<button class="chip${on?' on':''}" data-pvsp="${esc(n)}" aria-pressed="${on}">${on?'✓ ':''}${esc(n)} <small>${spc[n]}</small></button>`}).join('')}${f.sp.length?'<button class="linkbtn" data-pvspall>Show all</button>':''}</div>`:'';
- return`<div class="seg pvsort" role="group" aria-label="Sort and filter catches">${['date','species','weight'].map(k=>`<button data-pvsort="${k}" class="${pvSort===k?'on':''}" aria-pressed="${pvSort===k}">${lab[k]}</button>`).join('')}</div>${panel}${sum.length?`<p class="sub pvsum">Filtered: ${sum.join(' · ')} <button class="linkbtn" data-pvclear>Clear</button></p>`:''}`}
+ const nAct=(f.t!=='all'?1:0)+(f.sp.length?1:0);
+ const sum=[f.t!=='all'?(f.t==='custom'?(f.a||f.b?`${f.a?label(f.a):'the start'} to ${f.b?label(f.b):'today'}`:''):tl[f.t].toLowerCase()):'',f.sp.length?f.sp.length===1?esc(f.sp[0]):f.sp.length+' species':''].filter(Boolean);
+ const panel=pvOpen?`<div class="pvpanel${pvAnim?' in':''}"><h4 class="mpsec">Time</h4><div class="pickf pvp">${['all','7','30','custom'].map(k=>`<button class="chip${f.t===k?' on':''}" data-pvt="${k}" aria-pressed="${f.t===k}">${tl[k]}</button>`).join('')}</div>${f.t==='custom'?`<div class="pvrng"><label class="f">From<input type="date" data-pvd="a" value="${esc(f.a)}" max="${TODAY}"></label><label class="f">To<input type="date" data-pvd="b" value="${esc(f.b)}" max="${TODAY}"></label></div>`:''}
+  ${sps.length>1?`<h4 class="mpsec">Species <small>pick any</small></h4><div class="pickf pvp">${sps.map(n=>{const on=f.sp.includes(n);return`<button class="chip${on?' on':''}" data-pvsp="${esc(n)}" aria-pressed="${on}">${on?'✓ ':''}${esc(n)} <small>${spc[n]}</small></button>`}).join('')}</div>`:''}
+  <div class="pvfoot">${nAct?'<button class="linkbtn" data-pvclear>Clear filters</button>':'<span></span>'}<button class="btn sm" data-pvfilt>Done</button></div></div>`:'';
+ pvAnim=false;
+ return`<div class="pvbar"><div class="seg pvsort" role="group" aria-label="Sort catches">${[['date','Newest'],['species','A–Z'],['weight','Heaviest']].map(([k,l])=>`<button data-pvsort="${k}" class="${pvSort===k?'on':''}" aria-pressed="${pvSort===k}">${l}</button>`).join('')}</div><button class="pvfbtn${pvOpen?' open':''}${nAct?' act':''}" data-pvfilt aria-expanded="${pvOpen}" aria-label="Filter">${FILTSVG}<span>Filter</span>${nAct?`<i>${nAct}</i>`:''}</button></div>${panel}${!pvOpen&&sum.length?`<p class="sub pvsum">Showing ${sum.join(' · ')} <button class="linkbtn" data-pvclear>Clear</button></p>`:''}`}
 function pvSpecies(card,mine){const names=mine?speciesAll().filter(x=>isTicked(x.n,caughtMap())).map(x=>x.n):card.spp;
  if(!names)return`<section class="card pvsec"><h2>Species</h2><p class="sub">Their species list shows up once they update the app.</p></section>`;
  const all=speciesAll(),grp=n=>(all.find(y=>y.n===n)||{}).g||'Custom',best={};
