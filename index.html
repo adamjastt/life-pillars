@@ -471,7 +471,7 @@ img.fimg{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-w
 .mbi.out{opacity:0;transition:opacity .3s}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><div id="achpop" aria-live="polite"></div><script>
 {
-const VERSION='7.34';
+const VERSION='7.35';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -1030,10 +1030,10 @@ let blb=null;
 function boardBox(){const r=(board.rows||[]).find(x=>x.id===blb);if(!r||!r.photo)return'';
  const L=(board.rows||[]).filter(x=>x.species===r.species&&x.grams).sort((a,b)=>b.grams-a.grams).slice(0,25),ri=L.findIndex(x=>x.id===r.id),I=r.info||{};
  const card=tradeCard({id:r.id,species:r.species,g:r.grams,cm:r.cm,date:r.caught_on,time:I.time,place:I.place,method:I.method,bait:I.bait,notes:I.notes,rel:I.rel},null,ri===0,ri<0?{who:r.name,maxG:r.grams||1,maxL:r.cm||1}:{who:r.name,rank:ri+1,n:L.length,maxG:Math.max(...L.map(x=>x.grams||0),1),maxL:Math.max(...L.map(x=>x.cm||0),1)});
- return`<div class="lb" role="dialog" aria-modal="true" aria-label="Photo"><button class="lbx" data-lbclose aria-label="Close">×</button>${flipWrap(bimg(r.photo,r.species,'lbimg'),card)}
+ return`<div class="lb" role="dialog" aria-modal="true" aria-label="Photo"><button class="lbx" data-lbclose aria-label="Close">×</button>${flipWrap(bimg(r.photo,r.species,'lbimg'),'')}
  <div class="lbcap"><b>${esc(r.species)}${r.grams?' · '+fW(r.grams):''}</b><span>${esc(r.name)} · ${label(r.caught_on)}</span></div></div>`}
 function lightbox(){const all=catches().flatMap(c=>(c.photos||[]).map((p,i)=>({p,c,i}))),k=all.findIndex(x=>x.c.id===lb.c&&x.i===lb.i);if(k<0)return'';const {p,c}=all[k],cm=caughtMap();
- return`<div class="lb" role="dialog" aria-modal="true" aria-label="Photo"><button class="lbx" data-lbclose aria-label="Close">×</button>${flipWrap(pimg(p,c.species,'lbimg'),tradeCard(c,cm,!!(cm[c.species]&&cm[c.species].pb===c)))}
+ return`<div class="lb" role="dialog" aria-modal="true" aria-label="Photo"><button class="lbx" data-lbclose aria-label="Close">×</button>${flipWrap(pimg(p,c.species,'lbimg'),'')}
  <div class="lbcap"><b>${esc(c.species)}${c.g?' · '+fW(c.g):''}</b><span>${label(c.date)}${c.place?' · '+esc(c.place):''}</span></div>
  ${all.length>1?`<button class="lbn l" data-lbnav="${(k-1+all.length)%all.length}" aria-label="Previous photo">‹</button><button class="lbn r" data-lbnav="${(k+1)%all.length}" aria-label="Next photo">›</button>`:''}</div>`}
 function mergeFish(a,b){a=a||{};b=b||{};const o={catches:[],cdel:{...(a.cdel||{})},custom:[...new Set([...(a.custom||[]),...(b.custom||[])])],ticks:{...(a.ticks||{})}};
@@ -1600,14 +1600,14 @@ function flipInline(key,front,back){if(!front)return back;const on=!flipPhoto.ha
 const flipWrap=(front,back)=>`<div class="flipw"><div class="fface ffront">${front}</div>${back?`<div class="fface fback" aria-hidden="true">${back}</div>`:''}</div>${back?`<button class="lbflip" data-flip aria-pressed="false">${FLIPSVG}<span>Catch card</span></button>`:''}`;
 function glCard(x){const c=x.c||(x.sp?{species:x.sp,g:x.g,date:x.d}:null);if(!c)return'';if(x.own)return tradeCard(c,caughtMap(),x.pb);return tradeCard(c,null,!!x.pb,x.bx||{who:x.who||'',maxG:c.g||1,maxL:1})}
 function glBox(){if(!gl)return'';let x=gl.list[gl.i];if(!x)return'';const n=gl.list.length,own=x.user_id&&x.user_id===user.id,canDel=x.item&&(own||(albs.list.find(a=>a.id===alb)||{}).owner===user.id);
- const sp=x.c?x.c.species:x.sp,front=x.p?pimg(x.p,sp,'lbimg'):x.path?bimg(x.path,sp||'Photo','lbimg'):'',back=glCard(x);
+ const sp=x.c?x.c.species:x.sp,front=x.p?pimg(x.p,sp,'lbimg'):x.path?bimg(x.path,sp||'Photo','lbimg'):'',back=gl.kind==='p'?glCard(x):'';
  if(x.c&&!x.sp)x={...x,sp:x.c.species,g:x.c.g,d:x.c.date};
  return`<div class="lb${front?'':' cardonly'}" role="dialog" aria-modal="true" aria-label="${front?'Photo':'Catch card'}"><button class="lbx" data-lbclose aria-label="Close">×</button>${front?flipWrap(front,back):`<div class="lbcard">${back}</div>`}
  <div class="lbcap"${front?'':' hidden'}><b>${x.sp?esc(x.sp)+(x.g?' · '+fW(x.g):''):'&nbsp;'}</b><span>${[x.by,x.d?label(x.d):''].filter(Boolean).join(' · ')}</span>${canDel?`<button class="linkbtn" data-albrm="${x.item}" style="color:#ffb3b3;min-height:36px;justify-self:start">${albArm===x.item?'Tap again to remove':'Remove from album'}</button>`:''}</div>
  ${n>1?`<button class="lbn l" data-glnav="${(gl.i-1+n)%n}" aria-label="Previous photo">‹</button><button class="lbn r" data-glnav="${(gl.i+1)%n}" aria-label="Next photo">›</button>`:''}</div>`}
 function openGl(kind,i){let list=[];if(kind==='f'){const c=soc.cards[pv];list=((c&&c.gallery)||[]).map(x=>({...x,by:esc((c||{}).name||'')}))}
  else if(kind==='p'){const mine=view()==='profile';list=pvItems(mine?buildCard():soc.cards[pv]||{},mine)}
- else{list=(albs.items[alb]||[]).map(x=>({path:x.path,sp:(x.info||{}).sp,g:(x.info||{}).g,d:(x.info||{}).d,by:pname(x.user_id),who:x.user_id===(user&&user.id)?prof().name:(soc.people[x.user_id]||{}).name||'',user_id:x.user_id,item:x.id}))}gl={list,i};rr()}
+ else{list=(albs.items[alb]||[]).map(x=>({path:x.path,sp:(x.info||{}).sp,g:(x.info||{}).g,d:(x.info||{}).d,by:pname(x.user_id),who:x.user_id===(user&&user.id)?prof().name:(soc.people[x.user_id]||{}).name||'',user_id:x.user_id,item:x.id}))}gl={list,i,kind};rr()}
 function albClick(t,ds){
  if(ds.gmode){galMode=ds.gmode;albForm=null;rr();return true}
  if(ds.albnew!=null){albForm={name:'',sel:[]};rr();setTimeout(()=>{const i=document.querySelector('[data-albname]');if(i)i.focus()},50);return true}
