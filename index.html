@@ -347,10 +347,6 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 .lb.zooming .lbflip{opacity:0;pointer-events:none}
 .lb.cardonly .lbcap{display:none}
 .fhero.sm .mbox{display:none}
-#topcap{position:fixed;left:0;right:0;top:0;height:env(safe-area-inset-top);z-index:60;pointer-events:none;background:var(--bg);opacity:0;transition:opacity .2s}
-body.scrolled #topcap{opacity:1}
-html:has(.lb),body:has(.lb){background:#000}
-body:has(.lb) #topcap{background:#000;opacity:1;transition:none}
 .fback .tc,.lbcard .tc{--cw:min(340px,88vw,calc((100dvh - 200px)*.716));width:var(--cw);height:calc(var(--cw)*88/63);aspect-ratio:auto;flex:none}
 .fback .tc .tcin,.lbcard .tc .tcin{height:100%;box-sizing:border-box}
 @media (prefers-reduced-motion:reduce){.fface,.lbflip svg{transition-duration:.01s}}.pstats b small{font-size:13px;color:var(--mut);font-weight:500}.pstats span{font-size:12px;color:var(--mut)}
@@ -441,9 +437,9 @@ body:has(.lb) #topcap{background:#000;opacity:1;transition:none}
 .mbi-cap .btn.sec{background:#13241c14;color:#13241c;border-color:#13241c33}.mbi-cap .btn:not(.sec){background:#13241c;color:#f4ecd2;border-color:#13241c}
 .mbi-skip{position:absolute;right:16px;bottom:calc(24px + env(safe-area-inset-bottom));background:#0008;color:#f4ecd2;border:1px solid #ffffff33;border-radius:99px;padding:8px 16px;font:inherit;font-size:14px;cursor:pointer}
 .mbi.out{opacity:0;transition:opacity .3s}
-</style></head><body><div id="topcap" aria-hidden="true"></div><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><div id="achpop" aria-live="polite"></div><script>
+</style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><div id="achpop" aria-live="polite"></div><script>
 {
-const VERSION='7.22';
+const VERSION='7.23';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -1137,7 +1133,7 @@ const tabList=()=>fishOnly()?[['fishing','The Bank'],['settings','Settings']]:[[
 const tabs=v=>`<nav class="tabs" style="--n:${tabList().length}">${tabList().map(([k,l])=>`<a href="#${k}" class="${v===k?'on':''}" ${v===k?'aria-current="page"':''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[k]}</svg>${l}${k==='fishing'&&pendingIn().length?'<i class="tdot" aria-label="Friend requests"></i>':''}</a>`).join('')}</nav>`;
 const view=()=>{const h=location.hash.slice(1);if(h==='profile'||h==='friends'||(h==='news'&&D.cfg.fishTab!==false)||(h==='mate'&&pv)||(h==='album'&&alb)||(h==='map'&&D.cfg.fishTab!==false))return h;return tabList().some(t=>t[0]===h)?h:(fishOnly()?'fishing':'today')};
 function keepOpen(){document.querySelectorAll('details[data-keep]').forEach(d=>d.open?openD.add(d.dataset.keep):openD.delete(d.dataset.keep));document.querySelectorAll('details[data-pi]').forEach(d=>d.open?openP.add(+d.dataset.pi):openP.delete(+d.dataset.pi))}
-function render(){setTimeout(topCap,0);keepOpen();stopLoc();if(!D.onboarded||ob.done){root.innerHTML=onboard();return}const v=view();root.innerHTML=(v==='food'?food():v==='history'?history():v==='settings'?settings():v==='fishing'?fishing():v==='profile'||v==='mate'?profilePage():v==='friends'?friendsPage():v==='news'?newsPage():v==='album'?albumPage():v==='map'?mapPage():today())+(v==='map'||(lb||blb||spSel||celeb||secret||gl||albPick||mapPick)&&['fishing','album','mate'].includes(v)?'':tabs(v))+glBox();document.body.classList.toggle('fishmode',['fishing','profile','mate','album','map','friends','news'].includes(v)||(fishOnly()&&v==='settings'));if(v==='profile'||v==='mate'||v==='friends')loadSocial();if(v==='album')loadAlbums();if(v==='food')renderResults();if(v==='history')drawW();if(['fishing','profile','mate','album'].includes(v))hydratePhotos();if(v==='fishing'&&mbIntroDue()&&!mbIntro)setTimeout(mbIntroStart,900);if(v==='map'){initCatchMap();requestAnimationFrame(()=>{const p=document.querySelector('.mappage.noanim');if(p)p.classList.remove('noanim')})}else mapMenuOn=false;if(v==='fishing'&&mapPick)initPickMap()}
+function render(){keepOpen();stopLoc();if(!D.onboarded||ob.done){root.innerHTML=onboard();return}const v=view();root.innerHTML=(v==='food'?food():v==='history'?history():v==='settings'?settings():v==='fishing'?fishing():v==='profile'||v==='mate'?profilePage():v==='friends'?friendsPage():v==='news'?newsPage():v==='album'?albumPage():v==='map'?mapPage():today())+(v==='map'||(lb||blb||spSel||celeb||secret||gl||albPick||mapPick)&&['fishing','album','mate'].includes(v)?'':tabs(v))+glBox();document.body.classList.toggle('fishmode',['fishing','profile','mate','album','map','friends','news'].includes(v)||(fishOnly()&&v==='settings'));if(v==='profile'||v==='mate'||v==='friends')loadSocial();if(v==='album')loadAlbums();if(v==='food')renderResults();if(v==='history')drawW();if(['fishing','profile','mate','album'].includes(v))hydratePhotos();if(v==='fishing'&&mbIntroDue()&&!mbIntro)setTimeout(mbIntroStart,900);if(v==='map'){initCatchMap();requestAnimationFrame(()=>{const p=document.querySelector('.mappage.noanim');if(p)p.classList.remove('noanim')})}else mapMenuOn=false;if(v==='fishing'&&mapPick)initPickMap()}
 let morphing=false;
 function morph(to){if(morphing)return;morphing=true;const toFish=to==='fish',o=document.getElementById('morph'),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
  const apply=()=>{D.cfg.mode=to;if(toFish)D.cfg.fishTab=true;save();location.hash='settings';render();scrollTo(0,0)};
@@ -1694,8 +1690,6 @@ function pmenuHtml(){const n=pendingIn().length,P=D.cfg.prof||{};return`<div cla
 function pmenu(open){const m=document.querySelector('.pmenu'),b=document.querySelector('.fav');if(!m)return;m.classList.toggle('open',open);if(b)b.setAttribute('aria-expanded',open)}
 document.addEventListener('click',e=>{const m=document.querySelector('.pmenu.open');if(m&&!m.contains(e.target)&&!(e.target.closest&&e.target.closest('.fav')))pmenu(false)},true);
 addEventListener('keydown',e=>{if(e.key==='Escape')pmenu(false)});
-function topCap(){const b=document.body;if(!b)return;b.classList.toggle('scrolled',scrollY>4);const dark=!!document.querySelector('.lb'),col=dark?'#000000':getComputedStyle(b).getPropertyValue('--bg').trim()||'#0d0c11',m=document.querySelector('meta[name=theme-color]');if(m&&m.content!==col)m.content=col}
-addEventListener('scroll',topCap,{passive:true});
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-flip]');if(!b)return;const box=b.closest('.lb'),w=box&&box.querySelector('.flipw');if(!w)return;e.stopPropagation();
  const on=!w.classList.contains('on');if(on&&pz&&pz.s>1.01){pz.s=1;pz.x=0;pz.y=0;pzSet()}w.classList.toggle('on',on);box.classList.toggle('flipped',on);b.setAttribute('aria-pressed',on);b.querySelector('span').textContent=on?'Photo':'Catch card';
  w.querySelector('.fback').setAttribute('aria-hidden',!on);w.querySelector('.ffront').setAttribute('aria-hidden',on)},true);
