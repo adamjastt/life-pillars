@@ -238,6 +238,24 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 .ftabs button{padding:0 8px;font-size:15px}
 .ftabs button{display:inline-flex;align-items:center;justify-content:center;gap:6px}
 .ftabs .fti{width:18px;height:18px;flex:none}
+.ftabs button{position:relative}.ftabs button.live::after{content:'';position:absolute;top:6px;right:8px;width:8px;height:8px;border-radius:99px;background:#e0453a;box-shadow:0 0 0 2px var(--bg);animation:lvp 1.6s ease-in-out infinite}
+@keyframes lvp{50%{transform:scale(1.35);opacity:.7}}
+.livepill{display:inline-flex;align-items:center;gap:6px;background:#e0453a;color:#fff;font:700 11px/1 Inter,sans-serif;letter-spacing:.06em;text-transform:uppercase;padding:5px 9px;border-radius:99px}
+.livepill i{width:7px;height:7px;border-radius:99px;background:#fff;animation:lvp 1.6s ease-in-out infinite}
+.endpill{display:inline-block;background:var(--card2);color:var(--mut);font:700 11px/1 Inter,sans-serif;letter-spacing:.06em;text-transform:uppercase;padding:5px 9px;border-radius:99px}
+.sesl{display:grid;gap:10px}
+.sesc{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--card);border:1px solid #ffffff14;border-radius:16px;padding:14px;color:inherit;font:inherit;cursor:pointer}
+.sesc.live{border-color:#e0453a66}.sest{flex:1;min-width:0;display:grid;gap:4px;justify-items:start}.sest b{font-size:17px}.sest small{color:var(--mut);font-size:13px}
+.sesrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.sbd{display:grid;gap:8px;margin-top:10px}.sbr{display:flex;align-items:center;gap:10px}.sbn{font-size:22px;min-width:30px;text-align:right}
+.sfeed{display:grid;gap:10px;margin-top:10px}
+.sfi{display:flex;gap:10px;align-items:center;background:var(--card2);border-radius:14px;padding:10px}
+.sfit{flex:1;min-width:0;display:grid;gap:2px}.sfit p{margin:0;font-size:15px}.sfit small{color:var(--mut);font-size:13px}.sfit .sft{font-size:12px}
+.sfph{flex:none;width:64px;height:64px;border-radius:12px;overflow:hidden;padding:0;border:0;background:#0003;display:flex;align-items:center;justify-content:center}
+.sfph img{width:100%;height:100%;object-fit:cover}.sfph.art img{object-fit:contain}
+.spush b{display:block;font-size:16px;margin-bottom:4px}.spush .btn{margin-top:10px}.spush.on b::before{content:'';display:inline-block;width:8px;height:8px;border-radius:99px;background:#5fd08a;margin-right:8px;vertical-align:middle}
+.sesshare{background:var(--card2);border-radius:14px;padding:8px 14px;cursor:pointer}.dbtn{color:#ff8a80}
+@media(max-width:520px){.ftabs button{font-size:12px;padding:0 2px}.ftabs.seg{gap:4px}}
 @media(max-width:520px){.ftabs button{flex-direction:column;gap:2px;height:54px;border-radius:16px;font-size:12.5px;padding:0 4px;line-height:1.1}.ftabs .fti{width:20px;height:20px}}
 .crow{background:var(--card);border:1px solid #ffffff12;border-radius:18px;margin-bottom:12px;overflow:hidden}
 .crhead{display:grid;grid-template-columns:72px minmax(0,1fr) 20px;gap:14px;align-items:center;width:100%;text-align:left;background:none;border:0;padding:10px 14px 10px 10px;color:var(--ink)}
@@ -471,7 +489,7 @@ img.fimg{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-w
 .mbi.out{opacity:0;transition:opacity .3s}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><div id="achpop" aria-live="polite"></div><script>
 {
-const VERSION='7.37';
+const VERSION='7.38';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -969,9 +987,9 @@ function scene(){const t=sceneHour(),S=skyAt(t),R=fRng('stars');let stars='';for
 function fishing(){const C=catches(),cm=caughtMap(),sp=speciesAll(),got=sp.filter(s=>isTicked(s.n,cm)).length,big=C.filter(c=>c.g).sort((a,b)=>b.g-a.g)[0],yr=String(new Date().getFullYear()),sc=scene();
  return`<header class="fhero">${sc.svg}<div class="fhin">${user?`<button class="fav" data-act="pmenu" aria-label="Profile menu" aria-haspopup="menu" aria-expanded="false">${avatarImg(favAv(),'sm')}${pendingIn().length?'<i class="tdot"></i>':''}</button>`:''}<p class="fgreet">${sc.greet}</p><h1>The Bank</h1><p class="fsun">Sunrise ${hm(skyKeys().sr)} · Sunset ${hm(skyKeys().ss)}</p></div></header>
  <div class="fband"><div class="in"><div class="fstats"><div><div class="kbig">${got}</div><div class="sub">species caught</div></div><div><div class="kbig sm">${C.filter(c=>c.date.startsWith(yr)).length}</div><div class="sub">catches in ${yr}</div></div><div><div class="kbig sm">${big?fW(big.g):'–'}</div><div class="sub">${big?'biggest · '+esc(big.species):'biggest fish'}</div></div></div>
- <div class="seg ftabs" role="tablist">${[['log','Catches'],['species','Species'],['gallery','Gallery'],['board','Rankings']].map(([k,l])=>`<button role="tab" aria-selected="${fTab===k}" data-ftab="${k}" class="${fTab===k?'on':''}"><svg class="fti" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${FTI[k]}</svg><span>${l}</span></button>`).join('')}</div></div></div>
- ${user?pmenuHtml():''}<main class="wrap">${fTab==='species'?fishSpecies(cm,sp,got):fTab==='gallery'?fishGallery(C):fTab==='board'?fishBoard():fishLog(C,cm)}</main>${lb?lightbox():''}${blb?boardBox():''}${pickSheet()}${spSel?spSheet(cm):''}${celeb?celebrate(cm,sp):''}${secret?secretCard():''}`}
-const FTI={log:'<circle cx="15" cy="3.6" r="1.6"/><path d="M15 5.2V14a5 5 0 0 1-10 0v-2.2l3.2 2.4"/>',species:'<path d="M2 12c3.3-5.2 7.6-6.8 11.2-5.7 2.4.7 4.3 2.9 5.7 5.7-1.4 2.8-3.3 5-5.7 5.7C9.6 18.8 5.3 17.2 2 12z"/><path d="M18.9 12l3-3.2v6.4z"/><circle cx="6.3" cy="11.2" r=".9" fill="currentColor"/><path d="M9.4 8.4c1 2.2 1 5 0 7.2"/>',gallery:'<rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="9" cy="10" r="1.7"/><path d="M21 15.5l-5-5L6.5 19"/>',board:'<path d="M8 4h8v5.5a4 4 0 0 1-8 0z"/><path d="M8 6H5.2a3 3 0 0 0 3.1 4M16 6h2.8a3 3 0 0 1-3.1 4M12 13.5V17M8.5 20.5h7M9.8 17h4.4v3.5H9.8z"/>'};
+ <div class="seg ftabs" role="tablist">${[['log','Catches'],['species','Species'],['session','Session'],['gallery','Gallery'],['board','Rankings']].map(([k,l])=>`<button role="tab" aria-selected="${fTab===k}" data-ftab="${k}" class="${fTab===k?'on':''}${k==='session'&&liveSessions().length?' live':''}"><svg class="fti" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${FTI[k]}</svg><span>${l}</span></button>`).join('')}</div></div></div>
+ ${user?pmenuHtml():''}<main class="wrap">${fTab==='species'?fishSpecies(cm,sp,got):fTab==='session'?sessionTab():fTab==='gallery'?fishGallery(C):fTab==='board'?fishBoard():fishLog(C,cm)}</main>${lb?lightbox():''}${blb?boardBox():''}${pickSheet()}${spSel?spSheet(cm):''}${celeb?celebrate(cm,sp):''}${secret?secretCard():''}`}
+const FTI={session:'<circle cx="12" cy="12" r="2.3" fill="currentColor" stroke="none"/><path d="M8.3 8.3a5.2 5.2 0 0 0 0 7.4M15.7 8.3a5.2 5.2 0 0 1 0 7.4M5.4 5.4a9.3 9.3 0 0 0 0 13.2M18.6 5.4a9.3 9.3 0 0 1 0 13.2"/>',log:'<circle cx="15" cy="3.6" r="1.6"/><path d="M15 5.2V14a5 5 0 0 1-10 0v-2.2l3.2 2.4"/>',species:'<path d="M2 12c3.3-5.2 7.6-6.8 11.2-5.7 2.4.7 4.3 2.9 5.7 5.7-1.4 2.8-3.3 5-5.7 5.7C9.6 18.8 5.3 17.2 2 12z"/><path d="M18.9 12l3-3.2v6.4z"/><circle cx="6.3" cy="11.2" r=".9" fill="currentColor"/><path d="M9.4 8.4c1 2.2 1 5 0 7.2"/>',gallery:'<rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="9" cy="10" r="1.7"/><path d="M21 15.5l-5-5L6.5 19"/>',board:'<path d="M8 4h8v5.5a4 4 0 0 1-8 0z"/><path d="M8 6H5.2a3 3 0 0 0 3.1 4M16 6h2.8a3 3 0 0 1-3.1 4M12 13.5V17M8.5 20.5h7M9.8 17h4.4v3.5H9.8z"/>'};
 let spSel=null,celeb=null;
 function fishSpecies(cm,sp,got){const groups=[...FISH.map(f=>f[0]),...(fishD().custom.length?['Custom']:[]),'All'],list=spFilter(sp,cm),inG=sp.filter(s=>fGroup==='All'||s.g===fGroup),gotG=inG.filter(s=>isTicked(s.n,cm)).length;
  return`<section class="card"><div class="seg scenes" role="tablist" aria-label="Fishing scene">${groups.map(g=>{const n=sp.filter(s=>(g==='All'||s.g===g)&&isTicked(s.n,cm)).length;return`<button role="tab" aria-selected="${fGroup===g}" data-fgroup="${g}" class="${fGroup===g?'on':''}">${g}${n?` <span class="cnt">${n}</span>`:''}</button>`}).join('')}</div>
@@ -1005,6 +1023,7 @@ function fishForm(){const c=fForm,sp=speciesAll(),venues=[...new Set(fishD().cat
  ${(c.photos||[]).length<4?`<label class="fphadd"><input type="file" accept="image/*" multiple data-fphotos hidden><span>+ Add photo</span></label>`:''}</div>
  <p class="sub" style="margin:6px 0 0">${sb&&user?'Photos are backed up privately to your account.':'Photos are kept on this device. Sign in (Settings) to back them up.'}</p></div>
  ${locRow(c)}
+ ${!c.editId&&liveSessions().length?`<label class="tgl sesshare" style="grid-column:1/-1"><span>Share to ${liveSessions().length===1?esc(liveSessions()[0].name):liveSessions().length+' live sessions'}<small>Everyone in the session sees it straight away</small></span><input type="checkbox" name="ses" ${c.ses!==false?'checked':''}></label>`:''}
  <button class="btn">${c.editId?'Save changes':'Save catch'}</button><button type="button" class="btn sec" data-fcancel>Cancel</button></form></section>`}
 const SCENEC={'UK coarse':['#d9b45a','#2f6b48','#173a2a'],'UK sea':['#7fc4e8','#245a86','#12304a'],'European':['#c9a2ff','#5b3f8f','#2a1d45'],'Other':['#ffb36b','#a04f2a','#4a2414'],'Custom':['#d9d2c0','#5a5a52','#2a2a26']};
 function tradeCard(c,cm,pb,bx){const all=speciesAll(),idx=all.findIndex(s=>s.n===c.species),g=(all[idx]||{}).g||'Custom',[ac,mc,dc]=SCENEC[g]||SCENEC.Custom,mine=bx?[]:fishD().catches.filter(x=>x.species===c.species);
@@ -1043,6 +1062,7 @@ function mergeFish(a,b){a=a||{};b=b||{};const o={catches:[],cdel:{...(a.cdel||{}
 function fishClick(t,ds){
  if(pinClick(t,ds))return true;
  if(albClick(t,ds))return true;
+ if(sesClick(t,ds))return true;
  if(ds.pfp){const P=prof();P.avatar=ds.pfp;save();syncSocial();rr();return true}
  if(ds.pv){pvTab=null;pvFrom=view()==='friends'?'friends':view()==='fishing'?'fishing':'profile';pv=ds.pv;frArm=null;location.hash='mate';return true}
  if(ds.fracc){acceptReq(+ds.fracc);return true}
@@ -1050,7 +1070,7 @@ function fishClick(t,ds){
  if(ds.frdel){const id=+ds.frdel;if(frArm!==id){frArm=id;rr();return true}frArm=null;dropReq(id,'Friend removed');location.hash='profile';return true}
  if(ds.addf){addFriend(ds.addf,ds.addn);return true}
  if(ds.mode2){const to=ds.mode2;if((to==='fish')!==fishOnly())morph(to);return true}
- if(ds.ftab){fTab=ds.ftab;lb=null;blb=null;if(fTab==='board')loadBoard(true);rr();return true}
+ if(ds.ftab){fTab=ds.ftab;lb=null;blb=null;if(fTab==='board')loadBoard(true);if(fTab==='session')loadSessions(true);rr();return true}
  if(ds.bmode){board.mode=ds.bmode;board.open=null;rr();return true}
  if(ds.bshare){const F=fishD(),k=ds.bshare,cur=k==='details'?!!F.board.details:!!F.board[k];F.board={...F.board,[k]:!cur,t:Date.now()};save();board.phErr='';syncBoard().then(()=>loadBoard(true));toast({photos:'Photos',details:'Catch details',venues:'Venues'}[k]+(cur?' are private now':' now show on your cards'));rr();return true}
  if(ds.bopen){board.open=board.open===ds.bopen?null:ds.bopen;rr();return true}
@@ -1063,7 +1083,7 @@ function fishClick(t,ds){
  if(ds.fexp){fOpen=fOpen===ds.fexp?null:ds.fexp;fDelArm=null;rr();return true}
  if(ds.fedit){const c=fishD().catches.find(x=>x.id===ds.fedit);if(c){fForm={...JSON.parse(JSON.stringify(c)),editId:c.id};render();scrollTo(0,0)}return true}
  if(ds.fdelc){if(fDelArm!==ds.fdelc){fDelArm=ds.fdelc;rr();return true}const F=fishD(),c=F.catches.find(x=>x.id===ds.fdelc);F.cdel[ds.fdelc]=Date.now();F.catches=F.catches.filter(x=>x.id!==ds.fdelc);
-  if(c){for(const p of c.photos||[])idbDel(p.id).catch(()=>{});const paths=(c.photos||[]).map(p=>p.path).filter(Boolean);if(paths.length&&sb&&user)sb.storage.from(BUCKET).remove(paths).catch(()=>{})}fDelArm=null;fOpen=null;save();rr();toast('Catch deleted');return true}
+  if(c){for(const p of c.photos||[])idbDel(p.id).catch(()=>{});const paths=(c.photos||[]).map(p=>p.path).filter(Boolean);if(paths.length&&sb&&user)sb.storage.from(BUCKET).remove(paths).catch(()=>{})}fDelArm=null;fOpen=null;save();rr();toast('Catch deleted');sesUnpost(ds.fdelc);return true}
  if(ds.fphdel){fForm.photos=fForm.photos.filter(p=>p.id!==ds.fphdel);keepForm();rr();return true}
  if(ds.fgroup){fGroup=ds.fgroup;rr();return true}
  if(ds.fstatus){fStatus=ds.fstatus;rr();return true}
@@ -1076,11 +1096,11 @@ function fishClick(t,ds){
  return false}
 function keepForm(){const f=document.getElementById('fform');if(!f||!fForm)return;const e=f.elements;Object.assign(fForm,{species:e.species.value,date:e.date.value,time:e.time.value,g:readFW(f),cm:num(e.cm.value),place:e.place.value,method:e.method.value,bait:e.bait.value,rel:e.rel.checked,notes:e.notes.value})}
 async function addPhotos(files){keepForm();const room=4-(fForm.photos||[]).length;for(const file of[...files].slice(0,room)){try{if(!fForm.loc){const g=await exifGps(file);if(g){fForm.loc=g;fForm.locSrc='photo';toast("Pinned from your photo's location")}}const b=await compress(file);if(!b)continue;const id=uid('p');await idbPut(id,b);purl[id]=URL.createObjectURL(b);fForm.photos.push({id})}catch(e){toast('Could not read that photo')}}rr()}
-function saveCatch(f){keepForm();const c=fForm;const sp=(c.species||'').trim();if(!sp){toast('Add a species');return}
+function saveCatch(f){keepForm();const c=fForm;const toSes=!c.editId&&!!(f.elements.ses&&f.elements.ses.checked);const sp=(c.species||'').trim();if(!sp){toast('Add a species');return}
  const canon=speciesAll().find(s=>s.n.toLowerCase()===sp.toLowerCase()),spn=canon?canon.n:sp;const F=fishD(),now=Date.now(),rec={id:c.editId||uid('c'),ts:now,species:spn,date:c.date||TODAY,time:c.time||'',g:c.g||null,cm:c.cm||null,place:(c.place||'').trim(),method:(c.method||'').trim(),bait:(c.bait||'').trim(),rel:c.rel,notes:(c.notes||'').trim(),photos:c.photos||[],...(c.loc?{loc:{lat:r5(c.loc.lat),lng:r5(c.loc.lng)}}:{})};
  if(c.editId){const old=F.catches.find(x=>x.id===c.editId);if(old)for(const p of old.photos||[])if(!rec.photos.some(q=>q.id===p.id)){idbDel(p.id).catch(()=>{});if(p.path&&sb&&user)sb.storage.from(BUCKET).remove([p.path]).catch(()=>{})}F.catches=F.catches.filter(x=>x.id!==c.editId)}
  if(!canon)F.custom.push(spn);
- F.catches.push(rec);const first=F.catches.filter(x=>x.species===spn).length===1;fForm=null;fOpen=rec.id;save();rr();scrollTo(0,0);if(first)celeb=spn,rr();else toast('Catch saved');uploadPending()}
+ F.catches.push(rec);const first=F.catches.filter(x=>x.species===spn).length===1;fForm=null;fOpen=rec.id;save();rr();scrollTo(0,0);if(first)celeb=spn,rr();else toast('Catch saved');uploadPending();if(toSes)sesPost(rec)}
 
 /* ---------- Views ---------- */
 const navBar=()=>`<div class="nav"><button data-nav="-1" aria-label="Previous day">‹</button><span class="d">${label(cur)}</span><button data-nav="1" aria-label="Next day" ${cur>=TODAY?'disabled':''}>›</button>${cur!==TODAY?'<button data-nav="0">Today</button>':''}</div>`;
@@ -1163,9 +1183,9 @@ const ICONS={today:'<circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/>'
 const fishOnly=()=>D.cfg.mode==='fish';
 const tabList=()=>fishOnly()?[['fishing','The Bank'],['settings','Settings']]:[['today','Today'],['food','Food'],['history','Progress'],...(D.cfg.fishTab!==false?[['fishing','Fishing']]:[]),['settings','Settings']];
 const tabs=v=>`<nav class="tabs" style="--n:${tabList().length}">${tabList().map(([k,l])=>`<a href="#${k}" class="${v===k?'on':''}" ${v===k?'aria-current="page"':''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[k]}</svg>${l}${k==='fishing'&&pendingIn().length?'<i class="tdot" aria-label="Friend requests"></i>':''}</a>`).join('')}</nav>`;
-const view=()=>{const h=location.hash.slice(1);if(h==='profile'||h==='friends'||(h==='news'&&D.cfg.fishTab!==false)||(h==='mate'&&pv)||(h==='album'&&alb)||(h==='map'&&D.cfg.fishTab!==false))return h;return tabList().some(t=>t[0]===h)?h:(fishOnly()?'fishing':'today')};
+const view=()=>{const h=location.hash.slice(1);if(h==='profile'||h==='friends'||(h==='news'&&D.cfg.fishTab!==false)||(h==='mate'&&pv)||(h==='album'&&alb)||(h==='session'&&sesId)||(h==='map'&&D.cfg.fishTab!==false))return h;return tabList().some(t=>t[0]===h)?h:(fishOnly()?'fishing':'today')};
 function keepOpen(){document.querySelectorAll('details[data-keep]').forEach(d=>d.open?openD.add(d.dataset.keep):openD.delete(d.dataset.keep));document.querySelectorAll('details[data-pi]').forEach(d=>d.open?openP.add(+d.dataset.pi):openP.delete(+d.dataset.pi))}
-function render(){keepOpen();stopLoc();if(!D.onboarded||ob.done){root.innerHTML=onboard();return}const v=view();root.innerHTML=(v==='food'?food():v==='history'?history():v==='settings'?settings():v==='fishing'?fishing():v==='profile'||v==='mate'?profilePage():v==='friends'?friendsPage():v==='news'?newsPage():v==='album'?albumPage():v==='map'?mapPage():today())+(v==='map'||(lb||blb||spSel||celeb||secret||gl||albPick||mapPick)&&['fishing','album','mate'].includes(v)?'':tabs(v))+glBox();document.body.classList.toggle('fishmode',['fishing','profile','mate','album','map','friends','news'].includes(v)||(fishOnly()&&v==='settings'));if(v==='profile'||v==='mate'||v==='friends')loadSocial();if(v==='album')loadAlbums();if(v==='food')renderResults();if(v==='history')drawW();if(['fishing','profile','mate','album'].includes(v))hydratePhotos();if(v==='fishing'&&mbIntroDue()&&!mbIntro)setTimeout(mbIntroStart,900);if(v==='map'){initCatchMap();requestAnimationFrame(()=>{const p=document.querySelector('.mappage.noanim');if(p)p.classList.remove('noanim')})}else mapMenuOn=false;if(v==='fishing'&&mapPick)initPickMap()}
+function render(){keepOpen();stopLoc();if(!D.onboarded||ob.done){root.innerHTML=onboard();return}const v=view();root.innerHTML=(v==='food'?food():v==='history'?history():v==='settings'?settings():v==='fishing'?fishing():v==='profile'||v==='mate'?profilePage():v==='friends'?friendsPage():v==='news'?newsPage():v==='album'?albumPage():v==='session'?sessionPage():v==='map'?mapPage():today())+(v==='map'||(lb||blb||spSel||celeb||secret||gl||albPick||mapPick)&&['fishing','album','mate','session'].includes(v)?'':tabs(v))+glBox();document.body.classList.toggle('fishmode',['fishing','profile','mate','album','map','friends','news','session'].includes(v)||(fishOnly()&&v==='settings'));if(v==='profile'||v==='mate'||v==='friends')loadSocial();if(v==='album')loadAlbums();if(v==='food')renderResults();if(v==='history')drawW();if(['fishing','profile','mate','album','session'].includes(v))hydratePhotos();if(v==='session')loadSessions();if(v==='fishing'&&mbIntroDue()&&!mbIntro)setTimeout(mbIntroStart,900);if(v==='map'){initCatchMap();requestAnimationFrame(()=>{const p=document.querySelector('.mappage.noanim');if(p)p.classList.remove('noanim')})}else mapMenuOn=false;if(v==='fishing'&&mapPick)initPickMap()}
 let morphing=false;
 function morph(to){if(morphing)return;morphing=true;const toFish=to==='fish',o=document.getElementById('morph'),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
  const apply=()=>{D.cfg.mode=to;if(toFish)D.cfg.fishTab=true;save();location.hash='settings';render();scrollTo(0,0)};
@@ -1242,7 +1262,7 @@ root.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('[data-f
  if(a==='profile'){pv=null;soc.msg='';pmenu(false);location.hash='profile';return}
  if(a==='friends'){pv=null;soc.msg='';pmenu(false);location.hash='friends';return}
  if(a==='pmenu'){pmenu(!document.querySelector('.pmenu.open'));return}
- if(a==='pback'){if(view()==='album'){galMode='shared';fTab='gallery'}if(view()==='map')fTab='log';location.hash=view()==='mate'?(pvFrom||'profile'):'fishing';return}
+ if(a==='pback'){if(view()==='session')fTab='session';if(view()==='album'){galMode='shared';fTab='gallery'}if(view()==='map')fTab='log';location.hash=view()==='mate'?(pvFrom||'profile'):'fishing';return}
  if(a==='gosettings'){location.hash='settings';return}
  if(a==='copycode'){const c=prof().code;try{navigator.clipboard.writeText(c);toast('Code copied: '+c)}catch(e){toast(c)}return}
  if(a==='bleave'){leaveBoard();return}
@@ -1278,7 +1298,7 @@ root.addEventListener('change',e=>{const t=e.target,ds=t.dataset;
  if(ds.cfg){const v=num(t.value);if(v!=null&&v>0){if(ds.cfg==='mc')D.cfg.macros.c=v;else if(ds.cfg==='mf')D.cfg.macros.f=v;else D.cfg.good=Math.min(100,v)}save();rr();return}
  if(ds.restore!=null&&t.files[0]){t.files[0].text().then(s=>{const j=JSON.parse(s);if(!j.cfg||!j.days)throw 0;D=j;D.foods=D.foods||[];D.recent=D.recent||[];snapAll();D.cfgU=Date.now();Object.values(D.days).forEach(x=>x.u=Date.now());save();rr();toast('Backup restored')}).catch(()=>toast('That file is not a Life Pillars backup'))}});
 root.addEventListener('toggle',e=>{const d=e.target;if(d.dataset&&d.dataset.keep){d.open?openD.add(d.dataset.keep):openD.delete(d.dataset.keep)}if(d.dataset&&d.dataset.pi!=null){d.open?openP.add(+d.dataset.pi):openP.delete(+d.dataset.pi)}},true);
-root.addEventListener('input',e=>{if(e.target.dataset&&e.target.dataset.albname!=null&&albForm){albForm.name=e.target.value;return}if(e.target.dataset&&e.target.dataset.suggest){showSugg(e.target);return}if(e.target.dataset.fsq!=null){fQ=e.target.value;const cm=caughtMap(),el=document.getElementById('fsplist');if(el)el.innerHTML=spRows(spFilter(speciesAll(),cm),cm);return}if(e.target.id==='amt')updAmt();if(e.target.id==='fq'){lastQ=e.target.value;if(!lastQ.trim()){picked=null;status='';renderResults()}}});
+root.addEventListener('input',e=>{if(e.target.dataset&&e.target.dataset.albname!=null&&albForm){albForm.name=e.target.value;return}if(e.target.dataset&&e.target.dataset.sesname!=null&&sesForm){sesForm.name=e.target.value;return}if(e.target.dataset&&e.target.dataset.sesend!=null&&sesForm){sesForm.end=e.target.value;return}if(e.target.dataset&&e.target.dataset.suggest){showSugg(e.target);return}if(e.target.dataset.fsq!=null){fQ=e.target.value;const cm=caughtMap(),el=document.getElementById('fsplist');if(el)el.innerHTML=spRows(spFilter(speciesAll(),cm),cm);return}if(e.target.id==='amt')updAmt();if(e.target.id==='fq'){lastQ=e.target.value;if(!lastQ.trim()){picked=null;status='';renderResults()}}});
 root.addEventListener('submit',e=>{e.preventDefault();const f=e.target;if(f.id==='fradd'){addByCode(f.elements.code.value);return}
  if(f.id==='bjoin'){const n=f.elements.name.value.trim().slice(0,24);if(!n)return;fishD().board={on:true,name:n,photos:!!(f.elements.photos&&f.elements.photos.checked),details:!!(f.elements.details&&f.elements.details.checked),venues:!!(f.elements.venues&&f.elements.venues.checked),t:Date.now()};boardHash='';save();syncBoard().then(()=>{loadBoard(true);toast("You're on the leaderboard")});rr();return}
  if(f.id==='fform'){saveCatch(f);return}
@@ -1604,6 +1624,125 @@ async function albAddBlobs(list){const a=alb;let n=0;albBusy='Adding photos…';
 async function albPickGo(){const want=[...albPick];albPick=null;const list=[];
  for(const k of want){const[cid,i]=k.split(':'),c=fishD().catches.find(x=>x.id===cid),p=c&&(c.photos||[])[+i];if(!p)continue;const b=await photoBlob(p).catch(()=>null);if(b)list.push({blob:b,info:{sp:c.species,g:c.g||null,d:c.date}})}
  if(list.length)albAddBlobs(list);else{toast("Couldn't load those photos");rr()}}
+/* ---------- Live sessions: shared fishing trips with a live catch feed and alerts ---------- */
+const VAPID_PUB='BFEEMDCAP-BOKlvyUMfaRK6vvuWm5D8_2nePSd-lnYM0pyXmwgpqiPtfO54JUAjf4tcmuNeBCzbTWdXiGK4GKPU';
+let ses={at:0,list:[],members:{},events:{},err:''},sesId=null,sesForm=null,sesArm=null,sesInv=false,sesBusy='',rtCh=null,pushSt={ok:false,on:false,busy:false};
+const sesLive=s=>!!s&&!s.ended_at&&Date.parse(s.ends_at)>Date.now();
+const sesMine=s=>!!user&&(ses.members[s.id]||[]).includes(user.id);
+const liveSessions=()=>user?ses.list.filter(s=>sesLive(s)&&sesMine(s)):[];
+const sesView=()=>(view()==='fishing'&&fTab==='session')||view()==='session';
+const rname=id=>id===(user&&user.id)?'You':((soc.people[id]||{}).name||'Someone');
+const aAn=w=>(/^[aeiou]/i.test(w||'')?'an ':'a ')+(w||'fish');
+function sesLeft(s){const ms=Date.parse(s.ends_at)-Date.now();if(ms<=0)return'ending';const tm=Math.max(1,Math.round(ms/60000)),h=Math.floor(tm/60),m=tm%60;return h?`${h}h ${m}m left`:`${m}m left`}
+const shm=iso=>{const d=new Date(iso);return d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})};
+const dayhm=iso=>{const d=new Date(iso),t=new Date();return(d.toDateString()===t.toDateString()?'':d.toLocaleDateString('en-GB',{day:'numeric',month:'short'})+' ')+shm(iso)};
+async function loadSessions(force){if(!sb||!user)return;if(!force&&Date.now()-ses.at<15000)return;ses.at=Date.now();
+ try{const a=await sb.from('sessions').select('id,owner,name,started_at,ends_at,ended_at,created_at');if(a.error)throw a.error;
+  ses.list=(a.data||[]).sort((x,y)=>(y.started_at||'').localeCompare(x.started_at||''));const ids=ses.list.map(x=>x.id),M={},E={};
+  if(ids.length){const m=await sb.from('session_members').select('session_id,user_id').in('session_id',ids);if(m.error)throw m.error;for(const r of m.data||[])(M[r.session_id]=M[r.session_id]||[]).push(r.user_id);
+   const ev=await sb.from('session_events').select('id,session_id,user_id,kind,catch_id,info,path,created_at').in('session_id',ids);if(ev.error)throw ev.error;for(const r of ev.data||[])(E[r.session_id]=E[r.session_id]||[]).push(r);
+   for(const k in E)E[k].sort((a,b)=>(b.created_at||'').localeCompare(a.created_at||''));
+   const uids=[...new Set(Object.values(M).flat())].filter(u=>!soc.people[u]);if(uids.length){const p=await sb.from('profiles').select('user_id,name,code,avatar').in('user_id',uids);for(const x of p.data||[])soc.people[x.user_id]=x}}
+  ses.members=M;ses.events=E;ses.err=''}catch(e){ses.err=socErr(e)}
+ sesRealtime();if((sesView()||view()==='fishing')&&!sesForm)rr()}
+function sesRealtime(){if(!sb||!user||typeof sb.channel!=='function')return;const want=ses.list.some(s=>sesLive(s)&&sesMine(s))||ses.list.some(sesLive);
+ if(!want){if(rtCh){try{sb.removeChannel(rtCh)}catch(e){}rtCh=null}return}if(rtCh)return;
+ try{rtCh=sb.channel('sessions-live').on('postgres_changes',{event:'INSERT',schema:'public',table:'session_events'},p=>sesOnEvent(p.new))
+  .on('postgres_changes',{event:'*',schema:'public',table:'sessions'},()=>loadSessions(true)).on('postgres_changes',{event:'*',schema:'public',table:'session_members'},()=>loadSessions(true)).subscribe()}catch(e){rtCh=null}}
+function sesOnEvent(e){if(!e||!e.session_id)return;if(!ses.list.some(s=>s.id===e.session_id)){loadSessions(true);return}const L=ses.events[e.session_id]=ses.events[e.session_id]||[];if(L.some(x=>x.id===e.id))return;L.unshift(e);
+ if(user&&e.user_id!==user.id&&e.kind==='catch'){const i=e.info||{};toast(`${rname(e.user_id)} caught ${aAn(i.sp)}${i.g?' · '+fW(i.g):''}`);try{navigator.vibrate&&navigator.vibrate([60,40,60])}catch(_){}}
+ if(sesView()&&!sesForm)rr()}
+setInterval(()=>{if(document.visibilityState==='visible'&&user&&(sesView()||liveSessions().length))loadSessions(true)},30000);
+async function sesPost(c){const L=liveSessions();if(!L.length||!sb||!user)return;let photo=null;
+ if((c.photos||[])[0]){try{const b=await photoBlob(c.photos[0]);if(b)photo=await compress(b,1200,.8)}catch(e){}}
+ let n=0;for(const s of L){const id=newId();let path=null;
+  if(photo){const p=`sessions/${s.id}/${user.id}_${id}.jpg`;try{const u=await sb.storage.from(BUCKET).upload(p,photo,{contentType:'image/jpeg'});if(!u.error)path=p}catch(e){}}
+  const row={id,session_id:s.id,user_id:user.id,kind:'catch',catch_id:c.id,path,info:{sp:c.species,g:c.g||null,cm:c.cm||null,m:c.method||null,b:c.bait||null,t:c.time||null,rel:c.rel!==false},created_at:new Date().toISOString()};
+  const r=await sb.from('session_events').insert(row);if(r.error){console.warn('session post',r.error);continue}n++;sesOnEvent(row);sesPush({event_id:id})}
+ if(n)setTimeout(()=>toast(L.length===1?`Shared to ${L[0].name}`:`Shared to ${n} sessions`),celeb?0:1400);else toast("Couldn't share to the session. Check your connection.")}
+async function sesUnpost(cid){if(!sb||!user)return;for(const k in ses.events){const mine=ses.events[k].filter(e=>e.user_id===user.id&&e.catch_id===cid);for(const e of mine){await sb.from('session_events').delete().eq('id',e.id);if(e.path)sb.storage.from(BUCKET).remove([e.path]).catch(()=>{})}ses.events[k]=ses.events[k].filter(e=>!mine.includes(e))}}
+async function sesPush(body){try{if(sb&&sb.functions)await sb.functions.invoke('session-push',{body})}catch(e){}}
+async function sesCreate(){const f=sesForm,name=(f.name||'').trim();if(!name){toast('Give the session a name');return}
+ let end=f.len==='custom'?(f.end?new Date(f.end):null):new Date(Date.now()+(+f.len||6)*3600000);
+ if(!end||isNaN(end)||end<=new Date(Date.now()+10*60000)){toast('Pick an end time at least 10 minutes away');return}if(end>new Date(Date.now()+7*86400000)){toast('Sessions can run for up to a week');return}
+ sesBusy='Starting…';rr();const id=newId(),now=new Date().toISOString();
+ let r=await sb.from('sessions').insert({id,owner:user.id,name,started_at:now,ends_at:end.toISOString(),created_at:now});
+ if(r.error){sesBusy='';rr();toast(socErr(r.error)==='setup'?"Sessions aren't switched on yet":"Couldn't start the session");return}
+ r=await sb.from('session_members').insert([user.id,...f.sel].map(u=>({session_id:id,user_id:u})));if(r.error)toast('Session started, but some friends could not be added');
+ sesForm=null;sesBusy='';sesId=id;if(f.sel.length)sesPush({session_id:id,invite:true});await loadSessions(true);location.hash='session'}
+function sesFeedItem(e,i){const x=e.info||{},who=e.user_id;
+ return`<div class="sfi">${avatarImg((soc.people[who]||{}).avatar||(user&&who===user.id?favAv():null),'sm')}<div class="sfit"><p><b>${pname(who)}</b> ${who===(user&&user.id)?'caught':'caught'} <b>${esc(aAn(x.sp))}</b></p>
+ <small>${[x.g?fW(x.g):'',x.cm?x.cm+' cm':'',x.m?esc(x.m):'',x.b?'on '+esc(x.b):''].filter(Boolean).join(' · ')||'No weight logged'}</small><small class="sft">${dayhm(e.created_at)}${x.rel===false?' · kept':''}</small></div>
+ ${e.path?`<button class="sfph" data-gl="s:${i}" aria-label="Open photo">${bimg(e.path,x.sp||'Catch')}</button>`:`<span class="sfph art">${fishSVG(x.sp||'')}</span>`}</div>`}
+function sesBoard(s){const ev=(ses.events[s.id]||[]).filter(e=>e.kind==='catch'),mem=ses.members[s.id]||[],R={};
+ for(const u of mem)R[u]={u,n:0,best:null};for(const e of ev){const r=R[e.user_id]=R[e.user_id]||{u:e.user_id,n:0,best:null};r.n++;const g=(e.info||{}).g;if(g&&(!r.best||g>r.best.g))r.best={g,sp:(e.info||{}).sp}}
+ const L=Object.values(R).sort((a,b)=>b.n-a.n||((b.best||{}).g||0)-((a.best||{}).g||0));const top=Math.max(0,...L.map(r=>(r.best||{}).g||0));
+ return`<section class="card"><div class="ch"><h2>Scoreboard</h2><span class="sub">${ev.length} fish</span></div><div class="sbd">${L.map((r,i)=>`<div class="sbr">${avatarImg((soc.people[r.u]||{}).avatar||(user&&r.u===user.id?favAv():null),'sm')}<span class="frn">${pname(r.u)}<small>${r.best?`Best ${fW(r.best.g)} ${esc(r.best.sp||'')}${r.best.g===top&&top?' · biggest':''}`:r.n?'No weights yet':'Waiting for a bite'}</small></span><b class="sbn">${r.n}</b></div>`).join('')}</div></section>`}
+function pushCard(){if(!('Notification' in window)||!('serviceWorker' in navigator)||!('PushManager' in window)){
+  const ios=/iPhone|iPad|iPod/.test(navigator.userAgent),sa=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
+  return`<section class="card spush"><b>Lock-screen alerts</b><p class="sub">${ios&&!sa?'To get alerts when your phone is locked, add Life Pillars to your Home Screen (Share, then Add to Home Screen) and open it from there.':"This browser can't show lock-screen alerts. You'll still see catches live while the app is open."}</p></section>`}
+ if(!pushSt.checked)pushCheck();
+ if(Notification.permission==='denied')return`<section class="card spush"><b>Lock-screen alerts are blocked</b><p class="sub">Turn notifications on for Life Pillars in your phone's Settings, then come back here.</p></section>`;
+ return pushSt.on?`<section class="card spush on"><b>Lock-screen alerts are on</b><p class="sub">You'll get a notification when someone in your session catches a fish.</p><button class="linkbtn" data-pushoff>Turn off on this phone</button></section>`
+  :`<section class="card spush"><b>Get alerts on your lock screen</b><p class="sub">Know the moment a mate lands one, even with your phone in your pocket.</p><button class="btn sec" data-pushon ${pushSt.busy?'disabled':''}>${pushSt.busy?'Turning on…':'Turn on alerts'}</button></section>`}
+const b64u=s=>{const p='='.repeat((4-s.length%4)%4),b=atob((s+p).replace(/-/g,'+').replace(/_/g,'/'));return Uint8Array.from([...b].map(c=>c.charCodeAt(0)))};
+async function swReg(){if(!('serviceWorker' in navigator))return null;try{return await navigator.serviceWorker.register('sw.js')}catch(e){return null}}
+async function pushCheck(){pushSt.checked=true;try{const reg=await swReg();const sub=reg&&reg.pushManager&&await reg.pushManager.getSubscription();pushSt.on=!!sub&&Notification.permission==='granted'}catch(e){}if(sesView())rr()}
+async function pushOn(){if(!sb||!user)return;pushSt.busy=true;rr();try{const perm=await Notification.requestPermission();if(perm!=='granted'){toast('Notifications were not allowed');return}
+  const reg=await swReg();if(!reg)throw new Error('no sw');await navigator.serviceWorker.ready;let sub=await reg.pushManager.getSubscription();
+  if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64u(VAPID_PUB)});const j=sub.toJSON();
+  const r=await sb.from('push_subs').upsert({endpoint:j.endpoint,user_id:user.id,p256dh:j.keys.p256dh,auth:j.keys.auth});if(r.error)throw r.error;pushSt.on=true;toast("Alerts are on")}
+ catch(e){console.warn('push',e);toast(socErr(e)==='setup'?"Alerts aren't switched on on the server yet":"Couldn't turn on alerts on this phone")}finally{pushSt.busy=false;rr()}}
+async function pushOff(){try{const reg=await swReg(),sub=reg&&await reg.pushManager.getSubscription();if(sub){const ep=sub.endpoint;await sub.unsubscribe();if(sb)await sb.from('push_subs').delete().eq('endpoint',ep)}}catch(e){}pushSt.on=false;toast('Alerts turned off on this phone');rr()}
+if('serviceWorker' in navigator){swReg();navigator.serviceWorker.addEventListener('message',e=>{const d=e.data||{};if(d.type==='open'){try{const u=new URL(d.url),s=u.searchParams.get('s');if(s){sesId=s;loadSessions(true);location.hash='session'}}catch(_){}}})}
+{const q=new URLSearchParams(location.search).get('s');if(q&&/^[0-9a-f-]{36}$/i.test(q)){sesId=q;try{history.replaceState(null,'',location.pathname+'#session')}catch(e){}}}
+function sessionTab(){if(!SB_URL||!user)return'<section class="card"><p class="sub">Sign in from Settings to start live sessions with your mates.</p></section>';loadSessions();loadSocial();
+ if(ses.err==='setup')return`<section class="card"><h2>Sessions</h2><p class="sub">Live sessions aren't switched on on the server yet.</p></section>`;
+ const fr=friendIds(),f=sesForm,LENS=[2,4,6,8,12,24];
+ const form=f?`<section class="card sesform"><h2>Start a session</h2><label class="f" style="margin-top:10px">Session name<input data-sesname maxlength="60" value="${esc(f.name)}" placeholder="e.g. Saturday on the Colne"></label>
+ <p class="sub" style="margin:14px 0 6px">How long does it run for?</p><div class="pickf">${LENS.map(h=>`<button type="button" class="chip${String(f.len)===String(h)?' on':''}" data-seslen="${h}">${h} hours</button>`).join('')}<button type="button" class="chip${f.len==='custom'?' on':''}" data-seslen="custom">Pick a time</button></div>
+ ${f.len==='custom'?`<label class="f" style="margin-top:10px">Ends at<input type="datetime-local" data-sesend value="${esc(f.end||'')}"></label>`:`<p class="sub" style="margin:8px 0 0">Ends around ${shm(new Date(Date.now()+(+f.len)*3600000).toISOString())}${+f.len>=12?' tomorrow':''}. You can end it early or add time.</p>`}
+ <p class="sub" style="margin:14px 0 6px">Who's fishing?</p>${fr.length?`<div class="pickf">${fr.map(id=>`<button type="button" class="chip${f.sel.includes(id)?' on':''}" data-sessel="${id}">${f.sel.includes(id)?'✓ ':''}${pname(id)}</button>`).join('')}</div>`:'<p class="empty">Add friends on your profile first. You can still run a session on your own.</p>'}
+ <div class="row" style="margin-top:16px"><button class="btn" data-sescreate ${sesBusy?'disabled':''}>${sesBusy||'Start session'}</button><button class="btn sec" data-sescancel>Cancel</button></div></section>`
+  :`<button class="btn bigadd" data-sesnew>+ Start a session</button>`;
+ const live=ses.list.filter(sesLive),past=ses.list.filter(x=>!sesLive(x));
+ const card=s=>{const ev=(ses.events[s.id]||[]).filter(e=>e.kind==='catch'),mem=ses.members[s.id]||[],on=sesLive(s);
+  return`<button class="sesc${on?' live':''}" data-ses="${s.id}"><span class="sest">${on?'<span class="livepill"><i></i>Live</span>':''}<b>${esc(s.name)}</b><small>${on?sesLeft(s):'Ended '+dayhm(s.ended_at||s.ends_at)} · ${ev.length} fish · ${mem.length} angler${mem.length===1?'':'s'}</small></span><span class="avs">${mem.slice(0,5).map(u=>avatarImg((soc.people[u]||{}).avatar||(u===user.id?favAv():null),'xs')).join('')}</span></button>`};
+ return form+(live.length?`<h3 class="agh" style="margin-top:16px">Live now</h3><div class="sesl">${live.map(card).join('')}</div>`:ses.at&&!f?'<p class="empty" style="margin-top:12px">No live sessions. Start one when you head out, and your mates can follow every catch as it happens.</p>':!ses.at?'<p class="sub">Loading sessions…</p>':'')
+  +pushCard()+(past.length?`<details class="card pd" data-keep="sespast"><summary><h2>Past sessions</h2><span class="sub">${past.length}</span></summary><div class="sesl" style="margin-top:10px">${past.map(card).join('')}</div></details>`:'')}
+function sessionPage(){const s=ses.list.find(x=>x.id===sesId);const back=`<button class="pback" data-act="pback" aria-label="Back">‹</button>`;
+ const head=(t,g)=>`<header class="fhero sm">${scene().svg}<div class="fhin">${back}<p class="fgreet fx">${g}</p><div class="fhtop"><h1>${t}</h1></div></div></header>`;
+ if(!s)return head('Session','Session')+`<main class="wrap"><section class="card"><p class="sub">${ses.at?"This session isn't available. You may have left it or it was deleted.":'Loading…'}</p></section></main>`;
+ const on=sesLive(s),host=s.owner===user.id,mem=ses.members[s.id]||[],me=mem.includes(user.id),ev=ses.events[s.id]||[],fr=friendIds().filter(id=>!mem.includes(id));
+ return head(esc(s.name),on?'Live session':'Session')+`<main class="wrap">
+ <section class="card sestat"><div class="sesrow">${on?'<span class="livepill"><i></i>Live</span>':'<span class="endpill">Ended</span>'}<span class="sub">${on?`Ends ${dayhm(s.ends_at)} · ${sesLeft(s)}`:`${dayhm(s.started_at)} to ${dayhm(s.ended_at||s.ends_at)}`}</span></div>
+ ${host&&on?`<div class="row" style="margin-top:12px"><button class="btn sec sm" data-sesext="1">+1 hour</button><button class="btn sec sm dbtn" data-sesstop>${sesArm==='end'?'Tap again to end':'End session'}</button></div>`:''}
+ ${on&&me?`<button class="btn bigadd" data-seslog style="margin-top:12px">+ Log a catch</button>`:''}</section>
+ ${sesBoard(s)}
+ <section class="card"><div class="ch"><h2>Catches</h2>${on?'<span class="sub">Updates live</span>':''}</div>${ev.length?`<div class="sfeed">${ev.map(sesFeedItem).join('')}</div>`:`<p class="empty">${on?'No fish yet. The first catch logged shows up here for everyone.':'No catches in this session.'}</p>`}</section>
+ <section class="card"><div class="ch"><h2>Anglers</h2>${host&&fr.length?`<button class="btn sec sm" data-sesinv>+ Invite</button>`:''}</div>
+ ${sesInv?`<div class="pickf" style="margin:10px 0">${fr.map(id=>`<button class="chip" data-sesinvu="${id}">+ ${pname(id)}</button>`).join('')}</div>`:''}
+ ${mem.map(u=>`<div class="frow">${avatarImg((soc.people[u]||{}).avatar||(u===user.id?favAv():null),'sm')}<span class="frn">${pname(u)}${u===s.owner?'<small>Host</small>':''}</span>${host&&u!==user.id?`<button class="btn sec sm" data-seskick="${u}">Remove</button>`:''}</div>`).join('')}</section>
+ ${on?pushCard():''}
+ <p class="sub" style="text-align:center;margin-top:18px">${host?`<button class="linkbtn dlink" data-sesdel>${sesArm==='del'?'Tap again to delete the session for everyone':'Delete session'}</button>`:`<button class="linkbtn dlink" data-sesleave>${sesArm==='leave'?'Tap again to leave':'Leave session'}</button>`}</p></main>`}
+function sesClick(t,ds){
+ if(ds.sesnew!=null){sesForm={name:'',len:6,end:'',sel:[]};rr();setTimeout(()=>{const i=document.querySelector('[data-sesname]');if(i)i.focus()},50);return true}
+ if(ds.sescancel!=null){sesForm=null;rr();return true}
+ if(ds.seslen){sesForm.len=ds.seslen==='custom'?'custom':+ds.seslen;if(sesForm.len==='custom'&&!sesForm.end){const d=new Date(Date.now()+6*3600000);d.setMinutes(0,0,0);sesForm.end=new Date(d-d.getTimezoneOffset()*60000).toISOString().slice(0,16)}rr();return true}
+ if(ds.sessel){const a=sesForm.sel,i=a.indexOf(ds.sessel);i<0?a.push(ds.sessel):a.splice(i,1);rr();return true}
+ if(ds.sescreate!=null){sesCreate();return true}
+ if(ds.ses){sesId=ds.ses;sesArm=null;sesInv=false;location.hash='session';return true}
+ if(ds.seslog!=null){fForm={photos:[],date:TODAY,time:new Date().toTimeString().slice(0,5)};fTab='log';location.hash='fishing';setTimeout(()=>scrollTo(0,0),30);return true}
+ if(ds.sesext){const s=ses.list.find(x=>x.id===sesId);if(!s)return true;const e=new Date(Math.max(Date.parse(s.ends_at),Date.now())+3600000).toISOString();sb.from('sessions').update({ends_at:e}).eq('id',s.id).then(r=>{if(r.error){toast("Couldn't add time");return}s.ends_at=e;rr();toast('Added an hour')});return true}
+ if(ds.sesstop!=null){if(sesArm!=='end'){sesArm='end';rr();return true}sesArm=null;const s=ses.list.find(x=>x.id===sesId),e=new Date().toISOString();sb.from('sessions').update({ended_at:e}).eq('id',s.id).then(r=>{if(r.error){toast("Couldn't end the session");return}s.ended_at=e;rr();toast('Session ended. Tight lines!')});return true}
+ if(ds.sesinv!=null){sesInv=!sesInv;rr();return true}
+ if(ds.sesinvu){const u=ds.sesinvu;sb.from('session_members').insert({session_id:sesId,user_id:u}).then(r=>{if(r.error){toast("Couldn't add them");return}(ses.members[sesId]=ses.members[sesId]||[]).push(u);sesPush({session_id:sesId,invite:true,users:[u]});rr();toast(`${rname(u)} added`)});return true}
+ if(ds.seskick){const u=ds.seskick;sb.from('session_members').delete().eq('session_id',sesId).eq('user_id',u).then(r=>{if(r.error){toast("Couldn't remove them");return}ses.members[sesId]=(ses.members[sesId]||[]).filter(x=>x!==u);rr()});return true}
+ if(ds.sesleave!=null){if(sesArm!=='leave'){sesArm='leave';rr();return true}sesArm=null;sb.from('session_members').delete().eq('session_id',sesId).eq('user_id',user.id).then(()=>{ses.list=ses.list.filter(x=>x.id!==sesId);fTab='session';location.hash='fishing';toast('You left the session')});return true}
+ if(ds.sesdel!=null){if(sesArm!=='del'){sesArm='del';rr();return true}sesArm=null;const id=sesId;sb.from('sessions').delete().eq('id',id).then(r=>{if(r.error){toast("Couldn't delete it");return}ses.list=ses.list.filter(x=>x.id!==id);fTab='session';location.hash='fishing';toast('Session deleted')});return true}
+ if(ds.pushon!=null){pushOn();return true}
+ if(ds.pushoff!=null){pushOff();return true}
+ return false}
 const FLIPSVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 0 1-13.7 5.6M4 12a8 8 0 0 1 13.7-5.6"/><path d="M18 2.5v4.3h-4.3M6 21.5v-4.3h4.3"/></svg>';
 const flipPhoto=new Set(),crPh={};
 function flipInline(key,front,back){if(!front)return back;const on=!flipPhoto.has(key);
@@ -1617,6 +1756,7 @@ function glBox(){if(!gl)return'';let x=gl.list[gl.i];if(!x)return'';const n=gl.l
  <div class="lbcap"${front?'':' hidden'}><b>${x.sp?esc(x.sp)+(x.g?' · '+fW(x.g):''):'&nbsp;'}</b><span>${[x.by,x.d?label(x.d):''].filter(Boolean).join(' · ')}</span>${canDel?`<button class="linkbtn" data-albrm="${x.item}" style="color:#ffb3b3;min-height:36px;justify-self:start">${albArm===x.item?'Tap again to remove':'Remove from album'}</button>`:''}</div>
  ${n>1?`<button class="lbn l" data-glnav="${(gl.i-1+n)%n}" aria-label="Previous photo">‹</button><button class="lbn r" data-glnav="${(gl.i+1)%n}" aria-label="Next photo">›</button>`:''}</div>`}
 function openGl(kind,i){let list=[];if(kind==='f'){const c=soc.cards[pv];list=((c&&c.gallery)||[]).map(x=>({...x,by:esc((c||{}).name||'')}))}
+ else if(kind==='s'){list=(ses.events[sesId]||[]).filter(e=>e.path).map(e=>({path:e.path,sp:(e.info||{}).sp,g:(e.info||{}).g,d:(e.created_at||'').slice(0,10),by:pname(e.user_id)}))}
  else if(kind==='p'){const mine=view()==='profile';list=pvItems(mine?buildCard():soc.cards[pv]||{},mine)}
  else{list=(albs.items[alb]||[]).map(x=>({path:x.path,sp:(x.info||{}).sp,g:(x.info||{}).g,d:(x.info||{}).d,by:pname(x.user_id),who:x.user_id===(user&&user.id)?prof().name:(soc.people[x.user_id]||{}).name||'',user_id:x.user_id,item:x.id}))}gl={list,i,kind};rr()}
 function albClick(t,ds){
