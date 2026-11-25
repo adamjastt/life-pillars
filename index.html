@@ -471,7 +471,7 @@ img.fimg{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-w
 .mbi.out{opacity:0;transition:opacity .3s}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><div id="achpop" aria-live="polite"></div><script>
 {
-const VERSION='7.35';
+const VERSION='7.36';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -1413,6 +1413,17 @@ function mbIntroStart(){if(mbIntro||!mbIntroDue()||view()!=='fishing'||!document
   await wait(250);btns.innerHTML='<button class="btn mbi-go">Read the news</button><button class="btn sec mbi-no">Maybe later</button>';btns.querySelector('.mbi-go').onclick=()=>end(true);btns.querySelector('.mbi-no').onclick=()=>end(false);cap.classList.add('final')})()}
 /* ---------- News / announcements (the mailbox on the hill) ---------- */
 const NEWS=[
+ {id:'2026-11-25',date:'2026-11-25',title:'Catch cards and nosing through your mates\' catches',by:'Adam',body:[
+  ['p',"Another batch of updates just landed. Here's what's changed."],
+  ['h','See what your mates have caught'],
+  ['p',"Open a friend's profile and tap the species or catches number at the top. Species shows every fish they've ticked off along with their PBs. Catches shows all their photos, and any catch without a photo shows up as a card, so nothing gets missed."],
+  ['h','Sort and filter'],
+  ['p',"Sort anyone's catches by newest, A to Z or heaviest. Tap the filter button to narrow it down to the last 7 days, the last 30 days or your own dates, and pick as many species as you like. Biggest perch this month? Two taps."],
+  ['h','Flip it'],
+  ['p',"Every catch now opens on its catch card, with the weight, length, method and how it ranks. Tap Photo and it spins round to show the picture, and tap again to flip it back. It works on your own catches, your mates' profiles and the leaderboard."],
+  ['h','And the little things'],
+  ['ul',['Icons on the Catches, Species, Gallery and Rankings tabs','Full-screen photos sit in a tidy frame, and you can still pinch to zoom','Catch cards show their full gold border on iPhone now','A neater update pop-up','Holding down on species art no longer gives you a sneak peek, so no cheating']],
+  ['p','Tight lines.']]},
  {id:'2026-11-24',date:'2026-11-24',title:"What's new on The Bank",by:'Adam',body:[
   ['p',"A lot has landed on The Bank over the last few weeks. Here's the round-up of the big stuff, in case you missed any of it."],
   ['h','Every fish, properly drawn'],
