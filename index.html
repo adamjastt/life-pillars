@@ -594,7 +594,7 @@ img.fimg{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-w
 .sesi .mbi-cap{z-index:2}.sesi .mbi-cap.top{top:calc(14px + env(safe-area-inset-top))!important}.sesi .mbi-cap.top::before{display:none}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><div id="achpop" aria-live="polite"></div><script>
 {
-const VERSION='7.56';
+const VERSION='7.57';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -1675,7 +1675,7 @@ async function loadClan(force){if(!sb||!user)return;if(!force&&Date.now()-clan.a
  for(const k in bottleFirst)if(k.startsWith('c:')&&!clan.inv.some(r=>'c:'+r.clan_id===k)&&!bottleGone[k])delete bottleFirst[k];
  if(['fishing','cottage'].includes(view())&&!clanForm)rr()}
 async function clanRpc(fn,args,ok){if(!sb||!user)return null;const r=await sb.rpc(fn,args||{});if(r.error){const m=(r.error.message||'').toLowerCase();
-  toast(socErr(r.error)==='setup'?"The cottage isn't open yet":m.includes('already in a clan')?"You're already in a clan":m.includes('full')?'That clan is full (12 max)':m.includes('too big')?'Too big for the tank. Only small fish fit':m.includes('weight or length')?'Add a weight or length to that catch first':m.includes('already have a fish')?'You already have a fish in the tank':m.includes('not found')?"That catch hasn't synced yet. Try again in a moment":"Couldn't do that right now");return null}
+  toast(socErr(r.error)==='setup'?"The cottage isn't open yet":m.includes('already in a clan')?"You're already in a club":m.includes('full')?'That club is full (12 max)':m.includes('too big')?'Too big for the tank. Only small fish fit':m.includes('weight or length')?'Add a weight or length to that catch first':m.includes('already have a fish')?'You already have a fish in the tank':m.includes('not found')?"That catch hasn't synced yet. Try again in a moment":"Couldn't do that right now");return null}
  if(ok)toast(ok);await loadClan(true);return r.data}
 const GMA_LINES=["Ooh, come in, love. Kettle's just boiled.","Mind the cat. Oh, we haven't got one yet.","Is that a perch? Lovely stripes on him.","Don't forget to feed the little ones in the tank.","Your grandad caught a pike that big once. Or so he said.","Shut the door, you're letting the heat out.","Have you eaten? You look thin.","Tight lines, dear."];
 const isNight=()=>{const t=sceneHour(),{sr,ss}=skyKeys();return t<sr+.3||t>ss-.3};
@@ -1702,8 +1702,8 @@ function clanBottle(key){const r=clan.inv.find(x=>'c:'+x.clan_id===key);if(!r)re
   <p class="bto">${me?`Dear ${esc(me)},`:'Ahoy,'}</p>
   <p class="bmsg">${esc(r.note||`Grandma's put the kettle on. Come and join ${r.clan.name}.`)}</p>
   <p class="bsig">${esc(host)}</p>
-  <div class="bdet"><b>${esc(r.clan.name)}</b><span>A clan at Grandma's cottage</span></div>
-  <div class="bbtns"><button class="btn" data-cjoin="${r.clan_id}">Join the clan</button><button class="btn sec" data-cno="${r.clan_id}">Not this time</button></div>
+  <div class="bdet"><b>${esc(r.clan.name)}</b><span>A club at Grandma's cottage</span></div>
+  <div class="bbtns"><button class="btn" data-cjoin="${r.clan_id}">Join the club</button><button class="btn sec" data-cno="${r.clan_id}">Not this time</button></div>
   <button class="linkbtn bclose" data-bclose>Keep it for later</button>
  </div><span class="roll bot" aria-hidden="true"></span></div></div>`}
 function tankFishSvg(f,i,n){const src=fishSrc(f.species),w=46*(1+Math.min(f.feeds,7)*.06),h=w/2,y=96+((i*37)%70),x0=52+((i*53)%40),x1=262-((i*29)%40),d=9+((i*7)%6);
@@ -1764,8 +1764,8 @@ function cottagePage(){const back=`<button class="pback" data-act="pback" aria-l
  if(!clan.id){const fr=friendIds(),f=clanForm;
   return head+`<main class="wrap">${scene_}
   ${clan.inv.length?`<section class="card"><h2>You've been invited</h2>${clan.inv.map(r=>`<div class="frow"><span class="binv" aria-hidden="true">${BOTTLE_ICON}</span><span class="frn">${esc(r.clan.name)}<small>From ${pname(r.invited_by||r.clan.owner)}</small></span><button class="btn sm" data-bottle="c:${r.clan_id}">Read it</button></div>`).join('')}</section>`:''}
-  <section class="card"><h2>Start a clan</h2><p class="sub" style="margin:6px 0 12px">Grandma's cottage belongs to a clan of up to 12 mates. Together you fill her aquarium with your little catches, nurture them until they're ready for the garden pond, and do the place up with Scales.</p>
-  ${f?`<label class="f">Clan name<input data-clanname maxlength="40" value="${esc(f.name)}" placeholder="e.g. The Colne Crew"></label><div class="row" style="margin-top:12px"><button class="btn" data-clancreate ${clan.busy?'disabled':''}>${clan.busy?'Moving in…':'Move in'}</button><button class="btn sec" data-clancancel>Cancel</button></div>`:`<button class="btn" data-clannew>Start a clan</button>${fr.length?'':'<p class="sub" style="margin-top:8px">Add some friends first so you can invite them.</p>'}`}</section></main>${bottleOpen&&bottleOpen.startsWith('c:')?clanBottle(bottleOpen):''}`}
+  <section class="card"><h2>Start a club</h2><p class="sub" style="margin:6px 0 12px">Grandma's cottage belongs to a club of up to 12 mates. Together you fill her aquarium with your little catches, nurture them until they're ready for the garden pond, and do the place up with Scales.</p>
+  ${f?`<label class="f">Club name<input data-clanname maxlength="40" value="${esc(f.name)}" placeholder="e.g. The Colne Crew"></label><div class="row" style="margin-top:12px"><button class="btn" data-clancreate ${clan.busy?'disabled':''}>${clan.busy?'Moving in…':'Move in'}</button><button class="btn sec" data-clancancel>Cancel</button></div>`:`<button class="btn" data-clannew>Start a club</button>${fr.length?'':'<p class="sub" style="margin-top:8px">Add some friends first so you can invite them.</p>'}`}</section></main>${bottleOpen&&bottleOpen.startsWith('c:')?clanBottle(bottleOpen):''}`}
  const me=user.id,host=clan.c.owner===me,mem=clan.mem.filter(r=>r.status==='joined'),pend=clan.mem.filter(r=>r.status==='invited'),tank=clan.fish.filter(f=>f.place==='tank'),pond=clan.fish.filter(f=>f.place==='pond').sort((a,b)=>(b.promoted_at||'').localeCompare(a.promoted_at||'')),mine=tank.find(f=>f.user_id===me);
  const today=new Date().toISOString().slice(0,10),fr=friendIds().filter(id=>!clan.mem.some(r=>r.user_id===id));
  const elig=catches().filter(c=>isSmall(c)===true&&!clan.fish.some(f=>f.user_id===me&&f.catch_id===c.id));
@@ -1783,7 +1783,7 @@ function cottagePage(){const back=`<button class="pback" data-act="pback" aria-l
   ${clanInv?`<div class="bnote" style="margin-top:10px"><label for="claninvnote">Message in the bottle <small>Optional</small></label><textarea id="claninvnote" data-claninvnote maxlength="200" rows="2" placeholder="Grandma's put the kettle on. Come and join us.">${esc(clanInvNote)}</textarea></div><div class="pickf" style="margin:10px 0">${fr.map(id=>`<button class="chip" data-claninvu="${id}">Send to ${pname(id)}</button>`).join('')}</div>`:''}
   ${mem.map(r=>`<div class="frow">${avatarImg((soc.people[r.user_id]||{}).avatar||(r.user_id===me?favAv():null),'sm')}<span class="frn">${pname(r.user_id)}${r.user_id===clan.c.owner?'<small>Head of the family</small>':''}</span>${host&&r.user_id!==me?`<button class="btn sec sm" data-clankick="${r.user_id}">${clanArm==='k'+r.user_id?'Sure?':'Remove'}</button>`:''}</div>`).join('')}
   ${pend.map(r=>`<div class="frow pend">${avatarImg((soc.people[r.user_id]||{}).avatar,'sm')}<span class="frn">${pname(r.user_id)}<small>Bottle sent, not opened yet</small></span></div>`).join('')}
-  <p class="sub" style="text-align:center;margin-top:14px"><button class="linkbtn dlink" data-clanleave>${clanArm==='leave'?'Tap again to leave the clan':'Leave the clan'}</button></p></section></main>`}
+  <p class="sub" style="text-align:center;margin-top:14px"><button class="linkbtn dlink" data-clanleave>${clanArm==='leave'?'Tap again to leave the club':'Leave the club'}</button></p></section></main>`}
 function pondSvg(p){return`<svg class="pondsvg" viewBox="0 0 400 130" aria-hidden="true"><rect width="400" height="130" fill="#5f8a55"/>${[[30,20],[360,30],[60,110],[340,105],[200,8]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="10" fill="#4f7a47"/>`).join('')}
  <ellipse cx="200" cy="68" rx="160" ry="48" fill="#8a7a5a"/><ellipse cx="200" cy="68" rx="150" ry="42" fill="#3f6f7c"/><clipPath id="pondc"><ellipse cx="200" cy="68" rx="150" ry="42"/></clipPath>
  <g clip-path="url(#pondc)">${p.slice(0,12).map((f,i)=>{const src=fishSrc(f.species),w=40,y=44+((i*19)%46),d=11+(i%5)*2;return`<g opacity=".85"><animateTransform attributeName="transform" type="translate" values="${300-(i*13)%40} ${y};${100+(i*17)%40} ${y+4};${300-(i*13)%40} ${y}" dur="${d}s" begin="-${i*1.9}s" repeatCount="indefinite"/><g><animateTransform attributeName="transform" type="scale" values="1 1;-1 1" keyTimes="0;.5" calcMode="discrete" dur="${d}s" begin="-${i*1.9}s" repeatCount="indefinite"/>${src?`<image href="${src}" x="${-w/2}" y="${-w/4}" width="${w}" height="${w/2}"/>`:''}</g></g>`}).join('')}
@@ -1791,11 +1791,11 @@ function pondSvg(p){return`<svg class="pondsvg" viewBox="0 0 400 130" aria-hidde
 function clanClick(t,ds){
  if(ds.clannew!=null){clanForm={name:''};rr();setTimeout(()=>{const i=document.querySelector('[data-clanname]');if(i)i.focus()},50);return true}
  if(ds.clancancel!=null){clanForm=null;rr();return true}
- if(ds.clancreate!=null){const nm=(clanForm&&clanForm.name||'').trim();if(!nm){toast('Give your clan a name');return true}clan.busy='create';rr();clanRpc('clan_create',{cid:newId(),nm},'Welcome home. Grandma\'s put the kettle on.').then(()=>{clan.busy='';clanForm=null;rr()});return true}
+ if(ds.clancreate!=null){const nm=(clanForm&&clanForm.name||'').trim();if(!nm){toast('Give your club a name');return true}clan.busy='create';rr();clanRpc('clan_create',{cid:newId(),nm},'Welcome home. Grandma\'s put the kettle on.').then(()=>{clan.busy='';clanForm=null;rr()});return true}
  if(ds.claninv!=null){clanInv=!clanInv;rr();return true}
  if(ds.claninvu){const u=ds.claninvu;clanRpc('clan_invite',{u,nt:clanInvNote},`Bottle sent to ${rname(u)}`);return true}
  if(ds.clankick){if(clanArm!=='k'+ds.clankick){clanArm='k'+ds.clankick;rr();return true}clanArm=null;clanRpc('clan_remove',{u:ds.clankick});return true}
- if(ds.clanleave!=null){if(clanArm!=='leave'){clanArm='leave';rr();return true}clanArm=null;clanRpc('clan_leave',{},'You left the clan');return true}
+ if(ds.clanleave!=null){if(clanArm!=='leave'){clanArm='leave';rr();return true}clanArm=null;clanRpc('clan_leave',{},'You left the club');return true}
  if(ds.fpick!=null){donatePick=true;rr();return true}
  if(ds.fpickclose!=null){donatePick=false;rr();return true}
  if(ds.fdonate){const id=ds.fdonate;t.disabled=true;(async()=>{try{await syncNow()}catch(e){}const r=await clanRpc('fish_donate',{cid:id},'Plop! Into the tank it goes.');if(r)donatePick=false;rr()})();return true}
