@@ -38,8 +38,8 @@ Deno.serve(async (req) => {
     const { data: who } = await db.from("profiles").select("name").eq("user_id", user.id).maybeSingle();
     const name = who?.name || "A mate";
 
-    let sid = "", title = "", text = "", tag = "";
-    let only: string[] | null = null;
+    let sid = "", tag = "", title = "", text = "";
+    let invite = false, only: string[] | null = null;
     if (body.event_id) {
       const { data: ev } = await db.from("session_events").select("*").eq("id", body.event_id).maybeSingle();
       if (!ev || ev.user_id !== user.id) return json({ error: "not yours" }, 403);
@@ -55,14 +55,17 @@ Deno.serve(async (req) => {
       const { data: s } = await db.from("sessions").select("*").eq("id", body.session_id).maybeSingle();
       if (!s || s.owner !== user.id) return json({ error: "not the host" }, 403);
       sid = s.id;
-      title = `${name} started a session`;
-      text = `${s.name}. You're in, tap to follow along.`;
-      tag = "ses-" + s.id;
+      invite = true;
+      title = `${name} sent you a message in a bottle`;
+      text = `An invite to ${s.name}. Tap to open it.`;
+      tag = "inv-" + s.id;
       if (Array.isArray(body.users)) only = body.users;
     } else return json({ error: "nothing to send" }, 400);
 
-    const { data: mem } = await db.from("session_members").select("user_id").eq("session_id", sid);
-    let to = (mem || []).map((m) => m.user_id).filter((u) => u !== user.id);
+    const { data: mem } = await db.from("session_members").select("user_id,status").eq("session_id", sid);
+    let to = (mem || [])
+      .filter((m) => m.user_id !== user.id && (invite ? m.status === "invited" : (m.status ?? "joined") === "joined"))
+      .map((m) => m.user_id);
     if (only) to = to.filter((u) => only!.includes(u));
     if (!to.length) return json({ ok: true, sent: 0 });
     const { data: subs } = await db.from("push_subs").select("*").in("user_id", to);

@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Pillars">
 <link rel="manifest" id="lman" href="manifest.json"><link rel="apple-touch-icon" id="ltouch" href="icon-192.png"><link rel="icon" href="icon-192.png">
 <title>Life Pillars</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Sora:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Sora:wght@600;700&family=Inter:wght@400;500;600&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
 <style>
 :root{color-scheme:dark;--bg:#121016;--card:#1c1a22;--card2:#26232e;--line:#2e2b37;--ink:#f1eff6;--mut:#a9a5b5;--hero:#0d0c11;--acc:#8d88ff;--bad:#ff5a5a}
 *{box-sizing:border-box;min-width:0}
@@ -253,6 +253,35 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 .sesl{display:grid;gap:10px}
 .sesc{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--card);border:1px solid #ffffff14;border-radius:16px;padding:14px;color:inherit;font:inherit;cursor:pointer}
 .sesc.live{border-color:#e0453a66}.sest{flex:1;min-width:0;display:grid;gap:4px;justify-items:start}.sest b{font-size:17px}.sest small{color:var(--mut);font-size:13px}
+.bdrift{animation:bdrift 8s cubic-bezier(.15,.55,.25,1) both}
+@keyframes bdrift{from{transform:translateX(var(--dx))}to{transform:none}}
+.bdrift.bout{animation:bout 3.2s ease-in forwards}@keyframes bout{to{transform:translateX(330px)}}
+.binv{display:inline-flex;width:46px;height:28px;flex:none}.binv svg{width:100%;height:100%}.binv.big{width:120px;height:72px;margin:0 auto 6px}
+.sesc.inv{border-color:#d9b45a66;background:linear-gradient(90deg,#d9b45a1a,transparent)}
+.bpage{text-align:center;display:grid;justify-items:center;gap:8px}
+.bnote{position:relative;display:grid;gap:6px;margin-top:14px}.bnote label{font-size:14px;color:var(--mut)}.bnote label small{display:block;font-size:12px;opacity:.8}
+.bnote textarea{font:500 22px/1.25 Caveat,cursive;background:#f4e7c6;color:#3b2a14;border:0;border-radius:10px;padding:12px 14px;resize:vertical;min-height:84px}
+.bnote textarea::placeholder{color:#8a7048;opacity:.75}.bnotec{position:absolute;right:10px;bottom:8px;font-size:11px;color:#8a7048}
+.frow.pend{opacity:.75}
+.bbg{z-index:57;background:#04100cd9!important}
+.bottlebox{position:fixed;inset:0;z-index:58;display:flex;align-items:center;justify-content:center;padding:20px;pointer-events:none}
+.bottlebox>*{pointer-events:auto}
+.bbig{position:absolute;width:min(260px,70vw);animation:bshake .5s ease-in-out,bfade .35s ease-in .55s forwards}
+@keyframes bshake{0%,100%{transform:rotate(0)}25%{transform:rotate(-6deg)}50%{transform:rotate(5deg)}75%{transform:rotate(-3deg)}}
+@keyframes bfade{to{opacity:0;transform:scale(.85) translateY(30px)}}
+.bcork{position:absolute;width:22px;height:20px;border-radius:5px;background:#a8743f;box-shadow:inset 0 -3px #8a5c2e;margin-left:min(200px,52vw);animation:bpop .6s cubic-bezier(.2,.8,.3,1) .4s both}
+@keyframes bpop{0%{opacity:1;transform:none}100%{opacity:0;transform:translate(60px,-140px) rotate(220deg)}}
+.scrollw{position:relative;width:min(370px,92vw);animation:unroll .8s cubic-bezier(.2,.8,.2,1) .6s both;transform-origin:50% 50%}
+@keyframes unroll{from{transform:scaleY(.04);opacity:0}30%{opacity:1}to{transform:none;opacity:1}}
+.roll{position:absolute;left:-10px;right:-10px;height:20px;border-radius:10px;background:linear-gradient(#b8975c,#f6ebcf 42%,#e2cc9a 60%,#a7864f);box-shadow:0 4px 10px #0006;z-index:1}
+.roll.top{top:-10px}.roll.bot{bottom:-10px}
+.paper{max-height:78dvh;overflow:auto;padding:30px 26px 18px;color:#3b2a14;background:radial-gradient(circle at 20% 15%,#fff6df,transparent 55%),radial-gradient(circle at 85% 90%,#e6cf9c,transparent 60%),#f1e2bc;box-shadow:inset 0 0 40px #b8955a55}
+.bto,.bmsg,.bsig{font-family:Caveat,cursive;color:#3b2a14;margin:0}
+.bto{font-size:26px;font-weight:700}.bmsg{font-size:27px;line-height:1.2;margin:10px 0 14px;white-space:pre-wrap;word-break:break-word}.bsig{font-size:28px;font-weight:700;text-align:right}.bsig::before{content:'~ '}
+.bdet{display:grid;gap:2px;margin:16px 0 14px;padding-top:12px;border-top:1px dashed #a98a55}.bdet b{font:700 16px Inter,sans-serif}.bdet span{font-size:13px;color:#6b5434}
+.bbtns{display:grid;gap:8px}.paper .btn.sec{background:#fff8;color:#3b2a14;border-color:#a98a55}
+.bclose{display:block;margin:10px auto 0;color:#6b5434}
+@media (prefers-reduced-motion:reduce){.bdrift,.bbig,.bcork,.scrollw{animation-duration:.01s!important;animation-delay:0s!important}}
 .sesrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .sbd{display:grid;gap:8px;margin-top:10px}.sbr{display:flex;align-items:center;gap:10px}.sbn{font-size:22px;min-width:30px;text-align:right}
 .sfeed{display:grid;gap:10px;margin-top:10px}
@@ -496,7 +525,7 @@ img.fimg{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-w
 .mbi.out{opacity:0;transition:opacity .3s}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><div id="achpop" aria-live="polite"></div><script>
 {
-const VERSION='7.41';
+const VERSION='7.42';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -989,13 +1018,13 @@ function scene(){const t=sceneHour(),S=skyAt(t),R=fRng('stars');let stars='';for
  <path id="near" d="M0 116 ${Array.from({length:21},(_,i)=>`Q${i*20+10} ${100+((i*53)%14)} ${i*20+20} 114`).join(' ')} V122 H0Z" fill="${S.near}"/>${mailbox()}
  <rect y="118" width="400" height="52" fill="url(#wt)"/>
  <g id="shim" transform="translate(${(S.sx-200).toFixed(1)} 0)"><g class="shim">${[0,1,2,3,4].map(i=>`<rect x="${180+i*7-(i%2)*10}" y="${124+i*8}" width="${30-i*3}" height="1.6" rx=".8" fill="${S.sun}" opacity="${.5-i*.07}"/>`).join('')}</g></g>
- <g transform="translate(250 140)">${[0,1.8].map(d=>`<ellipse rx="4" ry="1" fill="none" stroke="#fff" stroke-opacity="0"><animate attributeName="rx" values="4;32" dur="3.6s" begin="${d}s" repeatCount="indefinite"/><animate attributeName="ry" values="1;7" dur="3.6s" begin="${d}s" repeatCount="indefinite"/><animate attributeName="stroke-opacity" values=".8;0" dur="3.6s" begin="${d}s" repeatCount="indefinite"/></ellipse>`).join('')}<g class="bob"><rect x="-1.6" y="-13" width="3.2" height="8" rx="1.6" fill="#ff6a2b"/><rect x="-1.2" y="-5.5" width="2.4" height="6" fill="#f2efe4"/></g><circle data-floattap r="16" cy="-6" fill="#fff" fill-opacity="0" style="cursor:pointer"/></g>
+ <g transform="translate(250 140)">${[0,1.8].map(d=>`<ellipse rx="4" ry="1" fill="none" stroke="#fff" stroke-opacity="0"><animate attributeName="rx" values="4;32" dur="3.6s" begin="${d}s" repeatCount="indefinite"/><animate attributeName="ry" values="1;7" dur="3.6s" begin="${d}s" repeatCount="indefinite"/><animate attributeName="stroke-opacity" values=".8;0" dur="3.6s" begin="${d}s" repeatCount="indefinite"/></ellipse>`).join('')}<g class="bob"><rect x="-1.6" y="-13" width="3.2" height="8" rx="1.6" fill="#ff6a2b"/><rect x="-1.2" y="-5.5" width="2.4" height="6" fill="#f2efe4"/></g><circle data-floattap r="16" cy="-6" fill="#fff" fill-opacity="0" style="cursor:pointer"/></g>${bottlesSvg()}
  ${reeds(18,9,1)}${reeds(392,7,-1)}</svg>`}}
 function fishing(){const C=catches(),cm=caughtMap(),sp=speciesAll(),got=sp.filter(s=>isTicked(s.n,cm)).length,big=C.filter(c=>c.g).sort((a,b)=>b.g-a.g)[0],yr=String(new Date().getFullYear()),sc=scene();
  return`<header class="fhero">${sc.svg}<div class="fhin">${user?`<button class="fav" data-act="pmenu" aria-label="Profile menu" aria-haspopup="menu" aria-expanded="false">${avatarImg(favAv(),'sm')}${pendingIn().length?'<i class="tdot"></i>':''}</button>`:''}<p class="fgreet">${sc.greet}</p><h1>The Bank</h1><p class="fsun">Sunrise ${hm(skyKeys().sr)} · Sunset ${hm(skyKeys().ss)}</p></div></header>
  <div class="fband"><div class="in"><div class="fstats"><div><div class="kbig">${got}</div><div class="sub">species caught</div></div><div><div class="kbig sm">${C.filter(c=>c.date.startsWith(yr)).length}</div><div class="sub">catches in ${yr}</div></div><div><div class="kbig sm">${big?fW(big.g):'–'}</div><div class="sub">${big?'biggest · '+esc(big.species):'biggest fish'}</div></div></div>
  <div class="seg ftabs" role="tablist">${[['log','Catches'],['species','Species'],['session','Session'],['gallery','Gallery'],['board','Rankings']].map(([k,l])=>`<button role="tab" aria-selected="${fTab===k}" data-ftab="${k}" class="${fTab===k?'on':''}${k==='session'?' fsess':''}${k==='session'&&liveSessions().length?' live':''}"><svg class="fti" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${FTI[k]}</svg><span>${l}</span></button>`).join('')}</div></div></div>
- ${user?pmenuHtml():''}<main class="wrap">${fTab==='species'?fishSpecies(cm,sp,got):fTab==='session'?sessionTab():fTab==='gallery'?fishGallery(C):fTab==='board'?fishBoard():fishLog(C,cm)}</main>${lb?lightbox():''}${blb?boardBox():''}${pickSheet()}${spSel?spSheet(cm):''}${celeb?celebrate(cm,sp):''}${secret?secretCard():''}`}
+ ${user?pmenuHtml():''}<main class="wrap">${fTab==='species'?fishSpecies(cm,sp,got):fTab==='session'?sessionTab():fTab==='gallery'?fishGallery(C):fTab==='board'?fishBoard():fishLog(C,cm)}</main>${bottleOpen&&view()==='fishing'?bottleBox():''}${lb?lightbox():''}${blb?boardBox():''}${pickSheet()}${spSel?spSheet(cm):''}${celeb?celebrate(cm,sp):''}${secret?secretCard():''}`}
 const FTI={session:'<circle cx="12" cy="12" r="2.3" fill="currentColor" stroke="none"/><path d="M8.3 8.3a5.2 5.2 0 0 0 0 7.4M15.7 8.3a5.2 5.2 0 0 1 0 7.4M5.4 5.4a9.3 9.3 0 0 0 0 13.2M18.6 5.4a9.3 9.3 0 0 1 0 13.2"/>',log:'<circle cx="15" cy="3.6" r="1.6"/><path d="M15 5.2V14a5 5 0 0 1-10 0v-2.2l3.2 2.4"/>',species:'<path d="M2 12c3.3-5.2 7.6-6.8 11.2-5.7 2.4.7 4.3 2.9 5.7 5.7-1.4 2.8-3.3 5-5.7 5.7C9.6 18.8 5.3 17.2 2 12z"/><path d="M18.9 12l3-3.2v6.4z"/><circle cx="6.3" cy="11.2" r=".9" fill="currentColor"/><path d="M9.4 8.4c1 2.2 1 5 0 7.2"/>',gallery:'<rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="9" cy="10" r="1.7"/><path d="M21 15.5l-5-5L6.5 19"/>',board:'<path d="M8 4h8v5.5a4 4 0 0 1-8 0z"/><path d="M8 6H5.2a3 3 0 0 0 3.1 4M16 6h2.8a3 3 0 0 1-3.1 4M12 13.5V17M8.5 20.5h7M9.8 17h4.4v3.5H9.8z"/>'};
 let spSel=null,celeb=null;
 function fishSpecies(cm,sp,got){const groups=[...FISH.map(f=>f[0]),...(fishD().custom.length?['Custom']:[]),'All'],list=spFilter(sp,cm),inG=sp.filter(s=>fGroup==='All'||s.g===fGroup),gotG=inG.filter(s=>isTicked(s.n,cm)).length;
@@ -1192,7 +1221,7 @@ const tabList=()=>fishOnly()?[['fishing','The Bank'],['settings','Settings']]:[[
 const tabs=v=>`<nav class="tabs" style="--n:${tabList().length}">${tabList().map(([k,l])=>`<a href="#${k}" class="${v===k?'on':''}" ${v===k?'aria-current="page"':''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[k]}</svg>${l}${k==='fishing'&&pendingIn().length?'<i class="tdot" aria-label="Friend requests"></i>':''}</a>`).join('')}</nav>`;
 const view=()=>{const h=location.hash.slice(1);if(h==='profile'||h==='friends'||(h==='news'&&D.cfg.fishTab!==false)||(h==='mate'&&pv)||(h==='album'&&alb)||(h==='session'&&sesId)||(h==='map'&&D.cfg.fishTab!==false))return h;return tabList().some(t=>t[0]===h)?h:(fishOnly()?'fishing':'today')};
 function keepOpen(){document.querySelectorAll('details[data-keep]').forEach(d=>d.open?openD.add(d.dataset.keep):openD.delete(d.dataset.keep));document.querySelectorAll('details[data-pi]').forEach(d=>d.open?openP.add(+d.dataset.pi):openP.delete(+d.dataset.pi))}
-function render(){keepOpen();stopLoc();if(!D.onboarded||ob.done){root.innerHTML=onboard();return}const v=view();root.innerHTML=(v==='food'?food():v==='history'?history():v==='settings'?settings():v==='fishing'?fishing():v==='profile'||v==='mate'?profilePage():v==='friends'?friendsPage():v==='news'?newsPage():v==='album'?albumPage():v==='session'?sessionPage():v==='map'?mapPage():today())+(v==='map'||(lb||blb||spSel||celeb||secret||gl||albPick||mapPick)&&['fishing','album','mate','session'].includes(v)?'':tabs(v))+glBox();document.body.classList.toggle('fishmode',['fishing','profile','mate','album','map','friends','news','session'].includes(v)||(fishOnly()&&v==='settings'));if(v==='profile'||v==='mate'||v==='friends')loadSocial();if(v==='album')loadAlbums();if(v==='food')renderResults();if(v==='history')drawW();if(['fishing','profile','mate','album','session'].includes(v))hydratePhotos();if(v==='session')loadSessions();if(v==='fishing'&&mbIntroDue()&&!mbIntro)setTimeout(mbIntroStart,900);if(v==='map'){initCatchMap();requestAnimationFrame(()=>{const p=document.querySelector('.mappage.noanim');if(p)p.classList.remove('noanim')})}else mapMenuOn=false;if(v==='fishing'&&mapPick)initPickMap()}
+function render(){keepOpen();stopLoc();if(!D.onboarded||ob.done){root.innerHTML=onboard();return}const v=view();root.innerHTML=(v==='food'?food():v==='history'?history():v==='settings'?settings():v==='fishing'?fishing():v==='profile'||v==='mate'?profilePage():v==='friends'?friendsPage():v==='news'?newsPage():v==='album'?albumPage():v==='session'?sessionPage():v==='map'?mapPage():today())+(v==='map'||(lb||blb||spSel||celeb||secret||gl||albPick||mapPick)&&['fishing','album','mate','session'].includes(v)?'':tabs(v))+glBox();document.body.classList.toggle('fishmode',['fishing','profile','mate','album','map','friends','news','session'].includes(v)||(fishOnly()&&v==='settings'));if(v==='profile'||v==='mate'||v==='friends')loadSocial();if(v==='album')loadAlbums();if(v==='food')renderResults();if(v==='history')drawW();if(['fishing','profile','mate','album','session'].includes(v))hydratePhotos();if(v==='session'||v==='fishing')loadSessions();if(v==='fishing'&&mbIntroDue()&&!mbIntro)setTimeout(mbIntroStart,900);if(v==='map'){initCatchMap();requestAnimationFrame(()=>{const p=document.querySelector('.mappage.noanim');if(p)p.classList.remove('noanim')})}else mapMenuOn=false;if(v==='fishing'&&mapPick)initPickMap()}
 let morphing=false;
 function morph(to){if(morphing)return;morphing=true;const toFish=to==='fish',o=document.getElementById('morph'),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
  const apply=()=>{D.cfg.mode=to;if(toFish)D.cfg.fishTab=true;save();location.hash='settings';render();scrollTo(0,0)};
@@ -1241,7 +1270,7 @@ function addEntry(it,q,saveIt){const k=it.unit==='g'?q/100:q;
 /* ---------- Events ---------- */
 addEventListener('keydown',e=>{if(e.key==='Escape'&&(lb||blb||gl||albPick||spSel||celeb||secret)){lb=null;blb=null;gl=null;albPick=null;mapPick=null;pickMap=null;spSel=null;celeb=null;secret=false;rr()}});
 let lastTab=null;addEventListener('hashchange',()=>{if(mbIntro&&location.hash!=='#fishing'&&location.hash!=='#news'){const m=mbIntro;m.stop=true;m.tid.forEach(clearTimeout);m.el.remove();mbIntro=null;mbFlagRot=null}{const v=view();if(tabList().some(t=>t[0]===v))lastTab=v}if(tourPending&&location.hash==='#today'){tourPending=false;setTimeout(startTour,300)}lb=null;gl=null;albPick=null;mapPick=null;pickMap=null;spSel=null;celeb=null;picked=null;status='';lastQ='';blb=null;render();scrollTo(0,0)});
-root.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('[data-floattap]')){floatTap();return}if(e.target.classList&&e.target.classList.contains('sheetbg')&&!celeb){spSel=null;albPick=null;mapPick=null;pickMap=null;rr();return}const t=e.target.closest('button,a');if(!t)return;const ds=t.dataset;
+root.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('[data-floattap]')){floatTap();return}{const b=e.target.closest&&e.target.closest('svg [data-bottle]');if(b){bottleOpen=b.getAttribute('data-bottle');rr();return}}if(e.target.classList&&e.target.classList.contains('sheetbg')&&!celeb){bottleOpen=null;spSel=null;albPick=null;mapPick=null;pickMap=null;rr();return}const t=e.target.closest('button,a');if(!t)return;const ds=t.dataset;
  if(fishClick(t,ds))return;
  if(ds.snap){const t=+ds.snap;if(snapArm!==t){snapArm=t;rr();return}snapArm=null;restoreSnap(t);return}
  if(ds.wr!=null){wRange=+ds.wr;rr();return}
@@ -1305,7 +1334,7 @@ root.addEventListener('change',e=>{const t=e.target,ds=t.dataset;
  if(ds.cfg){const v=num(t.value);if(v!=null&&v>0){if(ds.cfg==='mc')D.cfg.macros.c=v;else if(ds.cfg==='mf')D.cfg.macros.f=v;else D.cfg.good=Math.min(100,v)}save();rr();return}
  if(ds.restore!=null&&t.files[0]){t.files[0].text().then(s=>{const j=JSON.parse(s);if(!j.cfg||!j.days)throw 0;D=j;D.foods=D.foods||[];D.recent=D.recent||[];snapAll();D.cfgU=Date.now();Object.values(D.days).forEach(x=>x.u=Date.now());save();rr();toast('Backup restored')}).catch(()=>toast('That file is not a Life Pillars backup'))}});
 root.addEventListener('toggle',e=>{const d=e.target;if(d.dataset&&d.dataset.keep){d.open?openD.add(d.dataset.keep):openD.delete(d.dataset.keep)}if(d.dataset&&d.dataset.pi!=null){d.open?openP.add(+d.dataset.pi):openP.delete(+d.dataset.pi)}},true);
-root.addEventListener('input',e=>{if(e.target.dataset&&e.target.dataset.albname!=null&&albForm){albForm.name=e.target.value;return}if(e.target.dataset&&e.target.dataset.sesname!=null&&sesForm){sesForm.name=e.target.value;return}if(e.target.dataset&&e.target.dataset.sesend!=null&&sesForm){sesForm.end=e.target.value;return}if(e.target.dataset&&e.target.dataset.suggest){showSugg(e.target);return}if(e.target.dataset.fsq!=null){fQ=e.target.value;const cm=caughtMap(),el=document.getElementById('fsplist');if(el)el.innerHTML=spRows(spFilter(speciesAll(),cm),cm);return}if(e.target.id==='amt')updAmt();if(e.target.id==='fq'){lastQ=e.target.value;if(!lastQ.trim()){picked=null;status='';renderResults()}}});
+root.addEventListener('input',e=>{if(e.target.dataset&&e.target.dataset.albname!=null&&albForm){albForm.name=e.target.value;return}if(e.target.dataset&&e.target.dataset.sesname!=null&&sesForm){sesForm.name=e.target.value;return}if(e.target.dataset&&e.target.dataset.sesend!=null&&sesForm){sesForm.end=e.target.value;return}if(e.target.dataset&&e.target.dataset.sesnote!=null&&sesForm){sesForm.note=e.target.value;const c=document.querySelector('.bnotec');if(c)c.textContent=`${e.target.value.length}/200`;return}if(e.target.dataset&&e.target.dataset.sesinvnote!=null){sesInvNote=e.target.value;return}if(e.target.dataset&&e.target.dataset.suggest){showSugg(e.target);return}if(e.target.dataset.fsq!=null){fQ=e.target.value;const cm=caughtMap(),el=document.getElementById('fsplist');if(el)el.innerHTML=spRows(spFilter(speciesAll(),cm),cm);return}if(e.target.id==='amt')updAmt();if(e.target.id==='fq'){lastQ=e.target.value;if(!lastQ.trim()){picked=null;status='';renderResults()}}});
 root.addEventListener('submit',e=>{e.preventDefault();const f=e.target;if(f.id==='fradd'){addByCode(f.elements.code.value);return}
  if(f.id==='bjoin'){const n=f.elements.name.value.trim().slice(0,24);if(!n)return;fishD().board={on:true,name:n,photos:!!(f.elements.photos&&f.elements.photos.checked),details:!!(f.elements.details&&f.elements.details.checked),venues:!!(f.elements.venues&&f.elements.venues.checked),t:Date.now()};boardHash='';save();syncBoard().then(()=>{loadBoard(true);toast("You're on the leaderboard")});rr();return}
  if(f.id==='fform'){saveCatch(f);return}
@@ -1633,7 +1662,7 @@ async function albPickGo(){const want=[...albPick];albPick=null;const list=[];
  if(list.length)albAddBlobs(list);else{toast("Couldn't load those photos");rr()}}
 /* ---------- Live sessions: shared fishing trips with a live catch feed and alerts ---------- */
 const VAPID_PUB='BFEEMDCAP-BOKlvyUMfaRK6vvuWm5D8_2nePSd-lnYM0pyXmwgpqiPtfO54JUAjf4tcmuNeBCzbTWdXiGK4GKPU';
-let ses={at:0,list:[],members:{},events:{},err:''},sesId=null,sesForm=null,sesArm=null,sesInv=false,sesBusy='',rtCh=null,pushSt={ok:false,on:false,busy:false};
+let ses={at:0,list:[],members:{},pending:{},inv:[],events:{},err:''},bottleOpen=null,bottleFirst={},bottleGone={},sesInvNote='',sesId=null,sesForm=null,sesArm=null,sesInv=false,sesBusy='',rtCh=null,pushSt={ok:false,on:false,busy:false};
 const sesLive=s=>!!s&&!s.ended_at&&Date.parse(s.ends_at)>Date.now();
 const sesMine=s=>!!user&&(ses.members[s.id]||[]).includes(user.id);
 const liveSessions=()=>user?ses.list.filter(s=>sesLive(s)&&sesMine(s)):[];
@@ -1645,14 +1674,14 @@ const shm=iso=>{const d=new Date(iso);return d.toLocaleTimeString('en-GB',{hour:
 const dayhm=iso=>{const d=new Date(iso),t=new Date();return(d.toDateString()===t.toDateString()?'':d.toLocaleDateString('en-GB',{day:'numeric',month:'short'})+' ')+shm(iso)};
 async function loadSessions(force){if(!sb||!user)return;if(!force&&Date.now()-ses.at<15000)return;ses.at=Date.now();
  try{const a=await sb.from('sessions').select('id,owner,name,started_at,ends_at,ended_at,created_at');if(a.error)throw a.error;
-  ses.list=(a.data||[]).sort((x,y)=>(y.started_at||'').localeCompare(x.started_at||''));const ids=ses.list.map(x=>x.id),M={},E={};
-  if(ids.length){const m=await sb.from('session_members').select('session_id,user_id').in('session_id',ids);if(m.error)throw m.error;for(const r of m.data||[])(M[r.session_id]=M[r.session_id]||[]).push(r.user_id);
+  ses.list=(a.data||[]).sort((x,y)=>(y.started_at||'').localeCompare(x.started_at||''));const ids=ses.list.map(x=>x.id),M={},E={},P={},INV=[];
+  if(ids.length){const m=await sb.from('session_members').select('session_id,user_id,status,invited_by,note').in('session_id',ids);if(m.error)throw m.error;for(const r of m.data||[]){if((r.status||'joined')==='joined')(M[r.session_id]=M[r.session_id]||[]).push(r.user_id);else{(P[r.session_id]=P[r.session_id]||[]).push(r.user_id);if(r.user_id===user.id)INV.push(r)}}
    const ev=await sb.from('session_events').select('id,session_id,user_id,kind,catch_id,info,path,created_at').in('session_id',ids);if(ev.error)throw ev.error;for(const r of ev.data||[])(E[r.session_id]=E[r.session_id]||[]).push(r);
    for(const k in E)E[k].sort((a,b)=>(b.created_at||'').localeCompare(a.created_at||''));
-   const uids=[...new Set(Object.values(M).flat())].filter(u=>!soc.people[u]);if(uids.length){const p=await sb.from('profiles').select('user_id,name,code,avatar').in('user_id',uids);for(const x of p.data||[])soc.people[x.user_id]=x}}
-  ses.members=M;ses.events=E;ses.err=''}catch(e){ses.err=socErr(e)}
+   const uids=[...new Set([...Object.values(M).flat(),...Object.values(P).flat(),...INV.map(r=>r.invited_by).filter(Boolean),...ses.list.map(x=>x.owner)])].filter(u=>u&&!soc.people[u]);if(uids.length){const p=await sb.from('profiles').select('user_id,name,code,avatar').in('user_id',uids);for(const x of p.data||[])soc.people[x.user_id]=x}}
+  ses.members=M;ses.events=E;ses.pending=P;ses.inv=INV.filter(r=>sesLive(ses.list.find(x=>x.id===r.session_id)));ses.err=''}catch(e){ses.err=socErr(e)}
  sesRealtime();if((sesView()||view()==='fishing')&&!sesForm)rr()}
-function sesRealtime(){if(!sb||!user||typeof sb.channel!=='function')return;const want=ses.list.some(s=>sesLive(s)&&sesMine(s))||ses.list.some(sesLive);
+function sesRealtime(){if(!sb||!user||typeof sb.channel!=='function')return;const want=!!user;
  if(!want){if(rtCh){try{sb.removeChannel(rtCh)}catch(e){}rtCh=null}return}if(rtCh)return;
  try{rtCh=sb.channel('sessions-live').on('postgres_changes',{event:'INSERT',schema:'public',table:'session_events'},p=>sesOnEvent(p.new))
   .on('postgres_changes',{event:'*',schema:'public',table:'sessions'},()=>loadSessions(true)).on('postgres_changes',{event:'*',schema:'public',table:'session_members'},()=>loadSessions(true)).subscribe()}catch(e){rtCh=null}}
@@ -1675,8 +1704,8 @@ async function sesCreate(){const f=sesForm,name=(f.name||'').trim();if(!name){to
  sesBusy='Starting…';rr();const id=newId(),now=new Date().toISOString();
  let r=await sb.from('sessions').insert({id,owner:user.id,name,started_at:now,ends_at:end.toISOString(),created_at:now});
  if(r.error){sesBusy='';rr();toast(socErr(r.error)==='setup'?"Sessions aren't switched on yet":"Couldn't start the session");return}
- r=await sb.from('session_members').insert([user.id,...f.sel].map(u=>({session_id:id,user_id:u})));if(r.error)toast('Session started, but some friends could not be added');
- sesForm=null;sesBusy='';sesId=id;if(f.sel.length)sesPush({session_id:id,invite:true});await loadSessions(true);location.hash='session'}
+ r=await sb.from('session_members').insert([{session_id:id,user_id:user.id,status:'joined'},...f.sel.map(u=>({session_id:id,user_id:u,status:'invited',invited_by:user.id,note:(f.note||'').trim()||null}))]);if(r.error)toast('Session started, but some invites could not be sent');
+ sesForm=null;sesBusy='';sesId=id;if(f.sel.length){sesPush({session_id:id,invite:true});setTimeout(()=>toast(f.sel.length===1?'Your bottle is on its way':`${f.sel.length} bottles are on their way`),900)}await loadSessions(true);location.hash='session'}
 function sesFeedItem(e,i){const x=e.info||{},who=e.user_id;
  return`<div class="sfi">${avatarImg((soc.people[who]||{}).avatar||(user&&who===user.id?favAv():null),'sm')}<div class="sfit"><p><b>${pname(who)}</b> ${who===(user&&user.id)?'caught':'caught'} <b>${esc(aAn(x.sp))}</b></p>
  <small>${[x.g?fW(x.g):'',x.cm?x.cm+' cm':'',x.m?esc(x.m):'',x.b?'on '+esc(x.b):''].filter(Boolean).join(' · ')||'No weight logged'}</small><small class="sft">${dayhm(e.created_at)}${x.rel===false?' · kept':''}</small></div>
@@ -1707,6 +1736,28 @@ async function pushOn(){if(!sb||!user)return;pushSt.busy=true;rr();let step='per
 async function pushOff(){try{const reg=await swReg(),sub=reg&&await reg.pushManager.getSubscription();if(sub){const ep=sub.endpoint;await sub.unsubscribe();if(sb)await sb.from('push_subs').delete().eq('endpoint',ep)}}catch(e){}pushSt.on=false;toast('Alerts turned off on this phone');rr()}
 if('serviceWorker' in navigator){swReg();navigator.serviceWorker.addEventListener('message',e=>{const d=e.data||{};if(d.type==='open'){try{const u=new URL(d.url),s=u.searchParams.get('s');if(s){sesId=s;loadSessions(true);location.hash='session'}}catch(_){}}})}
 {const q=new URLSearchParams(location.search).get('s');if(q&&/^[0-9a-f-]{36}$/i.test(q)){sesId=q;try{history.replaceState(null,'',location.pathname+'#session')}catch(e){}}}
+const BOTTLE_IDEAS=["Fancy a few hours on the bank? Bring the bait, I'll bring the flask.","Fish are moving. Get down here.","Swim's quiet, banter isn't. Come join.","Biggest fish buys the chips.","Room for one more on the bank. Tight lines."];
+const BOTTLE_G='<g transform="rotate(-14)"><path d="M-12.5 -4.6h14q3.2 0 4.7 2.6h3.6v4h-3.6q-1.5 2.6-4.7 2.6h-14q-2.7 0-2.7-4.6t2.7-4.6z" fill="#86cfae" fill-opacity=".55" stroke="#e4fff2" stroke-opacity=".85" stroke-width=".6"/><rect x="9.6" y="-2" width="3.8" height="4" rx=".9" fill="#a8743f"/><rect x="-10" y="-2.5" width="13" height="5" rx="2.4" fill="#f4e7c6"/><path d="M-9.5-.1h12" stroke="#c9a96b" stroke-width=".45"/><rect x="-4.4" y="-2.7" width="1.3" height="5.4" fill="#b0413e"/><path d="M-11-3.2h10" stroke="#fff" stroke-opacity=".75" stroke-width=".7" stroke-linecap="round"/></g>';
+const BOTTLE_ICON=`<svg viewBox="-17 -10 34 20">${BOTTLE_G}</svg>`;
+function bottlesSvg(){if(view()!=='fishing'||!user)return'';const L=(ses.inv||[]).slice(0,3),spots=[[150,146],[96,157],[200,134]];
+ return L.map((r,i)=>{const[x,y]=spots[i],k=r.session_id,t0=bottleFirst[k]=bottleFirst[k]||Date.now(),el=Math.min(8,(Date.now()-t0)/1000),out=!!bottleGone[k];
+  return`<g transform="translate(${x} ${y})"><g class="bdrift${out?' bout':''}" style="--dx:${-(x+50)}px;animation-delay:${out?0:-el}s">
+  ${[0,1.5].map(d=>`<ellipse cy="3" rx="6" ry="1.3" fill="none" stroke="#fff" stroke-opacity="0"><animate attributeName="rx" values="6;20" dur="3s" begin="${d}s" repeatCount="indefinite"/><animate attributeName="stroke-opacity" values=".55;0" dur="3s" begin="${d}s" repeatCount="indefinite"/></ellipse>`).join('')}
+  <g><animateTransform attributeName="transform" type="rotate" values="-7;6;-7" dur="3.4s" repeatCount="indefinite"/><animateTransform attributeName="transform" type="translate" additive="sum" values="0 0;0 1.6;0 0" dur="2.6s" repeatCount="indefinite"/><g transform="scale(1.35)">${BOTTLE_G}</g><circle cx="-8" cy="-6" r="1.1" fill="#fff" opacity="0"><animate attributeName="opacity" values="0;0;1;0;0" keyTimes="0;.7;.78;.86;1" dur="4.5s" begin="${i*1.3}s" repeatCount="indefinite"/></circle></g>
+  ${out?'':`<g transform="translate(0 -15)"><circle r="3.6" fill="none" stroke="#ffd36b" stroke-width="1.1"><animate attributeName="r" values="3.6;9" dur="2s" repeatCount="indefinite"/><animate attributeName="opacity" values=".9;0" dur="2s" repeatCount="indefinite"/></circle><circle r="3.6" fill="#ffd36b"/><path d="M-1.8-.8h3.6v2.2h-3.6z M-1.8-.8l1.8 1.3 1.8-1.3" fill="none" stroke="#5a3b00" stroke-width=".55" stroke-linejoin="round"/></g>`}
+  <rect data-bottle="${k}" x="-22" y="-26" width="44" height="38" fill="#fff" fill-opacity="0" style="cursor:pointer"/></g></g>`}).join('')}
+function bottleBox(){const r=(ses.inv||[]).find(x=>x.session_id===bottleOpen),s=ses.list.find(x=>x.id===bottleOpen);if(!r||!s)return'';
+ const host=rname(r.invited_by||s.owner),n=(ses.members[s.id]||[]).length,on=sesLive(s),me=prof().name||'';
+ return`<div class="sheetbg bbg"></div><div class="bottlebox" role="dialog" aria-modal="true" aria-label="Message in a bottle from ${esc(host)}">
+ <svg class="bbig" viewBox="-17 -10 34 20" aria-hidden="true">${BOTTLE_G}</svg><span class="bcork" aria-hidden="true"></span>
+ <div class="scrollw"><span class="roll top" aria-hidden="true"></span><div class="paper">
+  <p class="bto">${me?`Dear ${esc(me)},`:'Ahoy,'}</p>
+  <p class="bmsg">${esc(r.note||`Come and wet a line with me. ${s.name}, until ${shm(s.ends_at)}.`)}</p>
+  <p class="bsig">${esc(host)}</p>
+  <div class="bdet"><b>${esc(s.name)}</b><span>${on?`Until ${dayhm(s.ends_at)} · ${n} angler${n===1?'':'s'} already in`:'This session has finished'}</span></div>
+  <div class="bbtns">${on?`<button class="btn" data-bjoin="${s.id}">Join the session</button>`:''}<button class="btn sec" data-bno="${s.id}">${on?'Not this time':'Toss it back'}</button></div>
+  <button class="linkbtn bclose" data-bclose>Keep it for later</button>
+ </div><span class="roll bot" aria-hidden="true"></span></div></div>`}
 function sessionTab(){if(!SB_URL||!user)return'<section class="card"><p class="sub">Sign in from Settings to start live sessions with your mates.</p></section>';loadSessions();loadSocial();
  if(ses.err==='setup')return`<section class="card"><h2>Sessions</h2><p class="sub">Live sessions aren't switched on on the server yet.</p></section>`;
  const fr=friendIds(),f=sesForm,LENS=[2,4,6,8,12,24];
@@ -1714,17 +1765,21 @@ function sessionTab(){if(!SB_URL||!user)return'<section class="card"><p class="s
  <p class="sub" style="margin:14px 0 6px">How long does it run for?</p><div class="pickf">${LENS.map(h=>`<button type="button" class="chip${String(f.len)===String(h)?' on':''}" data-seslen="${h}">${h} hours</button>`).join('')}<button type="button" class="chip${f.len==='custom'?' on':''}" data-seslen="custom">Pick a time</button></div>
  ${f.len==='custom'?`<label class="f" style="margin-top:10px">Ends at<input type="datetime-local" data-sesend value="${esc(f.end||'')}"></label>`:`<p class="sub" style="margin:8px 0 0">Ends around ${shm(new Date(Date.now()+(+f.len)*3600000).toISOString())}${+f.len>=12?' tomorrow':''}. You can end it early or add time.</p>`}
  <p class="sub" style="margin:14px 0 6px">Who's fishing?</p>${fr.length?`<div class="pickf">${fr.map(id=>`<button type="button" class="chip${f.sel.includes(id)?' on':''}" data-sessel="${id}">${f.sel.includes(id)?'✓ ':''}${pname(id)}</button>`).join('')}</div>`:'<p class="empty">Add friends on your profile first. You can still run a session on your own.</p>'}
- <div class="row" style="margin-top:16px"><button class="btn" data-sescreate ${sesBusy?'disabled':''}>${sesBusy||'Start session'}</button><button class="btn sec" data-sescancel>Cancel</button></div></section>`
+ ${f.sel.length?`<div class="bnote"><label for="sesnote">Message in the bottle <small>Your mates read this when they open it</small></label><textarea id="sesnote" data-sesnote maxlength="200" rows="3" placeholder="${esc(BOTTLE_IDEAS[(f.sel.length+f.name.length)%BOTTLE_IDEAS.length])}">${esc(f.note||'')}</textarea><span class="bnotec">${(f.note||'').length}/200</span></div>`:''}
+ <div class="row" style="margin-top:16px"><button class="btn" data-sescreate ${sesBusy?'disabled':''}>${sesBusy||(f.sel.length?'Start and send the bottles':'Start session')}</button><button class="btn sec" data-sescancel>Cancel</button></div></section>`
   :`<button class="btn bigadd" data-sesnew>+ Start a session</button>`;
- const live=ses.list.filter(sesLive),past=ses.list.filter(x=>!sesLive(x));
+ const invs=(ses.inv||[]).map(r=>{const s=ses.list.find(x=>x.id===r.session_id);return s?`<button class="sesc inv" data-bottle="${s.id}"><span class="binv" aria-hidden="true">${BOTTLE_ICON}</span><span class="sest"><b>${pname(r.invited_by||s.owner)} sent you a bottle</b><small>${esc(s.name)} · until ${dayhm(s.ends_at)}</small></span><span class="sub">Open</span></button>`:''}).join('');
+ const live0=ses.list.filter(x=>sesLive(x)&&!(ses.inv||[]).some(r=>r.session_id===x.id));
+ const live=live0,past=ses.list.filter(x=>!sesLive(x)&&(sesMine(x)||x.owner===user.id));
  const card=s=>{const ev=(ses.events[s.id]||[]).filter(e=>e.kind==='catch'),mem=ses.members[s.id]||[],on=sesLive(s);
   return`<button class="sesc${on?' live':''}" data-ses="${s.id}"><span class="sest">${on?'<span class="livepill"><i></i>Live</span>':''}<b>${esc(s.name)}</b><small>${on?sesLeft(s):'Ended '+dayhm(s.ended_at||s.ends_at)} · ${ev.length} fish · ${mem.length} angler${mem.length===1?'':'s'}</small></span><span class="avs">${mem.slice(0,5).map(u=>avatarImg((soc.people[u]||{}).avatar||(u===user.id?favAv():null),'xs')).join('')}</span></button>`};
- return form+(live.length?`<h3 class="agh" style="margin-top:16px">Live now</h3><div class="sesl">${live.map(card).join('')}</div>`:ses.at&&!f?'<p class="empty" style="margin-top:12px">No live sessions. Start one when you head out, and your mates can follow every catch as it happens.</p>':!ses.at?'<p class="sub">Loading sessions…</p>':'')
+ return (invs?`<h3 class="agh" style="margin-top:4px">Washed up for you</h3><div class="sesl" style="margin-bottom:14px">${invs}</div>`:'')+form+(live.length?`<h3 class="agh" style="margin-top:16px">Live now</h3><div class="sesl">${live.map(card).join('')}</div>`:ses.at&&!f?'<p class="empty" style="margin-top:12px">No live sessions. Start one when you head out, and your mates can follow every catch as it happens.</p>':!ses.at?'<p class="sub">Loading sessions…</p>':'')
   +pushCard()+(past.length?`<details class="card pd" data-keep="sespast"><summary><h2>Past sessions</h2><span class="sub">${past.length}</span></summary><div class="sesl" style="margin-top:10px">${past.map(card).join('')}</div></details>`:'')}
 function sessionPage(){const s=ses.list.find(x=>x.id===sesId);const back=`<button class="pback" data-act="pback" aria-label="Back">‹</button>`;
  const head=(t,g)=>`<header class="fhero sm">${scene().svg}<div class="fhin">${back}<p class="fgreet fx">${g}</p><div class="fhtop"><h1>${t}</h1></div></div></header>`;
  if(!s)return head('Session','Session')+`<main class="wrap"><section class="card"><p class="sub">${ses.at?"This session isn't available. You may have left it or it was deleted.":'Loading…'}</p></section></main>`;
- const on=sesLive(s),host=s.owner===user.id,mem=ses.members[s.id]||[],me=mem.includes(user.id),ev=ses.events[s.id]||[],fr=friendIds().filter(id=>!mem.includes(id));
+ const on=sesLive(s),host=s.owner===user.id,mem=ses.members[s.id]||[],pend=ses.pending[s.id]||[],me=mem.includes(user.id),ev=ses.events[s.id]||[],fr=friendIds().filter(id=>!mem.includes(id)&&!pend.includes(id));
+ if(!me&&pend.includes(user.id))return head(esc(s.name),'Message in a bottle')+`<main class="wrap"><section class="card bpage"><span class="binv big" aria-hidden="true">${BOTTLE_ICON}</span><h2>A bottle washed up for you</h2><p class="sub">${pname((ses.inv.find(r=>r.session_id===s.id)||{}).invited_by||s.owner)} has invited you to ${esc(s.name)}.</p><button class="btn" data-bottle="${s.id}">Open the bottle</button></section></main>${bottleOpen?bottleBox():''}`;
  return head(esc(s.name),on?'Live session':'Session')+`<main class="wrap">
  <section class="card sestat"><div class="sesrow">${on?'<span class="livepill"><i></i>Live</span>':'<span class="endpill">Ended</span>'}<span class="sub">${on?`Ends ${dayhm(s.ends_at)} · ${sesLeft(s)}`:`${dayhm(s.started_at)} to ${dayhm(s.ended_at||s.ends_at)}`}</span></div>
  ${host&&on?`<div class="row" style="margin-top:12px"><button class="btn sec sm" data-sesext="1">+1 hour</button><button class="btn sec sm dbtn" data-sesstop>${sesArm==='end'?'Tap again to end':'End session'}</button></div>`:''}
@@ -1732,12 +1787,13 @@ function sessionPage(){const s=ses.list.find(x=>x.id===sesId);const back=`<butto
  ${sesBoard(s)}
  <section class="card"><div class="ch"><h2>Catches</h2>${on?'<span class="sub">Updates live</span>':''}</div>${ev.length?`<div class="sfeed">${ev.map(sesFeedItem).join('')}</div>`:`<p class="empty">${on?'No fish yet. The first catch logged shows up here for everyone.':'No catches in this session.'}</p>`}</section>
  <section class="card"><div class="ch"><h2>Anglers</h2>${host&&fr.length?`<button class="btn sec sm" data-sesinv>+ Invite</button>`:''}</div>
- ${sesInv?`<div class="pickf" style="margin:10px 0">${fr.map(id=>`<button class="chip" data-sesinvu="${id}">+ ${pname(id)}</button>`).join('')}</div>`:''}
- ${mem.map(u=>`<div class="frow">${avatarImg((soc.people[u]||{}).avatar||(u===user.id?favAv():null),'sm')}<span class="frn">${pname(u)}${u===s.owner?'<small>Host</small>':''}</span>${host&&u!==user.id?`<button class="btn sec sm" data-seskick="${u}">Remove</button>`:''}</div>`).join('')}</section>
- ${on?pushCard():''}
+ ${sesInv?`<div class="bnote" style="margin-top:10px"><label for="sesinvnote">Message in the bottle <small>Optional</small></label><textarea id="sesinvnote" data-sesinvnote maxlength="200" rows="2" placeholder="Room for one more on the bank?">${esc(sesInvNote)}</textarea></div><div class="pickf" style="margin:10px 0">${fr.map(id=>`<button class="chip" data-sesinvu="${id}">Send to ${pname(id)}</button>`).join('')}</div>`:''}
+ ${mem.map(u=>`<div class="frow">${avatarImg((soc.people[u]||{}).avatar||(u===user.id?favAv():null),'sm')}<span class="frn">${pname(u)}${u===s.owner?'<small>Host</small>':''}</span>${host&&u!==user.id?`<button class="btn sec sm" data-seskick="${u}">Remove</button>`:''}</div>`).join('')}
+ ${pend.map(u=>`<div class="frow pend">${avatarImg((soc.people[u]||{}).avatar,'sm')}<span class="frn">${pname(u)}<small>Bottle sent, not opened yet</small></span>${host?`<button class="btn sec sm" data-seskick="${u}">Cancel</button>`:''}</div>`).join('')}</section>
+ ${on?pushCard():''}${bottleOpen?bottleBox():''}
  <p class="sub" style="text-align:center;margin-top:18px">${host?`<button class="linkbtn dlink" data-sesdel>${sesArm==='del'?'Tap again to delete the session for everyone':'Delete session'}</button>`:`<button class="linkbtn dlink" data-sesleave>${sesArm==='leave'?'Tap again to leave':'Leave session'}</button>`}</p></main>`}
 function sesClick(t,ds){
- if(ds.sesnew!=null){sesForm={name:'',len:6,end:'',sel:[]};rr();setTimeout(()=>{const i=document.querySelector('[data-sesname]');if(i)i.focus()},50);return true}
+ if(ds.sesnew!=null){sesForm={name:'',len:6,end:'',sel:[],note:''};rr();setTimeout(()=>{const i=document.querySelector('[data-sesname]');if(i)i.focus()},50);return true}
  if(ds.sescancel!=null){sesForm=null;rr();return true}
  if(ds.seslen){sesForm.len=ds.seslen==='custom'?'custom':+ds.seslen;if(sesForm.len==='custom'&&!sesForm.end){const d=new Date(Date.now()+6*3600000);d.setMinutes(0,0,0);sesForm.end=new Date(d-d.getTimezoneOffset()*60000).toISOString().slice(0,16)}rr();return true}
  if(ds.sessel){const a=sesForm.sel,i=a.indexOf(ds.sessel);i<0?a.push(ds.sessel):a.splice(i,1);rr();return true}
@@ -1747,8 +1803,12 @@ function sesClick(t,ds){
  if(ds.sesext){const s=ses.list.find(x=>x.id===sesId);if(!s)return true;const e=new Date(Math.max(Date.parse(s.ends_at),Date.now())+3600000).toISOString();sb.from('sessions').update({ends_at:e}).eq('id',s.id).then(r=>{if(r.error){toast("Couldn't add time");return}s.ends_at=e;rr();toast('Added an hour')});return true}
  if(ds.sesstop!=null){if(sesArm!=='end'){sesArm='end';rr();return true}sesArm=null;const s=ses.list.find(x=>x.id===sesId),e=new Date().toISOString();sb.from('sessions').update({ended_at:e}).eq('id',s.id).then(r=>{if(r.error){toast("Couldn't end the session");return}s.ended_at=e;rr();toast('Session ended. Tight lines!')});return true}
  if(ds.sesinv!=null){sesInv=!sesInv;rr();return true}
- if(ds.sesinvu){const u=ds.sesinvu;sb.from('session_members').insert({session_id:sesId,user_id:u}).then(r=>{if(r.error){toast("Couldn't add them");return}(ses.members[sesId]=ses.members[sesId]||[]).push(u);sesPush({session_id:sesId,invite:true,users:[u]});rr();toast(`${rname(u)} added`)});return true}
- if(ds.seskick){const u=ds.seskick;sb.from('session_members').delete().eq('session_id',sesId).eq('user_id',u).then(r=>{if(r.error){toast("Couldn't remove them");return}ses.members[sesId]=(ses.members[sesId]||[]).filter(x=>x!==u);rr()});return true}
+ if(ds.sesinvu){const u=ds.sesinvu;sb.from('session_members').insert({session_id:sesId,user_id:u,status:'invited',invited_by:user.id,note:sesInvNote.trim()||null}).then(r=>{if(r.error){toast("Couldn't send the bottle");return}(ses.pending[sesId]=ses.pending[sesId]||[]).push(u);sesPush({session_id:sesId,invite:true,users:[u]});rr();toast(`Bottle sent to ${rname(u)}`)});return true}
+ if(ds.seskick){const u=ds.seskick;sb.from('session_members').delete().eq('session_id',sesId).eq('user_id',u).then(r=>{if(r.error){toast("Couldn't remove them");return}ses.members[sesId]=(ses.members[sesId]||[]).filter(x=>x!==u);ses.pending[sesId]=(ses.pending[sesId]||[]).filter(x=>x!==u);rr()});return true}
+ if(ds.bottle){bottleOpen=ds.bottle;rr();return true}
+ if(ds.bclose!=null){bottleOpen=null;rr();return true}
+ if(ds.bjoin){const id=ds.bjoin;t.disabled=true;sb.from('session_members').update({status:'joined'}).eq('session_id',id).eq('user_id',user.id).then(async r=>{if(r.error){t.disabled=false;toast("Couldn't join. Is the session still running?");return}bottleOpen=null;ses.inv=ses.inv.filter(x=>x.session_id!==id);await loadSessions(true);sesId=id;location.hash='session';toast("You're in. Tight lines!")});return true}
+ if(ds.bno){const id=ds.bno;sb.from('session_members').delete().eq('session_id',id).eq('user_id',user.id).then(r=>{if(r.error){toast("Couldn't do that right now");return}bottleOpen=null;bottleGone[id]=1;if(view()!=='fishing'){fTab='session';location.hash='fishing'}else rr();toast('Tossed back. Maybe next time.');setTimeout(()=>{ses.inv=ses.inv.filter(x=>x.session_id!==id);delete bottleGone[id];if(view()==='fishing')rr()},3300)});return true}
  if(ds.sesleave!=null){if(sesArm!=='leave'){sesArm='leave';rr();return true}sesArm=null;sb.from('session_members').delete().eq('session_id',sesId).eq('user_id',user.id).then(()=>{ses.list=ses.list.filter(x=>x.id!==sesId);fTab='session';location.hash='fishing';toast('You left the session')});return true}
  if(ds.sesdel!=null){if(sesArm!=='del'){sesArm='del';rr();return true}sesArm=null;const id=sesId;sb.from('sessions').delete().eq('id',id).then(r=>{if(r.error){toast("Couldn't delete it");return}ses.list=ses.list.filter(x=>x.id!==id);fTab='session';location.hash='fishing';toast('Session deleted')});return true}
  if(ds.pushon!=null){pushOn();return true}
