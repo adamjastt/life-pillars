@@ -525,7 +525,7 @@ img.fimg{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-w
 .mbi.out{opacity:0;transition:opacity .3s}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><div id="achpop" aria-live="polite"></div><script>
 {
-const VERSION='7.45';
+const VERSION='7.46';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -1141,7 +1141,7 @@ function saveCatch(f){keepForm();const c=fForm;const toSes=!c.editId&&!!(f.eleme
  const canon=speciesAll().find(s=>s.n.toLowerCase()===sp.toLowerCase()),spn=canon?canon.n:sp;const F=fishD(),now=Date.now(),rec={id:c.editId||uid('c'),ts:now,species:spn,date:c.date||TODAY,time:c.time||'',g:c.g||null,cm:c.cm||null,place:(c.place||'').trim(),method:(c.method||'').trim(),bait:(c.bait||'').trim(),rel:c.rel,notes:(c.notes||'').trim(),photos:c.photos||[],...(c.loc?{loc:{lat:r5(c.loc.lat),lng:r5(c.loc.lng)}}:{})};
  if(c.editId){const old=F.catches.find(x=>x.id===c.editId);if(old)for(const p of old.photos||[])if(!rec.photos.some(q=>q.id===p.id)){idbDel(p.id).catch(()=>{});if(p.path&&sb&&user)sb.storage.from(BUCKET).remove([p.path]).catch(()=>{})}F.catches=F.catches.filter(x=>x.id!==c.editId)}
  if(!canon)F.custom.push(spn);
- F.catches.push(rec);const first=F.catches.filter(x=>x.species===spn).length===1;fForm=null;fOpen=rec.id;save();rr();scrollTo(0,0);if(first)celeb=spn,rr();else toast('Catch saved');uploadPending();if(toSes)sesPost(rec)}
+ F.catches.push(rec);const first=!c.editId&&F.catches.filter(x=>x.species===spn).length===1;fForm=null;fOpen=rec.id;save();rr();scrollTo(0,0);if(first)celeb=spn,rr();else toast('Catch saved');uploadPending();if(toSes)sesPost(rec);else if(c.editId)sesRepost(rec)}
 
 /* ---------- Views ---------- */
 const navBar=()=>`<div class="nav"><button data-nav="-1" aria-label="Previous day">‹</button><span class="d">${label(cur)}</span><button data-nav="1" aria-label="Next day" ${cur>=TODAY?'disabled':''}>›</button>${cur!==TODAY?'<button data-nav="0">Today</button>':''}</div>`;
@@ -1690,7 +1690,7 @@ function sesRealtime(){if(!sb||!user||typeof sb.channel!=='function')return;cons
  if(!want){if(rtCh){try{sb.removeChannel(rtCh)}catch(e){}rtCh=null}return}if(rtCh)return;
  try{rtCh=sb.channel('sessions-live').on('postgres_changes',{event:'INSERT',schema:'public',table:'session_events'},p=>sesOnEvent(p.new))
   .on('postgres_changes',{event:'*',schema:'public',table:'sessions'},()=>loadSessions(true)).on('postgres_changes',{event:'*',schema:'public',table:'session_members'},()=>loadSessions(true)).subscribe()}catch(e){rtCh=null}}
-function sesOnEvent(e){if(!e||!e.session_id)return;if(!ses.list.some(s=>s.id===e.session_id)){loadSessions(true);return}const L=ses.events[e.session_id]=ses.events[e.session_id]||[];if(L.some(x=>x.id===e.id))return;L.unshift(e);
+function sesOnEvent(e){if(!e||!e.session_id)return;if(!ses.list.some(s=>s.id===e.session_id)){loadSessions(true);return}const L=ses.events[e.session_id]=ses.events[e.session_id]||[];{const j=L.findIndex(x=>x.id===e.id);if(j>=0){L[j]=e;if(sesView()&&!sesForm)rr();return}}L.unshift(e);
  if(user&&e.user_id!==user.id&&e.kind==='catch'){const i=e.info||{};toast(`${rname(e.user_id)} caught ${aAn(i.sp)}${i.g?' · '+fW(i.g):''}`);try{navigator.vibrate&&navigator.vibrate([60,40,60])}catch(_){}}
  if(sesView()&&!sesForm)rr()}
 setInterval(()=>{if(document.visibilityState==='visible'&&user&&(sesView()||liveSessions().length))loadSessions(true)},30000);
@@ -1701,6 +1701,14 @@ async function sesPost(c){const L=liveSessions();if(!L.length||!sb||!user)return
   const row={id,session_id:s.id,user_id:user.id,kind:'catch',catch_id:c.id,path,info:{sp:c.species,g:c.g||null,cm:c.cm||null,m:c.method||null,b:c.bait||null,t:c.time||null,rel:c.rel!==false},created_at:new Date().toISOString()};
   const r=await sb.from('session_events').insert(row);if(r.error){console.warn('session post',r.error);continue}n++;sesOnEvent(row);sesPush({event_id:id})}
  if(n)setTimeout(()=>toast(L.length===1?`Shared to ${L[0].name}`:`Shared to ${n} sessions`),celeb?0:1400);else toast("Couldn't share to the session. Check your connection.")}
+async function sesRepost(c){if(!sb||!user)return;let n=0,photo;
+ for(const sid in ses.events){const s=ses.list.find(x=>x.id===sid);if(!sesLive(s))continue;
+  for(const e of ses.events[sid].filter(x=>x.user_id===user.id&&x.catch_id===c.id)){let path=e.path;const ph=(c.photos||[])[0];
+   if(!ph&&path){sb.storage.from(BUCKET).remove([path]).catch(()=>{});path=null}
+   if(ph&&!path){try{if(photo===undefined){const b=await photoBlob(ph);photo=b?await compress(b,1200,.8):null}if(photo){const p=`sessions/${sid}/${user.id}_${e.id}.jpg`;const u=await sb.storage.from(BUCKET).upload(p,photo,{contentType:'image/jpeg',upsert:true});if(!u.error)path=p}}catch(err){}}
+   const row={id:e.id,session_id:sid,user_id:user.id,kind:'catch',catch_id:c.id,path,info:{sp:c.species,g:c.g||null,cm:c.cm||null,m:c.method||null,b:c.bait||null,t:c.time||null,rel:c.rel!==false},created_at:e.created_at};
+   const d=await sb.from('session_events').delete().eq('id',e.id);if(d.error)continue;const r=await sb.from('session_events').insert(row);if(r.error){console.warn('session edit',r.error);continue}Object.assign(e,row);n++}}
+ if(n){if(sesView())rr();toast(n===1?'Session updated too':`${n} sessions updated too`)}}
 async function sesUnpost(cid){if(!sb||!user)return;for(const k in ses.events){const mine=ses.events[k].filter(e=>e.user_id===user.id&&e.catch_id===cid);for(const e of mine){await sb.from('session_events').delete().eq('id',e.id);if(e.path)sb.storage.from(BUCKET).remove([e.path]).catch(()=>{})}ses.events[k]=ses.events[k].filter(e=>!mine.includes(e))}}
 async function sesPush(body){try{if(sb&&sb.functions)await sb.functions.invoke('session-push',{body})}catch(e){}}
 async function sesCreate(){const f=sesForm,name=(f.name||'').trim();if(!name){toast('Give the session a name');return}
