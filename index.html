@@ -523,6 +523,24 @@ img.fimg{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-w
 .mbi-cap .btn.sec{background:#13241c14;color:#13241c;border-color:#13241c33}.mbi-cap .btn:not(.sec){background:#13241c;color:#f4ecd2;border-color:#13241c}
 .mbi-skip{position:absolute;right:16px;bottom:calc(24px + env(safe-area-inset-bottom));background:#0008;color:#f4ecd2;border:1px solid #ffffff33;border-radius:99px;padding:8px 16px;font:inherit;font-size:14px;cursor:pointer}
 .mbi.out{opacity:0;transition:opacity .3s}
+.fhero.sm .cot{display:none}
+.cot{cursor:pointer}
+.cotwrap{position:relative;margin:0 0 14px;border-radius:18px;overflow:hidden;box-shadow:0 10px 30px #0008;background:#e9d6b8}
+.cotin{display:block;width:100%;height:auto}
+.gmasay{position:absolute;right:12px;top:12px;max-width:min(62%,260px);background:#fffaf0;color:#3b2a14;border-radius:14px 14px 4px 14px;padding:8px 12px;font:600 19px/1.15 Caveat,cursive;box-shadow:0 6px 14px #0004;pointer-events:none}
+.gmasay.pop{animation:gpop .4s cubic-bezier(.3,1.5,.5,1)}@keyframes gpop{from{transform:scale(.9);opacity:.4}}
+.tlist{display:grid;gap:8px}
+.tfish,.tpick{display:flex;align-items:center;gap:10px;background:var(--card2);border-radius:14px;padding:10px;width:100%;text-align:left;border:0;color:inherit;font:inherit}
+.tpick{cursor:pointer}.tpick:active{transform:scale(.98)}
+.tfa{flex:none;width:64px;height:34px;display:flex;align-items:center;justify-content:center}.tfa>*{max-width:100%;max-height:100%}.tfa.sm{width:48px;height:26px}
+.tfn{flex:1;min-width:0;display:grid;gap:2px}.tfn b{font-size:15px}.tfn small{color:var(--mut);font-size:12.5px}
+.tfb{flex:none}.tfb small{color:var(--mut);font-size:12.5px}.fedok{color:#7fd09a!important}
+.grow{display:flex;gap:3px;margin-top:3px}.grow i{width:14px;height:6px;border-radius:9px;background:#ffffff1a}.grow i.on{background:#e9c86b}
+.donate{margin-top:10px;display:grid;gap:6px}
+.pondsvg{display:block;width:100%;height:auto;border-radius:14px;margin-top:8px}
+.plist{display:grid;gap:6px;margin-top:10px}.pfish{display:flex;align-items:center;gap:10px}.pfish span:last-child{display:grid}.pfish small{color:var(--mut);font-size:12.5px}
+@media (prefers-reduced-motion:reduce){.cotin animate,.cotin animateTransform{display:none}}
+
 .scl{width:100%;height:100%;display:block}
 .earnt{display:grid;gap:2px;margin-top:8px}.earnr{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid #ffffff10}.earnr:last-child{border-bottom:0}
 .earnr span{display:grid;gap:2px}.earnr small{color:var(--mut);font-size:12.5px}.earnr b{color:#e9c86b;font-size:17px;white-space:nowrap}
@@ -576,7 +594,7 @@ img.fimg{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-w
 .sesi .mbi-cap{z-index:2}.sesi .mbi-cap.top{top:calc(14px + env(safe-area-inset-top))!important}.sesi .mbi-cap.top::before{display:none}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><div id="achpop" aria-live="polite"></div><script>
 {
-const VERSION='7.53';
+const VERSION='7.54';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -1070,7 +1088,7 @@ function scene(){const t=sceneHour(),S=skyAt(t),R=fRng('stars');let stars='';for
  return{greet:esc(greetAt(t)),svg:`<svg class="scene" viewBox="0 -150 400 320" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><linearGradient id="sk" x1="0" y1="0" x2="0" y2="1">${S.s.map((c,i)=>`<stop id="sk${i}" offset="${[0,.2,.4,.58][i]}" stop-color="${c}"/>`).join('')}</linearGradient><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop id="cg1" offset="1" stop-color="${S.cl}" stop-opacity=".85"/></linearGradient><linearGradient id="wt" x1="0" y1="0" x2="0" y2="1"><stop id="wt0" offset="0" stop-color="${S.w[0]}"/><stop id="wt1" offset="1" stop-color="${S.w[1]}"/></linearGradient><radialGradient id="gl"><stop id="gl0" offset="0" stop-color="${S.sun}" stop-opacity="${S.gl}"/><stop id="gl1" offset="1" stop-color="${S.sun}" stop-opacity="0"/></radialGradient></defs>
  <rect id="skx" y="-150" width="400" height="152" fill="${S.s[0]}"/><rect width="400" height="170" fill="url(#sk)"/><g id="stars" opacity="${S.st.toFixed(2)}">${stars}</g><circle id="glc" cx="${S.sx}" cy="${S.sy}" r="60" fill="url(#gl)"/><circle id="sunc" cx="${S.sx}" cy="${S.sy}" r="${S.r}" fill="${S.sun}"/>
  <g id="clouds" opacity="${S.co.toFixed(2)}"><g class="clouds">${[[70,40,46,5],[110,33,30,4],[250,52,58,6],[300,45,34,4],[180,22,40,3.5]].map(([x,y,rx,ry])=>`<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="url(#cg)"/>`).join('')}</g></g><g class="mist"><ellipse cx="120" cy="104" rx="90" ry="6" fill="#fff" opacity=".12"/><ellipse cx="300" cy="100" rx="70" ry="5" fill="#fff" opacity=".1"/></g>
- <path id="far" d="M0 104 Q50 78 110 92 T230 84 T330 90 T400 82 V118 H0Z" fill="${S.far}"/>
+ <path id="far" d="M0 104 Q50 78 110 92 T230 84 T330 90 T400 82 V118 H0Z" fill="${S.far}"/>${cottageSvg()}
  <path id="near" d="M0 116 ${Array.from({length:21},(_,i)=>`Q${i*20+10} ${100+((i*53)%14)} ${i*20+20} 114`).join(' ')} V122 H0Z" fill="${S.near}"/>${mailbox()}
  <rect y="118" width="400" height="52" fill="url(#wt)"/>
  <g id="shim" transform="translate(${(S.sx-200).toFixed(1)} 0)"><g class="shim">${[0,1,2,3,4].map(i=>`<rect x="${180+i*7-(i%2)*10}" y="${124+i*8}" width="${30-i*3}" height="1.6" rx=".8" fill="${S.sun}" opacity="${.5-i*.07}"/>`).join('')}</g></g>
@@ -1155,6 +1173,7 @@ function fishClick(t,ds){
  if(pinClick(t,ds))return true;
  if(albClick(t,ds))return true;
  if(sesClick(t,ds))return true;
+ if(clanClick(t,ds))return true;
  if(ds.pfp){const P=prof();P.avatar=ds.pfp;save();syncSocial();rr();return true}
  if(ds.pv){pvTab=null;pvFrom=view()==='friends'?'friends':view()==='fishing'?'fishing':'profile';pv=ds.pv;frArm=null;location.hash='mate';return true}
  if(ds.fracc){acceptReq(+ds.fracc);return true}
@@ -1275,9 +1294,9 @@ const ICONS={today:'<circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/>'
 const fishOnly=()=>D.cfg.mode==='fish';
 const tabList=()=>fishOnly()?[['fishing','The Bank'],['settings','Settings']]:[['today','Today'],['food','Food'],['history','Progress'],...(D.cfg.fishTab!==false?[['fishing','Fishing']]:[]),['settings','Settings']];
 const tabs=v=>`<nav class="tabs" style="--n:${tabList().length}">${tabList().map(([k,l])=>`<a href="#${k}" class="${v===k?'on':''}" ${v===k?'aria-current="page"':''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[k]}</svg>${l}${k==='fishing'&&pendingIn().length?'<i class="tdot" aria-label="Friend requests"></i>':''}</a>`).join('')}</nav>`;
-const view=()=>{const h=location.hash.slice(1);if(h==='profile'||h==='friends'||(h==='news'&&D.cfg.fishTab!==false)||(h==='wallet'&&D.cfg.fishTab!==false)||(h==='mate'&&pv)||(h==='album'&&alb)||(h==='session'&&sesId)||(h==='map'&&D.cfg.fishTab!==false))return h;return tabList().some(t=>t[0]===h)?h:(fishOnly()?'fishing':'today')};
+const view=()=>{const h=location.hash.slice(1);if(h==='profile'||h==='friends'||(h==='news'&&D.cfg.fishTab!==false)||(h==='wallet'&&D.cfg.fishTab!==false)||(h==='cottage'&&D.cfg.fishTab!==false)||(h==='mate'&&pv)||(h==='album'&&alb)||(h==='session'&&sesId)||(h==='map'&&D.cfg.fishTab!==false))return h;return tabList().some(t=>t[0]===h)?h:(fishOnly()?'fishing':'today')};
 function keepOpen(){document.querySelectorAll('details[data-keep]').forEach(d=>d.open?openD.add(d.dataset.keep):openD.delete(d.dataset.keep));document.querySelectorAll('details[data-pi]').forEach(d=>d.open?openP.add(+d.dataset.pi):openP.delete(+d.dataset.pi))}
-function render(){keepOpen();stopLoc();if(!D.onboarded||ob.done){root.innerHTML=onboard();return}const v=view();root.innerHTML=(v==='food'?food():v==='history'?history():v==='settings'?settings():v==='fishing'?fishing():v==='profile'||v==='mate'?profilePage():v==='friends'?friendsPage():v==='news'?newsPage():v==='wallet'?walletPage():v==='album'?albumPage():v==='session'?sessionPage():v==='map'?mapPage():today())+(v==='map'||(lb||blb||spSel||celeb||secret||gl||albPick||mapPick)&&['fishing','album','mate','session'].includes(v)?'':tabs(v))+glBox();document.body.classList.toggle('fishmode',['fishing','profile','mate','album','map','friends','news','session','wallet'].includes(v)||(fishOnly()&&v==='settings'));if(v==='profile'||v==='mate'||v==='friends')loadSocial();if(v==='album')loadAlbums();if(v==='food')renderResults();if(v==='history')drawW();if(['fishing','profile','mate','album','session'].includes(v))hydratePhotos();if(v==='session'||v==='fishing')loadSessions();if(v==='fishing'||v==='news'||v==='wallet')loadWallet();if(v==='fishing'&&mbIntroDue()&&!mbIntro){introThisLoad=true;setTimeout(mbIntroStart,900)}else if(v==='fishing'&&sesIntroDue()&&!sesIntro)setTimeout(sesIntroStart,1200);if(v==='map'){initCatchMap();requestAnimationFrame(()=>{const p=document.querySelector('.mappage.noanim');if(p)p.classList.remove('noanim')})}else mapMenuOn=false;if(v==='fishing'&&mapPick)initPickMap()}
+function render(){keepOpen();stopLoc();if(!D.onboarded||ob.done){root.innerHTML=onboard();return}const v=view();root.innerHTML=(v==='food'?food():v==='history'?history():v==='settings'?settings():v==='fishing'?fishing():v==='profile'||v==='mate'?profilePage():v==='friends'?friendsPage():v==='news'?newsPage():v==='wallet'?walletPage():v==='cottage'?cottagePage():v==='album'?albumPage():v==='session'?sessionPage():v==='map'?mapPage():today())+(v==='map'||(lb||blb||spSel||celeb||secret||gl||albPick||mapPick)&&['fishing','album','mate','session'].includes(v)?'':tabs(v))+glBox();document.body.classList.toggle('fishmode',['fishing','profile','mate','album','map','friends','news','session','wallet','cottage'].includes(v)||(fishOnly()&&v==='settings'));if(v==='profile'||v==='mate'||v==='friends')loadSocial();if(v==='album')loadAlbums();if(v==='food')renderResults();if(v==='history')drawW();if(['fishing','profile','mate','album','session'].includes(v))hydratePhotos();if(v==='session'||v==='fishing')loadSessions();if(v==='fishing'||v==='news'||v==='wallet')loadWallet();if(v==='fishing'||v==='cottage')loadClan();if(v==='fishing'&&mbIntroDue()&&!mbIntro){introThisLoad=true;setTimeout(mbIntroStart,900)}else if(v==='fishing'&&sesIntroDue()&&!sesIntro)setTimeout(sesIntroStart,1200);if(v==='map'){initCatchMap();requestAnimationFrame(()=>{const p=document.querySelector('.mappage.noanim');if(p)p.classList.remove('noanim')})}else mapMenuOn=false;if(v==='fishing'&&mapPick)initPickMap()}
 let morphing=false;
 function morph(to){if(morphing)return;morphing=true;const toFish=to==='fish',o=document.getElementById('morph'),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
  const apply=()=>{D.cfg.mode=to;if(toFish)D.cfg.fishTab=true;save();location.hash='settings';render();scrollTo(0,0)};
@@ -1326,7 +1345,7 @@ function addEntry(it,q,saveIt){const k=it.unit==='g'?q/100:q;
 /* ---------- Events ---------- */
 addEventListener('keydown',e=>{if(e.key==='Escape'&&(lb||blb||gl||albPick||spSel||celeb||secret)){lb=null;blb=null;gl=null;albPick=null;mapPick=null;pickMap=null;spSel=null;celeb=null;secret=false;rr()}});
 let lastTab=null;addEventListener('hashchange',()=>{if(mbIntro&&location.hash!=='#fishing'&&location.hash!=='#news'){const m=mbIntro;m.stop=true;m.tid.forEach(clearTimeout);m.el.remove();mbIntro=null;mbFlagRot=null}{const v=view();if(tabList().some(t=>t[0]===v))lastTab=v}if(tourPending&&location.hash==='#today'){tourPending=false;setTimeout(startTour,300)}lb=null;gl=null;albPick=null;mapPick=null;pickMap=null;spSel=null;celeb=null;picked=null;status='';lastQ='';blb=null;render();scrollTo(0,0)});
-root.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('[data-floattap]')){floatTap();return}{const b=e.target.closest&&e.target.closest('svg [data-bottle]');if(b){bottleOpen=b.getAttribute('data-bottle');rr();return}}if(e.target.classList&&e.target.classList.contains('sheetbg')&&!celeb){bottleOpen=null;spSel=null;albPick=null;mapPick=null;pickMap=null;rr();return}const t=e.target.closest('button,a');if(!t)return;const ds=t.dataset;
+root.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('[data-floattap]')){floatTap();return}{const b=e.target.closest&&e.target.closest('svg [data-bottle]');if(b){bottleOpen=b.getAttribute('data-bottle');rr();return}}if(e.target.closest&&e.target.closest('svg [data-gma]')){clanClick(null,{gma:''});return}if(e.target.classList&&e.target.classList.contains('sheetbg')&&!celeb){bottleOpen=null;spSel=null;albPick=null;mapPick=null;pickMap=null;rr();return}const t=e.target.closest('button,a');if(!t)return;const ds=t.dataset;
  if(fishClick(t,ds))return;
  if(ds.snap){const t=+ds.snap;if(snapArm!==t){snapArm=t;rr();return}snapArm=null;restoreSnap(t);return}
  if(ds.wr!=null){wRange=+ds.wr;rr();return}
@@ -1390,7 +1409,7 @@ root.addEventListener('change',e=>{const t=e.target,ds=t.dataset;
  if(ds.cfg){const v=num(t.value);if(v!=null&&v>0){if(ds.cfg==='mc')D.cfg.macros.c=v;else if(ds.cfg==='mf')D.cfg.macros.f=v;else D.cfg.good=Math.min(100,v)}save();rr();return}
  if(ds.restore!=null&&t.files[0]){t.files[0].text().then(s=>{const j=JSON.parse(s);if(!j.cfg||!j.days)throw 0;D=j;D.foods=D.foods||[];D.recent=D.recent||[];snapAll();D.cfgU=Date.now();Object.values(D.days).forEach(x=>x.u=Date.now());save();rr();toast('Backup restored')}).catch(()=>toast('That file is not a Life Pillars backup'))}});
 root.addEventListener('toggle',e=>{const d=e.target;if(d.dataset&&d.dataset.keep){d.open?openD.add(d.dataset.keep):openD.delete(d.dataset.keep)}if(d.dataset&&d.dataset.pi!=null){d.open?openP.add(+d.dataset.pi):openP.delete(+d.dataset.pi)}},true);
-root.addEventListener('input',e=>{if(e.target.dataset&&e.target.dataset.albname!=null&&albForm){albForm.name=e.target.value;return}if(e.target.dataset&&e.target.dataset.sesname!=null&&sesForm){sesForm.name=e.target.value;return}if(e.target.dataset&&e.target.dataset.sesend!=null&&sesForm){sesForm.end=e.target.value;return}if(e.target.dataset&&e.target.dataset.sesnote!=null&&sesForm){sesForm.note=e.target.value;const c=document.querySelector('.bnotec');if(c)c.textContent=`${e.target.value.length}/200`;return}if(e.target.dataset&&e.target.dataset.sesinvnote!=null){sesInvNote=e.target.value;return}if(e.target.dataset&&e.target.dataset.suggest){showSugg(e.target);return}if(e.target.dataset.fsq!=null){fQ=e.target.value;const cm=caughtMap(),el=document.getElementById('fsplist');if(el)el.innerHTML=spRows(spFilter(speciesAll(),cm),cm);return}if(e.target.id==='amt')updAmt();if(e.target.id==='fq'){lastQ=e.target.value;if(!lastQ.trim()){picked=null;status='';renderResults()}}});
+root.addEventListener('input',e=>{if(e.target.dataset&&e.target.dataset.albname!=null&&albForm){albForm.name=e.target.value;return}if(e.target.dataset&&e.target.dataset.sesname!=null&&sesForm){sesForm.name=e.target.value;return}if(e.target.dataset&&e.target.dataset.sesend!=null&&sesForm){sesForm.end=e.target.value;return}if(e.target.dataset&&e.target.dataset.sesnote!=null&&sesForm){sesForm.note=e.target.value;const c=document.querySelector('.bnotec');if(c)c.textContent=`${e.target.value.length}/200`;return}if(e.target.dataset&&e.target.dataset.sesinvnote!=null){sesInvNote=e.target.value;return}if(e.target.dataset&&e.target.dataset.clanname!=null&&clanForm){clanForm.name=e.target.value;return}if(e.target.dataset&&e.target.dataset.claninvnote!=null){clanInvNote=e.target.value;return}if(e.target.dataset&&e.target.dataset.suggest){showSugg(e.target);return}if(e.target.dataset.fsq!=null){fQ=e.target.value;const cm=caughtMap(),el=document.getElementById('fsplist');if(el)el.innerHTML=spRows(spFilter(speciesAll(),cm),cm);return}if(e.target.id==='amt')updAmt();if(e.target.id==='fq'){lastQ=e.target.value;if(!lastQ.trim()){picked=null;status='';renderResults()}}});
 root.addEventListener('submit',e=>{e.preventDefault();const f=e.target;if(f.id==='fradd'){addByCode(f.elements.code.value);return}
  if(f.id==='bjoin'){const n=f.elements.name.value.trim().slice(0,24);if(!n)return;fishD().board={on:true,name:n,photos:!!(f.elements.photos&&f.elements.photos.checked),details:!!(f.elements.details&&f.elements.details.checked),venues:!!(f.elements.venues&&f.elements.venues.checked),t:Date.now()};boardHash='';save();syncBoard().then(()=>{loadBoard(true);toast("You're on the leaderboard")});rr();return}
  if(f.id==='fform'){saveCatch(f);return}
@@ -1636,6 +1655,153 @@ function earnNext(){if(document.querySelector('#achpop .achpop')){earnShowing=tr
 let earnLog=null;
 async function loadEarnLog(){if(!sb||!user||!walOn())return;const r=await sb.from('scale_log').select('amount,label,reason,revoked,created_at').eq('user_id',user.id);if(r.error)return;
  earnLog=(r.data||[]).filter(x=>!x.revoked).sort((a,b)=>(b.created_at||'').localeCompare(a.created_at||'')).slice(0,15);if(view()==='wallet')rr()}
+/* ---------- Clans, Grandma's cottage, the aquarium and the garden pond ---------- */
+const SMALL_SIZES={"Barbel":[900,40],"Bleak":[20,11],"Bream (common)":[900,35],"Bream (silver)":[115,20],"Bullhead":[15,8],"Carp (common)":[1800,40],"Carp (mirror)":[1800,40],"Carp (leather)":[1800,40],"Carp (ghost)":[1800,40],"Carp (grass)":[2300,50],"Carp (crucian)":[225,18],"Catfish (wels)":[4500,80],"Chub":[450,30],"Dace":[85,17],"Eel":[340,45],"Gudgeon":[30,11],"Ide":[450,30],"Golden orfe":[450,30],"Minnow":[5,6],"Perch":[170,22],"Pike":[1360,55],"Roach":[115,18],"Rudd":[115,18],"Ruffe":[25,11],"Stone loach":[8,8],"Stickleback":[2,5],"Tench":[680,32],"Zander":[900,45],"Brown trout":[340,30],"Rainbow trout":[450,32],"Sea trout":[680,38],"Tiger trout":[450,32],"Atlantic salmon":[2300,55],"Grayling":[280,30],"Arctic char":[280,28],"Bass":[900,40],"Cod":[1360,45],"Pollack":[900,40],"Coalfish":[680,38],"Whiting":[340,30],"Pouting":[225,22],"Haddock":[680,38],"Ling":[2300,70],"Mackerel":[280,30],"Scad":[170,25],"Garfish":[340,55],"Herring":[170,24],"Ballan wrasse":[450,25],"Corkwing wrasse":[85,14],"Cuckoo wrasse":[170,22],"Conger eel":[4500,100],"Thornback ray":[1800,50],"Small-eyed ray":[1800,50],"Spotted ray":[900,40],"Undulate ray":[1800,50],"Lesser spotted dogfish":[450,45],"Bull huss":[2300,65],"Smoothhound":[2300,65],"Tope":[6800,100],"Plaice":[450,30],"Flounder":[340,28],"Dab":[170,22],"Sole":[340,28],"Turbot":[1360,40],"Brill":[900,35],"Black bream":[450,28],"Gilthead bream":[450,28],"Red mullet":[225,22],"Thick-lipped grey mullet":[900,40],"Thin-lipped grey mullet":[900,40],"Golden grey mullet":[450,32],"Red gurnard":[340,28],"Grey gurnard":[225,25],"Tub gurnard":[680,35],"Lesser weever":[30,12],"Shore rockling":[85,20],"Shanny":[15,9],"Long-spined sea scorpion":[30,12],"Dragonet":[30,15],"Asp":[900,45],"Nase":[340,30],"Vimba":[340,30],"Huchen":[4500,75],"Sterlet":[900,50],"Siberian sturgeon":[4500,80],"Iberian barbel":[680,38],"Comizo barbel":[2300,55],"Pumpkinseed":[85,13],"Largemouth bass":[680,32],"Black bullhead":[225,22],"Leerfish":[2300,60],"Greater amberjack":[4500,70],"Common dentex":[1360,40],"White seabream":[340,25],"Saddled seabream":[225,22],"European barracuda":[900,50],"Atlantic bonito":[1800,50],"Little tunny":[1800,50],"Bluefin tuna":[23000,120],"Bluefish":[1360,45],"Dusky grouper":[2300,50],"Meagre":[4500,75],"Corb":[900,38],"Mahseer":[2300,55],"Arapaima":[9000,120],"Peacock bass":[900,38],"Nile perch":[4500,70],"Tigerfish":[1360,45],"Snook":[1800,55],"Tarpon":[4500,90],"Bonefish":[1360,50],"Giant trevally":[4500,65],"Barramundi":[2300,55],"Mahi-mahi":[2300,70],"Sailfish":[13600,150],"Blue marlin":[45000,200],"Yellowfin tuna":[9000,90],"Red snapper":[1360,40],"Red drum":[2300,55],"Walleye":[680,38],"Muskellunge":[2300,70],"Smallmouth bass":[450,30],"Channel catfish":[900,45]};
+const smallMax=sp=>SMALL_SIZES[sp]||[225,20];
+function isSmall(c){const[mg,mc]=smallMax(c.species);if(c.g)return c.g<=mg;if(c.cm)return c.cm<=mc;return null}
+const fishSrc=sp=>{const m=/src="([^"]+)"/.exec(fishSVG(sp));return m?m[1]:''};
+let clan={at:0,id:null,c:null,mem:[],inv:[],fish:[],err:'',busy:''},clanForm=null,clanInv=false,clanInvNote='',clanArm=null,donatePick=false,gmaLine=0;
+const clanOn=()=>!!user&&clan.err!=='setup';
+async function loadClan(force){if(!sb||!user)return;if(!force&&Date.now()-clan.at<20000)return;clan.at=Date.now();
+ try{const m=await sb.from('clan_members').select('clan_id,user_id,status,invited_by,note,joined_at');if(m.error)throw m.error;const rows=m.data||[];
+  const mine=rows.find(r=>r.user_id===user.id&&r.status==='joined');clan.id=mine?mine.clan_id:null;const ids=[...new Set(rows.map(r=>r.clan_id))];let cl=[];
+  if(ids.length){const c=await sb.from('clans').select('id,name,owner,created_at').in('id',ids);if(c.error)throw c.error;cl=c.data||[]}
+  clan.c=cl.find(x=>x.id===clan.id)||null;clan.mem=rows.filter(r=>r.clan_id===clan.id&&clan.id);
+  clan.inv=rows.filter(r=>r.user_id===user.id&&r.status==='invited').map(r=>({...r,clan:cl.find(x=>x.id===r.clan_id)})).filter(r=>r.clan);
+  if(clan.id){const f=await sb.from('clan_fish').select('*').eq('clan_id',clan.id);if(f.error)throw f.error;clan.fish=f.data||[]}else clan.fish=[];
+  const uids=[...new Set([...rows.map(r=>r.user_id),...rows.map(r=>r.invited_by),...clan.fish.map(f=>f.user_id),...cl.map(x=>x.owner)])].filter(u=>u&&!soc.people[u]);
+  if(uids.length){const p=await sb.from('profiles').select('user_id,name,code,avatar').in('user_id',uids);for(const x of p.data||[])soc.people[x.user_id]=x}
+  clan.err=''}catch(e){clan.err=socErr(e)}
+ for(const k in bottleFirst)if(k.startsWith('c:')&&!clan.inv.some(r=>'c:'+r.clan_id===k)&&!bottleGone[k])delete bottleFirst[k];
+ if(['fishing','cottage'].includes(view())&&!clanForm)rr()}
+async function clanRpc(fn,args,ok){if(!sb||!user)return null;const r=await sb.rpc(fn,args||{});if(r.error){const m=(r.error.message||'').toLowerCase();
+  toast(socErr(r.error)==='setup'?"The cottage isn't open yet":m.includes('already in a clan')?"You're already in a clan":m.includes('full')?'That clan is full (12 max)':m.includes('too big')?'Too big for the tank. Only small fish fit':m.includes('weight or length')?'Add a weight or length to that catch first':m.includes('already have a fish')?'You already have a fish in the tank':m.includes('not found')?"That catch hasn't synced yet. Try again in a moment":"Couldn't do that right now");return null}
+ if(ok)toast(ok);await loadClan(true);return r.data}
+const GMA_LINES=["Ooh, come in, love. Kettle's just boiled.","Mind the cat. Oh, we haven't got one yet.","Is that a perch? Lovely stripes on him.","Don't forget to feed the little ones in the tank.","Your grandad caught a pike that big once. Or so he said.","Shut the door, you're letting the heat out.","Have you eaten? You look thin.","Tight lines, dear."];
+const isNight=()=>{const t=sceneHour(),{sr,ss}=skyKeys();return t<sr+.3||t>ss-.3};
+function cottageSvg(){if(!user)return'';const n=isNight(),win=n?'#ffcf6e':'#a8c8d8',pond=clan.fish.some(f=>f.place==='pond');
+ return`<a href="#cottage" class="cot" aria-label="Grandma's cottage"><g transform="translate(302 78) scale(1.45)">
+ ${n?'<ellipse cx="-1" cy="-4.5" rx="9" ry="4" fill="#ffcf6e" opacity=".14"/>':''}
+ ${[0,1,2].map(i=>`<circle cx="5.5" cy="-19" r="1.6" fill="#e8e4dc" opacity="0"><animate attributeName="cy" values="-19;-34" dur="4.2s" begin="${i*1.4}s" repeatCount="indefinite"/><animate attributeName="r" values="1.4;3.6" dur="4.2s" begin="${i*1.4}s" repeatCount="indefinite"/><animate attributeName="opacity" values=".7;0" dur="4.2s" begin="${i*1.4}s" repeatCount="indefinite"/><animate attributeName="cx" values="5.5;8;6.5" dur="4.2s" begin="${i*1.4}s" repeatCount="indefinite"/></circle>`).join('')}
+ <rect x="4" y="-19" width="3" height="7" fill="#7d5040"/><rect x="3.5" y="-19.5" width="4" height="1.4" fill="#5e3b2f"/>
+ <rect x="-9" y="-9.5" width="18" height="9.5" fill="#ece2cc"/><rect x="-9" y="-1.2" width="18" height="1.2" fill="#c9b99a"/>
+ <path d="M-11.5 -8.5 Q-6 -18 0 -18.5 Q6 -18 11.5 -8.5 Q0 -6.5 -11.5 -8.5Z" fill="#c09a5c"/><path d="M-10 -9.6 Q0 -7.8 10 -9.6" stroke="#9c7a42" stroke-width=".7" fill="none"/>
+ <rect x="-1.6" y="-5.6" width="3.4" height="5.6" rx="1.5" fill="#6b4428"/>
+ ${[-6.4,4.2].map(x=>`<rect x="${x}" y="-6.6" width="3.4" height="3" fill="${win}"/><path d="M${x+1.7} -6.6v3M${x} -5.1h3.4" stroke="#6b4428" stroke-width=".5"/>`).join('')}
+ ${pond?'<ellipse cx="-14" cy="-.5" rx="4.2" ry="1.3" fill="#4f7e8c" opacity=".9"/>':''}
+ <rect x="-16" y="-24" width="32" height="26" fill="#fff" fill-opacity="0"/></g></a>`}
+function clanBottle(key){const r=clan.inv.find(x=>'c:'+x.clan_id===key);if(!r)return'';const host=rname(r.invited_by||r.clan.owner),me=prof().name||'';
+ return`<div class="sheetbg bbg"></div><div class="bottlebox" role="dialog" aria-modal="true" aria-label="Message in a bottle from ${esc(host)}">
+ <svg class="bbig" viewBox="-17 -10 34 20" aria-hidden="true">${BOTTLE_G}</svg><span class="bcork" aria-hidden="true"></span>
+ <div class="scrollw"><span class="roll top" aria-hidden="true"></span><div class="paper">
+  <p class="bto">${me?`Dear ${esc(me)},`:'Ahoy,'}</p>
+  <p class="bmsg">${esc(r.note||`Grandma's put the kettle on. Come and join ${r.clan.name}.`)}</p>
+  <p class="bsig">${esc(host)}</p>
+  <div class="bdet"><b>${esc(r.clan.name)}</b><span>A clan at Grandma's cottage</span></div>
+  <div class="bbtns"><button class="btn" data-cjoin="${r.clan_id}">Join the clan</button><button class="btn sec" data-cno="${r.clan_id}">Not this time</button></div>
+  <button class="linkbtn bclose" data-bclose>Keep it for later</button>
+ </div><span class="roll bot" aria-hidden="true"></span></div></div>`}
+function tankFishSvg(f,i,n){const src=fishSrc(f.species),w=46*(1+Math.min(f.feeds,7)*.06),h=w/2,y=96+((i*37)%70),x0=52+((i*53)%40),x1=262-((i*29)%40),d=9+((i*7)%6);
+ return`<g><animateTransform attributeName="transform" type="translate" values="${x1} ${y};${x0} ${y+6};${x1} ${y}" keyTimes="0;.5;1" dur="${d}s" begin="-${i*2.3}s" repeatCount="indefinite"/>
+  <g><animateTransform attributeName="transform" type="scale" values="1 1;-1 1" keyTimes="0;.5" calcMode="discrete" dur="${d}s" begin="-${i*2.3}s" repeatCount="indefinite"/>
+  ${src?`<image href="${src}" x="${-w/2}" y="${-h/2}" width="${w}" height="${h}" preserveAspectRatio="xMidYMid meet"/>`:`<ellipse rx="${w/2.4}" ry="${h/3}" fill="#c9a24a"/>`}</g></g>`}
+function interiorSvg(){const n=isNight(),S=skyAt(sceneHour()),tank=clan.fish.filter(f=>f.place==='tank');
+ return`<svg class="cotin" viewBox="0 0 400 300" role="img" aria-label="Inside Grandma's cottage: Grandma knitting in her armchair by the fire, with the aquarium on the sideboard">
+ <defs><linearGradient id="ciw" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9d6b8"/><stop offset="1" stop-color="#dcc29c"/></linearGradient>
+ <pattern id="cip" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="11" cy="11" r="2.2" fill="#c98f6b" opacity=".35"/><circle cx="0" cy="0" r="1.6" fill="#8aa07a" opacity=".3"/><circle cx="22" cy="22" r="1.6" fill="#8aa07a" opacity=".3"/></pattern>
+ <linearGradient id="cisky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${S.top}"/><stop offset="1" stop-color="${S.mid}"/></linearGradient>
+ <linearGradient id="ciwater" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7fc4c9" stop-opacity=".75"/><stop offset="1" stop-color="#2f6f78" stop-opacity=".9"/></linearGradient>
+ <radialGradient id="cifire" cx="50%" cy="60%" r="60%"><stop offset="0" stop-color="#ffb347" stop-opacity=".55"/><stop offset="1" stop-color="#ffb347" stop-opacity="0"/></radialGradient>
+ <clipPath id="citank"><rect x="40" y="88" width="234" height="96" rx="4"/></clipPath></defs>
+ <rect width="400" height="300" fill="url(#ciw)"/><rect width="400" height="300" fill="url(#cip)"/>
+ <rect y="196" width="400" height="104" fill="#8b5a3c"/>${[0,1,2,3,4,5].map(i=>`<path d="M0 ${212+i*16}H400" stroke="#6f452d" stroke-width="1.2"/>`).join('')}
+ <rect y="178" width="400" height="18" fill="#7a4e32"/><rect y="176" width="400" height="3" fill="#5e3a24"/>
+ <g transform="translate(150 30)"><rect width="58" height="52" rx="2" fill="#5e3a24"/><rect x="4" y="4" width="50" height="44" fill="url(#cisky)"/><path d="M29 4v44M4 26h50" stroke="#5e3a24" stroke-width="3"/>
+  ${n?'<circle cx="42" cy="14" r="4" fill="#f4efd9"/>':'<circle cx="16" cy="14" r="5" fill="#fff3c4" opacity=".9"/>'}<path d="M-6 -2 Q4 30 -2 56 H6 Q12 26 6 -2Z M64 -2 Q54 30 60 56 H52 Q46 26 52 -2Z" fill="#b5544a"/><rect x="-8" y="-5" width="74" height="4" rx="2" fill="#5e3a24"/></g>
+ <g transform="translate(28 184)"><rect width="258" height="12" rx="2" fill="#6b4428"/><rect y="12" width="258" height="18" fill="#5a3820"/><rect x="10" y="30" width="8" height="14" fill="#4a2e1a"/><rect x="240" y="30" width="8" height="14" fill="#4a2e1a"/></g>
+ <rect x="36" y="84" width="242" height="104" rx="6" fill="#3f4a46"/><rect x="40" y="88" width="234" height="96" rx="4" fill="url(#ciwater)"/>
+ <g clip-path="url(#citank)"><path d="M40 176 Q90 168 140 176 T240 174 T280 176 V188 H40Z" fill="#d9c08a"/>${[60,110,190,245].map((x,i)=>`<path d="M${x} 180 q${i%2?6:-6} -16 0 -30 q${i%2?-6:6} -12 0 -22" stroke="#4f8f5a" stroke-width="4" fill="none" stroke-linecap="round"><animateTransform attributeName="transform" type="rotate" values="-3 ${x} 180;3 ${x} 180;-3 ${x} 180" dur="${4+i}s" repeatCount="indefinite"/></path>`).join('')}
+  <path d="M215 182 l10 -22 l10 22Z" fill="#9a8f86"/><rect x="221" y="168" width="8" height="6" fill="#6b625b"/>
+  ${tank.map((f,i)=>tankFishSvg(f,i,tank.length)).join('')}
+  ${[70,150,230].map((x,i)=>`<circle cx="${x}" cy="178" r="2" fill="#fff" fill-opacity=".6"><animate attributeName="cy" values="178;90" dur="${3+i}s" begin="${i*.7}s" repeatCount="indefinite"/><animate attributeName="r" values="1.5;3" dur="${3+i}s" begin="${i*.7}s" repeatCount="indefinite"/></circle>`).join('')}
+  <g class="pellets"></g></g>
+ <rect x="40" y="88" width="234" height="6" fill="#fff" opacity=".25"/><rect x="34" y="80" width="246" height="8" rx="3" fill="#2f3734"/>
+ ${tank.length?'':`<text x="157" y="140" text-anchor="middle" font-family="Caveat,cursive" font-size="20" fill="#e9f4ef" opacity=".85">Waiting for its first little fish…</text>`}
+ <g transform="translate(298 96)"><rect x="-10" y="-8" width="104" height="10" rx="2" fill="#6b4428"/><rect x="0" y="2" width="84" height="98" fill="#9a8f86"/>
+  ${[[0,2],[28,2],[56,2],[0,22],[56,22],[0,42],[56,42],[0,62],[56,62],[0,82],[28,82],[56,82]].map(([x,y])=>`<rect x="${x+1}" y="${y+1}" width="26" height="18" rx="2" fill="#a89c92" stroke="#857a71"/>`).join('')}
+  <rect x="16" y="28" width="52" height="72" rx="20" ry="20" fill="#2a1a12"/><rect x="16" y="64" width="52" height="36" fill="#2a1a12"/>
+  <path d="M24 98 l14 -8 l14 6 l10 -4" stroke="#6b4428" stroke-width="6" stroke-linecap="round" fill="none"/>
+  <g class="flames">${[[30,'#ff7a1a',30],[42,'#ffb02e',38],[52,'#ff8c1a',28]].map(([x,c,h],i)=>`<path d="M${x} 94 Q${x-9} ${94-h*.6} ${x} ${94-h} Q${x+9} ${94-h*.6} ${x} 94Z" fill="${c}"><animateTransform attributeName="transform" type="scale" values="1 1;1.06 .86;.96 1.08;1 1" dur="${.9+i*.23}s" additive="sum" repeatCount="indefinite"/></path>`).join('')}
+   <path d="M42 94 Q37 82 42 72 Q47 82 42 94Z" fill="#fff1b8"><animate attributeName="opacity" values="1;.6;1" dur=".7s" repeatCount="indefinite"/></path></g>
+  <rect x="6" y="-20" width="5" height="12" fill="#f4ecd6"/><path d="M8.5 -24 q-2 2 0 4 q2 -2 0 -4" fill="#ffcf6e"/><circle cx="62" cy="-15" r="7" fill="#d9b45a"/><circle cx="62" cy="-15" r="5" fill="#f4ecd6"/><path d="M62 -15v-3.5M62 -15h2.6" stroke="#5e3a24" stroke-width=".9"/></g>
+ <ellipse cx="340" cy="248" rx="90" ry="40" fill="url(#cifire)"><animate attributeName="opacity" values=".8;1;.85;1;.8" dur="2.6s" repeatCount="indefinite"/></ellipse>
+ <ellipse cx="262" cy="262" rx="92" ry="24" fill="#a1463c"/><ellipse cx="262" cy="262" rx="78" ry="18" fill="none" stroke="#e0b25a" stroke-width="2.5" stroke-dasharray="6 5"/>
+ <g transform="translate(218 162)"><rect x="6" y="86" width="6" height="22" fill="#4a2e1a"/><rect x="92" y="86" width="6" height="22" fill="#4a2e1a"/>
+  <path d="M4 20 Q4 -4 30 -6 H74 Q100 -4 100 20 V70 H4Z" fill="#7a2f34"/><path d="M14 22 Q14 4 32 4 H72 Q90 4 90 22 V64 H14Z" fill="#8f3a3f"/>
+  <rect x="-6" y="48" width="24" height="44" rx="10" fill="#7a2f34"/><rect x="86" y="48" width="24" height="44" rx="10" fill="#7a2f34"/><rect x="10" y="62" width="84" height="30" rx="6" fill="#6b282d"/>
+  <g class="gma" data-gma><animateTransform attributeName="transform" type="rotate" values="0 52 70;-1.2 52 70;0 52 70" dur="4s" repeatCount="indefinite"/>
+   <path d="M26 74 Q24 40 52 38 Q80 40 78 74Z" fill="#9b8bbd"/><path d="M40 40 Q52 52 64 40" fill="none" stroke="#7d6ea0" stroke-width="2"/>${[46,52,58].map(y=>`<circle cx="52" cy="${y+6}" r="1.4" fill="#e9e2f5"/>`).join('')}
+   <rect x="30" y="70" width="46" height="26" rx="6" fill="#5c6b8a"/><rect x="32" y="94" width="10" height="12" rx="3" fill="#3a2a22"/><rect x="62" y="94" width="10" height="12" rx="3" fill="#3a2a22"/>
+   <circle cx="52" cy="26" r="13" fill="#f2c9a8"/><circle cx="52" cy="12" r="7" fill="#e6e3df"/><path d="M38 24 Q40 10 52 11 Q64 10 66 24 Q60 16 52 16 Q44 16 38 24Z" fill="#e6e3df"/>
+   <circle cx="47" cy="26" r="3.6" fill="none" stroke="#7a6a5a" stroke-width="1.2"/><circle cx="57" cy="26" r="3.6" fill="none" stroke="#7a6a5a" stroke-width="1.2"/><path d="M50.6 26h2.8" stroke="#7a6a5a" stroke-width="1.2"/>
+   <path d="M47.5 32 Q52 35 56.5 32" stroke="#a5634f" stroke-width="1.3" fill="none" stroke-linecap="round"/><circle cx="44" cy="31" r="2" fill="#f0a3a0" opacity=".5"/><circle cx="60" cy="31" r="2" fill="#f0a3a0" opacity=".5"/>
+   <g><animateTransform attributeName="transform" type="rotate" values="-4 52 64;4 52 64;-4 52 64" dur="1.1s" repeatCount="indefinite"/><path d="M36 54 L68 70 M68 54 L36 70" stroke="#d9c7a5" stroke-width="1.8" stroke-linecap="round"/><path d="M44 60 q8 6 16 0 v6 q-8 6 -16 0Z" fill="#7fb0a2"/></g></g>
+  <circle cx="-14" cy="104" r="8" fill="#7fb0a2"/><path d="M-20 100 q6 4 12 0 M-21 105 q7 4 14 0" stroke="#5f8f82" stroke-width="1" fill="none"/><path d="M-6 104 Q20 90 44 66" stroke="#7fb0a2" stroke-width="1" fill="none"/></g>
+ <g transform="translate(18 120)"><rect x="-2" width="4" height="78" fill="#4a2e1a"/><rect x="-10" y="76" width="20" height="4" rx="2" fill="#4a2e1a"/><path d="M-14 0 L14 0 L9 -20 L-9 -20Z" fill="#e8c98a"/>${n?'<ellipse cy="6" rx="30" ry="16" fill="#ffcf6e" opacity=".22"/>':''}</g>
+ ${n?'<rect width="400" height="300" fill="#140c24" opacity=".28" pointer-events="none"/>':''}
+ <rect x="218" y="162" width="110" height="110" fill="#fff" fill-opacity="0" data-gma style="cursor:pointer"/></svg>`}
+function cottagePage(){const back=`<button class="pback" data-act="pback" aria-label="Back">‹</button>`;loadClan();loadSocial();
+ const head=`<header class="fhero sm">${scene().svg}<div class="fhin">${back}<p class="fgreet fx">${clan.c?esc(clan.c.name):'Up on the hill'}</p><div class="fhtop"><h1>Grandma's cottage</h1></div></div></header>`;
+ if(!user)return head+'<main class="wrap"><section class="card"><p class="sub">Sign in from Settings to visit Grandma.</p></section></main>';
+ if(clan.err==='setup')return head+`<main class="wrap"><section class="card"><p>Grandma's still tidying up. The cottage opens very soon.</p></section></main>`;
+ const say=`<div class="gmasay" aria-live="polite"><span>${esc(GMA_LINES[gmaLine%GMA_LINES.length])}</span></div>`;
+ const scene_=`<section class="cotwrap">${interiorSvg()}${say}</section>`;
+ if(!clan.id){const fr=friendIds(),f=clanForm;
+  return head+`<main class="wrap">${scene_}
+  ${clan.inv.length?`<section class="card"><h2>You've been invited</h2>${clan.inv.map(r=>`<div class="frow"><span class="binv" aria-hidden="true">${BOTTLE_ICON}</span><span class="frn">${esc(r.clan.name)}<small>From ${pname(r.invited_by||r.clan.owner)}</small></span><button class="btn sm" data-bottle="c:${r.clan_id}">Read it</button></div>`).join('')}</section>`:''}
+  <section class="card"><h2>Start a clan</h2><p class="sub" style="margin:6px 0 12px">Grandma's cottage belongs to a clan of up to 12 mates. Together you fill her aquarium with your little catches, nurture them until they're ready for the garden pond, and do the place up with Scales.</p>
+  ${f?`<label class="f">Clan name<input data-clanname maxlength="40" value="${esc(f.name)}" placeholder="e.g. The Colne Crew"></label><div class="row" style="margin-top:12px"><button class="btn" data-clancreate ${clan.busy?'disabled':''}>${clan.busy?'Moving in…':'Move in'}</button><button class="btn sec" data-clancancel>Cancel</button></div>`:`<button class="btn" data-clannew>Start a clan</button>${fr.length?'':'<p class="sub" style="margin-top:8px">Add some friends first so you can invite them.</p>'}`}</section></main>${bottleOpen&&bottleOpen.startsWith('c:')?clanBottle(bottleOpen):''}`}
+ const me=user.id,host=clan.c.owner===me,mem=clan.mem.filter(r=>r.status==='joined'),pend=clan.mem.filter(r=>r.status==='invited'),tank=clan.fish.filter(f=>f.place==='tank'),pond=clan.fish.filter(f=>f.place==='pond').sort((a,b)=>(b.promoted_at||'').localeCompare(a.promoted_at||'')),mine=tank.find(f=>f.user_id===me);
+ const today=new Date().toISOString().slice(0,10),fr=friendIds().filter(id=>!clan.mem.some(r=>r.user_id===id));
+ const elig=catches().filter(c=>isSmall(c)===true&&!clan.fish.some(f=>f.user_id===me&&f.catch_id===c.id));
+ const fishRow=f=>{const ready=f.feeds>=7,fed=f.last_fed===today,own=f.user_id===me;return`<div class="tfish"><span class="tfa">${fishSVG(f.species)}</span><span class="tfn"><b>${esc(f.species)}${f.grams?' · '+fW(f.grams):f.cm?' · '+f.cm+' cm':''}</b><small>${own?'Yours':'From '+pname(f.user_id)}</small>
+  <span class="grow" aria-label="Fed ${f.feeds} of 7 days">${Array.from({length:7},(_,i)=>`<i class="${i<f.feeds?'on':''}"></i>`).join('')}</span></span>
+  <span class="tfb">${ready?(own?`<button class="btn sm" data-fpromote="${f.id}">To the pond</button>`:'<small>Ready for the pond</small>'):fed?'<small class="fedok">Fed today</small>':`<button class="btn sm sec" data-ffeed="${f.id}">Feed</button>`}</span></div>`};
+ return head+`<main class="wrap">${scene_}
+ <section class="card"><div class="ch"><h2>The aquarium</h2><span class="sub">${tank.length} of ${mem.length}</span></div>
+  <p class="sub" style="margin:4px 0 10px">One little fish each. Feed them once a day, and after 7 feeds they're big enough for the garden pond.</p>
+  ${tank.length?`<div class="tlist">${tank.map(fishRow).join('')}</div>`:''}
+  ${mine?(mine.feeds<7?`<button class="linkbtn" data-frelease="${mine.id}" style="margin-top:8px">${clanArm==='rel'?'Tap again to take yours out':'Take your fish out'}</button>`:''):`<div class="donate">${donatePick?`<p class="sub" style="margin:10px 0 6px">Pick one of your small catches:</p>${elig.length?`<div class="tlist">${elig.slice(0,30).map(c=>`<button class="tpick" data-fdonate="${c.id}"><span class="tfa">${fishSVG(c.species)}</span><span class="tfn"><b>${esc(c.species)}</b><small>${[c.g?fW(c.g):'',c.cm?c.cm+' cm':'',c.date?label(c.date):''].filter(Boolean).join(' · ')}</small></span></button>`).join('')}</div>`:`<p class="empty">None of your catches are small enough yet. Little ones only: a perch under ${fW(smallMax('Perch')[0])}, a roach under ${fW(smallMax('Roach')[0])}, that sort of thing. Your next tiddler could go straight in.</p>`}<button class="linkbtn" data-fpickclose>Cancel</button>`:`<button class="btn" data-fpick>Put a fish in the tank</button>`}</div>`}</section>
+ <section class="card"><div class="ch"><h2>The garden pond</h2><span class="sub">${pond.length} fish</span></div>${pondSvg(pond)}
+  ${pond.length?`<div class="plist">${pond.map(f=>`<div class="pfish"><span class="tfa sm">${fishSVG(f.species)}</span><span><b>${esc(f.species)}</b><small>Raised by ${pname(f.user_id)}${f.promoted_at?' · '+new Date(f.promoted_at).toLocaleDateString('en-GB',{day:'numeric',month:'short'}):''}</small></span></div>`).join('')}</div>`:'<p class="sub" style="margin-top:8px">Fish that outgrow the tank live here for good.</p>'}</section>
+ <section class="card"><div class="ch"><h2>${esc(clan.c.name)}</h2>${fr.length&&clan.mem.length<12?`<button class="btn sec sm" data-claninv>+ Invite</button>`:''}</div>
+  ${clanInv?`<div class="bnote" style="margin-top:10px"><label for="claninvnote">Message in the bottle <small>Optional</small></label><textarea id="claninvnote" data-claninvnote maxlength="200" rows="2" placeholder="Grandma's put the kettle on. Come and join us.">${esc(clanInvNote)}</textarea></div><div class="pickf" style="margin:10px 0">${fr.map(id=>`<button class="chip" data-claninvu="${id}">Send to ${pname(id)}</button>`).join('')}</div>`:''}
+  ${mem.map(r=>`<div class="frow">${avatarImg((soc.people[r.user_id]||{}).avatar||(r.user_id===me?favAv():null),'sm')}<span class="frn">${pname(r.user_id)}${r.user_id===clan.c.owner?'<small>Head of the family</small>':''}</span>${host&&r.user_id!==me?`<button class="btn sec sm" data-clankick="${r.user_id}">${clanArm==='k'+r.user_id?'Sure?':'Remove'}</button>`:''}</div>`).join('')}
+  ${pend.map(r=>`<div class="frow pend">${avatarImg((soc.people[r.user_id]||{}).avatar,'sm')}<span class="frn">${pname(r.user_id)}<small>Bottle sent, not opened yet</small></span></div>`).join('')}
+  <p class="sub" style="text-align:center;margin-top:14px"><button class="linkbtn dlink" data-clanleave>${clanArm==='leave'?'Tap again to leave the clan':'Leave the clan'}</button></p></section></main>`}
+function pondSvg(p){return`<svg class="pondsvg" viewBox="0 0 400 130" aria-hidden="true"><rect width="400" height="130" fill="#5f8a55"/>${[[30,20],[360,30],[60,110],[340,105],[200,8]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="10" fill="#4f7a47"/>`).join('')}
+ <ellipse cx="200" cy="68" rx="160" ry="48" fill="#8a7a5a"/><ellipse cx="200" cy="68" rx="150" ry="42" fill="#3f6f7c"/><clipPath id="pondc"><ellipse cx="200" cy="68" rx="150" ry="42"/></clipPath>
+ <g clip-path="url(#pondc)">${p.slice(0,12).map((f,i)=>{const src=fishSrc(f.species),w=40,y=44+((i*19)%46),d=11+(i%5)*2;return`<g opacity=".85"><animateTransform attributeName="transform" type="translate" values="${300-(i*13)%40} ${y};${100+(i*17)%40} ${y+4};${300-(i*13)%40} ${y}" dur="${d}s" begin="-${i*1.9}s" repeatCount="indefinite"/><g><animateTransform attributeName="transform" type="scale" values="1 1;-1 1" keyTimes="0;.5" calcMode="discrete" dur="${d}s" begin="-${i*1.9}s" repeatCount="indefinite"/>${src?`<image href="${src}" x="${-w/2}" y="${-w/4}" width="${w}" height="${w/2}"/>`:''}</g></g>`}).join('')}
+ <ellipse cx="130" cy="58" rx="16" ry="6" fill="#5f9a5a"/><ellipse cx="280" cy="80" rx="14" ry="5" fill="#5f9a5a"/><circle cx="283" cy="78" r="3" fill="#f3c4d6"/></g></svg>`}
+function clanClick(t,ds){
+ if(ds.clannew!=null){clanForm={name:''};rr();setTimeout(()=>{const i=document.querySelector('[data-clanname]');if(i)i.focus()},50);return true}
+ if(ds.clancancel!=null){clanForm=null;rr();return true}
+ if(ds.clancreate!=null){const nm=(clanForm&&clanForm.name||'').trim();if(!nm){toast('Give your clan a name');return true}clan.busy='create';rr();clanRpc('clan_create',{cid:newId(),nm},'Welcome home. Grandma\'s put the kettle on.').then(()=>{clan.busy='';clanForm=null;rr()});return true}
+ if(ds.claninv!=null){clanInv=!clanInv;rr();return true}
+ if(ds.claninvu){const u=ds.claninvu;clanRpc('clan_invite',{u,nt:clanInvNote},`Bottle sent to ${rname(u)}`);return true}
+ if(ds.clankick){if(clanArm!=='k'+ds.clankick){clanArm='k'+ds.clankick;rr();return true}clanArm=null;clanRpc('clan_remove',{u:ds.clankick});return true}
+ if(ds.clanleave!=null){if(clanArm!=='leave'){clanArm='leave';rr();return true}clanArm=null;clanRpc('clan_leave',{},'You left the clan');return true}
+ if(ds.fpick!=null){donatePick=true;rr();return true}
+ if(ds.fpickclose!=null){donatePick=false;rr();return true}
+ if(ds.fdonate){const id=ds.fdonate;t.disabled=true;(async()=>{try{await syncNow()}catch(e){}const r=await clanRpc('fish_donate',{cid:id},'Plop! Into the tank it goes.');if(r)donatePick=false;rr()})();return true}
+ if(ds.ffeed){const id=ds.ffeed;t.disabled=true;const sv=document.querySelector('.cotin .pellets');if(sv)sv.innerHTML=[0,1,2,3,4,5].map(i=>`<circle cx="${90+i*24}" cy="88" r="2" fill="#c9893a"><animate attributeName="cy" values="88;170" dur="${1.6+i*.15}s" fill="freeze"/></circle>`).join('');
+  clanRpc('fish_feed',{f:id}).then(n=>{if(n==null)return;toast(n>=7?"All grown up! Ready for the pond.":`Fed! ${n} of 7`)});return true}
+ if(ds.fpromote){clanRpc('fish_promote',{f:ds.fpromote},'Off to the garden pond! Your spot in the tank is free.');return true}
+ if(ds.frelease){if(clanArm!=='rel'){clanArm='rel';rr();return true}clanArm=null;clanRpc('fish_release',{f:ds.frelease},'Back in your keepnet. Your spot is free.');return true}
+ if(ds.gma!=null){gmaLine++;const s=document.querySelector('.gmasay span');if(s){s.parentNode.classList.remove('pop');void s.offsetWidth;s.textContent=GMA_LINES[gmaLine%GMA_LINES.length];s.parentNode.classList.add('pop')}return true}
+ if(ds.cjoin){const id=ds.cjoin;t.disabled=true;clanRpc('clan_answer',{c:id,yes:true},'Welcome to the family!').then(r=>{bottleOpen=null;if(r){location.hash='cottage'}else rr()});return true}
+ if(ds.cno){const id=ds.cno,k='c:'+id;sb.rpc('clan_answer',{c:id,yes:false}).then(r=>{if(r.error){toast("Couldn't do that right now");return}bottleOpen=null;bottleGone[k]=1;if(view()!=='fishing'&&view()!=='cottage')location.hash='fishing';else rr();toast('Tossed back. Maybe next time.');setTimeout(()=>{clan.inv=clan.inv.filter(x=>x.clan_id!==id);delete bottleGone[k];delete bottleFirst[k];rr()},3300)});return true}
+ return false}
 /* ---------- News / announcements (the mailbox on the hill) ---------- */
 const NEWS=[
  {id:'2026-11-26-backpay',date:'2026-11-26',title:'A thank-you for every species',by:'Adam',body:[
@@ -1941,14 +2107,14 @@ if('serviceWorker' in navigator){swReg();navigator.serviceWorker.addEventListene
 const BOTTLE_IDEAS=["Fancy a few hours on the bank? Bring the bait, I'll bring the flask.","Fish are moving. Get down here.","Swim's quiet, banter isn't. Come join.","Biggest fish buys the chips.","Room for one more on the bank. Tight lines."];
 const BOTTLE_G='<g transform="rotate(-14)"><path d="M-12.5 -4.6h14q3.2 0 4.7 2.6h3.6v4h-3.6q-1.5 2.6-4.7 2.6h-14q-2.7 0-2.7-4.6t2.7-4.6z" fill="#86cfae" fill-opacity=".55" stroke="#e4fff2" stroke-opacity=".85" stroke-width=".6"/><rect x="9.6" y="-2" width="3.8" height="4" rx=".9" fill="#a8743f"/><rect x="-10" y="-2.5" width="13" height="5" rx="2.4" fill="#f4e7c6"/><path d="M-9.5-.1h12" stroke="#c9a96b" stroke-width=".45"/><rect x="-4.4" y="-2.7" width="1.3" height="5.4" fill="#b0413e"/><path d="M-11-3.2h10" stroke="#fff" stroke-opacity=".75" stroke-width=".7" stroke-linecap="round"/></g>';
 const BOTTLE_ICON=`<svg viewBox="-17 -10 34 20">${BOTTLE_G}</svg>`;
-function bottlesSvg(){if(view()!=='fishing'||!user)return'';const L=(sesIntro&&sesIntro.demo?[{session_id:'demo'}]:[]).concat(ses.inv||[]).slice(0,3),spots=[[150,146],[96,157],[200,134]];
+function bottlesSvg(){if(view()!=='fishing'||!user)return'';const L=(sesIntro&&sesIntro.demo?[{session_id:'demo'}]:[]).concat(ses.inv||[],(clan.inv||[]).map(r=>({session_id:'c:'+r.clan_id}))).slice(0,3),spots=[[150,146],[96,157],[200,134]];
  return L.map((r,i)=>{const[x,y]=spots[i],k=r.session_id,t0=bottleFirst[k]=bottleFirst[k]||Date.now(),el=Math.min(8,(Date.now()-t0)/1000),out=!!bottleGone[k];
   return`<g transform="translate(${x} ${y})"><g class="bdrift${out?' bout':''}${k==='demo'?' demo':''}" style="--dx:${-(x+50)}px;animation-delay:${out?0:-el}s">
   ${[0,1.5].map(d=>`<ellipse cy="3" rx="6" ry="1.3" fill="none" stroke="#fff" stroke-opacity="0"><animate attributeName="rx" values="6;20" dur="3s" begin="${d}s" repeatCount="indefinite"/><animate attributeName="stroke-opacity" values=".55;0" dur="3s" begin="${d}s" repeatCount="indefinite"/></ellipse>`).join('')}
   <g><animateTransform attributeName="transform" type="rotate" values="-7;6;-7" dur="3.4s" repeatCount="indefinite"/><animateTransform attributeName="transform" type="translate" additive="sum" values="0 0;0 1.6;0 0" dur="2.6s" repeatCount="indefinite"/><g transform="scale(1.35)">${BOTTLE_G}</g><circle cx="-8" cy="-6" r="1.1" fill="#fff" opacity="0"><animate attributeName="opacity" values="0;0;1;0;0" keyTimes="0;.7;.78;.86;1" dur="4.5s" begin="${i*1.3}s" repeatCount="indefinite"/></circle></g>
   ${out?'':`<g transform="translate(0 -15)"><circle r="3.6" fill="none" stroke="#ffd36b" stroke-width="1.1"><animate attributeName="r" values="3.6;9" dur="2s" repeatCount="indefinite"/><animate attributeName="opacity" values=".9;0" dur="2s" repeatCount="indefinite"/></circle><circle r="3.6" fill="#ffd36b"/><path d="M-1.8-.8h3.6v2.2h-3.6z M-1.8-.8l1.8 1.3 1.8-1.3" fill="none" stroke="#5a3b00" stroke-width=".55" stroke-linejoin="round"/></g>`}
   <rect data-bottle="${k}" x="-22" y="-26" width="44" height="38" fill="#fff" fill-opacity="0" style="cursor:pointer"/></g></g>`}).join('')}
-function bottleBox(){const r=(ses.inv||[]).find(x=>x.session_id===bottleOpen),s=ses.list.find(x=>x.id===bottleOpen);if(!r||!s)return'';
+function bottleBox(){if(bottleOpen&&bottleOpen.startsWith('c:'))return clanBottle(bottleOpen);const r=(ses.inv||[]).find(x=>x.session_id===bottleOpen),s=ses.list.find(x=>x.id===bottleOpen);if(!r||!s)return'';
  const host=rname(r.invited_by||s.owner),n=(ses.members[s.id]||[]).length,on=sesLive(s),me=prof().name||'';
  return`<div class="sheetbg bbg"></div><div class="bottlebox" role="dialog" aria-modal="true" aria-label="Message in a bottle from ${esc(host)}">
  <svg class="bbig" viewBox="-17 -10 34 20" aria-hidden="true">${BOTTLE_G}</svg><span class="bcork" aria-hidden="true"></span>
