@@ -525,7 +525,7 @@ img.fimg{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-w
 .mbi.out{opacity:0;transition:opacity .3s}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><div id="achpop" aria-live="polite"></div><script>
 {
-const VERSION='7.44';
+const VERSION='7.45';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -1317,7 +1317,7 @@ root.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('[data-f
  if(a==='forgot'){const f=document.getElementById('auth'),m=document.getElementById('authmsg'),email=f.elements.email.value.trim();if(!email||!f.elements.email.checkValidity()){m.textContent='Type your email above first, then tap Forgot password.';f.elements.email.focus();return}
   m.textContent='Sending…';sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname}).then(r=>{m.textContent=r.error?(/fetch|network/i.test(r.error.message)?'Can\'t reach the server — check your connection.':/rate/i.test(r.error.message)?'Too many emails sent — wait a while and try again.':r.error.message):'If that email has an account, a reset link is on its way. Open it on this device.'}).catch(()=>{m.textContent='Can\'t reach the server — check your connection.'});return}
  if(a==='syncnow'){syncNow().then(()=>rr());return}
- if(a==='signout'){if(sb)sb.auth.signOut().then(()=>{user=null;setSync('local');rr();toast('Signed out — your data stays on this device')});return}
+ if(a==='signout'){try{if(user&&!localStorage.getItem('powner'))localStorage.setItem('powner',user.id)}catch(e){}if(sb)sb.auth.signOut().then(()=>{user=null;setSync('local');rr();toast('Signed out — your data stays on this device')});return}
  if(a==='addpick'){const q=num(document.getElementById('amt').value);if(!q||q<=0){toast('Enter an amount');return}const sv=document.getElementById('savepick');addEntry(picked,q,sv&&sv.checked);picked=null;rr()}
  if(a==='cancelpick'){picked=null;renderResults()}
  if(a==='addp'){P().push({k:uid('p'),n:'New pillar',s:'New',c:'#f5c04a',m:[]});openP.add(P().length-1);save();rr()}
