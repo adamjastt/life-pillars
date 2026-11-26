@@ -535,7 +535,11 @@ img.fimg{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-w
 .wchip .scl{width:22px;height:22px}
 .wchip.pop{animation:wpop .6s cubic-bezier(.3,1.6,.5,1)}@keyframes wpop{40%{transform:scale(1.18)}}
 .gift{display:grid;justify-items:center;text-align:center;gap:10px;margin:16px 0 8px;padding:18px 14px;border-radius:16px;background:radial-gradient(circle at 50% 30%,#d9b45a22,transparent 70%),var(--card2);position:relative}
-.gift p{margin:0}.gift .btn{min-width:200px}
+.gift p{margin:0}
+.claimall{display:flex;align-items:center;gap:14px;border:1px solid #d9b45a66;background:radial-gradient(circle at 15% 50%,#d9b45a26,transparent 60%),var(--card);position:relative;overflow:visible}
+.claimall .cat{flex:1;min-width:0;display:grid;gap:2px}.claimall .cat span{color:var(--mut);font-size:13px}.claimall .btn{flex:none;min-width:0;padding:0 16px}
+.parcel.mini{width:54px;height:40px;margin:10px 0 0 4px;flex:none;border-radius:6px}.parcel.mini::before{top:-8px;height:12px;left:-4px;right:-4px}.parcel.mini .bow{top:-17px;width:20px;height:10px;margin-left:-10px;border-width:3px}.parcel.mini .twine.v{top:-8px;width:4px;margin-left:-2px}.parcel.mini .twine.h{height:4px}
+.claimall .burst{top:0}.gift .btn{min-width:200px}
 .gift.done{grid-template-columns:auto 1fr;text-align:left;justify-items:start;align-items:center}.gcoin{width:44px;height:44px}
 .parcel{position:relative;width:118px;height:86px;border-radius:8px;background:linear-gradient(135deg,#b98a55,#9d7040);box-shadow:inset 0 -6px #00000022,0 10px 20px #0007;margin-top:14px;animation:pwob 3s ease-in-out infinite}
 .parcel::before{content:'';position:absolute;left:-6px;right:-6px;top:-14px;height:20px;border-radius:6px;background:linear-gradient(135deg,#c79a63,#a77847);box-shadow:0 3px 0 #00000026;transition:transform .5s cubic-bezier(.3,1.5,.5,1)}
@@ -572,7 +576,7 @@ img.fimg{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-w
 .sesi .mbi-cap{z-index:2}.sesi .mbi-cap.top{top:calc(14px + env(safe-area-inset-top))!important}.sesi .mbi-cap.top::before{display:none}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><div id="achpop" aria-live="polite"></div><script>
 {
-const VERSION='7.52';
+const VERSION='7.53';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -1584,6 +1588,19 @@ async function claimGift(id,btn){if(!sb||!user||wal.busy)return;wal.busy=id;if(b
    await new Promise(r=>setTimeout(r,1900))}
   wal.busy='';rr();toast(got?`+${got} Scales`:'Already in your pocket')}
  catch(e){wal.busy='';rr();toast(socErr(e)==='setup'?"Scales aren't switched on yet":"Couldn't open it. Check your connection.")}}
+function giftsOpen(){if(!user||wal.err==='setup'||wal.bal==null)return[];const out=[];
+ for(const n of NEWS)for(const [k,v] of n.body)if(k==='gift'&&!wal.claimed.includes(v.id)){if(v.kind==='backpay'){if(wal.bp&&wal.bp.amount>0)out.push({id:v.id,amt:wal.bp.amount})}else out.push({id:v.id,amt:v.amt})}
+ return out}
+function claimAllCard(){const g=giftsOpen();if(!g.length)return'';const tot=g.reduce((a,x)=>a+x.amt,0);
+ return`<section class="card claimall" data-giftbox="all"><div class="parcel mini" aria-hidden="true"><span class="twine v"></span><span class="twine h"></span><span class="bow"></span></div>
+ <div class="cat"><b>${g.length===1?'A parcel is':`${g.length} parcels are`} waiting for you</b><span>${tot} Scales in total</span></div><button class="btn" data-claimall ${wal.busy?'disabled':''}>${wal.busy==='all'?'Opening…':g.length===1?'Open it':'Claim all'}</button></section>`}
+async function claimAll(btn){const g=giftsOpen();if(!g.length||wal.busy||!sb||!user)return;wal.busy='all';if(btn){btn.disabled=true;btn.textContent='Opening…'}const before=wal.bal||0;let ok=0;
+ for(const x of g){try{const bp=x.id==='species-backpay',r=bp?await sb.rpc('claim_backpay',{}):await sb.rpc('claim_gift',{g:x.id});if(r.error)continue;wal.bal=bp?(r.data&&r.data.balance!=null?r.data.balance:wal.bal):r.data;if(!wal.claimed.includes(x.id))wal.claimed.push(x.id);ok++}catch(e){}}
+ try{localStorage.setItem(walKey(),JSON.stringify({bal:wal.bal,claimed:wal.claimed}))}catch(e){}
+ const box=document.querySelector('[data-giftbox="all"]');if(ok&&box&&!matchMedia('(prefers-reduced-motion: reduce)').matches){box.classList.add('opening');const p=box.querySelector('.parcel');
+  for(let i=0;i<18;i++){const c=document.createElement('span');c.className='burst';c.innerHTML=SCALE_SVG;const a=-Math.PI/2+(Math.random()-.5)*2.4,d=70+Math.random()*90;c.style.setProperty('--x',Math.cos(a)*d+'px');c.style.setProperty('--y',Math.sin(a)*d+'px');c.style.setProperty('--r',(Math.random()*720-360)+'deg');c.style.animationDelay=(.2+i*.03)+'s';p.appendChild(c)}
+  await new Promise(r=>setTimeout(r,1800))}
+ wal.busy='';rr();const got=(wal.bal||0)-before;toast(ok?(got>0?`+${got} Scales`:'All claimed'):"Couldn't open them. Check your connection.")}
 function walletPage(){const back=`<button class="pback" data-act="pback" aria-label="Back">‹</button>`;loadWallet();if(earnLog===null){earnLog=[];loadEarnLog()}
  const head=`<header class="fhero sm">${scene().svg}<div class="fhin">${back}<p class="fgreet fx">Your pocket</p><div class="fhtop"><h1>Scales</h1></div></div></header>`;
  if(!user)return head+'<main class="wrap"><section class="card"><p class="sub">Sign in from Settings to start collecting Scales.</p></section></main>';
@@ -1686,7 +1703,7 @@ function mailbox(){const up=newsUnread();return`<a href="#news" class="mbox${up?
 function newsPage(){const back=`<button class="pback" data-act="pback" aria-label="Back">‹</button>`,head=`<header class="fhero sm">${scene().svg}<div class="fhin">${back}<p class="fgreet fx">From the mailbox</p><div class="fhtop"><h1>News</h1></div></div></header>`;
  if(NEWS.length)try{localStorage.setItem('pnews',NEWS[0].id)}catch(e){}
  const fd=d=>new Date(d+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
- return head+`<main class="wrap">${NEWS.map(n=>`<article class="card news"><p class="ndate">${fd(n.date)}${n.by?' · '+esc(n.by):''}</p><h2>${esc(n.title)}</h2>${n.body.map(([k,v])=>k==='gift'?giftCard(v):k==='h'?`<h3>${esc(v)}</h3>`:k==='ul'?`<ul>${v.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:`<p>${esc(v)}</p>`).join('')}</article>`).join('')||'<section class="card"><p class="sub">No news yet.</p></section>'}</main>`}
+ return head+`<main class="wrap">${claimAllCard()}${NEWS.map(n=>`<article class="card news"><p class="ndate">${fd(n.date)}${n.by?' · '+esc(n.by):''}</p><h2>${esc(n.title)}</h2>${n.body.map(([k,v])=>k==='gift'?giftCard(v):k==='h'?`<h3>${esc(v)}</h3>`:k==='ul'?`<ul>${v.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:`<p>${esc(v)}</p>`).join('')}</article>`).join('')||'<section class="card"><p class="sub">No news yet.</p></section>'}</main>`}
 /* ---------- Pinch, drag and double-tap zoom for full-screen photos ---------- */
 let pz=null;
 const pzSet=()=>{const{img,s,x,y}=pz;img.style.transform=`translate(${x}px,${y}px) scale(${s})`;img.classList.toggle('zoomed',s>1.01);const lb=img.closest('.lb');if(lb)lb.classList.toggle('zooming',s>1.01)};
@@ -1990,6 +2007,7 @@ function sesClick(t,ds){
  if(ds.sesinv!=null){sesInv=!sesInv;rr();return true}
  if(ds.sesinvu){const u=ds.sesinvu;sb.from('session_members').insert({session_id:sesId,user_id:u,status:'invited',invited_by:user.id,note:sesInvNote.trim()||null}).then(r=>{if(r.error){toast("Couldn't send the bottle");return}(ses.pending[sesId]=ses.pending[sesId]||[]).push(u);sesPush({session_id:sesId,invite:true,users:[u]});rr();toast(`Bottle sent to ${rname(u)}`)});return true}
  if(ds.seskick){const u=ds.seskick;sb.from('session_members').delete().eq('session_id',sesId).eq('user_id',u).then(r=>{if(r.error){toast("Couldn't remove them");return}ses.members[sesId]=(ses.members[sesId]||[]).filter(x=>x!==u);ses.pending[sesId]=(ses.pending[sesId]||[]).filter(x=>x!==u);rr()});return true}
+ if(ds.claimall!=null){claimAll(t);return true}
  if(ds.claim){claimGift(ds.claim,t);return true}
  if(ds.bottle){bottleOpen=ds.bottle;rr();return true}
  if(ds.bclose!=null){bottleOpen=null;rr();return true}
