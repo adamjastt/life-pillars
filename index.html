@@ -525,7 +525,7 @@ img.fimg{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-w
 .mbi.out{opacity:0;transition:opacity .3s}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><div id="achpop" aria-live="polite"></div><script>
 {
-const VERSION='7.42';
+const VERSION='7.43';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -609,12 +609,17 @@ function finishOb(f){const cfg=PRESETS[ob.preset].make(),g=k=>f.elements[k]?num(
 const GENERIC=[['Chicken breast, cooked',165,31,0,3.6],['Turkey breast, cooked',135,30,0,1],['Beef mince 5%, cooked',175,26,0,8],['Salmon, cooked',206,22,0,13],['Tuna, canned in water',116,26,0,1],['Prawns, cooked',99,24,0,0.3],['Egg (1 large ≈ 60 g)',143,12.6,0.7,9.5],['Tofu, firm',144,17,3,9],['White rice, cooked',130,2.7,28,0.3],['Brown rice, cooked',123,2.7,26,1],['Pasta, cooked',158,5.8,31,0.9],['Potato, boiled',87,1.9,20,0.1],['Sweet potato, baked',90,2,21,0.2],['Porridge oats, dry',389,16.9,66,6.9],['Wholemeal bread',247,13,41,3.4],['White bread',265,9,49,3.2],['Banana',89,1.1,23,0.3],['Apple',52,0.3,14,0.2],['Blueberries',57,0.7,14,0.3],['Orange',47,0.9,12,0.1],['Broccoli',34,2.8,7,0.4],['Spinach',23,2.9,3.6,0.4],['Avocado',160,2,9,15],['Greek yoghurt, 0%',59,10,3.6,0.4],['Semi-skimmed milk',46,3.4,4.7,1.7],['Cheddar cheese',403,25,1.3,33],['Cottage cheese',98,11,3.4,4.3],['Whey protein powder',400,80,8,6],['Peanut butter',588,25,20,50],['Almonds',579,21,22,50],['Olive oil',884,0,0,100],['Butter',717,0.9,0.1,81],['Lentils, cooked',116,9,20,0.4],['Chickpeas, canned',139,7,23,2.6],['Honey',304,0.3,82,0],['Dark chocolate 70%',598,7.8,46,43],['Orange juice',45,0.7,10,0.2]].map(a=>({n:a[0],kcal:a[1],p:a[2],c:a[3],f:a[4],unit:'g',def:100,src:'Basic'}));
 
 /* ---------- Storage ---------- */
+/* Each account keeps its own copy on this device, so signing in as someone else never mixes data */
+let switching=false;
+function ownerSwitch(id){if(switching)return true;let own=null;try{own=localStorage.getItem('powner')}catch(e){}if(!id||!own||own===id)return false;
+ try{const cur=localStorage.getItem('pillars2');if(cur)localStorage.setItem('pillars2_'+own,cur);const keep=localStorage.getItem('pillars2_'+id);if(keep){localStorage.setItem('pillars2',keep);localStorage.removeItem('pillars2_'+id)}else localStorage.removeItem('pillars2');localStorage.setItem('powner',id)}catch(e){try{localStorage.removeItem('pillars2');localStorage.setItem('powner',id)}catch(_){}}
+ switching=true;location.reload();return true}
 let D=null;
 try{D=JSON.parse(localStorage.getItem('pillars2')||'null')}catch(e){}
 if(!D||!D.cfg)D={cfg:PRESET(),days:{},foods:[],recent:[],updated:0};
 D.foods=D.foods||[];D.recent=D.recent||[];D.weights=D.weights||[];D.wdel=D.wdel||{};
 if(!D.onboarded&&(D.cfgU||Object.keys(D.days).length))D.onboarded=true;
-function save(){clearTimeout(save.a);save.a=setTimeout(checkAch,700);stamp();takeSnap('While using');D.updated=Date.now();try{localStorage.setItem('pillars2',JSON.stringify(D))}catch(e){toast('Could not save — storage is full or blocked')}queueSync()}
+function save(){clearTimeout(save.a);save.a=setTimeout(checkAch,700);stamp();takeSnap('While using');D.updated=Date.now();if(switching)return;try{localStorage.setItem('pillars2',JSON.stringify(D))}catch(e){toast('Could not save — storage is full or blocked')}queueSync()}
 let cur=TODAY;try{const pc=JSON.parse(sessionStorage.getItem('pcur2')||'null');if(pc&&Date.now()-pc.t<10*60e3&&pc.d<=TODAY)cur=pc.d}catch(e){}
 const keepDay=()=>{try{sessionStorage.setItem('pcur2',JSON.stringify({d:cur,t:Date.now()}))}catch(e){}};
 if(cur>TODAY)cur=TODAY;
@@ -1382,17 +1387,17 @@ function merge(a,b,preferRemote){const o=JSON.parse(JSON.stringify(a));if(!b||!b
  o.onboarded=!!(a.onboarded||b.onboarded);o.updated=Math.max(a.updated||0,b.updated||0);return o}
 function setSync(s){syncState=s;document.querySelectorAll('[data-syncst]').forEach(e=>e.textContent=SYNC[s])}
 function queueSync(){if(!sb||!user)return;setSync('syncing');clearTimeout(syncTimer);syncTimer=setTimeout(syncNow,2000)}
-async function syncNow(){if(!sb||!user)return;if(syncing){again=true;return}syncing=true;setSync('syncing');let changed=false;
+async function syncNow(){if(!sb||!user||switching)return;if(syncing){again=true;return}syncing=true;setSync('syncing');let changed=false;
  try{const r=await sb.from('pillars_data').select('data').eq('user_id',user.id).maybeSingle();if(r.error)throw r.error;
-  if(r.data&&r.data.data){const before=JSON.stringify(D);const merged=merge(D,r.data.data,freshLogin);if(JSON.stringify(merged)!==before&&countVals(D))await takeSnap('Before sync',true);D=merged;freshLogin=false;changed=JSON.stringify(D)!==before;try{localStorage.setItem('pillars2',JSON.stringify(D))}catch(e){}snapAll()}
+  if(r.data&&r.data.data){const before=JSON.stringify(D);const merged=merge(D,r.data.data,freshLogin);if(JSON.stringify(merged)!==before&&countVals(D))await takeSnap('Before sync',true);D=merged;freshLogin=false;changed=JSON.stringify(D)!==before;if(switching)return;try{localStorage.setItem('pillars2',JSON.stringify(D))}catch(e){}snapAll()}
   const w=await sb.from('pillars_data').upsert({user_id:user.id,data:D,updated_at:new Date().toISOString()});if(w.error)throw w.error;
-  lastSync=new Date();syncErr='';setSync('synced');uploadPending();syncBoard();syncSocial().then(()=>loadSocial())}
+  lastSync=new Date();syncErr='';setSync('synced');try{if(!localStorage.getItem('powner'))localStorage.setItem('powner',user.id)}catch(e){}uploadPending();syncBoard();syncSocial().then(()=>loadSocial())}
  catch(e){console.warn('sync',e);syncErr=(e&&(e.message||e.code))||String(e);setSync(navigator.onLine===false?'offline':'error')}
  syncing=false;if(again){again=false;syncNow()}else if(changed)rr()}
 function initSync(){if(!SB_URL||!SB_KEY)return;const s=document.createElement('script');
  s.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.js';
- s.onload=async()=>{try{sb=window.supabase.createClient(SB_URL,SB_KEY);const{data}=await sb.auth.getSession();user=data.session?data.session.user:null;
-  sb.auth.onAuthStateChange((ev,ses)=>{if(ev==='PASSWORD_RECOVERY'){recovery=true;setTimeout(()=>{location.hash='settings';rr()},0)}const was=user&&user.id;user=ses?ses.user:null;if(!user)setSync('local');if((user&&user.id)!==was){if(user){if(ev==='SIGNED_IN')freshLogin=true;syncNow()}setTimeout(rr,0)}});
+ s.onload=async()=>{try{sb=window.supabase.createClient(SB_URL,SB_KEY);const{data}=await sb.auth.getSession();user=data.session?data.session.user:null;if(user&&ownerSwitch(user.id))return;
+  sb.auth.onAuthStateChange((ev,ses)=>{if(ev==='PASSWORD_RECOVERY'){recovery=true;setTimeout(()=>{location.hash='settings';rr()},0)}const was=user&&user.id;user=ses?ses.user:null;if(user&&ownerSwitch(user.id))return;if(!user)setSync('local');if((user&&user.id)!==was){if(user){if(ev==='SIGNED_IN')freshLogin=true;syncNow()}setTimeout(rr,0)}});
   if(user)syncNow();rr()}catch(e){console.warn(e)}};
  s.onerror=()=>{if(view()==='settings')rr()};document.head.appendChild(s)}
 addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')syncNow()});
