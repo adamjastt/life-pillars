@@ -262,20 +262,39 @@ begin
   return fid;
 end $$;
 
--- any clan member can feed any tank fish, once per fish per day
+-- growth: a fish gains an ounce for every 3 days it's fed. It outgrows the tank at 4 lb, or more for bigger species
+-- (twice the small size for its species), but never needs more than 6 lb of growth.
+create or replace function public.fish_start(f public.clan_fish) returns numeric language sql stable set search_path = public as $$
+  select coalesce(f.grams, round(coalesce(s.max_g, 225) * power(least(coalesce(f.cm, coalesce(s.max_cm, 20) / 2) / coalesce(s.max_cm, 20), 1), 3)))
+  from (select 1) one left join public.small_sizes s on s.species = f.species
+$$;
+create or replace function public.fish_grams(f public.clan_fish) returns numeric language sql stable set search_path = public as $$
+  select public.fish_start(f) + floor(f.feeds / 3) * 28.35
+$$;
+create or replace function public.fish_target(f public.clan_fish) returns numeric language sql stable set search_path = public as $$
+  select least(greatest(1814, 2 * coalesce(s.max_g, 225)), public.fish_start(f) + 2722)
+  from (select 1) one left join public.small_sizes s on s.species = f.species
+$$;
+
+-- any club member can feed any tank fish, once per fish per day; when it outgrows the tank it moves to the pond by itself
 create or replace function public.fish_feed(f uuid) returns integer language plpgsql security definer set search_path = public as $$
-declare n integer;
+declare r public.clan_fish;
 begin
-  update public.clan_fish set feeds = least(feeds + 1, 7), last_fed = current_date, last_fed_by = auth.uid()
-  where id = f and clan_id = public.my_clan() and place = 'tank' and (last_fed is null or last_fed < current_date) and feeds < 7
-  returning feeds into n;
-  return n;
+  update public.clan_fish set feeds = feeds + 1, last_fed = current_date, last_fed_by = auth.uid()
+  where id = f and clan_id = public.my_clan() and place = 'tank' and (last_fed is null or last_fed < current_date)
+  returning * into r;
+  if r.id is null then return null; end if;
+  if public.fish_grams(r) >= public.fish_target(r) then
+    update public.clan_fish set place = 'pond', promoted_at = now() where id = f;
+  end if;
+  return r.feeds;
 end $$;
 
--- once it's been fed on 7 different days, its owner moves it to the garden pond for good
+-- kept for older app versions: moves a fish that has already outgrown the tank
 create or replace function public.fish_promote(f uuid) returns boolean language plpgsql security definer set search_path = public as $$
 begin
-  update public.clan_fish set place = 'pond', promoted_at = now() where id = f and user_id = auth.uid() and clan_id = public.my_clan() and place = 'tank' and feeds >= 7;
+  update public.clan_fish c set place = 'pond', promoted_at = now() where c.id = f and c.user_id = auth.uid() and c.clan_id = public.my_clan() and c.place = 'tank'
+    and public.fish_grams(c) >= public.fish_target(c);
   return found;
 end $$;
 
