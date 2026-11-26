@@ -56,7 +56,7 @@ begin
   -- new species: once per species, ever
   select * into old from public.scale_log where user_id = u and reason = 'species' and ref = sp;
   -- only the first catch of a species counts (species caught before Scales existed never pay out)
-  if (old.id is null or old.revoked) and not exists (select 1 from jsonb_array_elements(d->'fish'->'catches') x where x->>'species' = sp and x->>'id' <> cid) then
+  if (old.id is null or old.revoked) and not public.bp_has(u, sp) and not exists (select 1 from jsonb_array_elements(d->'fish'->'catches') x where x->>'species' = sp and x->>'id' <> cid) then
     room := public.scales_room(u); amt := least(10, room);
     if amt > 0 then
       if old.id is null then insert into public.scale_log(user_id, amount, reason, ref, label, catch_id) values (u, amt, 'species', sp, 'New species: ' || sp, cid);

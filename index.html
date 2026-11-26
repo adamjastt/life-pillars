@@ -572,7 +572,7 @@ img.fimg{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-w
 .sesi .mbi-cap{z-index:2}.sesi .mbi-cap.top{top:calc(14px + env(safe-area-inset-top))!important}.sesi .mbi-cap.top::before{display:none}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><div id="achpop" aria-live="polite"></div><script>
 {
-const VERSION='7.51';
+const VERSION='7.52';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -1555,23 +1555,29 @@ function sesIntroStart(){if(sesIntro||!sesIntroDue()||view()!=='fishing'||!docum
   await wait(250);if(!sesIntro)return;btns.innerHTML='<button class="btn mbi-go">Take a look</button><button class="btn sec mbi-no">Maybe later</button>';btns.querySelector('.mbi-go').onclick=()=>end(true);btns.querySelector('.mbi-no').onclick=()=>end(false);cap.classList.add('final')})()}
 /* ---------- Scales: The Bank's own currency (balance lives on the server) ---------- */
 const SCALE_SVG='<svg class="scl" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10.6" fill="#e2b54a" stroke="#8a5e16" stroke-width="1.1"/><circle cx="12" cy="12" r="10.6" fill="#fff3c4" fill-opacity=".35" clip-path="inset(0 0 55% 0)"/><circle cx="12" cy="12" r="8.3" fill="none" stroke="#fff3c4" stroke-opacity=".55" stroke-width=".7"/><path d="M6.6 11.8a2.75 2.75 0 0 1 5.4 0a2.75 2.75 0 0 1 5.4 0M9.3 15.6a2.7 2.7 0 0 1 5.4 0M8.1 8.2a2.4 2.4 0 0 1 3.9 0a2.4 2.4 0 0 1 3.9 0" fill="none" stroke="#7a5212" stroke-width="1.15" stroke-linecap="round"/><ellipse cx="9" cy="7" rx="2.6" ry="1.2" fill="#fff" fill-opacity=".45" transform="rotate(-30 9 7)"/></svg>';
-let wal={bal:null,claimed:[],at:0,busy:'',err:''};
+let wal={bal:null,claimed:[],at:0,busy:'',err:'',bp:undefined};
 const walKey=()=>'pwal_'+(user&&user.id);
 function walCache(){try{const c=JSON.parse(localStorage.getItem(walKey())||'null');if(c&&wal.bal==null){wal.bal=c.bal;wal.claimed=c.claimed||[]}}catch(e){}}
 async function loadWallet(force){if(!sb||!user)return;walCache();if(!force&&Date.now()-wal.at<20000)return;wal.at=Date.now();
  try{const w=await sb.from('wallets').select('balance').eq('user_id',user.id);if(w.error)throw w.error;const c=await sb.from('gift_claims').select('gift_id').eq('user_id',user.id);if(c.error)throw c.error;
-  wal.bal=((w.data||[])[0]||{}).balance||0;wal.claimed=(c.data||[]).map(x=>x.gift_id);wal.err='';try{localStorage.setItem(walKey(),JSON.stringify({bal:wal.bal,claimed:wal.claimed}))}catch(e){}}
+  wal.bal=((w.data||[])[0]||{}).balance||0;wal.claimed=(c.data||[]).map(x=>x.gift_id);{const b=await sb.from('backpay').select('amount,species').eq('user_id',user.id);wal.bp=b.error?null:((b.data||[])[0]||{amount:0,species:[]})}wal.err='';try{localStorage.setItem(walKey(),JSON.stringify({bal:wal.bal,claimed:wal.claimed}))}catch(e){}}
  catch(e){wal.err=socErr(e)}if(['fishing','wallet','news'].includes(view()))rr()}
 const walOn=()=>!!user&&wal.err!=='setup';
 const walChip=()=>walOn()?`<a class="wchip" href="#wallet" aria-label="${wal.bal==null?'Scales':wal.bal+' Scales'}">${SCALE_SVG}<b>${wal.bal==null?'–':wal.bal.toLocaleString('en-GB')}</b></a>`:'';
 function giftCard(g){const done=wal.claimed.includes(g.id);
+ if(g.kind==='backpay'&&user&&wal.err!=='setup'){const b=wal.bp,n=b&&b.species?b.species.length:0;
+  if(b===undefined)return`<div class="gift"><div class="parcel shut" aria-hidden="true"></div><p class="sub">Checking your parcel…</p></div>`;
+  if(b===null)return`<div class="gift"><div class="parcel shut" aria-hidden="true"></div><p>This parcel is still on its way. Check back soon.</p></div>`;
+  if(done)return`<div class="gift done"><span class="gcoin">${SCALE_SVG}</span><p><b>${b.amount} Scales</b> claimed, 10 for each of your ${n} species. Nice work.</p></div>`;
+  if(!b.amount)return`<div class="gift done"><span class="gcoin">${SCALE_SVG}</span><p>You hadn't unlocked any species yet when Scales launched, so this one's empty. Every new species from now on earns you 10.</p></div>`;
+  g={...g,amt:b.amount};return`<div class="gift" data-giftbox="${g.id}"><div class="parcel" aria-hidden="true"><span class="twine v"></span><span class="twine h"></span><span class="bow"></span><span class="tag">${b.amount}</span></div><p>10 Scales for each of your <b>${n} species</b>.</p><button class="btn" data-claim="${g.id}" ${wal.busy?'disabled':''}>${wal.busy===g.id?'Opening…':'Open your parcel'}</button></div>`}
  if(!user)return`<div class="gift"><div class="parcel shut" aria-hidden="true"></div><p><b>${g.amt} Scales</b> are waiting in here. Sign in from Settings to open it.</p></div>`;
  if(wal.err==='setup')return`<div class="gift"><div class="parcel shut" aria-hidden="true"></div><p>Your parcel is still on its way. Check back soon.</p></div>`;
  if(done)return`<div class="gift done"><span class="gcoin">${SCALE_SVG}</span><p><b>${g.amt} Scales</b> claimed. They're in your pocket, top right of The Bank.</p></div>`;
  return`<div class="gift" data-giftbox="${g.id}"><div class="parcel" aria-hidden="true"><span class="twine v"></span><span class="twine h"></span><span class="bow"></span><span class="tag">${g.amt}</span></div><p>A parcel with your name on it.</p><button class="btn" data-claim="${g.id}" ${wal.busy?'disabled':''}>${wal.busy===g.id?'Opening…':'Open your parcel'}</button></div>`}
 async function claimGift(id,btn){if(!sb||!user||wal.busy)return;wal.busy=id;if(btn){btn.disabled=true;btn.textContent='Opening…'}
  const box=document.querySelector(`[data-giftbox="${id}"]`);
- try{const r=await sb.rpc('claim_gift',{g:id});if(r.error)throw r.error;const before=wal.bal||0;wal.bal=r.data;if(!wal.claimed.includes(id))wal.claimed.push(id);try{localStorage.setItem(walKey(),JSON.stringify({bal:wal.bal,claimed:wal.claimed}))}catch(e){}
+ try{const bp=id==='species-backpay',r=bp?await sb.rpc('claim_backpay',{}):await sb.rpc('claim_gift',{g:id});if(r.error)throw r.error;const before=wal.bal||0;wal.bal=bp?(r.data&&r.data.balance!=null?r.data.balance:before):r.data;if(!wal.claimed.includes(id))wal.claimed.push(id);try{localStorage.setItem(walKey(),JSON.stringify({bal:wal.bal,claimed:wal.claimed}))}catch(e){}
   const got=Math.max(0,wal.bal-before);
   if(box&&!matchMedia('(prefers-reduced-motion: reduce)').matches){box.classList.add('opening');const p=box.querySelector('.parcel');
    for(let i=0;i<16;i++){const c=document.createElement('span');c.className='burst';c.innerHTML=SCALE_SVG;const a=-Math.PI/2+(Math.random()-.5)*2.2,d=90+Math.random()*90;c.style.setProperty('--x',Math.cos(a)*d+'px');c.style.setProperty('--y',Math.sin(a)*d+'px');c.style.setProperty('--r',(Math.random()*720-360)+'deg');c.style.animationDelay=(.25+i*.03)+'s';p.appendChild(c)}
@@ -1615,6 +1621,12 @@ async function loadEarnLog(){if(!sb||!user||!walOn())return;const r=await sb.fro
  earnLog=(r.data||[]).filter(x=>!x.revoked).sort((a,b)=>(b.created_at||'').localeCompare(a.created_at||'')).slice(0,15);if(view()==='wallet')rr()}
 /* ---------- News / announcements (the mailbox on the hill) ---------- */
 const NEWS=[
+ {id:'2026-11-26-backpay',date:'2026-11-26',title:'A thank-you for every species',by:'Adam',body:[
+  ['p',"Scales only started paying out today, but plenty of you have been ticking off species for weeks. That deserves something."],
+  ['p',"So here's 10 Scales for every species you'd already unlocked when Scales launched. Your parcel's been packed to match your own checklist."],
+  ['gift',{id:'species-backpay',kind:'backpay'}],
+  ['p',"From now on, every new species earns 10 Scales the moment you log it, beating a PB earns 5, and landing the biggest fish in a session earns 15. Keep an eye on your Scales page to see what you've earned."],
+  ['p','Tight lines.']]},
  {id:'2026-11-26-scales',date:'2026-11-26',title:'Scales have landed',by:'Adam',body:[
   ['p',"There's a new currency on The Bank. Meet Scales."],
   ['p',"Your balance sits in the top corner of The Bank, right next to your profile picture. Scales were made for this little corner of the internet, and they're going to matter very soon."],
