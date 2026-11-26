@@ -253,7 +253,7 @@ body.fishmode{--bg:#0f201a;--card:#163029;--card2:#1e3d34;--line:#2a4a3f;--ink:#
 .sesl{display:grid;gap:10px}
 .sesc{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--card);border:1px solid #ffffff14;border-radius:16px;padding:14px;color:inherit;font:inherit;cursor:pointer}
 .sesc.live{border-color:#e0453a66}.sest{flex:1;min-width:0;display:grid;gap:4px;justify-items:start}.sest b{font-size:17px}.sest small{color:var(--mut);font-size:13px}
-.bdrift{animation:bdrift 8s cubic-bezier(.15,.55,.25,1) both}
+.bdrift{animation:bdrift 8s cubic-bezier(.15,.55,.25,1) both}.bdrift.demo{animation-duration:4.2s}
 @keyframes bdrift{from{transform:translateX(var(--dx))}to{transform:none}}
 .bdrift.bout{animation:bout 3.2s ease-in forwards}@keyframes bout{to{transform:translateX(330px)}}
 .binv{display:inline-flex;width:46px;height:28px;flex:none}.binv svg{width:100%;height:100%}.binv.big{width:120px;height:72px;margin:0 auto 6px}
@@ -523,9 +523,13 @@ img.fimg{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-w
 .mbi-cap .btn.sec{background:#13241c14;color:#13241c;border-color:#13241c33}.mbi-cap .btn:not(.sec){background:#13241c;color:#f4ecd2;border-color:#13241c}
 .mbi-skip{position:absolute;right:16px;bottom:calc(24px + env(safe-area-inset-bottom));background:#0008;color:#f4ecd2;border:1px solid #ffffff33;border-radius:99px;padding:8px 16px;font:inherit;font-size:14px;cursor:pointer}
 .mbi.out{opacity:0;transition:opacity .3s}
+.sesi .bottlebox.demo{z-index:1;pointer-events:none}.sesi .bottlebox.demo *{pointer-events:none}
+.sesi .bottlebox.demo.out{opacity:0;transform:scale(.96);transition:opacity .4s,transform .4s}
+.sesi .bottlebox.demo .scrollw{width:min(330px,86vw)}.sesi .bottlebox.demo .paper{max-height:58dvh}
+.sesi .mbi-cap{z-index:2}.sesi .mbi-cap.top{top:calc(14px + env(safe-area-inset-top))!important}.sesi .mbi-cap.top::before{display:none}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><div id="achpop" aria-live="polite"></div><script>
 {
-const VERSION='7.47';
+const VERSION='7.48';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -1226,7 +1230,7 @@ const tabList=()=>fishOnly()?[['fishing','The Bank'],['settings','Settings']]:[[
 const tabs=v=>`<nav class="tabs" style="--n:${tabList().length}">${tabList().map(([k,l])=>`<a href="#${k}" class="${v===k?'on':''}" ${v===k?'aria-current="page"':''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[k]}</svg>${l}${k==='fishing'&&pendingIn().length?'<i class="tdot" aria-label="Friend requests"></i>':''}</a>`).join('')}</nav>`;
 const view=()=>{const h=location.hash.slice(1);if(h==='profile'||h==='friends'||(h==='news'&&D.cfg.fishTab!==false)||(h==='mate'&&pv)||(h==='album'&&alb)||(h==='session'&&sesId)||(h==='map'&&D.cfg.fishTab!==false))return h;return tabList().some(t=>t[0]===h)?h:(fishOnly()?'fishing':'today')};
 function keepOpen(){document.querySelectorAll('details[data-keep]').forEach(d=>d.open?openD.add(d.dataset.keep):openD.delete(d.dataset.keep));document.querySelectorAll('details[data-pi]').forEach(d=>d.open?openP.add(+d.dataset.pi):openP.delete(+d.dataset.pi))}
-function render(){keepOpen();stopLoc();if(!D.onboarded||ob.done){root.innerHTML=onboard();return}const v=view();root.innerHTML=(v==='food'?food():v==='history'?history():v==='settings'?settings():v==='fishing'?fishing():v==='profile'||v==='mate'?profilePage():v==='friends'?friendsPage():v==='news'?newsPage():v==='album'?albumPage():v==='session'?sessionPage():v==='map'?mapPage():today())+(v==='map'||(lb||blb||spSel||celeb||secret||gl||albPick||mapPick)&&['fishing','album','mate','session'].includes(v)?'':tabs(v))+glBox();document.body.classList.toggle('fishmode',['fishing','profile','mate','album','map','friends','news','session'].includes(v)||(fishOnly()&&v==='settings'));if(v==='profile'||v==='mate'||v==='friends')loadSocial();if(v==='album')loadAlbums();if(v==='food')renderResults();if(v==='history')drawW();if(['fishing','profile','mate','album','session'].includes(v))hydratePhotos();if(v==='session'||v==='fishing')loadSessions();if(v==='fishing'&&mbIntroDue()&&!mbIntro)setTimeout(mbIntroStart,900);if(v==='map'){initCatchMap();requestAnimationFrame(()=>{const p=document.querySelector('.mappage.noanim');if(p)p.classList.remove('noanim')})}else mapMenuOn=false;if(v==='fishing'&&mapPick)initPickMap()}
+function render(){keepOpen();stopLoc();if(!D.onboarded||ob.done){root.innerHTML=onboard();return}const v=view();root.innerHTML=(v==='food'?food():v==='history'?history():v==='settings'?settings():v==='fishing'?fishing():v==='profile'||v==='mate'?profilePage():v==='friends'?friendsPage():v==='news'?newsPage():v==='album'?albumPage():v==='session'?sessionPage():v==='map'?mapPage():today())+(v==='map'||(lb||blb||spSel||celeb||secret||gl||albPick||mapPick)&&['fishing','album','mate','session'].includes(v)?'':tabs(v))+glBox();document.body.classList.toggle('fishmode',['fishing','profile','mate','album','map','friends','news','session'].includes(v)||(fishOnly()&&v==='settings'));if(v==='profile'||v==='mate'||v==='friends')loadSocial();if(v==='album')loadAlbums();if(v==='food')renderResults();if(v==='history')drawW();if(['fishing','profile','mate','album','session'].includes(v))hydratePhotos();if(v==='session'||v==='fishing')loadSessions();if(v==='fishing'&&mbIntroDue()&&!mbIntro){introThisLoad=true;setTimeout(mbIntroStart,900)}else if(v==='fishing'&&sesIntroDue()&&!sesIntro)setTimeout(sesIntroStart,1200);if(v==='map'){initCatchMap();requestAnimationFrame(()=>{const p=document.querySelector('.mappage.noanim');if(p)p.classList.remove('noanim')})}else mapMenuOn=false;if(v==='fishing'&&mapPick)initPickMap()}
 let morphing=false;
 function morph(to){if(morphing)return;morphing=true;const toFish=to==='fish',o=document.getElementById('morph'),calm=matchMedia('(prefers-reduced-motion: reduce)').matches;
  const apply=()=>{D.cfg.mode=to;if(toFish)D.cfg.fishTab=true;save();location.hash='settings';render();scrollTo(0,0)};
@@ -1472,6 +1476,40 @@ function mbIntroStart(){if(mbIntro||!mbIntroDue()||view()!=='fishing'||!document
    ring.classList.add('on');say("When the flag's up like that, there's news waiting for you. Like right now.");await wait(2800);
    say("Tap the mailbox any time to see what's new on The Bank.")}
   await wait(250);btns.innerHTML='<button class="btn mbi-go">Read the news</button><button class="btn sec mbi-no">Maybe later</button>';btns.querySelector('.mbi-go').onclick=()=>end(true);btns.querySelector('.mbi-no').onclick=()=>end(false);cap.classList.add('final')})()}
+/* ---------- One-time cutscene introducing live sessions and message-in-a-bottle invites ---------- */
+let sesIntro=null,introThisLoad=false;
+function sesIntroDue(){try{return!localStorage.getItem('psesintro')&&!!localStorage.getItem('pmbintro')&&!!user&&D.onboarded&&!tour&&!tourPending&&!mbIntro&&!introThisLoad}catch(e){return false}}
+function sesIntroStart(){if(sesIntro||!sesIntroDue()||view()!=='fishing'||!document.querySelector('.ftabs .fsess'))return;try{localStorage.setItem('psesintro','1')}catch(e){}introThisLoad=true;
+ scrollTo(0,0);const calm=matchMedia('(prefers-reduced-motion: reduce)').matches,el=document.createElement('div');el.className='mbi sesi';
+ el.innerHTML=`<div class="mbi-dim"></div><div class="mbi-ring"></div><div class="mbi-cap" role="status"><p></p><div class="mbi-btns"></div></div><button class="mbi-skip">Skip</button>`;document.body.appendChild(el);
+ sesIntro={el,stop:false,tid:[],demo:false};const $=q=>el.querySelector(q),cap=$('.mbi-cap'),capP=cap.querySelector('p'),btns=cap.querySelector('.mbi-btns'),ring=$('.mbi-ring');
+ let target=()=>document.querySelector('.ftabs .fsess');
+ const place=()=>{const t=target();if(!t)return;const r=t.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2,rad=Math.max(44,Math.max(r.width,r.height)*.62);
+  el.style.setProperty('--mx',cx+'px');el.style.setProperty('--my',cy+'px');el.style.setProperty('--mr',rad+'px');
+  const w=Math.min(340,innerWidth-32),left=Math.max(16,Math.min(innerWidth-w-16,cx-w/2));cap.style.width=w+'px';cap.style.left=left+'px';cap.style.top=(cy+rad+18)+'px';cap.style.setProperty('--tx',Math.max(18,Math.min(w-18,cx-left))+'px')};
+ const aim=f=>{target=f;place()};
+ const say=(t,show=true)=>{cap.classList.remove('on');setTimeout(()=>{capP.textContent=t;place();cap.classList.toggle('on',show)},show?180:0)};
+ const wait=ms=>new Promise(r=>{const id=setTimeout(r,ms);sesIntro&&sesIntro.tid.push(id)});
+ const end=go=>{if(!sesIntro)return;sesIntro.stop=true;sesIntro.tid.forEach(x=>{clearTimeout(x);clearInterval(x)});el.classList.add('out');const was=sesIntro;sesIntro=null;delete bottleFirst.demo;removeEventListener('resize',place);setTimeout(()=>{el.remove();rr()},350);if(go){fTab='session';loadSessions(true);rr();setTimeout(()=>{const b=document.querySelector('.ftabs');if(b)b.scrollIntoView({behavior:'smooth',block:'start'})},400)}};
+ const follow=setInterval(()=>{if(sesIntro)place()},60);sesIntro.tid.push(follow);
+ $('.mbi-skip').onclick=()=>end(false);addEventListener('resize',place);
+ const bottleEl=()=>document.querySelector('.fhero [data-bottle="demo"]');
+ (async()=>{place();await wait(60);el.classList.add('on');ring.classList.add('on');
+  if(calm){say("New on The Bank: live sessions. Start one when you head out and your mates can follow every catch. When a mate invites you, a message in a bottle washes up on the water. Tap it to join in.")}
+  else{
+   say("Something new has washed up on The Bank…");await wait(2200);
+   say("Live sessions. Start one when you head out, and your mates can follow every catch as it happens, wherever they're fishing.");await wait(4200);
+   ring.classList.remove('on');sesIntro.demo=true;bottleFirst.demo=Date.now();rr();await wait(80);aim(()=>bottleEl()||document.querySelector('.fhero'));
+   say("And when a mate wants you there, keep an eye on the water…");await wait(4600);if(!sesIntro)return;ring.classList.add('on');
+   say("A message in a bottle drifts in, with a note written just for you.");await wait(3200);if(!sesIntro)return;
+   const me=prof().name||'';const sc=document.createElement('div');sc.className='bottlebox demo';sc.setAttribute('aria-hidden','true');
+   sc.innerHTML=`<svg class="bbig" viewBox="-17 -10 34 20">${BOTTLE_G}</svg><span class="bcork"></span><div class="scrollw"><span class="roll top"></span><div class="paper"><p class="bto">${me?`Dear ${esc(me)},`:'Ahoy,'}</p><p class="bmsg">Fancy a few hours on the bank? Bring the bait, I'll bring the flask.</p><p class="bsig">Your mate</p><div class="bdet"><b>Saturday on the river</b><span>Until 18:00 · 3 anglers already in</span></div><div class="bbtns"><span class="btn">Join the session</span><span class="btn sec">Not this time</span></div></div><span class="roll bot"></span></div>`;
+   ring.classList.remove('on');cap.classList.remove('on');el.appendChild(sc);await wait(2300);if(!sesIntro)return;
+   cap.classList.add('top');say("Open it to read their note, then join in or toss it back.");await wait(3600);if(!sesIntro)return;
+   sc.classList.add('out');await wait(450);sc.remove();cap.classList.remove('top');sesIntro.demo=false;rr();await wait(80);
+   aim(()=>document.querySelector('.ftabs .fsess'));ring.classList.add('on');
+   say("Tap Session to start your own, and turn on alerts so you never miss a bite.")}
+  await wait(250);if(!sesIntro)return;btns.innerHTML='<button class="btn mbi-go">Take a look</button><button class="btn sec mbi-no">Maybe later</button>';btns.querySelector('.mbi-go').onclick=()=>end(true);btns.querySelector('.mbi-no').onclick=()=>end(false);cap.classList.add('final')})()}
 /* ---------- News / announcements (the mailbox on the hill) ---------- */
 const NEWS=[
  {id:'2026-11-25',date:'2026-11-25',title:'Catch cards and nosing through your mates\' catches',by:'Adam',body:[
@@ -1752,9 +1790,9 @@ if('serviceWorker' in navigator){swReg();navigator.serviceWorker.addEventListene
 const BOTTLE_IDEAS=["Fancy a few hours on the bank? Bring the bait, I'll bring the flask.","Fish are moving. Get down here.","Swim's quiet, banter isn't. Come join.","Biggest fish buys the chips.","Room for one more on the bank. Tight lines."];
 const BOTTLE_G='<g transform="rotate(-14)"><path d="M-12.5 -4.6h14q3.2 0 4.7 2.6h3.6v4h-3.6q-1.5 2.6-4.7 2.6h-14q-2.7 0-2.7-4.6t2.7-4.6z" fill="#86cfae" fill-opacity=".55" stroke="#e4fff2" stroke-opacity=".85" stroke-width=".6"/><rect x="9.6" y="-2" width="3.8" height="4" rx=".9" fill="#a8743f"/><rect x="-10" y="-2.5" width="13" height="5" rx="2.4" fill="#f4e7c6"/><path d="M-9.5-.1h12" stroke="#c9a96b" stroke-width=".45"/><rect x="-4.4" y="-2.7" width="1.3" height="5.4" fill="#b0413e"/><path d="M-11-3.2h10" stroke="#fff" stroke-opacity=".75" stroke-width=".7" stroke-linecap="round"/></g>';
 const BOTTLE_ICON=`<svg viewBox="-17 -10 34 20">${BOTTLE_G}</svg>`;
-function bottlesSvg(){if(view()!=='fishing'||!user)return'';const L=(ses.inv||[]).slice(0,3),spots=[[150,146],[96,157],[200,134]];
+function bottlesSvg(){if(view()!=='fishing'||!user)return'';const L=(sesIntro&&sesIntro.demo?[{session_id:'demo'}]:[]).concat(ses.inv||[]).slice(0,3),spots=[[150,146],[96,157],[200,134]];
  return L.map((r,i)=>{const[x,y]=spots[i],k=r.session_id,t0=bottleFirst[k]=bottleFirst[k]||Date.now(),el=Math.min(8,(Date.now()-t0)/1000),out=!!bottleGone[k];
-  return`<g transform="translate(${x} ${y})"><g class="bdrift${out?' bout':''}" style="--dx:${-(x+50)}px;animation-delay:${out?0:-el}s">
+  return`<g transform="translate(${x} ${y})"><g class="bdrift${out?' bout':''}${k==='demo'?' demo':''}" style="--dx:${-(x+50)}px;animation-delay:${out?0:-el}s">
   ${[0,1.5].map(d=>`<ellipse cy="3" rx="6" ry="1.3" fill="none" stroke="#fff" stroke-opacity="0"><animate attributeName="rx" values="6;20" dur="3s" begin="${d}s" repeatCount="indefinite"/><animate attributeName="stroke-opacity" values=".55;0" dur="3s" begin="${d}s" repeatCount="indefinite"/></ellipse>`).join('')}
   <g><animateTransform attributeName="transform" type="rotate" values="-7;6;-7" dur="3.4s" repeatCount="indefinite"/><animateTransform attributeName="transform" type="translate" additive="sum" values="0 0;0 1.6;0 0" dur="2.6s" repeatCount="indefinite"/><g transform="scale(1.35)">${BOTTLE_G}</g><circle cx="-8" cy="-6" r="1.1" fill="#fff" opacity="0"><animate attributeName="opacity" values="0;0;1;0;0" keyTimes="0;.7;.78;.86;1" dur="4.5s" begin="${i*1.3}s" repeatCount="indefinite"/></circle></g>
   ${out?'':`<g transform="translate(0 -15)"><circle r="3.6" fill="none" stroke="#ffd36b" stroke-width="1.1"><animate attributeName="r" values="3.6;9" dur="2s" repeatCount="indefinite"/><animate attributeName="opacity" values=".9;0" dur="2s" repeatCount="indefinite"/></circle><circle r="3.6" fill="#ffd36b"/><path d="M-1.8-.8h3.6v2.2h-3.6z M-1.8-.8l1.8 1.3 1.8-1.3" fill="none" stroke="#5a3b00" stroke-width=".55" stroke-linejoin="round"/></g>`}
