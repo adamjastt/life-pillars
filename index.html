@@ -544,8 +544,8 @@ img.fimg{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-w
 .cotpan{position:absolute;inset:0;overflow-x:auto;overflow-y:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-width:none;touch-action:pan-x}
 .cotpan::-webkit-scrollbar{display:none}
 .cotin2{position:relative;height:100%;width:max-content;min-width:100%}
-.cotpan .cotin{display:block;height:100%;width:auto;aspect-ratio:1300/700;min-width:100vw}
-.cotin2 .gmasay{left:auto;right:auto;top:auto;left:64.6%;bottom:49%;transform:translateX(-50%);border-radius:16px;max-width:min(230px,70vw);text-align:center;width:max-content}
+.cotpan .cotin{display:block;height:100%;width:auto;aspect-ratio:1300/900;min-width:100vw}
+.cotin2 .gmasay{left:auto;right:auto;top:auto;left:64.6%;bottom:52%;transform:translateX(-50%);border-radius:16px;max-width:min(230px,70vw);text-align:center;width:max-content}
 .cotback{position:absolute;left:max(12px,env(safe-area-inset-left));top:calc(env(safe-area-inset-top) + 12px);width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#1c120ab3;color:#fff4e0;font-size:30px;line-height:1;text-decoration:none;padding-bottom:3px;box-shadow:0 4px 14px #0006;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
 .cothint{position:absolute;left:50%;bottom:calc(env(safe-area-inset-bottom) + 22px);transform:translateX(-50%);margin:0;padding:8px 16px;border-radius:99px;background:#1c120acc;color:#fff4e0;font:600 15px/1.2 system-ui,sans-serif;white-space:nowrap;pointer-events:none;animation:chint 2.4s ease-in-out infinite;transition:opacity .5s}
 .cothint.gone{opacity:0}
@@ -612,7 +612,7 @@ img.fimg{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-w
 .sesi .mbi-cap{z-index:2}.sesi .mbi-cap.top{top:calc(14px + env(safe-area-inset-top))!important}.sesi .mbi-cap.top::before{display:none}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><div id="achpop" aria-live="polite"></div><script>
 {
-const VERSION='7.61';
+const VERSION='7.62';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -1729,7 +1729,7 @@ function tankFishSvg(f,i,n){const src=fishSrc(f.species),w=46*(1+Math.min(f.feed
   <g><animateTransform attributeName="transform" type="scale" values="1 1;-1 1" keyTimes="0;.5" calcMode="discrete" dur="${d}s" begin="-${i*2.3}s" repeatCount="indefinite"/>
   ${src?`<image href="${src}" x="${-w/2}" y="${-h/2}" width="${w}" height="${h}" preserveAspectRatio="xMidYMid meet"/>`:`<ellipse rx="${w/2.4}" ry="${h/3}" fill="#c9a24a"/>`}</g></g>`}
 function interiorSvg(){const n=isNight(),S=skyAt(sceneHour()),tank=clan.fish.filter(f=>f.place==='tank');
- return`<svg class="cotin" viewBox="0 100 1300 700" preserveAspectRatio="xMidYMax slice" role="img" aria-label="Inside Grandma's cottage: the aquarium on the sideboard, the fireplace, Grandma knitting in her armchair, and a writing desk under the window">
+ return`<svg class="cotin" viewBox="0 0 1300 900" preserveAspectRatio="xMidYMax slice" role="img" aria-label="Inside Grandma's cottage: the aquarium on the sideboard, the fireplace, Grandma knitting in her armchair, and a writing desk under the window">
  <defs><linearGradient id="ciw" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9d6b8"/><stop offset="1" stop-color="#dcc29c"/></linearGradient>
  <pattern id="cip" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="11" cy="11" r="2.2" fill="#c98f6b" opacity=".35"/><circle cx="0" cy="0" r="1.6" fill="#8aa07a" opacity=".3"/><circle cx="22" cy="22" r="1.6" fill="#8aa07a" opacity=".3"/></pattern>
  <linearGradient id="cisky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${S.top}"/><stop offset="1" stop-color="${S.mid}"/></linearGradient>
@@ -1738,9 +1738,9 @@ function interiorSvg(){const n=isNight(),S=skyAt(sceneHour()),tank=clan.fish.fil
  <clipPath id="citank"><rect x="40" y="88" width="234" height="96" rx="4"/></clipPath></defs>
  <rect width="1300" height="580" fill="url(#ciw)"/><rect width="1300" height="580" fill="url(#cip)"/>
  <rect x="405" y="0" width="262" height="560" fill="#d9c09a"/><rect x="405" y="0" width="10" height="560" fill="#c8ad86"/><rect x="657" y="0" width="10" height="560" fill="#c8ad86"/>
- <rect y="60" width="1300" height="80" fill="#4f3220"/>${[60,300,760,1000,1240].map(x=>`<rect x="${x-9}" y="134" width="18" height="22" fill="#4f3220"/>`).join('')}<rect y="138" width="1300" height="4" fill="#3c2516"/>
+ <rect width="1300" height="140" fill="#4f3220"/>${[0,1,2,3,4,5,6,7,8,9,10,11,12].map(i=>`<path d="M${i*100+50} 0v134" stroke="#3c2516" stroke-width="3"/>`).join('')}<rect y="96" width="1300" height="44" fill="#5a3a24"/>${[60,300,760,1000,1240].map(x=>`<rect x="${x-9}" y="134" width="18" height="22" fill="#4f3220"/>`).join('')}<rect y="138" width="1300" height="4" fill="#3c2516"/>
  <rect width="22" height="580" fill="#5a3820"/><rect x="1278" width="22" height="580" fill="#5a3820"/>
- <rect y="580" width="1300" height="220" fill="#8b5a3c"/>${[0,1,2,3,4,5,6].map(i=>`<path d="M0 ${604+i*30}H1300" stroke="#6f452d" stroke-width="2"/>`).join('')}${[[180,604],[620,634],[980,604],[340,664],[1150,664],[80,694],[760,724],[460,754],[1050,754]].map(([x,y])=>`<path d="M${x} ${y}v30" stroke="#6f452d" stroke-width="2"/>`).join('')}
+ <rect y="580" width="1300" height="320" fill="#8b5a3c"/>${[0,1,2,3,4,5,6,7,8,9,10].map(i=>`<path d="M0 ${604+i*30}H1300" stroke="#6f452d" stroke-width="2"/>`).join('')}${[[180,604],[620,634],[980,604],[340,664],[1150,664],[80,694],[760,724],[460,754],[1050,754],[220,784],[900,814],[560,844],[120,874],[1180,844]].map(([x,y])=>`<path d="M${x} ${y}v30" stroke="#6f452d" stroke-width="2"/>`).join('')}
  <rect y="556" width="1300" height="26" fill="#6a4128"/><rect y="554" width="1300" height="4" fill="#4f3220"/>
  <g transform="translate(150 200)"><rect width="150" height="104" rx="3" fill="#7a4e2c"/><rect x="9" y="9" width="132" height="86" fill="#e8dfc8"/><path d="M30 60 Q60 34 98 52 L116 40 L114 66 L98 58 Q60 80 30 60Z" fill="#6f8f7a"/><circle cx="44" cy="55" r="3" fill="#2f3a34"/><path d="M22 84 Q75 74 128 84" stroke="#9fb7c4" stroke-width="3" fill="none"/></g>
  <g transform="translate(2.2 272.2) scale(1.35)"><g transform="translate(28 184)"><rect width="258" height="12" rx="2" fill="#6b4428"/><rect y="12" width="258" height="18" fill="#5a3820"/><rect x="10" y="30" width="8" height="14" fill="#4a2e1a"/><rect x="240" y="30" width="8" height="14" fill="#4a2e1a"/></g>
@@ -1766,7 +1766,7 @@ function interiorSvg(){const n=isNight(),S=skyAt(sceneHour()),tank=clan.fish.fil
     ${[[40,0],[46,2.8]].map(([x,b])=>`<circle cx="${x}" cy="82" r=".9" fill="#ffd36b" opacity="0"><animate attributeName="cy" values="82;56" dur="3.4s" begin="${b}s" repeatCount="indefinite"/><animate attributeName="cx" values="${x};${x+(x>44?5:-5)};${x+(x>44?2:-2)}" dur="3.4s" begin="${b}s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;.8;0" dur="3.4s" begin="${b}s" repeatCount="indefinite"/></circle>`).join('')}
   <rect x="6" y="-20" width="5" height="12" fill="#f4ecd6"/><path d="M8.5 -24 q-2 2 0 4 q2 -2 0 -4" fill="#ffcf6e"/><circle cx="62" cy="-15" r="7" fill="#d9b45a"/><circle cx="62" cy="-15" r="5" fill="#f4ecd6"/><path d="M62 -15v-3.5M62 -15h2.6" stroke="#5e3a24" stroke-width=".9"/></g></g>
  <ellipse cx="540" cy="660" rx="270" ry="110" fill="url(#cifire)"><animate attributeName="opacity" values=".8;1;.85;1;.8" dur="2.6s" repeatCount="indefinite"/></ellipse>
- <ellipse cx="660" cy="706" rx="250" ry="62" fill="#a1463c"/><ellipse cx="660" cy="706" rx="214" ry="48" fill="none" stroke="#e0b25a" stroke-width="5" stroke-dasharray="14 11"/>
+ <ellipse cx="660" cy="748" rx="300" ry="86" fill="#a1463c"/><ellipse cx="660" cy="748" rx="262" ry="68" fill="none" stroke="#e0b25a" stroke-width="5" stroke-dasharray="14 11"/>
  <g transform="translate(684.6 110) scale(2.6)"><g transform="translate(150 30)"><rect width="58" height="52" rx="2" fill="#5e3a24"/><rect x="4" y="4" width="50" height="44" fill="url(#cisky)"/><path d="M29 4v44M4 26h50" stroke="#5e3a24" stroke-width="3"/>
   ${n?'<circle cx="42" cy="14" r="4" fill="#f4efd9"/>':'<circle cx="16" cy="14" r="5" fill="#fff3c4" opacity=".9"/>'}<path d="M-6 -2 Q4 30 -2 56 H6 Q12 26 6 -2Z M64 -2 Q54 30 60 56 H52 Q46 26 52 -2Z" fill="#b5544a"/><rect x="-8" y="-5" width="74" height="4" rx="2" fill="#5e3a24"/></g></g>
  <g transform="translate(1060 500)"><rect x="0" y="0" width="190" height="16" rx="3" fill="#6b4428"/><rect x="8" y="16" width="174" height="34" fill="#5a3820"/><rect x="70" y="24" width="50" height="18" rx="3" fill="#4a2e1a"/><circle cx="95" cy="33" r="3" fill="#d9a54a"/><rect x="12" y="50" width="12" height="62" fill="#4a2e1a"/><rect x="166" y="50" width="12" height="62" fill="#4a2e1a"/>
@@ -1807,7 +1807,7 @@ function interiorSvg(){const n=isNight(),S=skyAt(sceneHour()),tank=clan.fish.fil
     <path d="M51.6 28.6 q1.2 1.6 0 2.6" stroke="#d39b80" stroke-width="1" fill="none" stroke-linecap="round"/>
     <path d="M48.6 33 Q52 35.6 55.4 33" stroke="#a5634f" stroke-width="1.3" fill="none" stroke-linecap="round"/></g></g>
   <circle cx="-14" cy="104" r="8" fill="#e8b04a"/><path d="M-20 100 q6 4 12 0 M-21 105 q7 4 14 0" stroke="#c98d2c" stroke-width="1" fill="none"/><path d="M-6 104 Q20 92 44 75" stroke="#e8b04a" stroke-width="1" fill="none"/></g></g>
- ${n?'<rect width="1300" height="800" fill="#140c24" opacity=".28" pointer-events="none"/>':''}
+ ${n?'<rect width="1300" height="900" fill="#140c24" opacity=".28" pointer-events="none"/>':''}
  <rect x="700" y="440" width="270" height="280" fill="#fff" fill-opacity="0" data-gma style="cursor:pointer"/></svg>`}
 function cottagePage(){loadClan();loadSocial();
  const bot=bottleOpen&&bottleOpen.startsWith('c:')?clanBottle(bottleOpen):'';
@@ -1843,7 +1843,7 @@ function cottagePage(){loadClan();loadSocial();
 let cotSheet=null,cotX=null,cotSY=0;
 function cotHint(){try{return!localStorage.getItem('pcotpan')}catch(e){return false}}
 function cotAfter(){const p=document.querySelector('.cotpan');if(!p)return;const svg=p.querySelector('svg');
- if(cotX==null){cotX=Math.max(0,(svg.getBoundingClientRect().width*840/1300)-innerWidth/2)}p.scrollLeft=cotX;
+ if(cotX==null){cotX=Math.max(0,(svg.getBoundingClientRect().width*790/1300)-innerWidth/2)}p.scrollLeft=cotX;
  p.addEventListener('scroll',()=>{cotX=p.scrollLeft;if(cotHint()&&Math.abs(p.scrollLeft-cotX0)>40){try{localStorage.setItem('pcotpan','1')}catch(e){}const h=document.querySelector('.cothint');if(h)h.classList.add('gone')}},{passive:true});const cotX0=p.scrollLeft;
  const b=document.querySelector('.cshb');if(b){b.scrollTop=cotSY;b.addEventListener('scroll',()=>{cotSY=b.scrollTop},{passive:true})}}
 function pondSvg(p){return`<svg class="pondsvg" viewBox="0 0 400 130" aria-hidden="true"><rect width="400" height="130" fill="#5f8a55"/>${[[30,20],[360,30],[60,110],[340,105],[200,8]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="10" fill="#4f7a47"/>`).join('')}
