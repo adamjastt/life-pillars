@@ -523,13 +523,18 @@ img.fimg{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-w
 .mbi-cap .btn.sec{background:#13241c14;color:#13241c;border-color:#13241c33}.mbi-cap .btn:not(.sec){background:#13241c;color:#f4ecd2;border-color:#13241c}
 .mbi-skip{position:absolute;right:16px;bottom:calc(24px + env(safe-area-inset-bottom));background:#0008;color:#f4ecd2;border:1px solid #ffffff33;border-radius:99px;padding:8px 16px;font:inherit;font-size:14px;cursor:pointer}
 .mbi.out{opacity:0;transition:opacity .3s}
+.mbi-next{display:none;margin-top:8px;font-size:13px;font-weight:600;color:#13241c99;text-align:right}
+.mbi-next::after{content:' ›';display:inline-block;animation:mbnext 1.2s ease-in-out infinite}
+@keyframes mbnext{50%{transform:translateX(3px)}}
+.mbi-cap.tap .mbi-next{display:block}.mbi-cap.final .mbi-next{display:none}
+.mbi.on{cursor:pointer}
 .sesi .bottlebox.demo{z-index:1;pointer-events:none}.sesi .bottlebox.demo *{pointer-events:none}
 .sesi .bottlebox.demo.out{opacity:0;transform:scale(.96);transition:opacity .4s,transform .4s}
 .sesi .bottlebox.demo .scrollw{width:min(330px,86vw)}.sesi .bottlebox.demo .paper{max-height:58dvh}
 .sesi .mbi-cap{z-index:2}.sesi .mbi-cap.top{top:calc(14px + env(safe-area-inset-top))!important}.sesi .mbi-cap.top::before{display:none}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><div id="achpop" aria-live="polite"></div><script>
 {
-const VERSION='7.48';
+const VERSION='7.49';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -1450,7 +1455,7 @@ const ROBIN=`<svg viewBox="0 0 40 32" aria-hidden="true"><g class="rb-body"><ell
  <g class="rb-wing"><path d="M18 14c5-2 11-1 13 3-3 3-9 4-13 1z" fill="#5e3e25"/></g><path class="rb-legs" d="M18 27v3.5M22 27v3.5M16.5 30.5h3M20.5 30.5h3" stroke="#3b2a16" stroke-width="1.2" stroke-linecap="round"/></g></svg>`;
 function mbIntroDue(){try{return!localStorage.getItem('pmbintro')&&D.onboarded&&!tour&&!tourPending&&NEWS.length}catch(e){return false}}
 function mbIntroStart(){if(mbIntro||!mbIntroDue()||view()!=='fishing'||!document.querySelector('.fhero .mbox'))return;try{localStorage.setItem('pmbintro','1')}catch(e){}
- scrollTo(0,0);const calm=matchMedia('(prefers-reduced-motion: reduce)').matches,el=document.createElement('div');el.className='mbi';el.innerHTML=`<div class="mbi-dim"></div><div class="mbi-ring"></div><div class="mbi-bird">${ROBIN}</div><div class="mbi-cap" role="status"><p></p><div class="mbi-btns"></div></div><button class="mbi-skip">Skip</button>`;document.body.appendChild(el);
+ scrollTo(0,0);const calm=matchMedia('(prefers-reduced-motion: reduce)').matches,el=document.createElement('div');el.className='mbi';el.innerHTML=`<div class="mbi-dim"></div><div class="mbi-ring"></div><div class="mbi-bird">${ROBIN}</div><div class="mbi-cap" role="status"><p></p><span class="mbi-next">Tap to continue</span><div class="mbi-btns"></div></div><button class="mbi-skip">Skip</button>`;document.body.appendChild(el);
  mbIntro={el,stop:false,raf:0,tid:[]};const $=s=>el.querySelector(s),bird=$('.mbi-bird'),cap=$('.mbi-cap'),capP=cap.querySelector('p'),btns=cap.querySelector('.mbi-btns'),ring=$('.mbi-ring');
  const mbRect=()=>{const m=document.querySelector('.fhero .mbox');return m?m.getBoundingClientRect():null},flagEl=()=>document.querySelector('.fhero .mbox .mflag');
  const setFlag=a=>{mbFlagRot=a;const f=flagEl();if(f){f.querySelectorAll('animateTransform').forEach(x=>x.remove());f.setAttribute('transform',`rotate(${a} 8.15 -14.5)`)}};
@@ -1458,7 +1463,7 @@ function mbIntroStart(){if(mbIntro||!mbIntroDue()||view()!=='fishing'||!document
  const place=()=>{const r=mbRect();if(!r)return;const cx=r.left+r.width/2,cy=r.top+r.height*.45,rad=Math.max(46,r.width*.95);el.style.setProperty('--mx',cx+'px');el.style.setProperty('--my',cy+'px');el.style.setProperty('--mr',rad+'px');
   const w=Math.min(340,innerWidth-32);cap.style.width=w+'px';cap.style.left=Math.max(16,Math.min(innerWidth-w-16,cx-60))+'px';cap.style.top=(r.bottom+22)+'px';cap.style.setProperty('--tx',Math.max(18,Math.min(w-18,cx-Math.max(16,Math.min(innerWidth-w-16,cx-60))))+'px')};
  const say=(t,show=true)=>{cap.classList.remove('on');setTimeout(()=>{capP.textContent=t;cap.classList.toggle('on',show)},show?180:0)};
- const wait=ms=>new Promise(r=>{const id=setTimeout(r,ms);mbIntro&&mbIntro.tid.push(id)});
+ const wait=ms=>new Promise(r=>{const id=setTimeout(r,ms);mbIntro&&mbIntro.tid.push(id)});const tapNext=(min=0)=>new Promise(res=>{const t0=Date.now(),gap=Math.max(400,min),tt=setTimeout(()=>cap.classList.add('tap'),gap);const h=e=>{if(e.target.closest('.mbi-skip,.mbi-btns'))return;if(Date.now()-t0<gap)return;clearTimeout(tt);el.removeEventListener('click',h);cap.classList.remove('tap');res()};el.addEventListener('click',h)});
  const fly=(from,to,ms,arc,ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2)=>new Promise(res=>{const t0=performance.now(),step=now=>{if(!mbIntro||mbIntro.stop)return res();const k=Math.min(1,(now-t0)/ms),e=ease(k),x=from[0]+(to[0]-from[0])*e,y=from[1]+(to[1]-from[1])*e-arc*Math.sin(Math.PI*e);
   bird.style.transform=`translate(${x}px,${y}px) scaleX(${to[0]>from[0]?-1:1})`;if(k<1)mbIntro.raf=requestAnimationFrame(step);else res()};mbIntro.raf=requestAnimationFrame(step)});
  const end=go=>{if(!mbIntro)return;mbIntro.stop=true;cancelAnimationFrame(mbIntro.raf);mbIntro.tid.forEach(clearTimeout);el.classList.add('out');mbFlagRot=null;setTimeout(()=>{el.remove();rr()},350);mbIntro=null;if(go)location.hash='news'};
@@ -1467,13 +1472,13 @@ function mbIntroStart(){if(mbIntro||!mbIntroDue()||view()!=='fishing'||!document
   const r0=mbRect(),BW=Math.max(10,(r0?r0.width:30)*.42);bird.style.width=BW+'px';bird.style.height=(BW*28/34)+'px';const land=()=>{const[x,y]=flagTop();return[x-BW*.5,y-BW*28/34*.95]};
   if(calm){ring.classList.add('on');say("This little mailbox has turned up on the bank. When its flag is up, there's news waiting for you. Tap it any time to read it.");}
   else{
-   say("Shh… someone's just turned up on the bank.");await wait(1700);
+   say("Shh… someone's just turned up on the bank.");await tapNext();if(!mbIntro)return;cap.classList.remove('on');
    bird.classList.add('flap');const L=land();await fly([innerWidth+40,Math.max(40,L[1]-120)],L,2100,70);bird.classList.remove('flap');bird.classList.add('perch');
-   say("A robin's found the new mailbox, and it's taken quite a shine to that little red flag.");await wait(2600);
+   say("A robin's found the new mailbox, and it's taken quite a shine to that little red flag.");await tapNext();if(!mbIntro)return;
    say("Oi! That flag's not a perch.");await wait(500);
    for(const a of[-24,16,-20,12,-8,0]){setFlag(a);bird.classList.toggle('hop');await wait(95)}
    bird.classList.remove('perch');bird.classList.add('flap','startle');const p=land();fly(p,[-60,-80],1500,40).then(()=>{bird.style.opacity=0});await wait(700);
-   ring.classList.add('on');say("When the flag's up like that, there's news waiting for you. Like right now.");await wait(2800);
+   ring.classList.add('on');say("When the flag's up like that, there's news waiting for you. Like right now.");await tapNext();if(!mbIntro)return;
    say("Tap the mailbox any time to see what's new on The Bank.")}
   await wait(250);btns.innerHTML='<button class="btn mbi-go">Read the news</button><button class="btn sec mbi-no">Maybe later</button>';btns.querySelector('.mbi-go').onclick=()=>end(true);btns.querySelector('.mbi-no').onclick=()=>end(false);cap.classList.add('final')})()}
 /* ---------- One-time cutscene introducing live sessions and message-in-a-bottle invites ---------- */
@@ -1481,7 +1486,7 @@ let sesIntro=null,introThisLoad=false;
 function sesIntroDue(){try{return!localStorage.getItem('psesintro')&&!!localStorage.getItem('pmbintro')&&!!user&&D.onboarded&&!tour&&!tourPending&&!mbIntro&&!introThisLoad}catch(e){return false}}
 function sesIntroStart(){if(sesIntro||!sesIntroDue()||view()!=='fishing'||!document.querySelector('.ftabs .fsess'))return;try{localStorage.setItem('psesintro','1')}catch(e){}introThisLoad=true;
  scrollTo(0,0);const calm=matchMedia('(prefers-reduced-motion: reduce)').matches,el=document.createElement('div');el.className='mbi sesi';
- el.innerHTML=`<div class="mbi-dim"></div><div class="mbi-ring"></div><div class="mbi-cap" role="status"><p></p><div class="mbi-btns"></div></div><button class="mbi-skip">Skip</button>`;document.body.appendChild(el);
+ el.innerHTML=`<div class="mbi-dim"></div><div class="mbi-ring"></div><div class="mbi-cap" role="status"><p></p><span class="mbi-next">Tap to continue</span><div class="mbi-btns"></div></div><button class="mbi-skip">Skip</button>`;document.body.appendChild(el);
  sesIntro={el,stop:false,tid:[],demo:false};const $=q=>el.querySelector(q),cap=$('.mbi-cap'),capP=cap.querySelector('p'),btns=cap.querySelector('.mbi-btns'),ring=$('.mbi-ring');
  let target=()=>document.querySelector('.ftabs .fsess');
  const place=()=>{const t=target();if(!t)return;const r=t.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2,rad=Math.max(44,Math.max(r.width,r.height)*.62);
@@ -1489,7 +1494,7 @@ function sesIntroStart(){if(sesIntro||!sesIntroDue()||view()!=='fishing'||!docum
   const w=Math.min(340,innerWidth-32),left=Math.max(16,Math.min(innerWidth-w-16,cx-w/2));cap.style.width=w+'px';cap.style.left=left+'px';cap.style.top=(cy+rad+18)+'px';cap.style.setProperty('--tx',Math.max(18,Math.min(w-18,cx-left))+'px')};
  const aim=f=>{target=f;place()};
  const say=(t,show=true)=>{cap.classList.remove('on');setTimeout(()=>{capP.textContent=t;place();cap.classList.toggle('on',show)},show?180:0)};
- const wait=ms=>new Promise(r=>{const id=setTimeout(r,ms);sesIntro&&sesIntro.tid.push(id)});
+ const wait=ms=>new Promise(r=>{const id=setTimeout(r,ms);sesIntro&&sesIntro.tid.push(id)});const tapNext=(min=0)=>new Promise(res=>{const t0=Date.now(),gap=Math.max(400,min),tt=setTimeout(()=>cap.classList.add('tap'),gap);const h=e=>{if(e.target.closest('.mbi-skip,.mbi-btns'))return;if(Date.now()-t0<gap)return;clearTimeout(tt);el.removeEventListener('click',h);cap.classList.remove('tap');res()};el.addEventListener('click',h)});
  const end=go=>{if(!sesIntro)return;sesIntro.stop=true;sesIntro.tid.forEach(x=>{clearTimeout(x);clearInterval(x)});el.classList.add('out');const was=sesIntro;sesIntro=null;delete bottleFirst.demo;removeEventListener('resize',place);setTimeout(()=>{el.remove();rr()},350);if(go){fTab='session';loadSessions(true);rr();setTimeout(()=>{const b=document.querySelector('.ftabs');if(b)b.scrollIntoView({behavior:'smooth',block:'start'})},400)}};
  const follow=setInterval(()=>{if(sesIntro)place()},60);sesIntro.tid.push(follow);
  $('.mbi-skip').onclick=()=>end(false);addEventListener('resize',place);
@@ -1497,15 +1502,15 @@ function sesIntroStart(){if(sesIntro||!sesIntroDue()||view()!=='fishing'||!docum
  (async()=>{place();await wait(60);el.classList.add('on');ring.classList.add('on');
   if(calm){say("New on The Bank: live sessions. Start one when you head out and your mates can follow every catch. When a mate invites you, a message in a bottle washes up on the water. Tap it to join in.")}
   else{
-   say("Something new has washed up on The Bank…");await wait(2200);
-   say("Live sessions. Start one when you head out, and your mates can follow every catch as it happens, wherever they're fishing.");await wait(4200);
+   say("Something new has washed up on The Bank…");await tapNext();if(!sesIntro)return;
+   say("Live sessions. Start one when you head out, and your mates can follow every catch as it happens, wherever they're fishing.");await tapNext();if(!sesIntro)return;
    ring.classList.remove('on');sesIntro.demo=true;bottleFirst.demo=Date.now();rr();await wait(80);aim(()=>bottleEl()||document.querySelector('.fhero'));
-   say("And when a mate wants you there, keep an eye on the water…");await wait(4600);if(!sesIntro)return;ring.classList.add('on');
-   say("A message in a bottle drifts in, with a note written just for you.");await wait(3200);if(!sesIntro)return;
+   say("And when a mate wants you there, keep an eye on the water…");await tapNext(4400);if(!sesIntro)return;ring.classList.add('on');
+   say("A message in a bottle drifts in, with a note written just for you.");await tapNext();if(!sesIntro)return;
    const me=prof().name||'';const sc=document.createElement('div');sc.className='bottlebox demo';sc.setAttribute('aria-hidden','true');
    sc.innerHTML=`<svg class="bbig" viewBox="-17 -10 34 20">${BOTTLE_G}</svg><span class="bcork"></span><div class="scrollw"><span class="roll top"></span><div class="paper"><p class="bto">${me?`Dear ${esc(me)},`:'Ahoy,'}</p><p class="bmsg">Fancy a few hours on the bank? Bring the bait, I'll bring the flask.</p><p class="bsig">Your mate</p><div class="bdet"><b>Saturday on the river</b><span>Until 18:00 · 3 anglers already in</span></div><div class="bbtns"><span class="btn">Join the session</span><span class="btn sec">Not this time</span></div></div><span class="roll bot"></span></div>`;
    ring.classList.remove('on');cap.classList.remove('on');el.appendChild(sc);await wait(2300);if(!sesIntro)return;
-   cap.classList.add('top');say("Open it to read their note, then join in or toss it back.");await wait(3600);if(!sesIntro)return;
+   cap.classList.add('top');say("Open it to read their note, then join in or toss it back.");await tapNext();if(!sesIntro)return;
    sc.classList.add('out');await wait(450);sc.remove();cap.classList.remove('top');sesIntro.demo=false;rr();await wait(80);
    aim(()=>document.querySelector('.ftabs .fsess'));ring.classList.add('on');
    say("Tap Session to start your own, and turn on alerts so you never miss a bite.")}
