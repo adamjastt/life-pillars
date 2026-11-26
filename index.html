@@ -525,7 +525,7 @@ img.fimg{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-w
 .mbi.out{opacity:0;transition:opacity .3s}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><div id="achpop" aria-live="polite"></div><script>
 {
-const VERSION='7.43';
+const VERSION='7.44';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -612,7 +612,7 @@ const GENERIC=[['Chicken breast, cooked',165,31,0,3.6],['Turkey breast, cooked',
 /* Each account keeps its own copy on this device, so signing in as someone else never mixes data */
 let switching=false;
 function ownerSwitch(id){if(switching)return true;let own=null;try{own=localStorage.getItem('powner')}catch(e){}if(!id||!own||own===id)return false;
- try{const cur=localStorage.getItem('pillars2');if(cur)localStorage.setItem('pillars2_'+own,cur);const keep=localStorage.getItem('pillars2_'+id);if(keep){localStorage.setItem('pillars2',keep);localStorage.removeItem('pillars2_'+id)}else localStorage.removeItem('pillars2');localStorage.setItem('powner',id)}catch(e){try{localStorage.removeItem('pillars2');localStorage.setItem('powner',id)}catch(_){}}
+ try{const cur=localStorage.getItem('pillars2');for(const k of Object.keys(localStorage))if(k.startsWith('pillars2_'))localStorage.removeItem(k);if(cur)localStorage.setItem('pillars2_bak',cur);localStorage.removeItem('pillars2');localStorage.setItem('powner',id)}catch(e){try{localStorage.removeItem('pillars2');localStorage.setItem('powner',id)}catch(_){}}
  switching=true;location.reload();return true}
 let D=null;
 try{D=JSON.parse(localStorage.getItem('pillars2')||'null')}catch(e){}
