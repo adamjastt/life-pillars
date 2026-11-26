@@ -524,6 +524,13 @@ img.fimg{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-w
 .mbi-skip{position:absolute;right:16px;bottom:calc(24px + env(safe-area-inset-bottom));background:#0008;color:#f4ecd2;border:1px solid #ffffff33;border-radius:99px;padding:8px 16px;font:inherit;font-size:14px;cursor:pointer}
 .mbi.out{opacity:0;transition:opacity .3s}
 .scl{width:100%;height:100%;display:block}
+.earnt{display:grid;gap:2px;margin-top:8px}.earnr{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid #ffffff10}.earnr:last-child{border-bottom:0}
+.earnr span{display:grid;gap:2px}.earnr small{color:var(--mut);font-size:12.5px}.earnr b{color:#e9c86b;font-size:17px;white-space:nowrap}
+.earnpop{position:fixed;z-index:65;display:flex;align-items:center;gap:8px;max-width:min(320px,calc(100vw - 24px));padding:8px 14px 8px 8px;border-radius:99px;background:#13241c;border:1px solid #d9b45a88;color:#f3e7c2;box-shadow:0 10px 26px #000a;font-size:14px;animation:epin .5s cubic-bezier(.3,1.5,.5,1) both}
+.earnpop.free{left:0;right:0;margin:0 auto;width:max-content;top:calc(16px + env(safe-area-inset-top))}.earnpop .ec{width:24px;height:24px;flex:none;animation:ecspin 1s ease-out}
+.earnpop b{color:#e9c86b;font-size:16px}.earnpop span:last-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.earnpop.out{opacity:0;transform:translateY(-8px);transition:opacity .35s,transform .35s}
+@keyframes epin{from{opacity:0;transform:translateY(-10px) scale(.9)}}@keyframes ecspin{from{transform:rotateY(0)}to{transform:rotateY(720deg)}}
 .wchip{position:absolute;right:calc(max(5vw,16px) + 54px);top:calc(20px + env(safe-area-inset-top));display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px 0 5px;border-radius:99px;background:#0d1f18b3;border:1px solid #d9b45a66;color:#f3e7c2;font:700 15px/1 Inter,sans-serif;text-decoration:none;box-shadow:0 4px 12px #0006;pointer-events:auto}
 .wchip .scl{width:22px;height:22px}
 .wchip.pop{animation:wpop .6s cubic-bezier(.3,1.6,.5,1)}@keyframes wpop{40%{transform:scale(1.18)}}
@@ -565,7 +572,7 @@ img.fimg{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-w
 .sesi .mbi-cap{z-index:2}.sesi .mbi-cap.top{top:calc(14px + env(safe-area-inset-top))!important}.sesi .mbi-cap.top::before{display:none}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><div id="achpop" aria-live="polite"></div><script>
 {
-const VERSION='7.50';
+const VERSION='7.51';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -1164,7 +1171,7 @@ function fishClick(t,ds){
  if(ds.fexp){fOpen=fOpen===ds.fexp?null:ds.fexp;fDelArm=null;rr();return true}
  if(ds.fedit){const c=fishD().catches.find(x=>x.id===ds.fedit);if(c){fForm={...JSON.parse(JSON.stringify(c)),editId:c.id};render();scrollTo(0,0)}return true}
  if(ds.fdelc){if(fDelArm!==ds.fdelc){fDelArm=ds.fdelc;rr();return true}const F=fishD(),c=F.catches.find(x=>x.id===ds.fdelc);F.cdel[ds.fdelc]=Date.now();F.catches=F.catches.filter(x=>x.id!==ds.fdelc);
-  if(c){for(const p of c.photos||[])idbDel(p.id).catch(()=>{});const paths=(c.photos||[]).map(p=>p.path).filter(Boolean);if(paths.length&&sb&&user)sb.storage.from(BUCKET).remove(paths).catch(()=>{})}fDelArm=null;fOpen=null;save();rr();toast('Catch deleted');sesUnpost(ds.fdelc);return true}
+  if(c){for(const p of c.photos||[])idbDel(p.id).catch(()=>{});const paths=(c.photos||[]).map(p=>p.path).filter(Boolean);if(paths.length&&sb&&user)sb.storage.from(BUCKET).remove(paths).catch(()=>{})}fDelArm=null;fOpen=null;save();rr();toast('Catch deleted');sesUnpost(ds.fdelc);revokeEarn(ds.fdelc);return true}
  if(ds.fphdel){fForm.photos=fForm.photos.filter(p=>p.id!==ds.fphdel);keepForm();rr();return true}
  if(ds.fgroup){fGroup=ds.fgroup;rr();return true}
  if(ds.fstatus){fStatus=ds.fstatus;rr();return true}
@@ -1181,7 +1188,7 @@ function saveCatch(f){keepForm();const c=fForm;const toSes=!c.editId&&!!(f.eleme
  const canon=speciesAll().find(s=>s.n.toLowerCase()===sp.toLowerCase()),spn=canon?canon.n:sp;const F=fishD(),now=Date.now(),rec={id:c.editId||uid('c'),ts:now,species:spn,date:c.date||TODAY,time:c.time||'',g:c.g||null,cm:c.cm||null,place:(c.place||'').trim(),method:(c.method||'').trim(),bait:(c.bait||'').trim(),rel:c.rel,notes:(c.notes||'').trim(),photos:c.photos||[],...(c.loc?{loc:{lat:r5(c.loc.lat),lng:r5(c.loc.lng)}}:{})};
  if(c.editId){const old=F.catches.find(x=>x.id===c.editId);if(old)for(const p of old.photos||[])if(!rec.photos.some(q=>q.id===p.id)){idbDel(p.id).catch(()=>{});if(p.path&&sb&&user)sb.storage.from(BUCKET).remove([p.path]).catch(()=>{})}F.catches=F.catches.filter(x=>x.id!==c.editId)}
  if(!canon)F.custom.push(spn);
- F.catches.push(rec);const first=!c.editId&&F.catches.filter(x=>x.species===spn).length===1;fForm=null;fOpen=rec.id;save();rr();scrollTo(0,0);if(first)celeb=spn,rr();else toast('Catch saved');uploadPending();if(toSes)sesPost(rec);else if(c.editId)sesRepost(rec)}
+ F.catches.push(rec);const first=!c.editId&&F.catches.filter(x=>x.species===spn).length===1;fForm=null;fOpen=rec.id;save();rr();scrollTo(0,0);if(first)celeb=spn,rr();else toast('Catch saved');uploadPending();if(toSes)sesPost(rec);else if(c.editId)sesRepost(rec);queueEarn(rec.id)}
 
 /* ---------- Views ---------- */
 const navBar=()=>`<div class="nav"><button data-nav="-1" aria-label="Previous day">‹</button><span class="d">${label(cur)}</span><button data-nav="1" aria-label="Next day" ${cur>=TODAY?'disabled':''}>›</button>${cur!==TODAY?'<button data-nav="0">Today</button>':''}</div>`;
@@ -1431,7 +1438,7 @@ async function syncNow(){if(!sb||!user||switching)return;if(syncing){again=true;
  try{const r=await sb.from('pillars_data').select('data').eq('user_id',user.id).maybeSingle();if(r.error)throw r.error;
   if(r.data&&r.data.data){const before=JSON.stringify(D);const merged=merge(D,r.data.data,freshLogin);if(JSON.stringify(merged)!==before&&countVals(D))await takeSnap('Before sync',true);D=merged;freshLogin=false;changed=JSON.stringify(D)!==before;if(switching)return;try{localStorage.setItem('pillars2',JSON.stringify(D))}catch(e){}snapAll()}
   const w=await sb.from('pillars_data').upsert({user_id:user.id,data:D,updated_at:new Date().toISOString()});if(w.error)throw w.error;
-  lastSync=new Date();syncErr='';setSync('synced');try{if(!localStorage.getItem('powner'))localStorage.setItem('powner',user.id)}catch(e){}uploadPending();syncBoard();syncSocial().then(()=>loadSocial())}
+  lastSync=new Date();syncErr='';setSync('synced');setTimeout(flushEarn,50);try{if(!localStorage.getItem('powner'))localStorage.setItem('powner',user.id)}catch(e){}uploadPending();syncBoard();syncSocial().then(()=>loadSocial())}
  catch(e){console.warn('sync',e);syncErr=(e&&(e.message||e.code))||String(e);setSync(navigator.onLine===false?'offline':'error')}
  syncing=false;if(again){again=false;syncNow()}else if(changed)rr()}
 function initSync(){if(!SB_URL||!SB_KEY)return;const s=document.createElement('script');
@@ -1571,16 +1578,41 @@ async function claimGift(id,btn){if(!sb||!user||wal.busy)return;wal.busy=id;if(b
    await new Promise(r=>setTimeout(r,1900))}
   wal.busy='';rr();toast(got?`+${got} Scales`:'Already in your pocket')}
  catch(e){wal.busy='';rr();toast(socErr(e)==='setup'?"Scales aren't switched on yet":"Couldn't open it. Check your connection.")}}
-function walletPage(){const back=`<button class="pback" data-act="pback" aria-label="Back">‹</button>`;loadWallet();
+function walletPage(){const back=`<button class="pback" data-act="pback" aria-label="Back">‹</button>`;loadWallet();if(earnLog===null){earnLog=[];loadEarnLog()}
  const head=`<header class="fhero sm">${scene().svg}<div class="fhin">${back}<p class="fgreet fx">Your pocket</p><div class="fhtop"><h1>Scales</h1></div></div></header>`;
  if(!user)return head+'<main class="wrap"><section class="card"><p class="sub">Sign in from Settings to start collecting Scales.</p></section></main>';
  const tiles=[['bobber','Bobbers'],['frame','Profile frames'],['scene','Scenery'],['mystery','Something else']];
  return head+`<main class="wrap"><section class="card walhero"><span class="walcoin">${SCALE_SVG}</span><p class="walbal">${wal.bal==null?'–':wal.bal.toLocaleString('en-GB')}</p><p class="sub">Scales in your pocket</p>
- <p style="margin-top:12px">Scales are The Bank's own currency. Hang on to them, because there'll be something to spend them on very soon.</p></section>
+ <p style="margin-top:12px">Scales are The Bank's own currency. Earn them by catching new species and beating your PBs, and hang on to them, because there'll be something to spend them on very soon.</p></section>
  <section class="card shop"><div class="ch"><h2>The Tackle Shop</h2><span class="soon">Opening soon</span></div><p class="sub" style="margin:4px 0 12px">Something's being built down by the water…</p>
  <div class="shopg">${tiles.map(([k,l])=>`<div class="shopt" aria-label="${l}, locked"><span class="shopq">?</span><span class="lock">${LOCK_SVG}</span><small>${l}</small></div>`).join('')}</div></section>
- <section class="card"><h2>Getting Scales</h2><p class="sub" style="margin-top:6px">Keep an eye on your mailbox. More ways to earn them are on the way.</p></section></main>`}
+ <section class="card"><h2>How to earn Scales</h2><div class="earnt">${EARN_WAYS.map(([a,b,c])=>`<div class="earnr"><span>${a}<small>${c}</small></span><b>${b}</b></div>`).join('')}</div><p class="sub" style="margin-top:10px">Up to 50 a day. Gifts in the mailbox don't count towards that.</p></section>
+ ${earnLog&&earnLog.length?`<section class="card"><h2>Recent</h2><div class="earnt">${earnLog.map(x=>`<div class="earnr"><span>${esc(x.label||'Scales')}<small>${new Date(x.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</small></span><b>+${x.amount}</b></div>`).join('')}</div></section>`:''}</main>`}
 const LOCK_SVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
+/* ---------- Earning Scales: the server checks and pays, the app just asks after each sync ---------- */
+const EARN_WAYS=[['New species ticked off','+10','Once per species'],['New personal best','+5','Up to 3 a day'],['Biggest fish in a session','+15','2+ anglers, paid when it ends']];
+const earnKey=()=>'pearn_'+(user&&user.id);
+function earnQ(){try{return JSON.parse(localStorage.getItem(earnKey())||'[]')}catch(e){return[]}}
+function earnSet(q){try{localStorage.setItem(earnKey(),JSON.stringify(q.slice(-40)))}catch(e){}}
+function queueEarn(cid){if(!user||!walOn())return;const q=earnQ().filter(x=>x.cid!==cid);q.push({cid,n:0});earnSet(q)}
+let earnBusy=false;
+async function flushEarn(){if(!sb||!user||earnBusy||wal.err==='setup')return;let q=earnQ();if(!q.length)return;earnBusy=true;const keep=[];
+ try{for(const it of q){const r=await sb.rpc('earn_catch',{cid:it.cid});if(r.error){if(socErr(r.error)==='setup'){wal.err='setup';keep.push(...q.slice(q.indexOf(it)));break}if(++it.n<5)keep.push(it);continue}
+  const d=r.data||{};if(d.wait){if(++it.n<5)keep.push(it);continue}if(d.balance!=null)wal.bal=d.balance;for(const a of d.awards||[])earnPop(a.amount,a.label)}}
+ catch(e){keep.push(...q)}finally{earnSet(keep.filter((x,i,a)=>a.findIndex(y=>y.cid===x.cid)===i));earnBusy=false;wal.at=0}}
+async function revokeEarn(cid){earnSet(earnQ().filter(x=>x.cid!==cid));if(!sb||!user||!walOn())return;try{const r=await sb.rpc('revoke_catch',{cid});if(!r.error&&r.data!=null&&r.data!==wal.bal){wal.bal=r.data;rr()}}catch(e){}}
+async function awardSessions(){if(!sb||!user||!walOn())return;for(const s of ses.list){if(sesLive(s)||!(sesMine(s)||s.owner===user.id))continue;const k='psaw_'+s.id;try{if(localStorage.getItem(k))continue}catch(e){}
+ try{const r=await sb.rpc('award_session',{sid:s.id});if(r.error)continue;try{localStorage.setItem(k,'1')}catch(e){}if((r.data||{}).winner===user.id){const before=wal.bal||0;await loadWallet(true);const got=(wal.bal||0)-before;if(got>0)earnPop(got,'Biggest fish: '+s.name)}}catch(e){}}}
+const earnQueue=[];let earnShowing=false;
+function earnPop(amt,label){earnQueue.push([amt,label]);if(!earnShowing)earnNext()}
+function earnNext(){if(document.querySelector('#achpop .achpop')){earnShowing=true;setTimeout(earnNext,500);return}const n=earnQueue.shift();if(!n){earnShowing=false;return}earnShowing=true;const[amt,label]=n;
+ const chip=document.querySelector('.wchip');if(chip){const b=chip.querySelector('b');if(b&&wal.bal!=null)b.textContent=wal.bal.toLocaleString('en-GB');chip.classList.remove('pop');void chip.offsetWidth;chip.classList.add('pop')}
+ const el=document.createElement('div');el.className='earnpop';el.setAttribute('role','status');el.innerHTML=`<span class="ec">${SCALE_SVG}</span><b>+${amt}</b><span>${esc(label)}</span>`;
+ if(chip){const r=chip.getBoundingClientRect();el.style.top=(r.bottom+10)+'px';el.style.right=Math.max(12,innerWidth-r.right)+'px'}else el.classList.add('free');
+ document.body.appendChild(el);setTimeout(()=>el.classList.add('out'),2600);setTimeout(()=>{el.remove();earnNext()},3000)}
+let earnLog=null;
+async function loadEarnLog(){if(!sb||!user||!walOn())return;const r=await sb.from('scale_log').select('amount,label,reason,revoked,created_at').eq('user_id',user.id);if(r.error)return;
+ earnLog=(r.data||[]).filter(x=>!x.revoked).sort((a,b)=>(b.created_at||'').localeCompare(a.created_at||'')).slice(0,15);if(view()==='wallet')rr()}
 /* ---------- News / announcements (the mailbox on the hill) ---------- */
 const NEWS=[
  {id:'2026-11-26-scales',date:'2026-11-26',title:'Scales have landed',by:'Adam',body:[
@@ -1813,7 +1845,7 @@ async function loadSessions(force){if(!sb||!user)return;if(!force&&Date.now()-se
    for(const k in E)E[k].sort((a,b)=>(b.created_at||'').localeCompare(a.created_at||''));
    const uids=[...new Set([...Object.values(M).flat(),...Object.values(P).flat(),...INV.map(r=>r.invited_by).filter(Boolean),...ses.list.map(x=>x.owner)])].filter(u=>u&&!soc.people[u]);if(uids.length){const p=await sb.from('profiles').select('user_id,name,code,avatar').in('user_id',uids);for(const x of p.data||[])soc.people[x.user_id]=x}}
   ses.members=M;ses.events=E;ses.pending=P;ses.inv=INV.filter(r=>sesLive(ses.list.find(x=>x.id===r.session_id)));for(const k in bottleFirst)if(!ses.inv.some(r=>r.session_id===k)&&!bottleGone[k])delete bottleFirst[k];ses.err=''}catch(e){ses.err=socErr(e)}
- sesRealtime();if((sesView()||view()==='fishing')&&!sesForm)rr()}
+ sesRealtime();awardSessions();if((sesView()||view()==='fishing')&&!sesForm)rr()}
 function sesRealtime(){if(!sb||!user||typeof sb.channel!=='function')return;const want=!!user;
  if(!want){if(rtCh){try{sb.removeChannel(rtCh)}catch(e){}rtCh=null}return}if(rtCh)return;
  try{rtCh=sb.channel('sessions-live').on('postgres_changes',{event:'INSERT',schema:'public',table:'session_events'},p=>sesOnEvent(p.new))
@@ -1942,7 +1974,7 @@ function sesClick(t,ds){
  if(ds.ses){sesId=ds.ses;sesArm=null;sesInv=false;location.hash='session';return true}
  if(ds.seslog!=null){fForm={photos:[],date:TODAY,time:new Date().toTimeString().slice(0,5)};fTab='log';location.hash='fishing';setTimeout(()=>scrollTo(0,0),30);return true}
  if(ds.sesext){const s=ses.list.find(x=>x.id===sesId);if(!s)return true;const e=new Date(Math.max(Date.parse(s.ends_at),Date.now())+3600000).toISOString();sb.from('sessions').update({ends_at:e}).eq('id',s.id).then(r=>{if(r.error){toast("Couldn't add time");return}s.ends_at=e;rr();toast('Added an hour')});return true}
- if(ds.sesstop!=null){if(sesArm!=='end'){sesArm='end';rr();return true}sesArm=null;const s=ses.list.find(x=>x.id===sesId),e=new Date().toISOString();sb.from('sessions').update({ended_at:e}).eq('id',s.id).then(r=>{if(r.error){toast("Couldn't end the session");return}s.ended_at=e;rr();toast('Session ended. Tight lines!')});return true}
+ if(ds.sesstop!=null){if(sesArm!=='end'){sesArm='end';rr();return true}sesArm=null;const s=ses.list.find(x=>x.id===sesId),e=new Date().toISOString();sb.from('sessions').update({ended_at:e}).eq('id',s.id).then(r=>{if(r.error){toast("Couldn't end the session");return}s.ended_at=e;rr();toast('Session ended. Tight lines!');setTimeout(awardSessions,800)});return true}
  if(ds.sesinv!=null){sesInv=!sesInv;rr();return true}
  if(ds.sesinvu){const u=ds.sesinvu;sb.from('session_members').insert({session_id:sesId,user_id:u,status:'invited',invited_by:user.id,note:sesInvNote.trim()||null}).then(r=>{if(r.error){toast("Couldn't send the bottle");return}(ses.pending[sesId]=ses.pending[sesId]||[]).push(u);sesPush({session_id:sesId,invite:true,users:[u]});rr();toast(`Bottle sent to ${rname(u)}`)});return true}
  if(ds.seskick){const u=ds.seskick;sb.from('session_members').delete().eq('session_id',sesId).eq('user_id',u).then(r=>{if(r.error){toast("Couldn't remove them");return}ses.members[sesId]=(ses.members[sesId]||[]).filter(x=>x!==u);ses.pending[sesId]=(ses.pending[sesId]||[]).filter(x=>x!==u);rr()});return true}
