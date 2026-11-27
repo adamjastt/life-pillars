@@ -613,7 +613,7 @@ img.fimg{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-w
 .sesi .mbi-cap{z-index:2}.sesi .mbi-cap.top{top:calc(14px + env(safe-area-inset-top))!important}.sesi .mbi-cap.top::before{display:none}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><div id="achpop" aria-live="polite"></div><script>
 {
-const VERSION='7.66';
+const VERSION='7.67';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -1729,10 +1729,25 @@ function clanBottle(key){const r=clan.inv.find(x=>'c:'+x.clan_id===key);if(!r)re
   <div class="bbtns"><button class="btn" data-cjoin="${r.clan_id}">Join the club</button><button class="btn sec" data-cno="${r.clan_id}">Not this time</button></div>
   <button class="linkbtn bclose" data-bclose>Keep it for later</button>
  </div><span class="roll bot" aria-hidden="true"></span></div></div>`}
-function tankFishSvg(f,i,n){const src=fishSrc(f.species),w=46*(1+fishProg(f)*.6),h=w/2,y=96+((i*37)%70),x0=52+((i*53)%40),x1=262-((i*29)%40),d=9+((i*7)%6);
- return`<g><animateTransform attributeName="transform" type="translate" values="${x1} ${y};${x0} ${y+6};${x1} ${y}" keyTimes="0;.5;1" dur="${d}s" begin="-${i*2.3}s" repeatCount="indefinite"/>
-  <g><animateTransform attributeName="transform" type="scale" values="1 1;-1 1" keyTimes="0;.5" calcMode="discrete" dur="${d}s" begin="-${i*2.3}s" repeatCount="indefinite"/>
-  ${src?`<image href="${src}" x="${-w/2}" y="${-h/2}" width="${w}" height="${h}" preserveAspectRatio="xMidYMid meet"/>`:`<ellipse rx="${w/2.4}" ry="${h/3}" fill="#c9a24a"/>`}</g></g>`}
+function seedRng(str){let h=1779033703^String(str).length;for(let k=0;k<String(str).length;k++){h=Math.imul(h^String(str).charCodeAt(k),3432918353);h=h<<13|h>>>19}return()=>{h=Math.imul(h^h>>>16,2246822507);h=Math.imul(h^h>>>13,3266489909);h^=h>>>16;return(h>>>0)/4294967296}}
+const FISH_BOTTOM=/tench|carp|barbel|gudgeon|bream|catfish|bullhead|eel|loach|sturgeon|flounder|plaice|sole|dab|ray|gurnard|goby|blenny|wrasse/i,FISH_HUNTER=/pike|perch|zander|trout|salmon|bass|grayling|chub|ide|orfe|cod|pollack/i;
+function tankFishSvg(f,i,n){const src=fishSrc(f.species),w=38*(1+fishProg(f)*.6),h=w/2,R=seedRng((f.id||'')+i);
+ const kind=FISH_BOTTOM.test(f.species)?'bottom':FISH_HUNTER.test(f.species)?'hunter':'shoal';
+ const xlo=44+w/2,xhi=270-w/2,yT=98+h/2,yB=174-h/2,band=kind==='bottom'?[yB-18,yB]:kind==='hunter'?[yT+8,yB-10]:[yT,yB-14],[ylo,yhi]=[Math.max(yT,Math.min(band[0],yB)),Math.max(yT,Math.min(band[1],yB))];
+ const spd=kind==='shoal'?26:kind==='hunter'?14:9,rx=()=>xlo+R()*(xhi-xlo),ry=()=>ylo+R()*(yhi-ylo);
+ let x=rx(),y=ry(),t=0,dir=R()<.5?1:-1;const P=[[x,y]],T=[0],Dr=[dir];
+ for(let k=0;k<11;k++){
+  if(R()<(kind==='hunter'?.38:kind==='bottom'?.3:.18)){t+=kind==='hunter'?1.5+R()*4:.8+R()*2.2;P.push([x,y+(R()-.5)*2.4]);T.push(t);Dr.push(dir);continue}
+  const far=R()<.5,nx=far?(dir>0?xlo+R()*(xhi-xlo)*.35:xhi-R()*(xhi-xlo)*.35):rx(),ny=ry(),d=Math.hypot(nx-x,ny-y),dart=R()<(kind==='hunter'?.25:.1);
+  t+=Math.max(.5,d/(spd*(dart?3.2:.7+R()*.6)));const nd=nx>x+3?1:nx<x-3?-1:dir;P.push([nx,ny]);T.push(t);Dr.push(nd);x=nx;y=ny;dir=nd}
+ {const[x0,y0]=P[0],d=Math.hypot(x0-x,y0-y);t+=Math.max(.6,d/spd);P.push([x0,y0]);T.push(t);Dr.push(x0>x+3?1:x0<x-3?-1:dir)}
+ const kt=T.map(v=>(v/t).toFixed(4)).join(';'),vals=P.map(([a,b])=>`${a.toFixed(1)} ${b.toFixed(1)}`).join(';'),spl=P.slice(1).map(()=>'.42 0 .58 1').join(';');
+ const flip=Dr.map((_,k)=>(Dr[Math.min(k+1,Dr.length-1)]>0?'-1 1':'1 1')).join(';'),dur=t.toFixed(2),beg=(-R()*t).toFixed(2),wob=(kind==='shoal'?.45:.7)+R()*.3;
+ return`<g><animateTransform attributeName="transform" type="translate" values="${vals}" keyTimes="${kt}" calcMode="spline" keySplines="${spl}" dur="${dur}s" begin="${beg}s" repeatCount="indefinite"/>
+  <g><animateTransform attributeName="transform" type="scale" values="${flip}" keyTimes="${kt}" calcMode="discrete" dur="${dur}s" begin="${beg}s" repeatCount="indefinite"/>
+  <g><animateTransform attributeName="transform" type="translate" values="0 0;0 ${(-1-R()*1.5).toFixed(1)};0 0" dur="${(2+R()*2).toFixed(2)}s" repeatCount="indefinite"/>
+  <g><animateTransform attributeName="transform" type="skewY" values="-2;2;-2" dur="${wob.toFixed(2)}s" repeatCount="indefinite"/>
+  ${src?`<image href="${src}" x="${-w/2}" y="${-h/2}" width="${w}" height="${h}" preserveAspectRatio="xMidYMid meet"/>`:`<ellipse rx="${w/2.4}" ry="${h/3}" fill="#c9a24a"/>`}</g></g></g></g>`}
 function interiorSvg(){const n=isNight(),S=skyAt(sceneHour()),tank=clan.fish.filter(f=>f.place==='tank');
  return`<svg class="cotin" viewBox="0 0 1300 900" preserveAspectRatio="xMidYMax slice" role="img" aria-label="Inside Grandma's cottage: the aquarium on the sideboard, the fireplace, Grandma knitting in her armchair, and a writing desk under the window">
  <defs><linearGradient id="ciw" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9d6b8"/><stop offset="1" stop-color="#dcc29c"/></linearGradient>
