@@ -530,7 +530,7 @@ img.fimg{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-w
 .gmasay{position:absolute;right:12px;top:12px;max-width:min(62%,260px);background:#fffaf0;color:#3b2a14;border-radius:14px 14px 4px 14px;padding:8px 12px;font:600 19px/1.15 Caveat,cursive;box-shadow:0 6px 14px #0004;pointer-events:none}
 .gmasay.pop{animation:gpop .4s cubic-bezier(.3,1.5,.5,1)}@keyframes gpop{from{transform:scale(.9);opacity:.4}}
 .tlist{display:grid;gap:8px}
-.clubrow{background:var(--card2);border-radius:14px;padding:10px 12px}.reqd{display:flex;flex-direction:column;align-items:flex-end;gap:2px}.reqd small{color:var(--acc);font-weight:600}.reqh{font-size:15px;margin:14px 0 6px;color:var(--mut)}
+.clubrow{background:var(--card2);border-radius:14px;padding:10px 12px}.reqd{display:flex;flex-direction:column;align-items:flex-end;gap:2px}.reqd small{color:var(--acc);font-weight:600}.yours{color:var(--acc);font-weight:700}.reqh{font-size:15px;margin:14px 0 6px;color:var(--mut)}
 .growb{display:block;height:7px;border-radius:9px;background:var(--line);overflow:hidden;margin:6px 0 3px}.growb i{display:block;height:100%;border-radius:9px;background:linear-gradient(90deg,#7fb0a2,#d9b45a)}
 .tfish,.tpick{display:flex;align-items:center;gap:10px;background:var(--card2);border-radius:14px;padding:10px;width:100%;text-align:left;border:0;color:inherit;font:inherit}
 .tpick{cursor:pointer}.tpick:active{transform:scale(.98)}
@@ -614,7 +614,7 @@ img.fimg{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-w
 .sesi .mbi-cap{z-index:2}.sesi .mbi-cap.top{top:calc(14px + env(safe-area-inset-top))!important}.sesi .mbi-cap.top::before{display:none}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><div id="achpop" aria-live="polite"></div><script>
 {
-const VERSION='7.71';
+const VERSION='7.72';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -1887,7 +1887,8 @@ function cottagePage(){loadClan();loadSocial();
   ${mem.map(r=>`<div class="frow">${avatarImg((soc.people[r.user_id]||{}).avatar||(r.user_id===me?favAv():null),'sm')}<span class="frn">${pname(r.user_id)}${r.user_id===clan.c.owner?'<small>Head of the family</small>':''}</span>${host&&r.user_id!==me?`<button class="btn sec sm" data-clankick="${r.user_id}">${clanArm==='k'+r.user_id?'Sure?':'Remove'}</button>`:''}</div>`).join('')}
   ${reqs.length?`<h3 class="reqh">Asking to join</h3>${reqs.map(r=>`<div class="frow pend">${avatarImg((soc.people[r.user_id]||{}).avatar,'sm')}<span class="frn">${pname(r.user_id)}<small>${host?'Wants to join your club':'Waiting for the head of the club'}</small></span>${host?`<button class="btn sm" data-cdecide="${r.user_id}" data-yes="1">Let in</button><button class="btn sec sm" data-cdecide="${r.user_id}" data-yes="0">No</button>`:''}</div>`).join('')}`:''}
   ${pend.map(r=>`<div class="frow pend">${avatarImg((soc.people[r.user_id]||{}).avatar,'sm')}<span class="frn">${pname(r.user_id)}<small>Bottle sent, not opened yet</small></span></div>`).join('')}
-  <p class="sub" style="text-align:center;margin-top:14px"><button class="linkbtn dlink" data-clanleave>${clanArm==='leave'?'Tap again to leave the club':'Leave the club'}</button></p></section>`}}
+  <p class="sub" style="text-align:center;margin-top:14px"><button class="linkbtn dlink" data-clanleave>${clanArm==='leave'?'Tap again to leave the club':'Leave the club'}</button></p></section>
+  ${clubsHtml()}`}}
  const hint=cotHint()?'<p class="cothint" aria-hidden="true">‹ Swipe to look around ›</p>':'';
  return`<div class="cotroom"><div class="cotpan"><div class="cotin2">${interiorSvg()}<div class="gmasay" aria-live="polite"><span>${esc(line)}</span></div></div></div>
  <a class="cotback" href="#fishing" aria-label="Back to The Bank">‹</a>${hint}</div>
@@ -1895,8 +1896,8 @@ function cottagePage(){loadClan();loadSocial();
 let cotSheet=null,cotX=null,cotSY=0,clubList=null,clubLoading=false;
 async function loadClubs(){if(!sb||!user||clubLoading)return;clubLoading=true;try{const r=await sb.rpc('clan_browse',{});clubList=r.error?[]:(r.data||[])}catch(e){clubList=[]}clubLoading=false;if(view()==='cottage')rr()}
 function clubsHtml(){if(clubList===null){loadClubs();return'<section class="card"><h2>Clubs at the cottage</h2><p class="sub" style="margin-top:6px">Having a look…</p></section>'}
- const row=c=>{const full=c.members>=12;return`<div class="frow clubrow"><span class="frn">${esc(c.name)}<small>${c.owner_name?'Head: '+esc(c.owner_name)+' · ':''}${c.members} of 12${c.pond?' · '+c.pond+' in the pond':''}</small></span>${c.invited?`<button class="btn sm" data-creq="${c.id}">Join</button>`:c.asked?`<span class="reqd"><small>Asked ✓</small><button class="linkbtn" data-cunreq="${c.id}">Cancel</button></span>`:full?'<small class="sub">Full</small>':`<button class="btn sec sm" data-creq="${c.id}">Ask to join</button>`}</div>`};
- return`<section class="card"><div class="ch"><h2>Clubs at the cottage</h2><span class="sub">${clubList.length||''}</span></div>${clubList.length?`<p class="sub" style="margin:4px 0 10px">Ask to join and the head of the club can let you in.</p><div class="tlist">${clubList.map(row).join('')}</div>`:'<p class="sub" style="margin-top:6px">No clubs yet. Be the first to start one.</p>'}</section>`}
+ const row=c=>{const full=c.members>=12;return`<div class="frow clubrow"><span class="frn">${esc(c.name)}<small>${c.owner_name?'Head: '+esc(c.owner_name)+' · ':''}${c.members} of 12${c.pond?' · '+c.pond+' in the pond':''}</small></span>${c.id===clan.id?'<small class="yours">Your club</small>':clan.id?'':c.invited?`<button class="btn sm" data-creq="${c.id}">Join</button>`:c.asked?`<span class="reqd"><small>Asked ✓</small><button class="linkbtn" data-cunreq="${c.id}">Cancel</button></span>`:full?'<small class="sub">Full</small>':`<button class="btn sec sm" data-creq="${c.id}">Ask to join</button>`}</div>`};
+ return`<section class="card"><div class="ch"><h2>Clubs at the cottage</h2><span class="sub">${clubList.length||''}</span></div>${clubList.length?`<p class="sub" style="margin:4px 0 10px">${clan.id?'Every club at the cottage. Yours is marked.':'Ask to join and the head of the club can let you in.'}</p><div class="tlist">${clubList.map(row).join('')}</div>`:'<p class="sub" style="margin-top:6px">No clubs yet. Be the first to start one.</p>'}</section>`}
 function cotHint(){try{return!localStorage.getItem('pcotpan')}catch(e){return false}}
 function cotAfter(){const p=document.querySelector('.cotpan');if(!p)return;const svg=p.querySelector('svg');
  if(cotX==null){cotX=Math.max(0,(svg.getBoundingClientRect().width*790/1300)-innerWidth/2)}p.scrollLeft=cotX;
