@@ -526,8 +526,8 @@ begin
   return fid;
 end $$;
 
--- growth: a fish gains an ounce for every 3 days it's fed. It outgrows the tank at 4 lb, or more for bigger species
--- (twice the small size for its species), but never needs more than 6 lb of growth.
+-- growth: a fish gains an ounce for every 3 days it's fed. Every fish outgrows the tank at 4 lb
+-- (a giant species that starts heavier than that just needs to put on another pound).
 create or replace function public.fish_start(f public.clan_fish) returns numeric language sql stable set search_path = public as $$
   select coalesce(f.grams, round(coalesce(s.max_g, 225) * power(least(coalesce(f.cm, coalesce(s.max_cm, 20) / 2) / coalesce(s.max_cm, 20), 1), 3)))
   from (select 1) one left join public.small_sizes s on s.species = f.species
@@ -536,8 +536,7 @@ create or replace function public.fish_grams(f public.clan_fish) returns numeric
   select public.fish_start(f) + floor(f.feeds / 3) * 28.35
 $$;
 create or replace function public.fish_target(f public.clan_fish) returns numeric language sql stable set search_path = public as $$
-  select least(greatest(1814, 2 * coalesce(s.max_g, 225)), public.fish_start(f) + 2722)
-  from (select 1) one left join public.small_sizes s on s.species = f.species
+  select greatest(1814, public.fish_start(f) + 454)
 $$;
 
 -- any club member can feed any tank fish, once per fish per day; when it outgrows the tank it moves to the pond by itself

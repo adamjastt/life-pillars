@@ -634,7 +634,7 @@ img.fimg{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-w
 .sesi .mbi-cap{z-index:2}.sesi .mbi-cap.top{top:calc(14px + env(safe-area-inset-top))!important}.sesi .mbi-cap.top::before{display:none}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><div id="achpop" aria-live="polite"></div><script>
 {
-const VERSION='7.85';
+const VERSION='7.86';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -1701,7 +1701,7 @@ const SMALL_SIZES={"Barbel":[900,40],"Bleak":[20,11],"Bream (common)":[900,35],"
 const smallMax=sp=>SMALL_SIZES[sp]||[225,20];
 function fishStart(f){if(f.grams)return+f.grams;const[mg,mc]=smallMax(f.species);return Math.round(mg*Math.pow(Math.min((f.cm||mc/2)/mc,1),3))}
 function fishNow(f,n){return fishStart(f)+Math.floor((n==null?f.feeds:n)/3)*28.35}
-function fishTarget(f){return Math.min(Math.max(1814,2*smallMax(f.species)[0]),fishStart(f)+2722)}
+function fishTarget(f){return Math.max(1814,fishStart(f)+454)}
 function fishProg(f){const a=fishStart(f),t=fishTarget(f);return Math.max(0,Math.min(1,(fishNow(f)-a)/(t-a)))}
 function isSmall(c){const[mg,mc]=smallMax(c.species);if(c.g)return c.g<=mg;if(c.cm)return c.cm<=mc;return null}
 const fishSrc=sp=>{const m=/src="([^"]+)"/.exec(fishSVG(sp));return m?m[1]:''};
@@ -1924,7 +1924,7 @@ function cottagePage(){loadClan();loadSocial();
   <span class="tfb">${fed?'<small class="fedok">Fed today</small>':`<button class="btn sm sec" data-ffeed="${f.id}">Feed</button>`}</span></div>`};
  
   if(cotSheet==='tank'){title='The aquarium';body=` <section class="card"><div class="ch"><h2>The aquarium</h2><span class="sub">${tank.length} of ${mem.length}</span></div>
-  <p class="sub" style="margin:4px 0 10px">One little fish each. Anyone in the club can feed each fish once a day. Every 3 feeds it gains an ounce, and once it reaches 4 lb (more for bigger species) it outgrows the tank and moves to the garden pond.</p>
+  <p class="sub" style="margin:4px 0 10px">One little fish each. Anyone in the club can feed each fish once a day. Every 3 feeds it gains an ounce, and once it reaches 4 lb it outgrows the tank and moves to the garden pond.</p>
   ${tank.length?`<div class="tlist">${tank.map(fishRow).join('')}</div>`:''}
   ${mine?(true?`<button class="linkbtn" data-frelease="${mine.id}" style="margin-top:8px">${clanArm==='rel'?'Tap again to take yours out':'Take your fish out'}</button>`:''):`<div class="donate">${donatePick?`<p class="sub" style="margin:10px 0 6px">Pick one of your small catches:</p>${elig.length?`<div class="tlist">${elig.slice(0,30).map(c=>`<button class="tpick" data-fdonate="${c.id}"><span class="tfa">${fishSVG(c.species)}</span><span class="tfn"><b>${esc(c.species)}</b><small>${[c.g?fW(c.g):'',c.cm?c.cm+' cm':'',c.date?label(c.date):''].filter(Boolean).join(' · ')}</small></span></button>`).join('')}</div>`:`<p class="empty">None of your catches are small enough yet. Little ones only: a perch under ${fW(smallMax('Perch')[0])}, a roach under ${fW(smallMax('Roach')[0])}, that sort of thing. Your next tiddler could go straight in.</p>`}<button class="linkbtn" data-fpickclose>Cancel</button>`:`<button class="btn" data-fpick>Put a fish in the tank</button>`}</div>`}</section>
  <section class="card"><div class="ch"><h2>The garden pond</h2><span class="sub">${pond.length} fish</span></div><button class="pondbtn" data-pondopen aria-label="Look under the water">${pondSvg(pond)}</button>
