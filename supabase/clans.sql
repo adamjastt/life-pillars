@@ -340,7 +340,7 @@ begin
 end $$;
 
 -- XP per member, worked out from what they've logged since joining:
---   10 per catch (up to 5 a day count), 25 per species logged, 100 per fish raised to the pond
+--   10 per catch (up to 5 a day count), 25 for each species new to the club (to whoever logged it first), 100 per fish raised to the pond
 create or replace function public.clan_xp_rows(c uuid) returns table(user_id uuid, catches integer, counted integer, species integer, pond integer, xp integer)
 language sql stable security definer set search_path = public as $$
   with mem as (select m.user_id, m.joined_at::date j from public.clan_members m where m.clan_id = c and m.status = 'joined'),
@@ -350,10 +350,11 @@ language sql stable security definer set search_path = public as $$
     cross join lateral jsonb_array_elements(case when jsonb_typeof(p.data->'fish'->'catches') = 'array' then p.data->'fish'->'catches' else '[]'::jsonb end) x
     where coalesce(x->>'date', '') ~ '^\d{4}-\d{2}-\d{2}$' and coalesce(x->>'species', '') <> ''
       and (x->>'date')::date >= m.j and (x->>'date')::date <= current_date + 1),
+  firsts as (select distinct on (lower(sp)) lower(sp) sp, user_id from cat order by lower(sp), d, user_id),
   per as (select m.user_id,
       (select count(*)::int from cat where cat.user_id = m.user_id) catches,
       (select coalesce(sum(n), 0)::int from (select least(count(*), 5) n from cat where cat.user_id = m.user_id group by d) q) counted,
-      (select count(distinct sp)::int from cat where cat.user_id = m.user_id) species,
+      (select count(*)::int from firsts where firsts.user_id = m.user_id) species,
       (select count(*)::int from public.clan_fish f where f.clan_id = c and f.user_id = m.user_id and f.place = 'pond') pond
     from mem m)
   select per.user_id, per.catches, per.counted, per.species, per.pond, per.counted * 10 + per.species * 25 + per.pond * 100 from per
@@ -411,7 +412,7 @@ end $$;
 -- ======================= club leaderboard =======================
 -- club XP earned since a date (same rules: 10 per catch up to 5 a day, 25 per species, 100 per fish raised, challenge wins)
 create or replace function public.clan_xp_since(c uuid, since date) returns integer language sql stable security definer set search_path = public as $$
-  with mem as (select m.user_id, greatest(m.joined_at::date, since) j from public.clan_members m where m.clan_id = c and m.status = 'joined'),
+  with mem as (select m.user_id, m.joined_at::date j from public.clan_members m where m.clan_id = c and m.status = 'joined'),
   cat as (
     select m.user_id, (x->>'date')::date d, x->>'species' sp
     from mem m join public.pillars_data p on p.user_id = m.user_id
@@ -419,8 +420,8 @@ create or replace function public.clan_xp_since(c uuid, since date) returns inte
     where coalesce(x->>'date', '') ~ '^\d{4}-\d{2}-\d{2}$' and coalesce(x->>'species', '') <> ''
       and (x->>'date')::date >= m.j and (x->>'date')::date <= current_date + 1)
   select (
-    coalesce((select sum(least(n, 5)) from (select user_id, d, count(*) n from cat group by 1, 2) q), 0) * 10
-    + coalesce((select sum(k) from (select user_id, count(distinct sp) k from cat group by 1) q), 0) * 25
+    coalesce((select sum(least(n, 5)) from (select user_id, d, count(*) n from cat where d >= since group by 1, 2) q), 0) * 10
+    + (select count(*) from (select lower(sp), min(d) first from cat group by 1) q where q.first >= since) * 25
     + (select count(*) from public.clan_fish f where f.clan_id = c and f.place = 'pond' and f.promoted_at >= since) * 100
     + coalesce((select sum(w.xp) from public.clan_wins w where w.clan_id = c and w.done_at >= since), 0)
   )::int
