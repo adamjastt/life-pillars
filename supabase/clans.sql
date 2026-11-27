@@ -14,6 +14,8 @@ create table if not exists public.clan_members(
   joined_at timestamptz not null default now(),
   primary key (clan_id, user_id)
 );
+alter table public.clan_members drop constraint if exists clan_members_status_check;
+alter table public.clan_members add constraint clan_members_status_check check (status in ('invited','joined','requested'));
 create unique index if not exists clan_one_per_person on public.clan_members(user_id) where status = 'joined';
 create table if not exists public.clan_fish(
   id uuid primary key,
@@ -189,7 +191,7 @@ begin
   if public.my_clan() is not null then raise exception 'already in a clan'; end if;
   insert into public.clans(id, name, owner) values (cid, trim(nm), auth.uid());
   insert into public.clan_members(clan_id, user_id, status) values (cid, auth.uid(), 'joined');
-  delete from public.clan_members where user_id = auth.uid() and status = 'invited';
+  delete from public.clan_members where user_id = auth.uid() and status in ('invited','requested');
   return cid;
 end $$;
 
@@ -198,7 +200,10 @@ declare c uuid := public.my_clan();
 begin
   if c is null then raise exception 'not in a clan'; end if;
   if not public.mates(auth.uid(), u) then raise exception 'not friends'; end if;
-  if (select count(*) from public.clan_members where clan_id = c) >= 12 then raise exception 'clan is full'; end if;
+  if (select count(*) from public.clan_members where clan_id = c and status in ('joined','invited')) >= 12 then raise exception 'clan is full'; end if;
+  if exists (select 1 from public.clan_members where clan_id = c and user_id = u and status = 'requested') then
+    return public.clan_decide(u, true);
+  end if;
   insert into public.clan_members(clan_id, user_id, status, invited_by, note) values (c, u, 'invited', auth.uid(), nullif(trim(coalesce(nt, '')), ''))
   on conflict (clan_id, user_id) do nothing;
   return found;
@@ -211,7 +216,7 @@ begin
   if public.my_clan() is not null then raise exception 'already in a clan'; end if;
   if (select count(*) from public.clan_members where clan_id = c and status = 'joined') >= 12 then raise exception 'clan is full'; end if;
   update public.clan_members set status = 'joined', joined_at = now() where clan_id = c and user_id = auth.uid();
-  delete from public.clan_members where user_id = auth.uid() and status = 'invited';
+  delete from public.clan_members where user_id = auth.uid() and status in ('invited','requested');
   return true;
 end $$;
 
@@ -243,6 +248,55 @@ begin
   delete from public.clan_members where clan_id = c and user_id = u;
   return found;
 end $$;
+
+-- the club directory: every club, how full it is, and whether you've already asked to join
+create or replace function public.clan_browse() returns table(id uuid, name text, owner uuid, owner_name text, members integer, pond integer, asked boolean, invited boolean)
+language sql stable security definer set search_path = public as $$
+  select c.id, c.name, c.owner, p.name,
+    (select count(*)::int from public.clan_members m where m.clan_id = c.id and m.status = 'joined'),
+    (select count(*)::int from public.clan_fish f where f.clan_id = c.id and f.place = 'pond'),
+    exists(select 1 from public.clan_members m where m.clan_id = c.id and m.user_id = auth.uid() and m.status = 'requested'),
+    exists(select 1 from public.clan_members m where m.clan_id = c.id and m.user_id = auth.uid() and m.status = 'invited')
+  from public.clans c left join public.profiles p on p.user_id = c.owner
+  where auth.uid() is not null
+  order by 5 desc, c.created_at
+$$;
+
+-- ask to join a club (up to 3 open requests at a time). If that club already invited you, you're straight in.
+create or replace function public.clan_request(c uuid) returns text language plpgsql security definer set search_path = public as $$
+begin
+  if auth.uid() is null then raise exception 'not signed in'; end if;
+  if public.my_clan() is not null then raise exception 'already in a clan'; end if;
+  if not exists (select 1 from public.clans where id = c) then raise exception 'club not found'; end if;
+  if public.clan_invited(c) then perform public.clan_answer(c, true); return 'joined'; end if;
+  if (select count(*) from public.clan_members where clan_id = c and status in ('joined','invited')) >= 12 then raise exception 'clan is full'; end if;
+  if (select count(*) from public.clan_members where user_id = auth.uid() and status = 'requested') >= 3 then raise exception 'too many requests'; end if;
+  insert into public.clan_members(clan_id, user_id, status) values (c, auth.uid(), 'requested') on conflict (clan_id, user_id) do nothing;
+  return 'requested';
+end $$;
+
+create or replace function public.clan_unrequest(c uuid) returns boolean language plpgsql security definer set search_path = public as $$
+begin
+  delete from public.clan_members where clan_id = c and user_id = auth.uid() and status = 'requested';
+  return found;
+end $$;
+
+-- the head of the club lets someone in, or turns them down
+create or replace function public.clan_decide(u uuid, yes boolean) returns boolean language plpgsql security definer set search_path = public as $$
+declare c uuid := public.my_clan();
+begin
+  if c is null or (select owner from public.clans where id = c) <> auth.uid() then raise exception 'only the head of the club can do that'; end if;
+  if not exists (select 1 from public.clan_members where clan_id = c and user_id = u and status = 'requested') then return false; end if;
+  if not yes then delete from public.clan_members where clan_id = c and user_id = u; return true; end if;
+  if exists (select 1 from public.clan_members where user_id = u and status = 'joined') then
+    delete from public.clan_members where clan_id = c and user_id = u; return false;
+  end if;
+  if (select count(*) from public.clan_members where clan_id = c and status in ('joined','invited')) >= 12 then raise exception 'clan is full'; end if;
+  update public.clan_members set status = 'joined', joined_at = now() where clan_id = c and user_id = u;
+  delete from public.clan_members where user_id = u and status in ('invited','requested');
+  return true;
+end $$;
+
 
 -- put one of your small catches in the tank (one each); the server checks the catch and its size
 create or replace function public.fish_donate(cid text) returns uuid language plpgsql security definer set search_path = public as $$
@@ -306,4 +360,5 @@ begin
 end $$;
 
 grant execute on function public.clan_create(uuid, text), public.clan_invite(uuid, text), public.clan_answer(uuid, boolean), public.clan_leave(),
-  public.clan_rename(text), public.clan_remove(uuid), public.fish_donate(text), public.fish_feed(uuid), public.fish_promote(uuid), public.fish_release(uuid) to authenticated;
+  public.clan_rename(text), public.clan_remove(uuid), public.fish_donate(text), public.fish_feed(uuid), public.fish_promote(uuid), public.fish_release(uuid),
+  public.clan_browse(), public.clan_request(uuid), public.clan_unrequest(uuid), public.clan_decide(uuid, boolean) to authenticated;
