@@ -249,14 +249,96 @@ begin
   return found;
 end $$;
 
+-- ======================= the club page: badge, description, XP and stats =======================
+alter table public.clans add column if not exists about text;
+alter table public.clans add column if not exists emblem jsonb;
+alter table public.clans drop constraint if exists clans_about_len;
+alter table public.clans add constraint clans_about_len check (about is null or char_length(about) <= 160);
+
+-- the head edits the club's name, description and badge
+create or replace function public.clan_update(nm text, ab text, em jsonb) returns boolean language plpgsql security definer set search_path = public as $$
+begin
+  if char_length(trim(coalesce(nm, ''))) not between 1 and 40 then raise exception 'name length'; end if;
+  if char_length(trim(coalesce(ab, ''))) > 160 then raise exception 'description too long'; end if;
+  if em is not null and not (
+       em->>'s' in ('shield','round','pennant','badge')
+   and em->>'i' in ('fish','hook','float','reel','leaf','crown','pike','moon')
+   and coalesce(em->>'a', '') ~ '^#[0-9a-fA-F]{6}$' and coalesce(em->>'b', '') ~ '^#[0-9a-fA-F]{6}$') then raise exception 'bad badge'; end if;
+  update public.clans set name = trim(nm), about = nullif(trim(coalesce(ab, '')), ''),
+    emblem = case when em is null then null else jsonb_build_object('s', em->>'s', 'i', em->>'i', 'a', em->>'a', 'b', em->>'b') end
+  where id = public.my_clan() and owner = auth.uid();
+  return found;
+end $$;
+
+-- XP per member, worked out from what they've logged since joining:
+--   10 per catch (up to 5 a day count), 25 per species logged, 100 per fish raised to the pond
+create or replace function public.clan_xp_rows(c uuid) returns table(user_id uuid, catches integer, counted integer, species integer, pond integer, xp integer)
+language sql stable security definer set search_path = public as $$
+  with mem as (select m.user_id, m.joined_at::date j from public.clan_members m where m.clan_id = c and m.status = 'joined'),
+  cat as (
+    select m.user_id, (x->>'date')::date d, x->>'species' sp
+    from mem m join public.pillars_data p on p.user_id = m.user_id
+    cross join lateral jsonb_array_elements(case when jsonb_typeof(p.data->'fish'->'catches') = 'array' then p.data->'fish'->'catches' else '[]'::jsonb end) x
+    where coalesce(x->>'date', '') ~ '^\d{4}-\d{2}-\d{2}$' and coalesce(x->>'species', '') <> ''
+      and (x->>'date')::date >= m.j and (x->>'date')::date <= current_date + 1),
+  per as (select m.user_id,
+      (select count(*)::int from cat where cat.user_id = m.user_id) catches,
+      (select coalesce(sum(n), 0)::int from (select least(count(*), 5) n from cat where cat.user_id = m.user_id group by d) q) counted,
+      (select count(distinct sp)::int from cat where cat.user_id = m.user_id) species,
+      (select count(*)::int from public.clan_fish f where f.clan_id = c and f.user_id = m.user_id and f.place = 'pond') pond
+    from mem m)
+  select per.user_id, per.catches, per.counted, per.species, per.pond, per.counted * 10 + per.species * 25 + per.pond * 100 from per
+  union all
+  -- fish raised by people who've since left still count for the club
+  select null::uuid, 0, 0, 0, count(*)::int, count(*)::int * 100 from public.clan_fish f
+  where f.clan_id = c and f.place = 'pond' and not exists (select 1 from mem where mem.user_id = f.user_id)
+$$;
+revoke execute on function public.clan_xp_rows(uuid) from public;
+
+create or replace function public.clan_xp(c uuid) returns integer language sql stable security definer set search_path = public as $$
+  select coalesce(sum(xp), 0)::int from public.clan_xp_rows(c)
+$$;
+revoke execute on function public.clan_xp(uuid) from public;
+
+-- full stats for your own club
+create or replace function public.clan_stats() returns json language plpgsql stable security definer set search_path = public as $$
+declare c uuid := public.my_clan(); r json;
+begin
+  if c is null then return null; end if;
+  select json_build_object(
+    'xp', (select coalesce(sum(xp), 0) from public.clan_xp_rows(c)),
+    'members', (select coalesce(json_agg(json_build_object('user_id', x.user_id, 'xp', x.xp, 'catches', x.catches, 'species', x.species, 'pond', x.pond) order by x.xp desc), '[]'::json) from public.clan_xp_rows(c) x where x.user_id is not null),
+    'past_pond', (select coalesce(sum(pond), 0) from public.clan_xp_rows(c) x where x.user_id is null),
+    'species', (select count(distinct x->>'species') from public.clan_members m join public.pillars_data p on p.user_id = m.user_id
+        cross join lateral jsonb_array_elements(case when jsonb_typeof(p.data->'fish'->'catches') = 'array' then p.data->'fish'->'catches' else '[]'::jsonb end) x
+        where m.clan_id = c and m.status = 'joined' and coalesce(x->>'date', '') ~ '^\d{4}-\d{2}-\d{2}$' and (x->>'date')::date >= m.joined_at::date and coalesce(x->>'species', '') <> ''),
+    'pond', (select count(*) from public.clan_fish where clan_id = c and place = 'pond'),
+    'feeds', (select coalesce(sum(feeds), 0) from public.clan_fish where clan_id = c),
+    'recent', (select coalesce(json_agg(z.e order by z.ts desc), '[]'::json) from (select * from (
+        select (x->>'date') || 'T' || coalesce(nullif(x->>'time', ''), '12:00') as ts,
+          json_build_object('k', 'catch', 'user_id', m.user_id, 'species', x->>'species', 'g', nullif(x->>'g', '')::numeric, 'date', x->>'date') e
+        from public.clan_members m join public.pillars_data p on p.user_id = m.user_id
+        cross join lateral jsonb_array_elements(case when jsonb_typeof(p.data->'fish'->'catches') = 'array' then p.data->'fish'->'catches' else '[]'::jsonb end) x
+        where m.clan_id = c and m.status = 'joined' and coalesce(x->>'date', '') ~ '^\d{4}-\d{2}-\d{2}$' and (x->>'date')::date >= m.joined_at::date and coalesce(x->>'species', '') <> ''
+        union all
+        select to_char(f.promoted_at at time zone 'UTC', 'YYYY-MM-DD"T"HH24:MI'),
+          json_build_object('k', 'pond', 'user_id', f.user_id, 'species', f.species, 'g', round(public.fish_grams(f)), 'date', to_char(f.promoted_at at time zone 'UTC', 'YYYY-MM-DD'))
+        from public.clan_fish f where f.clan_id = c and f.place = 'pond' and f.promoted_at is not null
+      ) u order by ts desc limit 10) z)
+  ) into r;
+  return r;
+end $$;
+
 -- the club directory: every club, how full it is, and whether you've already asked to join
-create or replace function public.clan_browse() returns table(id uuid, name text, owner uuid, owner_name text, members integer, pond integer, asked boolean, invited boolean)
+drop function if exists public.clan_browse();
+create or replace function public.clan_browse() returns table(id uuid, name text, owner uuid, owner_name text, members integer, pond integer, asked boolean, invited boolean, emblem jsonb, xp integer)
 language sql stable security definer set search_path = public as $$
   select c.id, c.name, c.owner, p.name,
     (select count(*)::int from public.clan_members m where m.clan_id = c.id and m.status = 'joined'),
     (select count(*)::int from public.clan_fish f where f.clan_id = c.id and f.place = 'pond'),
     exists(select 1 from public.clan_members m where m.clan_id = c.id and m.user_id = auth.uid() and m.status = 'requested'),
-    exists(select 1 from public.clan_members m where m.clan_id = c.id and m.user_id = auth.uid() and m.status = 'invited')
+    exists(select 1 from public.clan_members m where m.clan_id = c.id and m.user_id = auth.uid() and m.status = 'invited'),
+    c.emblem, public.clan_xp(c.id)
   from public.clans c left join public.profiles p on p.user_id = c.owner
   where auth.uid() is not null
   order by 5 desc, c.created_at
@@ -266,7 +348,7 @@ $$;
 create or replace function public.clan_info(c uuid) returns json language sql stable security definer set search_path = public as $$
   select case when auth.uid() is null then null else (
     select json_build_object(
-      'id', k.id, 'name', k.name, 'owner', k.owner, 'created_at', k.created_at,
+      'id', k.id, 'name', k.name, 'owner', k.owner, 'created_at', k.created_at, 'about', k.about, 'emblem', k.emblem, 'xp', public.clan_xp(k.id),
       'members', (select coalesce(json_agg(json_build_object('user_id', m.user_id, 'name', p.name, 'avatar', p.avatar, 'joined_at', m.joined_at) order by m.joined_at), '[]'::json)
                   from public.clan_members m left join public.profiles p on p.user_id = m.user_id where m.clan_id = k.id and m.status = 'joined'),
       'tank', (select coalesce(json_agg(json_build_object('species', f.species, 'grams', round(public.fish_grams(f)), 'by', p.name) order by f.created_at), '[]'::json)
@@ -377,4 +459,4 @@ end $$;
 
 grant execute on function public.clan_create(uuid, text), public.clan_invite(uuid, text), public.clan_answer(uuid, boolean), public.clan_leave(),
   public.clan_rename(text), public.clan_remove(uuid), public.fish_donate(text), public.fish_feed(uuid), public.fish_promote(uuid), public.fish_release(uuid),
-  public.clan_browse(), public.clan_info(uuid), public.clan_request(uuid), public.clan_unrequest(uuid), public.clan_decide(uuid, boolean) to authenticated;
+  public.clan_browse(), public.clan_info(uuid), public.clan_stats(), public.clan_update(text, text, jsonb), public.clan_request(uuid), public.clan_unrequest(uuid), public.clan_decide(uuid, boolean) to authenticated;
