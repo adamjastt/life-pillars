@@ -634,7 +634,7 @@ img.fimg{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-w
 .sesi .mbi-cap{z-index:2}.sesi .mbi-cap.top{top:calc(14px + env(safe-area-inset-top))!important}.sesi .mbi-cap.top::before{display:none}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><div id="achpop" aria-live="polite"></div><script>
 {
-const VERSION='7.83';
+const VERSION='7.84';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -1925,7 +1925,7 @@ function cottagePage(){loadClan();loadSocial();
   <p class="sub" style="margin:4px 0 10px">One little fish each. Anyone in the club can feed each fish once a day. Every 3 feeds it gains an ounce, and once it reaches 4 lb (more for bigger species) it outgrows the tank and moves to the garden pond.</p>
   ${tank.length?`<div class="tlist">${tank.map(fishRow).join('')}</div>`:''}
   ${mine?(true?`<button class="linkbtn" data-frelease="${mine.id}" style="margin-top:8px">${clanArm==='rel'?'Tap again to take yours out':'Take your fish out'}</button>`:''):`<div class="donate">${donatePick?`<p class="sub" style="margin:10px 0 6px">Pick one of your small catches:</p>${elig.length?`<div class="tlist">${elig.slice(0,30).map(c=>`<button class="tpick" data-fdonate="${c.id}"><span class="tfa">${fishSVG(c.species)}</span><span class="tfn"><b>${esc(c.species)}</b><small>${[c.g?fW(c.g):'',c.cm?c.cm+' cm':'',c.date?label(c.date):''].filter(Boolean).join(' · ')}</small></span></button>`).join('')}</div>`:`<p class="empty">None of your catches are small enough yet. Little ones only: a perch under ${fW(smallMax('Perch')[0])}, a roach under ${fW(smallMax('Roach')[0])}, that sort of thing. Your next tiddler could go straight in.</p>`}<button class="linkbtn" data-fpickclose>Cancel</button>`:`<button class="btn" data-fpick>Put a fish in the tank</button>`}</div>`}</section>
- <section class="card"><div class="ch"><h2>The garden pond</h2><span class="sub">${pond.length} fish</span></div>${pond.length?`<button class="pondbtn" data-pondopen aria-label="Look under the water at the pond fish">${pondSvg(pond)}</button>`:pondSvg(pond)}
+ <section class="card"><div class="ch"><h2>The garden pond</h2><span class="sub">${pond.length} fish</span></div><button class="pondbtn" data-pondopen aria-label="Look under the water">${pondSvg(pond)}</button>
   ${pond.length?`<div class="plist">${pond.map(f=>`<div class="pfish"><span class="tfa sm">${fishSVG(f.species)}</span><span><b>${esc(f.species)}</b><small>Raised by ${pname(f.user_id)} to ${fW(fishNow(f))}${f.promoted_at?' · '+new Date(f.promoted_at).toLocaleDateString('en-GB',{day:'numeric',month:'short'}):''}</small></span></div>`).join('')}</div>`:'<p class="sub" style="margin-top:8px">Fish that outgrow the tank live here for good.</p>'}</section>`}
   else if(cotSheet==='club'){title='The guestbook';body=myClubHtml({me,host,mem,pend,reqs,fr})}}
  let tabs='';
@@ -2113,8 +2113,8 @@ function pondSvg(p){const n=isNight(),K='M74 84 C70 52 118 40 170 44 C214 47 236
  ${[[312,40],[320,46],[326,38],[332,44],[318,52]].map(([x,y],i)=>`<g><animateTransform attributeName="transform" type="rotate" values="${-3+i} ${x} ${y+30};${3-i} ${x} ${y+30};${-3+i} ${x} ${y+30}" dur="${4+i*.6}s" repeatCount="indefinite"/><path d="M${x} ${y+30} Q${x+1} ${y+10} ${x} ${y-8}" stroke="#5f8a46" stroke-width="2" fill="none"/>${i%2?'':`<rect x="${x-1.8}" y="${y-8}" width="3.6" height="11" rx="1.8" fill="#6b4428"/>`}</g>`).join('')}
  ${[[70,92],[78,104],[66,80]].map(([x,y],i)=>`<path d="M${x} ${y} q-4 -14 2 -24" stroke="#6fa058" stroke-width="2" fill="none"><animateTransform attributeName="transform" type="rotate" values="-3 ${x} ${y};3 ${x} ${y};-3 ${x} ${y}" dur="${3.5+i}s" repeatCount="indefinite"/></path>`).join('')}
  <g><animateTransform attributeName="transform" type="translate" values="150 52;188 40;228 60;196 70;150 52" dur="10s" repeatCount="indefinite"/><g transform="scale(1.8)"><path d="M-6 0 H6" stroke="#2f6f8a" stroke-width="1.6" stroke-linecap="round"/><g opacity=".7"><ellipse cx="-1" cy="-2" rx="3.4" ry="1.2" fill="#cfe9ec"><animate attributeName="ry" values="1.2;.3;1.2" dur=".15s" repeatCount="indefinite"/></ellipse><ellipse cx="2" cy="-2" rx="3.4" ry="1.2" fill="#cfe9ec"><animate attributeName="ry" values=".3;1.2;.3" dur=".15s" repeatCount="indefinite"/></ellipse></g></g></g>
- ${p.length?'':`<text x="204" y="88" text-anchor="middle" font-family="Caveat,cursive" font-size="17" fill="#e9f4ef" opacity=".9">Waiting for its first big fish…</text>`}
- ${p.length?`<g transform="translate(204 150)"><rect x="-74" y="-12" width="148" height="22" rx="11" fill="#13241ccc"/><text y="3.4" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10.5" font-weight="700" fill="#fff4e0">Look under the water ›</text></g>`:''}
+ ${p.length?'':`<text x="204" y="84" text-anchor="middle" font-family="Caveat,cursive" font-size="17" fill="#e9f4ef" opacity=".9">Waiting for its first big fish…</text>`}
+ ${true?`<g transform="translate(204 150)"><rect x="-74" y="-12" width="148" height="22" rx="11" fill="#13241ccc"/><text y="3.4" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="10.5" font-weight="700" fill="#fff4e0">Look under the water ›</text></g>`:''}
  ${n?'<rect width="400" height="160" fill="#140c24" opacity=".35"/>':''}</svg>`}
 function clanClick(t,ds){
  if(ds.cotclose!=null){cotSheet=null;clanEdit=null;rr();return true}
