@@ -262,6 +262,22 @@ language sql stable security definer set search_path = public as $$
   order by 5 desc, c.created_at
 $$;
 
+-- one club's details for anyone browsing: members, what's in the tank and the pond
+create or replace function public.clan_info(c uuid) returns json language sql stable security definer set search_path = public as $$
+  select case when auth.uid() is null then null else (
+    select json_build_object(
+      'id', k.id, 'name', k.name, 'owner', k.owner, 'created_at', k.created_at,
+      'members', (select coalesce(json_agg(json_build_object('user_id', m.user_id, 'name', p.name, 'avatar', p.avatar, 'joined_at', m.joined_at) order by m.joined_at), '[]'::json)
+                  from public.clan_members m left join public.profiles p on p.user_id = m.user_id where m.clan_id = k.id and m.status = 'joined'),
+      'tank', (select coalesce(json_agg(json_build_object('species', f.species, 'grams', round(public.fish_grams(f)), 'by', p.name) order by f.created_at), '[]'::json)
+               from public.clan_fish f left join public.profiles p on p.user_id = f.user_id where f.clan_id = k.id and f.place = 'tank'),
+      'pond', (select coalesce(json_agg(json_build_object('species', f.species, 'grams', round(public.fish_grams(f)), 'by', p.name, 'promoted_at', f.promoted_at) order by f.promoted_at desc), '[]'::json)
+               from public.clan_fish f left join public.profiles p on p.user_id = f.user_id where f.clan_id = k.id and f.place = 'pond'),
+      'asked', exists(select 1 from public.clan_members m where m.clan_id = k.id and m.user_id = auth.uid() and m.status = 'requested'),
+      'invited', exists(select 1 from public.clan_members m where m.clan_id = k.id and m.user_id = auth.uid() and m.status = 'invited'))
+    from public.clans k where k.id = c) end
+$$;
+
 -- ask to join a club (up to 3 open requests at a time). If that club already invited you, you're straight in.
 create or replace function public.clan_request(c uuid) returns text language plpgsql security definer set search_path = public as $$
 begin
@@ -361,4 +377,4 @@ end $$;
 
 grant execute on function public.clan_create(uuid, text), public.clan_invite(uuid, text), public.clan_answer(uuid, boolean), public.clan_leave(),
   public.clan_rename(text), public.clan_remove(uuid), public.fish_donate(text), public.fish_feed(uuid), public.fish_promote(uuid), public.fish_release(uuid),
-  public.clan_browse(), public.clan_request(uuid), public.clan_unrequest(uuid), public.clan_decide(uuid, boolean) to authenticated;
+  public.clan_browse(), public.clan_info(uuid), public.clan_request(uuid), public.clan_unrequest(uuid), public.clan_decide(uuid, boolean) to authenticated;
