@@ -554,7 +554,7 @@ img.fimg{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-w
 .cothint.gone{opacity:0}
 @keyframes chint{50%{transform:translateX(calc(-50% + 6px))}}
 .cotsheet{position:fixed;left:0;right:0;bottom:0;z-index:40;max-height:82dvh;display:flex;flex-direction:column;background:var(--bg);border-radius:22px 22px 0 0;box-shadow:0 -10px 40px #0009;max-width:640px;margin:0 auto}.cotsheet::after{content:'';position:absolute;left:0;right:0;top:calc(100% - 1px);height:70vh;background:var(--bg);pointer-events:none}
-.cotsheet.up{animation:cshup .4s cubic-bezier(.22,1,.36,1)}.cotsheet.down{transform:translateY(105%);transition:transform .26s cubic-bezier(.5,0,.75,0)}#cotover .sheetbg{animation:cbgin .3s ease-out both;transition:opacity .26s}#cotover .sheetbg.out{opacity:0}@keyframes cbgin{from{opacity:0}}.cshb.swap{animation:cfade .26s cubic-bezier(.22,1,.36,1)}@keyframes cfade{from{opacity:0;transform:translateX(18px)}}
+.cotsheet.cshin{animation:cshup .4s cubic-bezier(.22,1,.36,1)}.cotsheet.cshout{transform:translateY(105%);transition:transform .26s cubic-bezier(.5,0,.75,0)}#cotover .sheetbg{animation:cbgin .3s ease-out both;transition:opacity .26s}#cotover .sheetbg.out{opacity:0}@keyframes cbgin{from{opacity:0}}.cshb.swap{animation:cfade .26s cubic-bezier(.22,1,.36,1)}@keyframes cfade{from{opacity:0;transform:translateX(18px)}}
 @keyframes cshup{from{transform:translateY(100%)}}
 .csh{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 8px}.csh h2{margin:0}
 .cshx{border:0;background:var(--card2);color:var(--ink);width:36px;height:36px;border-radius:50%;font-size:22px;line-height:1}
@@ -616,7 +616,7 @@ img.fimg{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-w
 .sesi .mbi-cap{z-index:2}.sesi .mbi-cap.top{top:calc(14px + env(safe-area-inset-top))!important}.sesi .mbi-cap.top::before{display:none}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><div id="achpop" aria-live="polite"></div><script>
 {
-const VERSION='7.75';
+const VERSION='7.76';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -1896,20 +1896,20 @@ function cottagePage(){loadClan();loadSocial();
  const key=body?cotSheet+(cotSheet==='clubinfo'&&clubInfo?':'+clubInfo.id:''):'',up=!!body&&!cotOpenKey,swap=!!body&&!!cotOpenKey&&cotOpenKey!==key;cotOpenKey=key;cotLine=line;
  cotRoomHtml=`<div class="cotroom"><div class="cotpan"><div class="cotin2">${interiorSvg()}<div class="gmasay" aria-live="polite"><span></span></div></div></div>
  <a class="cotback" href="#fishing" aria-label="Back to The Bank">‹</a>${hint}</div>`;
- cotOverHtml=`${body?`<div class="sheetbg" data-cotclose></div><div class="cotsheet${up?' up':''}" data-key="${key}" role="dialog" aria-modal="true" aria-label="${title}"><div class="csh"><h2>${title}</h2><button class="cshx" data-cotclose aria-label="Close">×</button></div><div class="cshb${clan.id&&user&&cotSheet!=='clubinfo'?' dup':''}${swap?' swap':''}">${body}</div></div>`:''}${bot}`;
+ cotOverHtml=`${body?`<div class="sheetbg" data-cotclose></div><div class="cotsheet${up?' cshin':''}" data-key="${key}" role="dialog" aria-modal="true" aria-label="${title}"><div class="csh"><h2>${title}</h2><button class="cshx" data-cotclose aria-label="Close">×</button></div><div class="cshb${clan.id&&user&&cotSheet!=='clubinfo'?' dup':''}${swap?' swap':''}">${body}</div></div>`:''}${bot}`;
  return cotRoomHtml+'<div id="cotover">'+cotOverHtml+'</div>'}
 let cotRoomHtml='',cotOverHtml='',cotLine='',cotOpenKey='',cotRoomShown='',cotClosing=0;
 function cotPatch(extra){const o=document.getElementById('cotover');if(!o)return;const tmp=document.createElement('div');tmp.innerHTML=cotOverHtml+(extra||'');
- const cur=o.querySelector('.cotsheet:not(.down)'),nx=tmp.querySelector('.cotsheet'),others=el=>[...el.children].filter(n=>!n.matches('.sheetbg,.cotsheet'));
+ const cur=o.querySelector('.cotsheet:not(.cshout)'),nx=tmp.querySelector('.cotsheet'),others=el=>[...el.children].filter(n=>!n.matches('.sheetbg,.cotsheet'));
  if(cur&&nx){clearTimeout(cotClosing);const top0=cur.getBoundingClientRect().top,swap=cur.dataset.key!==nx.dataset.key;cur.dataset.key=nx.dataset.key;cur.setAttribute('aria-label',nx.getAttribute('aria-label')||'');
   const h=cur.querySelector('.csh h2'),nh=nx.querySelector('.csh h2');if(h.innerHTML!==nh.innerHTML)h.innerHTML=nh.innerHTML;
   const b=cur.querySelector('.cshb'),nb=nx.querySelector('.cshb');nb.classList.remove('swap');if(b.innerHTML!==nb.innerHTML){b.innerHTML=nb.innerHTML;b.scrollTop=cotSY}
   b.className=nb.className;if(swap){void b.offsetWidth;b.classList.add('swap')}
-  const dy=top0-cur.getBoundingClientRect().top;if(Math.abs(dy)>2&&!cur.classList.contains('up')||Math.abs(dy)>2&&cur.getAnimations().every(a=>a.playState!=='running')){cur.style.transition='none';cur.style.transform=`translateY(${dy}px)`;void cur.offsetWidth;cur.style.transition='transform .34s cubic-bezier(.22,1,.36,1)';cur.style.transform='';setTimeout(()=>{cur.style.transition=''},400)}
+  const dy=top0-cur.getBoundingClientRect().top;if(Math.abs(dy)>2&&!cur.classList.contains('cshin')||Math.abs(dy)>2&&cur.getAnimations().every(a=>a.playState!=='running')){cur.style.transition='none';cur.style.transform=`translateY(${dy}px)`;void cur.offsetWidth;cur.style.transition='transform .34s cubic-bezier(.22,1,.36,1)';cur.style.transform='';setTimeout(()=>{cur.style.transition=''},400)}
   others(o).forEach(n=>n.remove());others(tmp).forEach(n=>o.appendChild(n))}
- else if(cur&&!nx){cur.classList.add('down');const bg=o.querySelector('.sheetbg');if(bg)bg.classList.add('out');others(o).forEach(n=>n.remove());others(tmp).forEach(n=>o.appendChild(n));
-  clearTimeout(cotClosing);cotClosing=setTimeout(()=>{if(!cotSheet){o.querySelectorAll('.cotsheet.down,.sheetbg.out').forEach(n=>n.remove())}},260)}
- else{o.querySelectorAll('.cotsheet.down,.sheetbg.out').forEach(n=>n.remove());others(o).forEach(n=>n.remove());while(tmp.firstChild)o.appendChild(tmp.firstChild)}}
+ else if(cur&&!nx){cur.classList.add('cshout');const bg=o.querySelector('.sheetbg');if(bg)bg.classList.add('out');others(o).forEach(n=>n.remove());others(tmp).forEach(n=>o.appendChild(n));
+  clearTimeout(cotClosing);cotClosing=setTimeout(()=>{if(!cotSheet){o.querySelectorAll('.cotsheet.cshout,.sheetbg.out').forEach(n=>n.remove())}},260)}
+ else{o.querySelectorAll('.cotsheet.cshout,.sheetbg.out').forEach(n=>n.remove());others(o).forEach(n=>n.remove());while(tmp.firstChild)o.appendChild(tmp.firstChild)}}
 const waitFor=(p,ms)=>Promise.race([p,new Promise(r=>setTimeout(r,ms))]);
 function cotFill(){const b=document.querySelector('.gmasay span');if(b&&b.textContent!==cotLine)b.textContent=cotLine}
 let cotSheet=null,cotX=null,cotSY=0,clubList=null,clubLoading=false,clubInfo=null;
