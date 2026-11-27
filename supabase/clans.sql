@@ -249,6 +249,75 @@ begin
   return found;
 end $$;
 
+-- ======================= weekly club challenges =======================
+create table if not exists public.clan_wins(
+  clan_id uuid not null references public.clans(id) on delete cascade,
+  week date not null,
+  kind text not null,
+  xp integer not null default 150,
+  done_at timestamptz not null default now(),
+  primary key (clan_id, week)
+);
+alter table public.clan_wins enable row level security;
+drop policy if exists clanw_read on public.clan_wins;
+create policy clanw_read on public.clan_wins for select to authenticated using (clan_id = public.my_clan());
+grant select on public.clan_wins to authenticated;
+grant all on public.clan_wins to service_role;
+
+-- the same challenge for every club each week (weeks start on Monday)
+create or replace function public.clan_week_kind(w date) returns text language sql immutable as $$
+  select (array['species','catches','big','everyone','predators','early','weight'])[1 + ((extract(isoyear from w)::int * 53 + extract(week from w)::int) % 7)]
+$$;
+
+-- how a club is doing on a week's challenge
+create or replace function public.clan_week_eval(c uuid, w date) returns json language sql stable security definer set search_path = public as $$
+  with mem as (select m.user_id, m.joined_at::date j from public.clan_members m where m.clan_id = c and m.status = 'joined'),
+  n as (select greatest(count(*), 1)::int m from mem),
+  cat as (
+    select m.user_id, x->>'species' sp, nullif(x->>'g', '')::numeric g, coalesce(x->>'time', '') tm
+    from mem m join public.pillars_data p on p.user_id = m.user_id
+    cross join lateral jsonb_array_elements(case when jsonb_typeof(p.data->'fish'->'catches') = 'array' then p.data->'fish'->'catches' else '[]'::jsonb end) x
+    where coalesce(x->>'date', '') ~ '^\d{4}-\d{2}-\d{2}$' and coalesce(x->>'species', '') <> ''
+      and (x->>'date')::date >= greatest(w, m.j) and (x->>'date')::date < w + 7),
+  k as (select public.clan_week_kind(w) kind),
+  r as (
+    select k.kind,
+      case k.kind
+        when 'species' then least(6, 2 + ceil(n.m / 3.0)::int)
+        when 'catches' then least(30, 3 * n.m + 2)
+        when 'big' then 1
+        when 'everyone' then n.m
+        when 'predators' then least(6, 1 + ceil(n.m / 2.0)::int)
+        when 'early' then least(6, 1 + ceil(n.m / 3.0)::int)
+        when 'weight' then 1814 * ceil(n.m / 2.0)::int
+      end target,
+      case k.kind
+        when 'species' then (select count(distinct sp) from cat)
+        when 'catches' then (select count(*) from cat)
+        when 'big' then (select count(*) from cat where g >= 454)
+        when 'everyone' then (select count(distinct user_id) from cat)
+        when 'predators' then (select count(*) from cat where sp ~* '(pike|perch|zander|chub|trout)')
+        when 'early' then (select count(*) from cat where tm ~ '^\d{1,2}:\d{2}' and split_part(tm, ':', 1)::int < 8)
+        when 'weight' then (select coalesce(sum(g), 0)::int from cat)
+      end progress
+    from k, n)
+  select json_build_object('kind', kind, 'target', target, 'progress', progress, 'done', progress >= target, 'week', w, 'ends', w + 7) from r
+$$;
+revoke execute on function public.clan_week_eval(uuid, date) from public;
+
+-- check this week (and last week, in case nobody looked before it ended) and bank the XP once
+create or replace function public.clan_challenge_check(c uuid) returns json language plpgsql security definer set search_path = public as $$
+declare w date := date_trunc('week', current_date)::date; e json; pe json;
+begin
+  pe := public.clan_week_eval(c, w - 7);
+  if (pe->>'done')::boolean then insert into public.clan_wins(clan_id, week, kind) values (c, w - 7, pe->>'kind') on conflict do nothing; end if;
+  e := public.clan_week_eval(c, w);
+  if (e->>'done')::boolean then insert into public.clan_wins(clan_id, week, kind) values (c, w, e->>'kind') on conflict do nothing; end if;
+  return e;
+end $$;
+revoke execute on function public.clan_challenge_check(uuid) from public;
+
+
 -- ======================= the club page: badge, description, XP and stats =======================
 alter table public.clans add column if not exists about text;
 alter table public.clans add column if not exists emblem jsonb;
@@ -292,6 +361,9 @@ language sql stable security definer set search_path = public as $$
   -- fish raised by people who've since left still count for the club
   select null::uuid, 0, 0, 0, count(*)::int, count(*)::int * 100 from public.clan_fish f
   where f.clan_id = c and f.place = 'pond' and not exists (select 1 from mem where mem.user_id = f.user_id)
+  union all
+  -- weekly challenges the club has won
+  select null::uuid, 0, 0, 0, 0, coalesce(sum(w.xp), 0)::int from public.clan_wins w where w.clan_id = c
 $$;
 revoke execute on function public.clan_xp_rows(uuid) from public;
 
@@ -301,11 +373,14 @@ $$;
 revoke execute on function public.clan_xp(uuid) from public;
 
 -- full stats for your own club
-create or replace function public.clan_stats() returns json language plpgsql stable security definer set search_path = public as $$
-declare c uuid := public.my_clan(); r json;
+create or replace function public.clan_stats() returns json language plpgsql security definer set search_path = public as $$
+declare c uuid := public.my_clan(); r json; ch json;
 begin
   if c is null then return null; end if;
+  ch := public.clan_challenge_check(c);
   select json_build_object(
+    'challenge', ch,
+    'wins', (select count(*) from public.clan_wins where clan_id = c),
     'xp', (select coalesce(sum(xp), 0) from public.clan_xp_rows(c)),
     'members', (select coalesce(json_agg(json_build_object('user_id', x.user_id, 'xp', x.xp, 'catches', x.catches, 'species', x.species, 'pond', x.pond) order by x.xp desc), '[]'::json) from public.clan_xp_rows(c) x where x.user_id is not null),
     'past_pond', (select coalesce(sum(pond), 0) from public.clan_xp_rows(c) x where x.user_id is null),
@@ -324,6 +399,10 @@ begin
         select to_char(f.promoted_at at time zone 'UTC', 'YYYY-MM-DD"T"HH24:MI'),
           json_build_object('k', 'pond', 'user_id', f.user_id, 'species', f.species, 'g', round(public.fish_grams(f)), 'date', to_char(f.promoted_at at time zone 'UTC', 'YYYY-MM-DD'))
         from public.clan_fish f where f.clan_id = c and f.place = 'pond' and f.promoted_at is not null
+        union all
+        select to_char(w.done_at at time zone 'UTC', 'YYYY-MM-DD"T"HH24:MI'),
+          json_build_object('k', 'win', 'kind', w.kind, 'g', w.xp, 'date', to_char(w.done_at at time zone 'UTC', 'YYYY-MM-DD'))
+        from public.clan_wins w where w.clan_id = c
       ) u order by ts desc limit 10) z)
   ) into r;
   return r;
