@@ -614,7 +614,7 @@ img.fimg{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;-w
 .sesi .mbi-cap{z-index:2}.sesi .mbi-cap.top{top:calc(14px + env(safe-area-inset-top))!important}.sesi .mbi-cap.top::before{display:none}
 </style></head><body><div id="root"></div><div id="toast"></div><div id="tour"></div><div id="morph" class="morph" aria-hidden="true"></div><div id="achpop" aria-live="polite"></div><script>
 {
-const VERSION='7.70';
+const VERSION='7.71';
 /* Supabase project (the publishable key is safe in the browser; row-level security protects the data) */
 const SB_URL='https://wsouuzdkzkktafjhgnxw.supabase.co',SB_KEY='sb_publishable_Z_KKIpJHUTlK0h7zk3BkUA_EbHvZ88z';
 const root=document.getElementById('root');
@@ -1703,6 +1703,7 @@ async function clanRpc(fn,args,ok){if(!sb||!user)return null;const r=await sb.rp
   toast(socErr(r.error)==='setup'?"The cottage isn't open yet":m.includes('already in a clan')?"You're already in a club":m.includes('too many requests')?'You can ask up to 3 clubs at a time':m.includes('head of the club')?'Only the head of the club can do that':m.includes('club not found')?'That club has closed its doors':m.includes('full')?'That club is full (12 max)':m.includes('too big')?'Too big for the tank. Only small fish fit':m.includes('weight or length')?'Add a weight or length to that catch first':m.includes('already have a fish')?'You already have a fish in the tank':m.includes('not found')?"That catch hasn't synced yet. Try again in a moment":"Couldn't do that right now");return null}
  if(ok)toast(ok);await loadClan(true);return r.data}
 const GMA_LINES=["Ooh, come in, love. Kettle's just boiled.","Mind the cat. Oh, we haven't got one yet.","Is that a perch? Lovely stripes on him.","Don't forget to feed the little ones in the tank.","Your grandad caught a pike that big once. Or so he said.","Shut the door, you're letting the heat out.","Have you eaten? You look thin.","Tight lines, dear."];
+const clubReqs=()=>clan.c&&user&&clan.c.owner===user.id?clan.mem.filter(r=>r.status==='requested').length:0;
 const isNight=()=>{const t=sceneHour(),{sr,ss}=skyKeys();return t<sr+.3||t>ss-.3};
 function cottageSvg(){if(!user)return'';const n=isNight(),win=n?'#ffcf6e':'#a8c8d8',pond=clan.fish.some(f=>f.place==='pond');
  return`<a href="#cottage" class="cot" aria-label="Grandma's cottage"><g transform="translate(280 76.4) scale(1.75)">
@@ -1719,6 +1720,7 @@ function cottageSvg(){if(!user)return'';const n=isNight(),win=n?'#ffcf6e':'#a8c8
  <rect x="-1.7" y="-5.8" width="3.4" height="5.8" rx="1.6" fill="#3e2414"/><path d="M0 -5.6v5.4" stroke="#2c180c" stroke-width=".35"/><circle cx="1" cy="-2.7" r=".35" fill="#d9a54a"/>
  ${[-7.6,4.8].map(x=>`<rect x="${x-.4}" y="-7" width="3.6" height="3.6" fill="#3e2414"/><rect x="${x}" y="-6.6" width="2.8" height="2.8" fill="${win}"/><path d="M${x+1.4} -6.6v2.8M${x} -5.2h2.8" stroke="#3e2414" stroke-width=".45"/><rect x="${x-.6}" y="-3.5" width="4" height=".7" fill="#5a3820"/>`).join('')}
  ${pond?'<ellipse cx="-14" cy="-.5" rx="4.2" ry="1.3" fill="#4f7e8c" opacity=".9"/>':''}
+ ${clubReqs()?`<g transform="translate(-9 -25) scale(.62)" pointer-events="none" aria-hidden="true"><circle r="4.4" fill="none" stroke="#ffd36b" stroke-width="1.3"><animate attributeName="r" values="4.4;11" dur="1.8s" repeatCount="indefinite"/><animate attributeName="opacity" values=".95;0" dur="1.8s" repeatCount="indefinite"/></circle><circle r="4.4" fill="#e0453a" stroke="#fff3d6" stroke-width=".8"/><text y="2.2" text-anchor="middle" font-size="6.2" font-weight="800" font-family="Inter,sans-serif" fill="#fff">!</text></g>`:''}
  <rect x="-16" y="-24" width="32" height="26" fill="#fff" fill-opacity="0"/></g></a>`}
 function clanBottle(key){const r=clan.inv.find(x=>'c:'+x.clan_id===key);if(!r)return'';const host=rname(r.invited_by||r.clan.owner),me=prof().name||'';
  return`<div class="sheetbg bbg"></div><div class="bottlebox" role="dialog" aria-modal="true" aria-label="Message in a bottle from ${esc(host)}">
@@ -1820,7 +1822,7 @@ function interiorSvg(){const n=isNight(),S=skyAt(sceneHour()),tank=clan.fish.fil
     <path d="M-.8 2 L0 7 L.8 2Z" fill="#2a2a3a"/></g></g>
    <g transform="translate(92 -52) scale(1.5)" pointer-events="none" aria-hidden="true"><g><animateTransform attributeName="transform" type="translate" values="0 0;0 -3;0 0" dur="1.8s" repeatCount="indefinite"/>
    <circle r="5" fill="none" stroke="#ffd36b" stroke-width="1.3"><animate attributeName="r" values="5;12" dur="1.8s" repeatCount="indefinite"/><animate attributeName="opacity" values=".95;0" dur="1.8s" repeatCount="indefinite"/></circle>
-   <circle r="5" fill="#d9a54a" stroke="#fff3d6" stroke-width="1"/><path d="M-2.4 -.8 L0 1.6 L2.4 -.8" stroke="#fff" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g></g>
+   ${clubReqs()?'<circle r="5" fill="#e0453a" stroke="#fff3d6" stroke-width="1"/><text y="2.6" text-anchor="middle" font-size="7.4" font-weight="800" font-family="Inter,sans-serif" fill="#fff">!</text>':'<circle r="5" fill="#d9a54a" stroke="#fff3d6" stroke-width="1"/><path d="M-2.4 -.8 L0 1.6 L2.4 -.8" stroke="#fff" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'}</g></g>
    <rect x="10" y="-104" width="200" height="120" fill="#fff" fill-opacity="0"/></g></g>
  <g transform="translate(968.6 240) scale(2.3)"><g transform="translate(18 120)"><rect x="-2" width="4" height="78" fill="#4a2e1a"/><rect x="-10" y="76" width="20" height="4" rx="2" fill="#4a2e1a"/><path d="M-14 0 L14 0 L9 -20 L-9 -20Z" fill="#e8c98a"/>${n?'<ellipse cy="6" rx="30" ry="16" fill="#ffcf6e" opacity=".22"/>':''}</g></g>
  <g transform="translate(218.4 94) scale(2.3)"><g transform="translate(218 162)"><rect x="6" y="86" width="6" height="22" fill="#4a2e1a"/><rect x="92" y="86" width="6" height="22" fill="#4a2e1a"/>
@@ -1906,14 +1908,14 @@ function pondSvg(p){return`<svg class="pondsvg" viewBox="0 0 400 130" aria-hidde
  <ellipse cx="130" cy="58" rx="16" ry="6" fill="#5f9a5a"/><ellipse cx="280" cy="80" rx="14" ry="5" fill="#5f9a5a"/><circle cx="283" cy="78" r="3" fill="#f3c4d6"/></g></svg>`}
 function clanClick(t,ds){
  if(ds.cotclose!=null){cotSheet=null;rr();return true}
- if(ds.creq){const id=ds.creq;t.disabled=true;clanRpc('clan_request',{c:id}).then(r=>{if(r==='joined')toast('Welcome to the family!');else if(r)toast("Asked! The head of the club will let you in.");clubList=null;rr()});return true}
+ if(ds.creq){const id=ds.creq;t.disabled=true;clanRpc('clan_request',{c:id}).then(r=>{if(r==='joined')toast('Welcome to the family!');else if(r){toast("Asked! The head of the club will let you in.");sesPush({club_id:id,kind:'request'})}clubList=null;rr()});return true}
  if(ds.cunreq){clanRpc('clan_unrequest',{c:ds.cunreq},'Request cancelled').then(()=>{clubList=null;rr()});return true}
- if(ds.cdecide){const u=ds.cdecide,yes=ds.yes==='1';t.disabled=true;clanRpc('clan_decide',{u,yes}).then(r=>{if(r===true)toast(yes?`${rname(u)} is in! Welcome to the family.`:'Request turned down');else if(r===false)toast(`${rname(u)} has already joined another club`)});return true}
+ if(ds.cdecide){const u=ds.cdecide,yes=ds.yes==='1';t.disabled=true;clanRpc('clan_decide',{u,yes}).then(r=>{if(r===true){toast(yes?`${rname(u)} is in! Welcome to the family.`:'Request turned down');if(yes&&clan.id)sesPush({club_id:clan.id,kind:'accepted',user:u})}else if(r===false)toast(`${rname(u)} has already joined another club`)});return true}
  if(ds.clannew!=null){clanForm={name:''};rr();setTimeout(()=>{const i=document.querySelector('[data-clanname]');if(i)i.focus()},50);return true}
  if(ds.clancancel!=null){clanForm=null;rr();return true}
  if(ds.clancreate!=null){const nm=(clanForm&&clanForm.name||'').trim();if(!nm){toast('Give your club a name');return true}clan.busy='create';rr();clanRpc('clan_create',{cid:newId(),nm},'Welcome home. Grandma\'s put the kettle on.').then(()=>{clan.busy='';clanForm=null;rr()});return true}
  if(ds.claninv!=null){clanInv=!clanInv;rr();return true}
- if(ds.claninvu){const u=ds.claninvu;clanRpc('clan_invite',{u,nt:clanInvNote},`Bottle sent to ${rname(u)}`);return true}
+ if(ds.claninvu){const u=ds.claninvu;clanRpc('clan_invite',{u,nt:clanInvNote},`Bottle sent to ${rname(u)}`).then(ok=>{if(ok&&clan.id)sesPush({club_id:clan.id,kind:'invite',users:[u]})});return true}
  if(ds.clankick){if(clanArm!=='k'+ds.clankick){clanArm='k'+ds.clankick;rr();return true}clanArm=null;clanRpc('clan_remove',{u:ds.clankick});return true}
  if(ds.clanleave!=null){if(clanArm!=='leave'){clanArm='leave';rr();return true}clanArm=null;clanRpc('clan_leave',{},'You left the club');return true}
  if(ds.fpick!=null){donatePick=true;rr();return true}
